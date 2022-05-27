@@ -109,28 +109,29 @@ class ApiService {
           if (statusCode == HttpStatus.unauthorized) {
             RequestOptions requestOptions = e.requestOptions;
 
-            try {
-              await _clientService.login();
-            } catch (e) {
-              // TODO check registration and authentication flow
-              // shopuld be implemented in issue #3 and #11
-              _store.delete(SecureStorageService.clientIdStorageKey);
-              _store.delete(SecureStorageService.clientSecretStorageKey);
-              _store.delete(SecureStorageService.rsaPrivateStorageKey);
-              _store.delete(SecureStorageService.appKeyStorageKey);
-              _store.delete(SecureStorageService.serverNameStorageKey);
-              RouterService.getInstance()
-                  .navigatorKey
-                  .currentState!
-                  .pushReplacementNamed('/register');
-            }
+            // TODO check registration and authentication flow
+            // shopuld be implemented in issue #3 and #11
+            // try {
+            //   await _clientService.login();
+            // } catch (e) {
 
-            if (!(await _store.has(
-              SecureStorageService.accessTokenStorageKey,
-            ))) {
-              // Logout was called, since token incorrect or expired!
-              return handler.reject(e);
-            }
+            //   _store.delete(SecureStorageService.clientIdStorageKey);
+            //   _store.delete(SecureStorageService.clientSecretStorageKey);
+            //   _store.delete(SecureStorageService.rsaPrivateStorageKey);
+            //   _store.delete(SecureStorageService.appKeyStorageKey);
+            //   _store.delete(SecureStorageService.serverNameStorageKey);
+            //   RouterService.getInstance()
+            //       .navigatorKey
+            //       .currentState!
+            //       .pushReplacementNamed('/register');
+            // }
+
+            // if (!(await _store.has(
+            //   SecureStorageService.accessTokenStorageKey,
+            // ))) {
+            //   // Logout was called, since token incorrect or expired!
+            //   return handler.reject(e);
+            // }
 
             // Retry request with the new token.
             var retryDio = Dio();
@@ -189,7 +190,7 @@ class ApiService {
         int port,
       ) {
         // Ignore bad certificates in debug mode!
-        if (!kDebugMode) {
+        if (!kReleaseMode) {
           _messenger.showMessage(_messenger.badCertificate);
         }
         return kDebugMode;

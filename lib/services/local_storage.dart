@@ -1,4 +1,4 @@
-import 'package:cross_local_storage/cross_local_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service that handles data of the local storage for the app.
 ///
@@ -12,7 +12,7 @@ class LocalStorageService {
 
   /// Instance of the lcoal storage plugin to access the data from the
   /// local storage.
-  late LocalStorageInterface _storage;
+  late SharedPreferences _storage;
 
   /// Private constructor of the service.
   LocalStorageService._() {
@@ -20,7 +20,7 @@ class LocalStorageService {
   }
 
   void _initLocalStorage() async {
-    _storage = await LocalStorage.getInstance();
+    _storage = await SharedPreferences.getInstance();
   }
 
   /// Returns the singleton instance of the [LocalStorageService].
@@ -29,8 +29,8 @@ class LocalStorageService {
   }
 
   /// Returns the value persisted under the given [key].
-  String? get(String key) {
-    return _storage.get(key);
+  T? get<T>(String key) {
+    return _storage.get(key) as T?;
   }
 
   /// Returns a boolean, that indicates whether a value is persisted under
@@ -47,11 +47,6 @@ class LocalStorageService {
   /// Deletes the value under the given [key] from the secure storage.
   Future<void> delete(String key) async {
     await _storage.remove(key);
-  }
-
-  /// Returns the value persisted under the given [key].
-  bool? getBool(String key) {
-    return _storage.getBool(key);
   }
 
   /// Stores the [value] under the given [key].

@@ -20,7 +20,9 @@ class RouterService {
 
   /// Routes of the main navigator.
   Map<String, Widget Function(BuildContext)> get routes {
-    return {IntroViewModel.route: (context) => const IntroScreen()};
+    return {
+      IntroViewModel.route: (context) => const IntroScreen(),
+    };
   }
 
   /// Name of the initial route for the main navigation.

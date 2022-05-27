@@ -4,11 +4,11 @@
     "badCertificate": "Es ist ein Zertifikatfehler aufgetreten!",
     "unexpectedError": "Es ist ein unerwarterter Fehler aufgetreten: {message}",
     "@unexpectedError": {
-      "placeholders": {
-        "message": {
-          "type": "String"
+        "placeholders": {
+            "message": {
+                "type": "String"
+            }
         }
-      }
     },
-    "forbidden": "Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!"  
+    "forbidden": "Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!"
 }
