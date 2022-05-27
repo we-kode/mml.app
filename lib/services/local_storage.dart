@@ -49,11 +49,6 @@ class LocalStorageService {
     await _storage.remove(key);
   }
 
-  /// Returns the value persisted under the given [key].
-  bool? getBool(String key) {
-    return _storage.getBool(key);
-  }
-
   /// Stores the [value] under the given [key].
   Future<void> setBool(String key, bool value) async {
     await _storage.setBool(key, value);

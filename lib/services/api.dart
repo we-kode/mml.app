@@ -114,6 +114,7 @@ class ApiService {
             // try {
             //   await _clientService.login();
             // } catch (e) {
+
             //   _store.delete(SecureStorageService.clientIdStorageKey);
             //   _store.delete(SecureStorageService.clientSecretStorageKey);
             //   _store.delete(SecureStorageService.rsaPrivateStorageKey);
@@ -189,10 +190,10 @@ class ApiService {
         int port,
       ) {
         // Ignore bad certificates in debug mode!
-        if (!kDebugMode) {
+        if (!kReleaseMode) {
           _messenger.showMessage(_messenger.badCertificate);
         }
-        return kDebugMode;
+        return kReleaseMode;
       };
 
       return client;
