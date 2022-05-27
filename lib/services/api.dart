@@ -193,7 +193,7 @@ class ApiService {
         if (!kReleaseMode) {
           _messenger.showMessage(_messenger.badCertificate);
         }
-        return kDebugMode;
+        return kReleaseMode;
       };
 
       return client;
