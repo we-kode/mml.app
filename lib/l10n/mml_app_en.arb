@@ -3,5 +3,7 @@
     "appTitle": "My Media Lib",
     "badCertificate": "An certificate error occurred!",
     "unexpectedError": "An unexpected error occurred: {message}",
-    "forbidden": "You have not the necessary rights, to execute this action!"
+    "forbidden": "You have not the necessary rights, to execute this action!",
+    "done": "Done",
+    "skip": "Skip"
 }

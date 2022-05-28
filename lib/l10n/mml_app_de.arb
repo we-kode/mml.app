@@ -10,5 +10,7 @@
             }
         }
     },
-    "forbidden": "Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!"
+    "forbidden": "Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!",
+    "done": "Fertig",
+    "skip": "Überspringen"
 }

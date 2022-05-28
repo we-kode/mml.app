@@ -15,22 +15,21 @@ class LocalStorageService {
   late SharedPreferences _storage;
 
   /// Private constructor of the service.
-  LocalStorageService._() {
-    _initLocalStorage();
-  }
+  LocalStorageService._();
 
-  void _initLocalStorage() async {
+  Future _initLocalStorage() async {
     _storage = await SharedPreferences.getInstance();
   }
 
   /// Returns the singleton instance of the [LocalStorageService].
-  static LocalStorageService getInstance() {
+  static Future<LocalStorageService> getInstance() async {
+    await _instance._initLocalStorage();
     return _instance;
   }
 
   /// Returns the value persisted under the given [key].
-  String? get(String key) {
-    return _storage.getString(key);
+  T? get<T>(String key) {
+    return _storage.get(key) as T?;
   }
 
   /// Returns a boolean, that indicates whether a value is persisted under
