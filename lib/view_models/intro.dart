@@ -45,9 +45,8 @@ class IntroViewModel extends ChangeNotifier {
       locales = AppLocalizations.of(_context)!;
       _storage = await LocalStorageService.getInstance();
       var skipTutorial = _storage.get<bool?>(LocalStorageService.skipIntro);
-      if (skipTutorial ?? false) {
+      if (skipTutorial == true) {
         _nextScreen();
-        return false;
       }
       return true;
     });
