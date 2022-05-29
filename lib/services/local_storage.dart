@@ -15,16 +15,15 @@ class LocalStorageService {
   late SharedPreferences _storage;
 
   /// Private constructor of the service.
-  LocalStorageService._() {
-    _initLocalStorage();
-  }
+  LocalStorageService._();
 
-  void _initLocalStorage() async {
+  Future _initLocalStorage() async {
     _storage = await SharedPreferences.getInstance();
   }
 
   /// Returns the singleton instance of the [LocalStorageService].
-  static LocalStorageService getInstance() {
+  static Future<LocalStorageService> getInstance() async {
+    await _instance._initLocalStorage();
     return _instance;
   }
 
