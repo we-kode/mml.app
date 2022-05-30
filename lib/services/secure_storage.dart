@@ -24,6 +24,9 @@ class SecureStorageService {
   /// Key under which the servername is persisted.
   static const String serverNameStorageKey = 'serverName';
 
+  /// Key under which the skip intro flag is stored
+  static const String skipIntroStorageKey = 'skipIntro';
+
   /// Key under which the access token is persisted.
   static const String accessTokenStorageKey = 'a';
 

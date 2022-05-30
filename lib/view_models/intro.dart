@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:mml_app/services/local_storage.dart';
 import 'package:mml_app/services/router.dart';
+import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/register.dart';
 
 /// View model for the intro screen.
@@ -35,17 +35,16 @@ class IntroViewModel extends ChangeNotifier {
   /// Locales of the application.
   late AppLocalizations locales;
 
-  /// [LocalStorageService] used to load data from the local storage.
-  late LocalStorageService _storage;
+  /// [SecureStorageService] used to load data from secure store.
+  final SecureStorageService _storage = SecureStorageService.getInstance();
 
   /// Initialize the view model.
   Future<bool> init(BuildContext context) async {
     return Future<bool>.microtask(() async {
       _context = context;
       locales = AppLocalizations.of(_context)!;
-      _storage = await LocalStorageService.getInstance();
-      var skipTutorial = _storage.get<bool?>(LocalStorageService.skipIntro);
-      if (skipTutorial == true) {
+      var skipTutorial = await _storage.get(SecureStorageService.skipIntroStorageKey);
+      if (skipTutorial == true.toString()) {
         _nextScreen();
       }
       return true;
@@ -54,7 +53,7 @@ class IntroViewModel extends ChangeNotifier {
 
   /// Manages the user skip or done click event.
   void finish() async {
-    await _storage.setBool(LocalStorageService.skipIntro, true);
+    await _storage.set(SecureStorageService.skipIntroStorageKey, true.toString());
     await _nextScreen();
   }
 
