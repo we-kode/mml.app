@@ -20,9 +20,6 @@ class ApiService {
   /// Instance of the messenger service, to show messages with.
   final MessengerService _messenger = MessengerService.getInstance();
 
-  /// Instance of the client service, to show messages with.
-  final ClientService _clientService = ClientService.getInstance();
-
   /// Instance of the [SecureStorageService] to handle data in the secure
   /// storage.
   final SecureStorageService _store = SecureStorageService.getInstance();
@@ -125,7 +122,7 @@ class ApiService {
               return handler.reject(e);
             }
 
-            await _clientService.refreshToken();
+            await ClientService.getInstance().refreshToken();
 
             var hasAccessToken = await _store.has(
               SecureStorageService.accessTokenStorageKey,
