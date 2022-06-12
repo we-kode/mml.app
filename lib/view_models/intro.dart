@@ -29,9 +29,6 @@ class IntroViewModel extends ChangeNotifier {
     )
   ];
 
-  /// Current build context.
-  late BuildContext _context;
-
   /// Locales of the application.
   late AppLocalizations locales;
 
@@ -41,19 +38,28 @@ class IntroViewModel extends ChangeNotifier {
   /// Initialize the view model.
   Future<bool> init(BuildContext context) async {
     return Future<bool>.microtask(() async {
-      _context = context;
-      locales = AppLocalizations.of(_context)!;
-      var skipTutorial = await _storage.get(SecureStorageService.skipIntroStorageKey);
+      locales = AppLocalizations.of(context)!;
+
+      var skipTutorial = await _storage.get(
+        SecureStorageService.skipIntroStorageKey,
+      );
+
       if (skipTutorial == true.toString()) {
         _nextScreen();
+        return false;
       }
+
       return true;
     });
   }
 
   /// Manages the user skip or done click event.
   void finish() async {
-    await _storage.set(SecureStorageService.skipIntroStorageKey, true.toString());
+    await _storage.set(
+      SecureStorageService.skipIntroStorageKey,
+      true.toString(),
+    );
+
     await _nextScreen();
   }
 

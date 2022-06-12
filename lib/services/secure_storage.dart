@@ -20,6 +20,9 @@ class SecureStorageService {
 
   /// Key under which the private rsa key is stored.
   static const String rsaPrivateStorageKey = 'rsaPrivate';
+ 
+  /// Key under which the public rsa key is stored.
+  static const String rsaPublicStorageKey = 'rsaPrivate';
 
   /// Key under which the servername is persisted.
   static const String serverNameStorageKey = 'serverName';

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/messenger.dart';
-import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 
 /// Service that handles requests to the server by adding all necessary headers
@@ -47,13 +47,15 @@ class ApiService {
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
   }) {
-    return _dio.request<T>(path,
-        data: data,
-        queryParameters: queryParameters,
-        cancelToken: cancelToken,
-        options: options,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress);
+    return _dio.request<T>(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      cancelToken: cancelToken,
+      options: options,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+    );
   }
 
   /// Initializes the [dio] instance with interceptors for the default handling.
@@ -78,7 +80,9 @@ class ApiService {
         );
 
         options.baseUrl = 'https://$serverName/api/v1.0/';
-        options.headers['Accept-Language'] = Platform.localeName;
+        options.headers['Accept-Language'] = Intl.shortLocale(
+          Platform.localeName,
+        );
 
         var accessToken = await _store.get(
           SecureStorageService.accessTokenStorageKey,
@@ -109,29 +113,27 @@ class ApiService {
           if (statusCode == HttpStatus.unauthorized) {
             RequestOptions requestOptions = e.requestOptions;
 
-            // TODO check registration and authentication flow
-            // shopuld be implemented in issue #3 and #11
-            // try {
-            //   await _clientService.login();
-            // } catch (e) {
+            var hasClientId = await _store.has(
+              SecureStorageService.clientIdStorageKey,
+            );
 
-            //   _store.delete(SecureStorageService.clientIdStorageKey);
-            //   _store.delete(SecureStorageService.clientSecretStorageKey);
-            //   _store.delete(SecureStorageService.rsaPrivateStorageKey);
-            //   _store.delete(SecureStorageService.appKeyStorageKey);
-            //   _store.delete(SecureStorageService.serverNameStorageKey);
-            //   RouterService.getInstance()
-            //       .navigatorKey
-            //       .currentState!
-            //       .pushReplacementNamed('/register');
-            // }
+            var hasClientSecret = await _store.has(
+              SecureStorageService.clientSecretStorageKey,
+            );
 
-            // if (!(await _store.has(
-            //   SecureStorageService.accessTokenStorageKey,
-            // ))) {
-            //   // Logout was called, since token incorrect or expired!
-            //   return handler.reject(e);
-            // }
+            if (!hasClientId || !hasClientSecret) {
+              return handler.reject(e);
+            }
+
+            await _clientService.refreshToken();
+
+            var hasAccessToken = await _store.has(
+              SecureStorageService.accessTokenStorageKey,
+            );
+
+            if (!hasAccessToken) {
+              return handler.reject(e);
+            }
 
             // Retry request with the new token.
             var retryDio = Dio();

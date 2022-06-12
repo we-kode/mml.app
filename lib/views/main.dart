@@ -8,6 +8,10 @@ class MainScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Text('test'));
+    return const Scaffold(
+      body: SafeArea(
+        child: Text('test'),
+      ),
+    );
   }
 }

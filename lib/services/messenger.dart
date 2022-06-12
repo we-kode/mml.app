@@ -39,4 +39,8 @@ class MessengerService {
   String get forbidden {
     return AppLocalizations.of(snackbarKey.currentContext!)!.forbidden;
   }
+
+  String get reRegister {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.reRegister;
+  }
 }

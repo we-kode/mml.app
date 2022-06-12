@@ -42,6 +42,9 @@ dependencies:
   dio: ^4.0.6
   json_annotation: ^4.5.0
   introduction_screen: ^3.0.2
+  mobile_scanner: ^2.0.0
+  fast_rsa: ^3.4.7
+  animated_check: ^1.0.5
 
 dev_dependencies:
   flutter_test:
