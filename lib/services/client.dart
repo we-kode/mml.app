@@ -121,7 +121,7 @@ class ClientService {
         'client_secret': clientSecret,
       };
       data['code_challenge'] = await RSA.signPKCS1v15(
-        '{ "clientId" : "$clientId", "clientSecret" : "$clientSecret", "grant_type" : "client_credentials" }',
+        data.toString(),
         Hash.SHA512,
         rsaPrivate ?? '',
       );
