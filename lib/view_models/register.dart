@@ -58,14 +58,16 @@ class RegisterViewModel extends ChangeNotifier {
       }
 
       var keyPair = await RSA.generate(4096);
+      var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
+      var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
 
       await _storage.set(
         SecureStorageService.rsaPrivateStorageKey,
-        keyPair.privateKey,
+        private,
       );
       await _storage.set(
         SecureStorageService.rsaPublicStorageKey,
-        keyPair.publicKey,
+        public,
       );
 
       state = RegistrationState.scan;

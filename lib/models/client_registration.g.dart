@@ -9,13 +9,13 @@ part of 'client_registration.dart';
 ClientRegistration _$ClientRegistrationFromJson(Map<String, dynamic> json) =>
     ClientRegistration(
       token: json['token'] as String,
-      serverName: json['serverName'] as String,
+      endpoint: json['endpoint'] as String,
       appKey: json['appKey'] as String,
     );
 
 Map<String, dynamic> _$ClientRegistrationToJson(ClientRegistration instance) =>
     <String, dynamic>{
       'token': instance.token,
-      'serverName': instance.serverName,
+      'endpoint': instance.endpoint,
       'appKey': instance.appKey,
     };

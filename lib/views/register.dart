@@ -52,38 +52,48 @@ class RegisterScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     Center(
-                      child: Container(
-                        height: 256,
-                        width: 256,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: 6.0,
-                            style: BorderStyle.solid,
-                          ),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Consumer<RegisterViewModel>(
-                          builder: (context, vm, _) {
-                            switch (vm.state) {
-                              case RegistrationState.scan:
-                                return MobileScanner(
-                                  allowDuplicates: false,
-                                  onDetect: vm.register,
-                                );
-                              case RegistrationState.register:
-                                return const CircularProgressIndicator();
-                              case RegistrationState.error:
-                                return const Icon(
-                                  Icons.error_outline_outlined,
-                                );
-                              case RegistrationState.success:
-                                return const Icon(
-                                  Icons.check_circle_outline_outlined,
-                                );
-                            }
-                          },
-                        ),
+                      child: Consumer<RegisterViewModel>(
+                        builder: (context, vm, _) {
+                          Widget? child;
+                          switch (vm.state) {
+                            case RegistrationState.scan:
+                              child = MobileScanner(
+                                allowDuplicates: false,
+                                onDetect: vm.register,
+                              );
+                              break;
+                            case RegistrationState.register:
+                              child = const CircularProgressIndicator();
+                              break;
+                            case RegistrationState.error:
+                              child = const Icon(
+                                Icons.error_outline_outlined,
+                              );
+                              break;
+                            case RegistrationState.success:
+                              child = const Icon(
+                                Icons.check_circle_outline_outlined,
+                              );
+                              break;
+                          }
+
+                          return Container(
+                            height: 256,
+                            width: 256,
+                            decoration: vm.state == RegistrationState.scan
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 6.0,
+                                      style: BorderStyle.solid,
+                                    ),
+                                    borderRadius: BorderRadius.circular(5),
+                                  )
+                                : null,
+                            child: child,
+                          );
+                        },
                       ),
                     ),
                     const Spacer(flex: 3),

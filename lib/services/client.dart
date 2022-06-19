@@ -41,7 +41,7 @@ class ClientService {
     );
     await _storage.set(
       SecureStorageService.serverNameStorageKey,
-      clientRegistration.serverName,
+      clientRegistration.endpoint,
     );
 
     var publicKey = await _storage.get(
@@ -51,22 +51,22 @@ class ClientService {
     var response = await _apiService.request(
       '/identity/client/register/${clientRegistration.token}',
       data: {
-        'base64PublicKey': base64Encode(utf8.encode(publicKey ?? '')),
+        'base64PublicKey': (publicKey ?? '')
+            .replaceAll('-----BEGIN RSA PUBLIC KEY-----', '')
+            .replaceAll('-----END RSA PUBLIC KEY-----', '')
+            .replaceAll('\n', ''),
       },
-      options: Options(
-        method: 'POST',
-        contentType: Headers.formUrlEncodedContentType,
-      ),
+      options: Options(method: 'POST'),
     );
 
     if (response.statusCode == HttpStatus.ok) {
       await _storage.set(
         SecureStorageService.clientIdStorageKey,
-        response.data?['client_id'],
+        response.data?['clientId'],
       );
       await _storage.set(
         SecureStorageService.clientSecretStorageKey,
-        response.data?['client_secret'],
+        response.data?['clientSecret'],
       );
 
       await refreshToken();
@@ -120,17 +120,13 @@ class ClientService {
         'client_id': clientId,
         'client_secret': clientSecret,
       };
-      data['code_challenge'] = base64Encode(
-        utf8.encode(
-          await RSA.signPKCS1v15(
-            data.toString(),
-            Hash.SHA512,
-            rsaPrivate ?? '',
-          ),
-        ),
+      data['code_challenge'] = await RSA.signPKCS1v15(
+        '{ "clientId" : "$clientId", "clientSecret" : "$clientSecret", "grant_type" : "client_credentials" }',
+        Hash.SHA512,
+        rsaPrivate ?? '',
       );
 
-      Response<Map> response = await _apiService.request(
+      Response<Map> response = await dio.request(
         '/identity/connect/token',
         data: data,
         options: Options(
@@ -153,6 +149,9 @@ class ClientService {
       // Remove registration on errors
       //_messenger.showMessage(_messenger.reRegister);
       await removeRegistration();
+
+      // TODO: If no accessToken is available (during registration) remove registration
+      // and rethrow error instead of redirect
     }
   }
 }

@@ -11,7 +11,7 @@ class ClientRegistration {
   final String token;
 
   ///
-  final String serverName;
+  final String endpoint;
 
   ///
   final String appKey;
@@ -19,7 +19,7 @@ class ClientRegistration {
   /// Creates a new client instance with the given values.
   ClientRegistration({
     required this.token,
-    required this.serverName,
+    required this.endpoint,
     required this.appKey,
   });
 
@@ -45,7 +45,7 @@ class ClientRegistration {
     try {
       Map<String, dynamic> json = jsonDecode(utf8.decode(base64Decode(value)));
 
-      if (!json.keys.toSet().containsAll({'token', 'serverName', 'appKey'})) {
+      if (!json.keys.toSet().containsAll({'token', 'endpoint', 'appKey'})) {
         return null;
       }
 

@@ -189,10 +189,10 @@ class ApiService {
         int port,
       ) {
         // Ignore bad certificates in debug mode!
-        if (!kReleaseMode) {
+        if (kReleaseMode) {
           _messenger.showMessage(_messenger.badCertificate);
         }
-        return kReleaseMode;
+        return !kReleaseMode;
       };
 
       return client;
