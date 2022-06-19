@@ -129,16 +129,8 @@ class RegisterViewModel extends ChangeNotifier {
     try {
       await _clientService.register(clientRegistration);
       state = RegistrationState.success;
-
-      Future.delayed(const Duration(seconds: 5), () async {
-        afterRegistration();
-      });
     } catch (e) {
       state = RegistrationState.error;
-
-      Future.delayed(const Duration(seconds: 5), () {
-        state = RegistrationState.scan;
-      });
     }
   }
 }

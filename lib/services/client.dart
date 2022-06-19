@@ -1,11 +1,12 @@
-import 'dart:convert';
 import 'dart:io';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/api.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/register.dart';
@@ -21,6 +22,8 @@ class ClientService {
   /// Instance of the [SecureStorageService] to handle data in the secure
   /// storage.
   final SecureStorageService _storage = SecureStorageService.getInstance();
+
+  final MessengerService _messenger = MessengerService.getInstance();
 
   /// Private constructor of the service.
   ClientService._();
@@ -121,7 +124,7 @@ class ClientService {
         'client_secret': clientSecret,
       };
       data['code_challenge'] = await RSA.signPKCS1v15(
-        data.toString(),
+        jsonEncode(data),
         Hash.SHA512,
         rsaPrivate ?? '',
       );
@@ -142,16 +145,17 @@ class ClientService {
           response.data?['access_token'],
         );
       } else {
-        //_messenger.showMessage(_messenger.reRegister);
+        _messenger.showMessage(_messenger.reRegister);
         await removeRegistration();
       }
     } catch (e) {
-      // Remove registration on errors
-      //_messenger.showMessage(_messenger.reRegister);
-      await removeRegistration();
+      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey))) {
+        rethrow;
+      }
 
-      // TODO: If no accessToken is available (during registration) remove registration
-      // and rethrow error instead of redirect
+      // Remove registration on errors
+      _messenger.showMessage(_messenger.reRegister);
+      await removeRegistration();
     }
   }
 }

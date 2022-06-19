@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/check_animation.dart';
+import 'package:mml_app/components/error_animation.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -54,45 +56,48 @@ class RegisterScreen extends StatelessWidget {
                     Center(
                       child: Consumer<RegisterViewModel>(
                         builder: (context, vm, _) {
-                          Widget? child;
                           switch (vm.state) {
                             case RegistrationState.scan:
-                              child = MobileScanner(
-                                allowDuplicates: false,
-                                onDetect: vm.register,
+                              return Container(
+                                height: 256,
+                                width: 256,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    width: 6.0,
+                                    style: BorderStyle.solid,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: MobileScanner(
+                                  allowDuplicates: false,
+                                  onDetect: vm.register,
+                                ),
                               );
-                              break;
                             case RegistrationState.register:
-                              child = const CircularProgressIndicator();
-                              break;
+                              return const CircularProgressIndicator();
                             case RegistrationState.error:
-                              child = const Icon(
-                                Icons.error_outline_outlined,
+                              return SizedBox(
+                                height: 256,
+                                width: 256,
+                                child: ErrorAnimation(
+                                  onStop: () async {
+                                    vm.state = RegistrationState.scan;
+                                  },
+                                ),
                               );
-                              break;
                             case RegistrationState.success:
-                              child = const Icon(
-                                Icons.check_circle_outline_outlined,
+                              return SizedBox(
+                                height: 256,
+                                width: 256,
+                                child: CheckAnimation(
+                                  onStop: () async {
+                                    await vm.afterRegistration();
+                                  },
+                                ),
                               );
-                              break;
                           }
-
-                          return Container(
-                            height: 256,
-                            width: 256,
-                            decoration: vm.state == RegistrationState.scan
-                                ? BoxDecoration(
-                                    border: Border.all(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      width: 6.0,
-                                      style: BorderStyle.solid,
-                                    ),
-                                    borderRadius: BorderRadius.circular(5),
-                                  )
-                                : null,
-                            child: child,
-                          );
                         },
                       ),
                     ),
