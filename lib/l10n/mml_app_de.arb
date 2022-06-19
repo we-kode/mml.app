@@ -12,5 +12,8 @@
     },
     "forbidden": "Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!",
     "done": "Fertig",
-    "skip": "Überspringen"
+    "skip": "Überspringen",
+    "records": "Aufnahmen",
+    "settings": "Einstellungen",
+    "playlist": "Wiedergabeliste"
 }
