@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/register.dart';
 
 /// View model for the intro screen.
@@ -59,9 +60,13 @@ class IntroViewModel extends ChangeNotifier {
 
   /// Calls the [RegisterScreen].
   Future _nextScreen() async {
+    RouterService.getInstance()
+        .navigatorKey
+        .currentState!
+        .popUntil((route) => route.isFirst);
     await RouterService.getInstance()
         .navigatorKey
         .currentState!
-        .pushReplacementNamed(RegisterViewModel.route);
+        .pushReplacementNamed(MainViewModel.route);
   }
 }

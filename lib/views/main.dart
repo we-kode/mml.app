@@ -8,6 +8,35 @@ class MainScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Text('test'));
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Text('test'),
+        bottomNavigationBar: BottomNavigationBar(
+          showUnselectedLabels: false,
+          currentIndex: 1,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.music_note_outlined,
+              ),
+              label: 'Records',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.audio_file_outlined,
+              ),
+              label: 'Playlist',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.settings,
+              ),
+              label: 'Settings',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
