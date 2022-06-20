@@ -48,6 +48,7 @@ class MainViewModel extends ChangeNotifier {
   /// Sets the actual screens [index] as selected.
   set selectedIndex(int index) {
     _selectedIndex = index;
+    loadPage();
     notifyListeners();
   }
 
@@ -59,11 +60,15 @@ class MainViewModel extends ChangeNotifier {
   /// Loads the selected page of the navigation.
   void loadPage() {
     _context.visitChildElements((element) {
-      _visitChildElements(element);
+      _loadScreen(element);
     });
   }
 
-  void _visitChildElements(Element element) {
+  /// Loads the route of the selected item in the bottom navigation bar.
+  ///
+  /// Searches the [element] for an existing [Navigator]. If element is of type [Navigator]
+  /// the new route will be loaded in the nested [Navigator].
+  void _loadScreen(Element element) {
     if (element.widget is Navigator) {
       var state = (element as StatefulElement).state as NavigatorState;
       var routeService = RouterService.getInstance();
@@ -73,7 +78,7 @@ class MainViewModel extends ChangeNotifier {
     }
 
     element.visitChildElements((e) {
-      _visitChildElements(e);
+      _loadScreen(e);
     });
   }
 }

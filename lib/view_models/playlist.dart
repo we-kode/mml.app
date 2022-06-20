@@ -1,4 +1,4 @@
 class PlaylistViewModel {
-  /// Route of the main screen.
+  /// Route of the plalist screen.
   static String route = '/playlist';
 }

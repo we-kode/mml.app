@@ -1,4 +1,4 @@
 class RecordsViewModel {
-  /// Route of the main screen.
+  /// Route of the records screen.
   static String route = '/records';
 }

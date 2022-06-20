@@ -52,7 +52,6 @@ class MainScreen extends StatelessWidget {
                         return;
                       }
                       vm.selectedIndex = index;
-                      vm.loadPage();
                     },
                     items: vm.navItems,
                   );
