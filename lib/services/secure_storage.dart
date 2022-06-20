@@ -21,6 +21,9 @@ class SecureStorageService {
   /// Key under which the private rsa key is stored.
   static const String rsaPrivateStorageKey = 'rsaPrivate';
 
+  /// Key under which the public rsa key is stored.
+  static const String rsaPublicStorageKey = 'rsaPublic';
+
   /// Key under which the servername is persisted.
   static const String serverNameStorageKey = 'serverName';
 
@@ -57,5 +60,16 @@ class SecureStorageService {
   /// Deletes the value under the given [key] from the secure storage.
   Future<void> delete(String key) async {
     await _storage.delete(key: key);
+  }
+
+  /// Deletes all tokens and secure information except the skip intro flag.
+  Future<void> clearTokens() async {
+    await delete(accessTokenStorageKey);
+    await delete(appKeyStorageKey);
+    await delete(clientIdStorageKey);
+    await delete(clientSecretStorageKey);
+    await delete(rsaPrivateStorageKey);
+    await delete(rsaPublicStorageKey);
+    await delete(serverNameStorageKey);
   }
 }

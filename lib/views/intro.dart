@@ -21,7 +21,7 @@ class IntroScreen extends StatelessWidget {
           return FutureBuilder(
             future: vm.init(context),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (!snapshot.hasData) {
+              if (!snapshot.hasData || !snapshot.data!) {
                 return const Center(child: CircularProgressIndicator());
               }
 

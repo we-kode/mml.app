@@ -6,14 +6,16 @@ import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 
 /// Application for My Media Lib.
-class App extends StatelessWidget {
+class MMLApp extends StatelessWidget {
   /// Initializes the instance.
-  const App({Key? key}) : super(key: key);
+  const MMLApp({Key? key}) : super(key: key);
 
   /// Creates the app with the necessary configurations.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+
       onGenerateTitle: (BuildContext context) =>
           AppLocalizations.of(context)!.appTitle,
 

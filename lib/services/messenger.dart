@@ -39,4 +39,9 @@ class MessengerService {
   String get forbidden {
     return AppLocalizations.of(snackbarKey.currentContext!)!.forbidden;
   }
+
+  /// Translated string for automatic logout.
+  String get reRegister {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.reRegister;
+  }
 }

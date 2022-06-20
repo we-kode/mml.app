@@ -1,9 +1,15 @@
 {
-    "@@locale": "en",
-    "appTitle": "My Media Lib",
-    "badCertificate": "An certificate error occurred!",
-    "unexpectedError": "An unexpected error occurred: {message}",
-    "forbidden": "You have not the necessary rights, to execute this action!",
-    "done": "Done",
-    "skip": "Skip"
+  "@@locale": "en",
+  "appTitle": "My Media Lib",
+  "badCertificate": "An certificate error occurred!",
+  "unexpectedError": "An unexpected error occurred: {message}",
+  "forbidden": "You have not the necessary rights, to execute this action!",
+  "done": "Done",
+  "skip": "Skip",
+  "registrationTitle": "Registration",
+  "registrationScan": "To register your device, scan the QR-Code in the administration.",
+  "registrationError": "An error occurred during registration. Please retry again!",
+  "registrationSuccess": "Device has been successfully registered!",
+  "registrationProgress": "Device registration is running...",
+  "reRegister": "Your registration is not valid any more. Re-Register your device!"
 }
