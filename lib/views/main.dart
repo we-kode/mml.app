@@ -12,57 +12,56 @@ class MainScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: ChangeNotifierProvider<MainViewModel>(
-        create: (context) => MainViewModel(),
-        builder: (context, _) {
-          var vm = Provider.of<MainViewModel>(context, listen: false);
-          return FutureBuilder(
-            future: vm.init(context),
-            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    return ChangeNotifierProvider<MainViewModel>(
+      create: (context) => MainViewModel(),
+      builder: (context, _) {
+        var vm = Provider.of<MainViewModel>(context, listen: false);
+        return FutureBuilder(
+          future: vm.init(context),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              return Scaffold(
-                appBar: AppBar(
-                  title: Consumer<MainViewModel>(
-                    builder: (context, vm, _) {
-                      return Text(
-                          vm.navItems.elementAt(vm.selectedIndex).label!);
-                    },
-                  ),
+            return Scaffold(
+              appBar: AppBar(
+                title: Consumer<MainViewModel>(
+                  builder: (context, vm, _) {
+                    return Text(vm.navItems.elementAt(vm.selectedIndex).label!);
+                  },
                 ),
-                body: Navigator(
+              ),
+              body: SafeArea(
+                child: Navigator(
                   initialRoute: RecordsViewModel.route,
                   onGenerateRoute: (settings) {
                     return RouterService.getInstance()
                         .nestedRoutes[settings.name];
                   },
                 ),
-                bottomNavigationBar: Consumer<MainViewModel>(
-                  builder: (context, vm, _) {
-                    return BottomNavigationBar(
-                      backgroundColor: Theme.of(context).bottomAppBarColor,
-                      showUnselectedLabels: false,
-                      showSelectedLabels: false,
-                      currentIndex: vm.selectedIndex,
-                      onTap: (index) {
-                        if (index == vm.selectedIndex) {
-                          return;
-                        }
-                        vm.selectedIndex = index;
-                        vm.loadPage();
-                      },
-                      items: vm.navItems,
-                    );
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
+              ),
+              bottomNavigationBar: Consumer<MainViewModel>(
+                builder: (context, vm, _) {
+                  return BottomNavigationBar(
+                    backgroundColor: Theme.of(context).bottomAppBarColor,
+                    showUnselectedLabels: false,
+                    showSelectedLabels: false,
+                    currentIndex: vm.selectedIndex,
+                    onTap: (index) {
+                      if (index == vm.selectedIndex) {
+                        return;
+                      }
+                      vm.selectedIndex = index;
+                      vm.loadPage();
+                    },
+                    items: vm.navItems,
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
