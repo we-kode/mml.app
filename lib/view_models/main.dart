@@ -48,7 +48,7 @@ class MainViewModel extends ChangeNotifier {
   /// Sets the actual screens [index] as selected.
   set selectedIndex(int index) {
     _selectedIndex = index;
-    loadPage();
+    _loadPage();
     notifyListeners();
   }
 
@@ -58,7 +58,7 @@ class MainViewModel extends ChangeNotifier {
   }
 
   /// Loads the selected page of the navigation.
-  void loadPage() {
+  void _loadPage() {
     _context.visitChildElements((element) {
       _loadScreen(element);
     });
