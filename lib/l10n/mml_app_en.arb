@@ -11,5 +11,8 @@
   "registrationError": "An error occurred during registration. Please retry again!",
   "registrationSuccess": "Device has been successfully registered!",
   "registrationProgress": "Device registration is running...",
-  "reRegister": "Your registration is not valid any more. Re-Register your device!"
+  "reRegister": "Your registration is not valid any more. Re-Register your device!",
+  "records": "Records",
+  "settings": "Settings",
+  "playlist": "Playlist"
 }

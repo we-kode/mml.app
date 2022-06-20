@@ -18,5 +18,8 @@
   "registrationError": "Ein Fehler ist beim Registrieren aufgetreten. Versuchen Sie es erneut!",
   "registrationSuccess": "Gerät wurde erfolgreich registriert!",
   "registrationProgress": "Gerät wird registriert...",
-  "reRegister": "Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!"
+  "reRegister": "Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!",
+  "records": "Aufnahmen",
+  "settings": "Einstellungen",
+  "playlist": "Wiedergabeliste"
 }
