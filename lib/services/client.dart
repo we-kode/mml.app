@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
-import 'package:flutter/material.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -76,20 +74,42 @@ class ClientService {
     }
   }
 
-  Future removeRegistration() async {
-    // TODO: Remove Registration on Server and handle errors correctly
+  Future removeRegistration({automatic = false}) async {
+    var successfull = false;
+    var message = "";
 
-    await _storage.delete(SecureStorageService.accessTokenStorageKey);
-    await _storage.delete(SecureStorageService.appKeyStorageKey);
-    await _storage.delete(SecureStorageService.clientIdStorageKey);
-    await _storage.delete(SecureStorageService.clientSecretStorageKey);
-    await _storage.delete(SecureStorageService.rsaPrivateStorageKey);
-    await _storage.delete(SecureStorageService.rsaPublicStorageKey);
-    await _storage.delete(SecureStorageService.serverNameStorageKey);
+    try {
+      var dio = Dio();
+      _apiService.initDio(dio, false);
 
-    NavigatorState state =
-        RouterService.getInstance().navigatorKey.currentState!;
-    state.pushReplacementNamed(RegisterViewModel.route);
+      var response = await dio.request(
+        '/identity/client/removeRegistration',
+        data: {},
+        options: Options(method: 'POST'),
+      );
+
+      successfull = response.statusCode == HttpStatus.ok;
+    } catch (e) {
+      successfull =
+          e is DioError && e.response?.statusCode == HttpStatus.unauthorized;
+      message = e.toString();
+    }
+
+    if (successfull || automatic) {
+      await _storage.delete(SecureStorageService.accessTokenStorageKey);
+      await _storage.delete(SecureStorageService.appKeyStorageKey);
+      await _storage.delete(SecureStorageService.clientIdStorageKey);
+      await _storage.delete(SecureStorageService.clientSecretStorageKey);
+      await _storage.delete(SecureStorageService.rsaPrivateStorageKey);
+      await _storage.delete(SecureStorageService.rsaPublicStorageKey);
+      await _storage.delete(SecureStorageService.serverNameStorageKey);
+
+      await RouterService.getInstance().pushReplacementNamed(
+        RegisterViewModel.route,
+      );
+    } else {
+      _messenger.unexpectedError(message);
+    }
   }
 
   ///
@@ -124,7 +144,7 @@ class ClientService {
         'client_secret': clientSecret,
       };
       data['code_challenge'] = await RSA.signPKCS1v15(
-        jsonEncode(data),
+        '{"grant_type":"client_credentials","client_id":"$clientId","client_secret":"$clientSecret"}',
         Hash.SHA512,
         rsaPrivate ?? '',
       );
@@ -146,7 +166,7 @@ class ClientService {
         );
       } else {
         _messenger.showMessage(_messenger.reRegister);
-        await removeRegistration();
+        await removeRegistration(automatic: true);
       }
     } catch (e) {
       if (!(await _storage.has(SecureStorageService.accessTokenStorageKey))) {
@@ -155,7 +175,7 @@ class ClientService {
 
       // Remove registration on errors
       _messenger.showMessage(_messenger.reRegister);
-      await removeRegistration();
+      await removeRegistration(automatic: true);
     }
   }
 }

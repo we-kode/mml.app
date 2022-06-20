@@ -77,10 +77,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   Future afterRegistration() async {
-    await RouterService.getInstance()
-        .navigatorKey
-        .currentState!
-        .pushReplacementNamed(MainViewModel.route);
+    await RouterService.getInstance().pushReplacementNamed(MainViewModel.route);
   }
 
   ///

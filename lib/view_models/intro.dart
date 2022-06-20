@@ -66,8 +66,6 @@ class IntroViewModel extends ChangeNotifier {
   /// Calls the [RegisterScreen].
   Future _nextScreen() async {
     await RouterService.getInstance()
-        .navigatorKey
-        .currentState!
         .pushReplacementNamed(RegisterViewModel.route);
   }
 }

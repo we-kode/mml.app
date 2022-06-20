@@ -41,4 +41,9 @@ class RouterService {
     // TODO do we need it?
     return {};
   }
+
+  Future pushReplacementNamed(String name) async {
+    navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    await navigatorKey.currentState!.pushReplacementNamed(name);
+  }
 }
