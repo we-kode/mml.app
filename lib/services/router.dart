@@ -42,6 +42,8 @@ class RouterService {
     return {};
   }
 
+  /// Replaces the complete route history stack with the route with the passed
+  /// [name].
   Future pushReplacementNamed(String name) async {
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
     await navigatorKey.currentState!.pushReplacementNamed(name);

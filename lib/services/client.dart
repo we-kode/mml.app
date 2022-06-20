@@ -21,6 +21,7 @@ class ClientService {
   /// storage.
   final SecureStorageService _storage = SecureStorageService.getInstance();
 
+  /// Instance of the [MessengerService] used to show messages to the user.
   final MessengerService _messenger = MessengerService.getInstance();
 
   /// Private constructor of the service.
@@ -74,6 +75,12 @@ class ClientService {
     }
   }
 
+  /// Tries to remove the registration of the current client.
+  ///
+  /// If an error occurs and the remove process was not called [automatic] due
+  /// to an unauthorized error the error will be shown. Otherwise the removal
+  /// process is finished by removing the data from the storage and redirecting
+  /// to registration screen.
   Future removeRegistration({automatic = false}) async {
     var successfull = false;
     var message = "";
@@ -108,11 +115,11 @@ class ClientService {
         RegisterViewModel.route,
       );
     } else {
-      _messenger.unexpectedError(message);
+      _messenger.showMessage(_messenger.unexpectedError(message));
     }
   }
 
-  ///
+  /// Returns a boolean that indicates whether the client is registered.
   Future<bool> isClientRegistered() async {
     var response = await _apiService.request(
       '/identity/client/',
@@ -122,7 +129,10 @@ class ClientService {
     return response.data['Registered'];
   }
 
+  /// Tries to refresh the current access token.
   ///
+  /// If an error occurs [removeRegistration] gets called to remove the
+  /// client registration.
   Future refreshToken() async {
     var dio = Dio();
     _apiService.initDio(dio, false);
@@ -169,6 +179,8 @@ class ClientService {
         await removeRegistration(automatic: true);
       }
     } catch (e) {
+      // Rethrow the error on login page, to abort the register process
+      // correctly.
       if (!(await _storage.has(SecureStorageService.accessTokenStorageKey))) {
         rethrow;
       }

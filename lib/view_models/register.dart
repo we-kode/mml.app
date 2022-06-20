@@ -15,21 +15,23 @@ class RegisterViewModel extends ChangeNotifier {
   /// Route of the register screen.
   static String route = '/register';
 
-  ///
+  /// [RegistrationState] of the current process.
   late RegistrationState _state;
 
-  ///
+  /// Info message that should be shown to the user.
   late String infoMessage;
 
   /// [SecureStorageService] used to load data from the secure storage.
   final SecureStorageService _storage = SecureStorageService.getInstance();
 
-  ///
+  /// [ClientService] that is used to register the client.
   final ClientService _clientService = ClientService.getInstance();
 
   /// Locales of the application.
   late AppLocalizations locales;
 
+  /// Initializes the registration screen and generates a new RSA-Key if
+  /// a new registration should be executed.
   Future<bool> init(BuildContext context) async {
     locales = AppLocalizations.of(context)!;
 
@@ -76,11 +78,12 @@ class RegisterViewModel extends ChangeNotifier {
     });
   }
 
+  /// Redirects the route with main route after successfull registration.
   Future afterRegistration() async {
     await RouterService.getInstance().pushReplacementNamed(MainViewModel.route);
   }
 
-  ///
+  /// Sets the registration state of the process to the passed [state].
   set state(RegistrationState state) {
     _state = state;
 
@@ -102,12 +105,12 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  ///
+  /// Returns the current [state] of the registration process.
   RegistrationState get state {
     return _state;
   }
 
-  ///
+  /// Tries to register the client if a new [barcode] gets scanned.
   void register(barcode, args) async {
     if (barcode.rawValue == null) {
       return;
@@ -132,7 +135,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 }
 
-///
+/// State of the registration process.
 enum RegistrationState {
   scan,
   register,
