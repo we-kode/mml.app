@@ -9,6 +9,7 @@ import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/view_models/main.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 /// View model for the register screen.
 class RegisterViewModel extends ChangeNotifier {
@@ -111,7 +112,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   /// Tries to register the client if a new [barcode] gets scanned.
-  void register(barcode, args) async {
+  void register(Barcode barcode, MobileScannerArguments? args) async {
     if (barcode.rawValue == null) {
       return;
     }
