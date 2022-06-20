@@ -103,14 +103,7 @@ class ClientService {
     }
 
     if (successfull || automatic) {
-      await _storage.delete(SecureStorageService.accessTokenStorageKey);
-      await _storage.delete(SecureStorageService.appKeyStorageKey);
-      await _storage.delete(SecureStorageService.clientIdStorageKey);
-      await _storage.delete(SecureStorageService.clientSecretStorageKey);
-      await _storage.delete(SecureStorageService.rsaPrivateStorageKey);
-      await _storage.delete(SecureStorageService.rsaPublicStorageKey);
-      await _storage.delete(SecureStorageService.serverNameStorageKey);
-
+      await _storage.clearTokens();
       await RouterService.getInstance().pushReplacementNamed(
         RegisterViewModel.route,
       );

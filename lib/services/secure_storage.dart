@@ -61,4 +61,15 @@ class SecureStorageService {
   Future<void> delete(String key) async {
     await _storage.delete(key: key);
   }
+
+  /// Deletes all tokens and secure information except the skip intro flag.
+  Future<void> clearTokens() async {
+    await delete(accessTokenStorageKey);
+    await delete(appKeyStorageKey);
+    await delete(clientIdStorageKey);
+    await delete(clientSecretStorageKey);
+    await delete(rsaPrivateStorageKey);
+    await delete(rsaPublicStorageKey);
+    await delete(serverNameStorageKey);
+  }
 }
