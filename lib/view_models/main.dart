@@ -18,24 +18,24 @@ class MainViewModel extends ChangeNotifier {
 
   /// Items of the navigation bar.
   late final List<BottomNavigationBarItem> navItems = [
-     BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.music_note_outlined,
-        ),
-        label: locales.records,
+    BottomNavigationBarItem(
+      icon: const Icon(
+        Icons.music_note_outlined,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.playlist_play,
-        ),
-        label: locales.playlist,
+      label: locales.records,
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(
+        Icons.playlist_play,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(
-          Icons.settings,
-        ),
-        label: locales.settings,
+      label: locales.playlist,
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(
+        Icons.settings,
       ),
+      label: locales.settings,
+    ),
   ];
 
   /// Initializes the view model.
@@ -58,8 +58,6 @@ class MainViewModel extends ChangeNotifier {
 
   /// Loads the selected page of the navigation.
   void loadPage() {
-    // Get the nested navigator state to change the nested route.
-    NavigatorState? state;
     _context.visitChildElements((element) {
       _visitChildElements(element);
     });
@@ -70,7 +68,7 @@ class MainViewModel extends ChangeNotifier {
       var state = (element as StatefulElement).state as NavigatorState;
       var routeService = RouterService.getInstance();
       var route = routeService.nestedRoutes.keys.elementAt(_selectedIndex);
-      state.pushReplacementNamed(route);
+      state.pushNamed(route);
       return;
     }
 
