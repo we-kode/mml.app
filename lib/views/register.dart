@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/check_animation.dart';
 import 'package:mml_app/components/error_animation.dart';
+import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
@@ -57,6 +58,58 @@ class RegisterScreen extends StatelessWidget {
                       child: Consumer<RegisterViewModel>(
                         builder: (context, vm, _) {
                           switch (vm.state) {
+                            case RegistrationState.init:
+                              return SizedBox(
+                                width: 256,
+                                child: Form(
+                                  key: vm.formKey,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      TextFormField(
+                                        initialValue: vm.firstName,
+                                        decoration: InputDecoration(
+                                          labelText: vm.locales.firstName,
+                                          errorMaxLines: 5,
+                                        ),
+                                        onSaved: (String? name) {
+                                          vm.firstName = name!;
+                                        },
+                                        onChanged: (String? name) {
+                                          vm.firstName = name;
+                                        },
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        validator: vm.validateFirstName,
+                                      ),
+                                      verticalSpacer,
+                                      TextFormField(
+                                        initialValue: vm.lastName,
+                                        decoration: InputDecoration(
+                                          labelText: vm.locales.lastName,
+                                          errorMaxLines: 5,
+                                        ),
+                                        onSaved: (String? name) {
+                                          vm.lastName = name!;
+                                        },
+                                        onChanged: (String? name) {
+                                          vm.lastName = name;
+                                        },
+                                        autovalidateMode:
+                                            AutovalidateMode.onUserInteraction,
+                                        validator: vm.validateLastName,
+                                      ),
+                                      verticalSpacer,
+                                      ElevatedButton(
+                                        onPressed: vm.saveName,
+                                        child: Text(vm.locales.next),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
                             case RegistrationState.scan:
                               return Container(
                                 height: 256,
