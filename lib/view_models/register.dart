@@ -35,13 +35,13 @@ class RegisterViewModel extends ChangeNotifier {
   /// Locales of the application.
   late AppLocalizations locales;
 
-  /// Users firstname who wants to register device.
+  /// Users firstname who wants to register a device.
   String? firstName;
 
-  /// Users lastname who wants to register device.
+  /// Users lastname who wants to register a device.
   String? lastName;
 
-  /// The name of this device.
+  /// The name of the device.
   late String deviceName;
 
   /// Initializes the registration screen and generates a new RSA-Key if
