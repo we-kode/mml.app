@@ -35,10 +35,10 @@ class RegisterViewModel extends ChangeNotifier {
   /// Locales of the application.
   late AppLocalizations locales;
 
-  /// Users firstname who wants to register device.
+  /// Users firstname who wants to register a device.
   String? firstName;
 
-  /// Users lastname who wants to register device.
+  /// Users lastname who wants to register a device.
   String? lastName;
 
   /// The identifier of the device.
