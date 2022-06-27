@@ -18,8 +18,14 @@
   "registrationError": "Ein Fehler ist beim Registrieren aufgetreten. Versuchen Sie es erneut!",
   "registrationSuccess": "Gerät wurde erfolgreich registriert!",
   "registrationProgress": "Gerät wird registriert...",
+  "registrationEnterName": "Geben Sie Ihren Namen ein, um sich zu registrieren.",
   "reRegister": "Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!",
   "records": "Aufnahmen",
   "settings": "Einstellungen",
-  "playlist": "Wiedergabeliste"
+  "playlist": "Wiedergabeliste",
+  "next": "Weiter",
+  "firstName": "Vorname",
+  "lastName": "Nachname",
+  "invalidFirstName": "Bitte geben Sie einen Vornamen an!",
+  "invalidLastName": "Bitte geben Sie einen Nachnamen an!"
 }

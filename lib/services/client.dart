@@ -36,7 +36,11 @@ class ClientService {
   ///
   /// If the register is successfully the returned data gets persisted to the
   /// secure storage.
-  Future register(ClientRegistration clientRegistration) async {
+  Future register(
+    ClientRegistration clientRegistration,
+    String name,
+    String deviceIdentifier,
+  ) async {
     await _storage.set(
       SecureStorageService.appKeyStorageKey,
       clientRegistration.appKey,
@@ -57,6 +61,8 @@ class ClientService {
             .replaceAll('-----BEGIN RSA PUBLIC KEY-----', '')
             .replaceAll('-----END RSA PUBLIC KEY-----', '')
             .replaceAll('\n', ''),
+        'displayName': name,
+        'deviceIdentifier': deviceIdentifier,
       },
       options: Options(method: 'POST'),
     );

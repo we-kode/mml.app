@@ -11,8 +11,14 @@
   "registrationError": "An error occurred during registration. Please retry again!",
   "registrationSuccess": "Device has been successfully registered!",
   "registrationProgress": "Device registration is running...",
+  "registrationEnterName": "To register, enter your name.",
   "reRegister": "Your registration is not valid any more. Re-Register your device!",
   "records": "Records",
   "settings": "Settings",
-  "playlist": "Playlist"
+  "playlist": "Playlist",
+  "next": "Next",
+  "firstName": "First name",
+  "lastName": "Last name",
+  "invalidFirstName": "Please enter a first name!",
+  "invalidLastName": "Please enter a last name!"
 }

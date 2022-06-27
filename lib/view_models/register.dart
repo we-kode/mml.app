@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,20 @@ class RegisterViewModel extends ChangeNotifier {
   /// [ClientService] that is used to register the client.
   final ClientService _clientService = ClientService.getInstance();
 
+  /// Key of the user register form.
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
   /// Locales of the application.
   late AppLocalizations locales;
+
+  /// Users firstname who wants to register a device.
+  String? firstName;
+
+  /// Users lastname who wants to register a device.
+  String? lastName;
+
+  /// The identifier of the device.
+  late String deviceIdentifier;
 
   /// Initializes the registration screen and generates a new RSA-Key if
   /// a new registration should be executed.
@@ -60,6 +73,14 @@ class RegisterViewModel extends ChangeNotifier {
         }
       }
 
+      if (Platform.isAndroid) {
+        deviceIdentifier = (await DeviceInfoPlugin().androidInfo).model ?? '';
+      }
+
+      if (Platform.isIOS) {
+        deviceIdentifier = (await DeviceInfoPlugin().iosInfo).name ?? '';
+      }
+
       var keyPair = await RSA.generate(4096);
       var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
       var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
@@ -73,7 +94,7 @@ class RegisterViewModel extends ChangeNotifier {
         public,
       );
 
-      state = RegistrationState.scan;
+      state = RegistrationState.init;
 
       return true;
     });
@@ -89,6 +110,9 @@ class RegisterViewModel extends ChangeNotifier {
     _state = state;
 
     switch (_state) {
+      case RegistrationState.init:
+        infoMessage = locales.registrationEnterName;
+        break;
       case RegistrationState.scan:
         infoMessage = locales.registrationScan;
         break;
@@ -128,16 +152,42 @@ class RegisterViewModel extends ChangeNotifier {
     state = RegistrationState.register;
 
     try {
-      await _clientService.register(clientRegistration);
+      await _clientService.register(
+        clientRegistration,
+        "$firstName $lastName",
+        deviceIdentifier,
+      );
       state = RegistrationState.success;
     } catch (e) {
       state = RegistrationState.error;
+    }
+  }
+
+  /// Validates the given [name] and returns an error message or null if
+  /// the [name] is valid.
+  String? validateFirstName(String? name) {
+    return (firstName ?? '').isNotEmpty ? null : locales.invalidFirstName;
+  }
+
+  /// Validates the given [name] and returns an error message or null if
+  /// the [name] is valid.
+  String? validateLastName(String? name) {
+    return (lastName ?? '').isNotEmpty ? null : locales.invalidLastName;
+  }
+
+  /// Caches the entered name and sets the [RegistrationState] to scan if values are valid.
+  void saveName() async {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      _state = RegistrationState.scan;
+      notifyListeners();
     }
   }
 }
 
 /// State of the registration process.
 enum RegistrationState {
+  init,
   scan,
   register,
   error,
