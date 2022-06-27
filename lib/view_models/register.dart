@@ -41,8 +41,8 @@ class RegisterViewModel extends ChangeNotifier {
   /// Users lastname who wants to register device.
   String? lastName;
 
-  /// The name of this device.
-  late String deviceName;
+  /// The identifier of the device.
+  late String deviceIdentifier;
 
   /// Initializes the registration screen and generates a new RSA-Key if
   /// a new registration should be executed.
@@ -74,11 +74,11 @@ class RegisterViewModel extends ChangeNotifier {
       }
 
       if (Platform.isAndroid) {
-        deviceName = (await DeviceInfoPlugin().androidInfo).device ?? '';
+        deviceIdentifier = (await DeviceInfoPlugin().androidInfo).host ?? '';
       }
 
       if (Platform.isIOS) {
-        deviceName = (await DeviceInfoPlugin().iosInfo).name ?? '';
+        deviceIdentifier = (await DeviceInfoPlugin().iosInfo).name ?? '';
       }
 
       var keyPair = await RSA.generate(4096);
@@ -94,9 +94,7 @@ class RegisterViewModel extends ChangeNotifier {
         public,
       );
 
-      state = (firstName ?? '').isEmpty || (lastName ?? '').isEmpty
-          ? RegistrationState.init
-          : RegistrationState.scan;
+      state = RegistrationState.init;
 
       return true;
     });
@@ -154,7 +152,11 @@ class RegisterViewModel extends ChangeNotifier {
     state = RegistrationState.register;
 
     try {
-      await _clientService.register(clientRegistration, "$firstName $lastName", deviceName);
+      await _clientService.register(
+        clientRegistration,
+        "$firstName $lastName",
+        deviceIdentifier,
+      );
       state = RegistrationState.success;
     } catch (e) {
       state = RegistrationState.error;
