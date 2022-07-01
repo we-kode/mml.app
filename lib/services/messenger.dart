@@ -19,7 +19,10 @@ class MessengerService {
 
   /// Shows the given [text] in the app snackbar.
   showMessage(String text) {
-    final SnackBar snackBar = SnackBar(content: Text(text));
+    final SnackBar snackBar = SnackBar(
+      content: Text(text),
+      duration: const Duration(seconds: 15),
+    );
     snackbarKey.currentState?.showSnackBar(snackBar);
   }
 
@@ -43,5 +46,10 @@ class MessengerService {
   /// Translated string for automatic logout.
   String get reRegister {
     return AppLocalizations.of(snackbarKey.currentContext!)!.reRegister;
+  }
+
+  /// Translated string for server not reachable.
+  String get notReachable {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.notReachable;
   }
 }
