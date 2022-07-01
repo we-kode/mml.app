@@ -20,5 +20,6 @@
   "firstName": "First name",
   "lastName": "Last name",
   "invalidFirstName": "Please enter a first name!",
-  "invalidLastName": "Please enter a last name!"
+  "invalidLastName": "Please enter a last name!",
+  "notReachable": "The server is not reachable! Please check your network connection!"
 }

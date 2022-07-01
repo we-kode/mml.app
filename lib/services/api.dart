@@ -59,6 +59,10 @@ class ApiService {
   ///
   /// Adds interceptors for error handling if [addErrorHandling] is set to true.
   void initDio(Dio dio, bool addErrorHandling) {
+    dio.options.connectTimeout = 5000;
+    dio.options.sendTimeout = 5000;
+    dio.options.receiveTimeout = 5000;
+
     _addRequestOptionsInterceptor(dio);
     _initClientBadCertificateCallback(dio);
 
@@ -168,7 +172,9 @@ class ApiService {
         }
 
         // All other errors except certificate errors!
-        if (e.type is! HandshakeException) {
+        if (e.error is SocketException) {
+          _messenger.showMessage(_messenger.notReachable);
+        } else if (e.type is! HandshakeException) {
           _messenger.showMessage(_messenger.unexpectedError(e.message));
         }
 
