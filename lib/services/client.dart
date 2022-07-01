@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
+import 'package:flutter/material.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -105,7 +106,20 @@ class ClientService {
     } catch (e) {
       successfull =
           e is DioError && e.response?.statusCode == HttpStatus.unauthorized;
-      message = e.toString();
+
+      if (e is DioError) {
+        if (e.error is SocketException) {
+          message = _messenger.notReachable;
+        } else if (e.type is! HandshakeException) {
+          message = _messenger.unexpectedError(e.message);
+        }
+      } else {
+        message = _messenger.unexpectedError(
+          FlutterErrorDetails(
+            exception: e,
+          ).summary.toDescription(),
+        );
+      }
     }
 
     if (successfull || automatic) {
@@ -114,7 +128,7 @@ class ClientService {
         RegisterViewModel.route,
       );
     } else {
-      _messenger.showMessage(_messenger.unexpectedError(message));
+      _messenger.showMessage(message);
     }
   }
 

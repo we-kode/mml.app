@@ -74,8 +74,7 @@ class RegisterViewModel extends ChangeNotifier {
       }
 
       if (Platform.isAndroid) {
-        var androidInfo = (await DeviceInfoPlugin().androidInfo);
-        deviceIdentifier = androidInfo.model ?? '';
+        deviceIdentifier = (await DeviceInfoPlugin().androidInfo).model ?? '';
       }
 
       if (Platform.isIOS) {

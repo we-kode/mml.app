@@ -172,7 +172,7 @@ class ApiService {
         }
 
         // All other errors except certificate errors!
-        if (e.type is SocketException) {
+        if (e.error is SocketException) {
           _messenger.showMessage(_messenger.notReachable);
         } else if (e.type is! HandshakeException) {
           _messenger.showMessage(_messenger.unexpectedError(e.message));

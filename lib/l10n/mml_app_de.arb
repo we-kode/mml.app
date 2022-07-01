@@ -28,5 +28,5 @@
   "lastName": "Nachname",
   "invalidFirstName": "Bitte geben Sie einen Vornamen an!",
   "invalidLastName": "Bitte geben Sie einen Nachnamen an!",
-  "notReachable": "Der Server ist nicht erreichbar!"
+  "notReachable": "Der Server ist nicht erreichbar! Bitte prüfen Sie Ihre Netzwerkverbindung!"
 }
