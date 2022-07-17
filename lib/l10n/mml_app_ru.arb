@@ -21,5 +21,16 @@
   "lastName": "Фамилия",
   "invalidFirstName": "Пожалуйста, введите имя!",
   "invalidLastName": "Пожалуйста, введите фамилию!",
-  "notReachable": "Не удалось подключиться к серверу! Пожалуйста, проверьте вашу соединение к сети!"
+  "notReachable": "Не удалось подключиться к серверу! Пожалуйста, проверьте вашу соединение к сети!",
+  "changeServerConnection": "Изменить подключение к серверу",
+  "removeRegistration": "Удалить регистрацию",
+  "info": "Инфо",
+  "privacyPolicy": "Политика Конфиденциальности",
+  "legalInformation": "Правовая Информация",
+  "licenses": "Лицензии",
+  "updateConnectionSettingsTitle": "Изменить подключение к серверу",
+  "updateConnectionSettingsScan": "Чтобы изменить настройки, отсканируйте QR-код в администрации.",
+  "updateConnectionSettingsError": "Во время cмены произошла ошибка. Пожалуйста, повторите попытку ещё раз!",
+  "updateConnectionSettingsSuccess": "Настройки были успешно изменены!",
+  "updateConnectionSettingsProgress": "Смена настроек..."
 }

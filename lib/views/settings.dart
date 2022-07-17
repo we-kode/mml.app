@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mml_app/services/client.dart';
+import 'package:mml_app/view_models/settings.dart';
+import 'package:provider/provider.dart';
 
-//TODO
+/// Settings screen.
 class SettingsScreen extends StatelessWidget {
   /// Initializes the instance.
   const SettingsScreen({Key? key}) : super(key: key);
@@ -9,13 +10,62 @@ class SettingsScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: TextButton(
-        child: const Text("Remove Registration"),
-        onPressed: () {
-          ClientService.getInstance().removeRegistration();
-        },
-      ),
+    return ChangeNotifierProvider<SettingsViewModel>(
+      create: (context) => SettingsViewModel(),
+      builder: (context, _) {
+        var vm = Provider.of<SettingsViewModel>(context, listen: false);
+
+        return FutureBuilder(
+          future: vm.init(context),
+          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            return ListView(
+              children: [
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.settings,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ),
+                ListTile(
+                  title: Text(vm.locales.changeServerConnection),
+                  onTap: vm.changeServerConnection,
+                ),
+                ListTile(
+                  title: Text(vm.locales.removeRegistration),
+                  onTap: vm.removeRegistration,
+                ),
+                const Divider(),
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.info,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                ),
+                ListTile(
+                  title: Text(vm.locales.privacyPolicy),
+                  onTap: vm.showPrivacyPolicy,
+                ),
+                ListTile(
+                  title: Text(vm.locales.legalInformation),
+                  onTap: vm.showLegalInformation,
+                ),
+                ListTile(
+                  title: Text(vm.locales.licenses),
+                  onTap: vm.showLicensesOverview,
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

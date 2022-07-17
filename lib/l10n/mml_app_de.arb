@@ -28,5 +28,16 @@
   "lastName": "Nachname",
   "invalidFirstName": "Bitte geben Sie einen Vornamen an!",
   "invalidLastName": "Bitte geben Sie einen Nachnamen an!",
-  "notReachable": "Der Server ist nicht erreichbar! Bitte prüfen Sie Ihre Netzwerkverbindung!"
+  "notReachable": "Der Server ist nicht erreichbar! Bitte prüfen Sie Ihre Netzwerkverbindung!",
+  "changeServerConnection": "Server-Verbindung ändern",
+  "removeRegistration": "Registrierung löschen",
+  "info": "Info",
+  "privacyPolicy": "Datenschutzerklärung",
+  "legalInformation": "Impressum",
+  "licenses": "Lizenzen",
+  "updateConnectionSettingsTitle": "Server-Verbindung ändern",
+  "updateConnectionSettingsScan": "Scannen Sie den QR-Code in der Administration, um die Einstellungen zu ändern.",
+  "updateConnectionSettingsError": "Ein Fehler ist bei der Änderung aufgetreten. Versuchen Sie es erneut!",
+  "updateConnectionSettingsSuccess": "Einstellungen wurden erfolgreich geändert!",
+  "updateConnectionSettingsProgress": "Einstellungen werden geändert..."
 }
