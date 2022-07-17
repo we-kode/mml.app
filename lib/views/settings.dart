@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +39,12 @@ class SettingsScreen extends StatelessWidget {
                   onTap: vm.changeServerConnection,
                 ),
                 ListTile(
-                  title: Text(vm.locales.removeRegistration),
+                  title: Text(
+                    vm.locales.removeRegistration,
+                    style: TextStyle(
+                      color: Theme.of(context).errorColor,
+                    ),
+                  ),
                   onTap: vm.removeRegistration,
                 ),
                 const Divider(),
