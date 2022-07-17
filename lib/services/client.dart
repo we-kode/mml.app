@@ -133,13 +133,22 @@ class ClientService {
   }
 
   /// Returns a boolean that indicates whether the client is registered.
-  Future<bool> isClientRegistered() async {
-    var response = await _apiService.request(
-      '/identity/client/',
-      options: Options(method: 'GET'),
-    );
+  Future<bool> isClientRegistered({bool handleErrors = true}) async {
+    Response response;
 
-    return response.data['Registered'];
+    var url = '/identity/client/';
+    var options = Options(method: 'GET');
+
+    if (handleErrors) {
+      response = await _apiService.request(url, options: options);
+    } else {
+      var dio = Dio();
+      _apiService.initDio(dio, false);
+
+      response = await dio.request(url, options: options);
+    }
+
+    return response.data['registered'];
   }
 
   /// Tries to refresh the current access token.

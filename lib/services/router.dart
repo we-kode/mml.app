@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/oss_licenses.dart';
+import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
+import 'package:mml_app/view_models/license.dart';
+import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/playlist.dart';
 import 'package:mml_app/view_models/records.dart';
 import 'package:mml_app/view_models/register.dart';
+import 'package:mml_app/view_models/server_connection.dart';
 import 'package:mml_app/view_models/settings.dart';
+import 'package:mml_app/views/information.dart';
 import 'package:mml_app/views/intro.dart';
+import 'package:mml_app/views/license.dart';
+import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/main.dart';
 import 'package:mml_app/views/playlist.dart';
 import 'package:mml_app/views/records.dart';
 import 'package:mml_app/views/register.dart';
+import 'package:mml_app/views/server_connection.dart';
 import 'package:mml_app/views/settings.dart';
 
 /// Service that holds all routing information of the navigators of the app.
@@ -43,20 +52,50 @@ class RouterService {
   }
 
   /// Routes of the nested navigator.
-  Map<String, Route<dynamic>?> get nestedRoutes {
-   return {
+  Map<String, PageRouteBuilder> getNestedRoutes({Object? arguments}) {
+    return {
       RecordsViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: RecordsViewModel.route),
         pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
-        transitionDuration: const Duration(seconds: 0),
+        transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
-        pageBuilder: (context, animation1, animation2) => const PlaylistScreen(),
-        transitionDuration: const Duration(seconds: 0),
+        settings: RouteSettings(name: PlaylistViewModel.route),
+        pageBuilder: (context, animation1, animation2) =>
+            const PlaylistScreen(),
+        transitionsBuilder: _buildTransition,
       ),
       SettingsViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: SettingsViewModel.route),
         pageBuilder: (context, animation1, animation2) =>
             const SettingsScreen(),
-        transitionDuration: const Duration(seconds: 0),
+        transitionsBuilder: _buildTransition,
+      ),
+      ServerConnectionViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: ServerConnectionViewModel.route),
+        pageBuilder: (context, animation1, animation2) =>
+            const ServerConnectionScreen(),
+        transitionsBuilder: _buildTransition,
+      ),
+      InformationViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: InformationViewModel.route),
+        pageBuilder: (context, animation1, animation2) => InformationScreen(
+          url: (arguments as String),
+        ),
+        transitionsBuilder: _buildTransition,
+      ),
+      LicensesOverviewViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: LicensesOverviewViewModel.route),
+        pageBuilder: (context, animation1, animation2) =>
+            const LicensesOverviewScreen(),
+        transitionsBuilder: _buildTransition,
+      ),
+      LicenseViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(name: LicenseViewModel.route),
+        pageBuilder: (context, animation1, animation2) => LicenseScreen(
+          package: (arguments as Package),
+        ),
+        transitionsBuilder: _buildTransition,
       ),
     };
   }
@@ -66,5 +105,51 @@ class RouterService {
   Future pushReplacementNamed(String name) async {
     navigatorKey.currentState!.popUntil((route) => route.isFirst);
     await navigatorKey.currentState!.pushReplacementNamed(name);
+  }
+
+  /// Pops the latest route of the nested navigator.
+  Future<bool> popNestedRoute() async {
+    return await _getNestedNavigatorState()!.maybePop();
+  }
+
+  /// Pushes the route with the passed [name] and [arguments] to the nested
+  /// navigator.
+  Future pushNestedRoute(String name, {Object? arguments}) async {
+    await _getNestedNavigatorState()!.pushNamed(name, arguments: arguments);
+  }
+
+  /// Returns the state of the nested navigator, by searching from the outer
+  /// navigator.
+  NavigatorState? _getNestedNavigatorState({Element? element}) {
+    if (element?.widget is Navigator) {
+      return (element as StatefulElement).state as NavigatorState;
+    } else if (element == null) {
+      NavigatorState? state;
+
+      navigatorKey.currentContext!.visitChildElements((e) {
+        state ??= _getNestedNavigatorState(element: e);
+      });
+
+      return state;
+    }
+
+    NavigatorState? state;
+
+    element.visitChildElements((e) {
+      state ??= _getNestedNavigatorState(element: e);
+    });
+
+    return state;
+  }
+
+  /// Creates a slide transition for the animation on route changes.
+  SlideTransition _buildTransition(_, a, __, c) {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1.0, 0.0),
+        end: Offset.zero,
+      ).animate(a),
+      child: c,
+    );
   }
 }

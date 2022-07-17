@@ -21,5 +21,16 @@
   "lastName": "Last name",
   "invalidFirstName": "Please enter a first name!",
   "invalidLastName": "Please enter a last name!",
-  "notReachable": "The server is not reachable! Please check your network connection!"
+  "notReachable": "The server is not reachable! Please check your network connection!",
+  "changeServerConnection": "Change server connection",
+  "removeRegistration": "Remove registration",
+  "info": "Info",
+  "privacyPolicy": "Privacy Policy",
+  "legalInformation": "Legal Information",
+  "licenses": "Licenses",
+  "updateConnectionSettingsTitle": "Change server connection",
+  "updateConnectionSettingsScan": "To change the settings, scan the QR-Code in the administration.",
+  "updateConnectionSettingsError": "An error occurred during change. Please retry again!",
+  "updateConnectionSettingsSuccess": "Settings were successfully changed!",
+  "updateConnectionSettingsProgress": "Changing settings..."
 }

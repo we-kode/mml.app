@@ -16,6 +16,9 @@ class MainViewModel extends ChangeNotifier {
   /// Index of the currently selected route.
   int _selectedIndex = 0;
 
+  /// Router service used for navigation in the app.
+  final RouterService _routerService = RouterService.getInstance();
+
   /// Items of the navigation bar.
   late final List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
@@ -45,11 +48,18 @@ class MainViewModel extends ChangeNotifier {
     return true;
   }
 
+  /// Pops the nested route.
+  Future<bool> popNestedRoute(context) async {
+    return !await _routerService.popNestedRoute();
+  }
+
   /// Sets the actual screens [index] as selected.
   set selectedIndex(int index) {
     _selectedIndex = index;
-    _loadPage();
-    notifyListeners();
+
+    Future.microtask(() {
+      notifyListeners();
+    });
   }
 
   /// Returns index of the actual selected page.
@@ -58,27 +68,8 @@ class MainViewModel extends ChangeNotifier {
   }
 
   /// Loads the selected page of the navigation.
-  void _loadPage() {
-    _context.visitChildElements((element) {
-      _loadScreen(element);
-    });
-  }
-
-  /// Loads the route of the selected item in the bottom navigation bar.
-  ///
-  /// Searches the [element] for an existing [Navigator]. If element is of type [Navigator]
-  /// the new route will be loaded in the nested [Navigator].
-  void _loadScreen(Element element) {
-    if (element.widget is Navigator) {
-      var state = (element as StatefulElement).state as NavigatorState;
-      var routeService = RouterService.getInstance();
-      var route = routeService.nestedRoutes.keys.elementAt(_selectedIndex);
-      state.pushNamed(route);
-      return;
-    }
-
-    element.visitChildElements((e) {
-      _loadScreen(e);
-    });
+  void loadPage(int index) async {
+    var route = _routerService.getNestedRoutes().keys.elementAt(index);
+    await _routerService.pushNestedRoute(route);
   }
 }
