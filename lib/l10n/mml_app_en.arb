@@ -32,5 +32,15 @@
   "updateConnectionSettingsScan": "To change the settings, scan the QR-Code in the administration.",
   "updateConnectionSettingsError": "An error occurred during change. Please retry again!",
   "updateConnectionSettingsSuccess": "Settings were successfully changed!",
-  "updateConnectionSettingsProgress": "Changing settings..."
+  "updateConnectionSettingsProgress": "Changing settings...",
+  "unknown": "Unknown",
+  "save": "Save",
+  "cancel": "Cancel",
+  "noData": "No records were found!",
+  "reload": "Reload",
+  "date": "Date",
+  "artist": "Artist",
+  "genre": "Genre",
+  "album": "Album",
+  "filter": "Filter"
 }

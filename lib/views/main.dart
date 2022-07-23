@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/records.dart';
+import 'package:mml_app/view_models/records/records.dart';
 import 'package:provider/provider.dart';
 
 /// Main screen.
@@ -26,15 +26,6 @@ class MainScreen extends StatelessWidget {
             return WillPopScope(
               onWillPop: () => vm.popNestedRoute(context),
               child: Scaffold(
-                appBar: AppBar(
-                  title: Consumer<MainViewModel>(
-                    builder: (context, vm, _) {
-                      return Text(
-                        vm.navItems.elementAt(vm.selectedIndex).label!,
-                      );
-                    },
-                  ),
-                ),
                 body: SafeArea(
                   child: Navigator(
                     initialRoute: RecordsViewModel.route,
