@@ -26,6 +26,14 @@ class MainScreen extends StatelessWidget {
             return WillPopScope(
               onWillPop: () => vm.popNestedRoute(context),
               child: Scaffold(
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: Consumer<MainViewModel>(
+                    builder: (context, vm, _) {
+                      return vm.getAppBar();
+                    },
+                  ),
+                ),
                 body: SafeArea(
                   child: Navigator(
                     initialRoute: RecordsViewModel.route,

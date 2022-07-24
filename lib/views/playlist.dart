@@ -9,14 +9,8 @@ class PlaylistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //TODO implement
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Playlist"),
-        automaticallyImplyLeading: false,
-      ),
-      body: Center(
-        child: Text('Playlist'),
-      ),
+    return Center(
+      child: Text('Playlist'),
     );
   }
 }

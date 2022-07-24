@@ -72,4 +72,15 @@ class MainViewModel extends ChangeNotifier {
     var route = _routerService.getNestedRoutes().keys.elementAt(index);
     await _routerService.pushNestedRoute(route);
   }
+
+  Widget getAppBar() {
+    final routeArgs = RouterService.getInstance()
+        .getNestedRoutes()[RouterService.getInstance()
+            .getNestedRoutes()
+            .keys
+            .elementAt(_selectedIndex)]
+        ?.settings
+        .arguments;
+    return routeArgs != null ? routeArgs as Widget : const SizedBox.shrink();
+  }
 }

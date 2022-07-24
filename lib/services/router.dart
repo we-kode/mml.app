@@ -55,18 +55,27 @@ class RouterService {
   Map<String, PageRouteBuilder> getNestedRoutes({Object? arguments}) {
     return {
       RecordsViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: RecordsViewModel.route),
+        settings: RouteSettings(
+          name: RecordsViewModel.route,
+          arguments: RecordsViewModel.routeArgs,
+        ),
         pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: PlaylistViewModel.route),
+        settings: RouteSettings(
+          name: PlaylistViewModel.route,
+          arguments: PlaylistViewModel.routeArgs,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const PlaylistScreen(),
         transitionsBuilder: _buildTransition,
       ),
       SettingsViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: SettingsViewModel.route),
+        settings: RouteSettings(
+          name: SettingsViewModel.route,
+          arguments: SettingsViewModel.routeArgs,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const SettingsScreen(),
         transitionsBuilder: _buildTransition,

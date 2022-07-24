@@ -34,7 +34,7 @@ class RecordService {
     }
 
     if (offset != null) {
-      params['offset'] = offset.toString();
+      params['skip'] = offset.toString();
     }
 
     if (take != null) {

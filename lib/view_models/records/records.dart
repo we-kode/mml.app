@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/services/record.dart';
@@ -11,12 +12,17 @@ class RecordsViewModel extends ChangeNotifier {
   /// Route of the records screen.
   static String route = '/records';
 
+  static Widget routeArgs = const FilterAppBar(
+    title: "records",
+    enableFilter: true,
+  );
+
   /// App locales.
   late AppLocalizations locales;
 
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
-  
+
   /// [StreamController] to stream events on.
   final StreamController filterChangedStreamController = StreamController();
 
@@ -44,4 +50,23 @@ class RecordsViewModel extends ChangeNotifier {
   void filterChanged(ID3TagFilter? filter) {
     filterChangedStreamController.add(filter);
   }
+
+  
 }
+
+// FilterChangedListener createFilterChangedListener() {
+//     return _FilterChangedEvent(run: (String? filter) async {
+//       print(filter);
+//     });
+//   }
+// class _FilterChangedEvent implements FilterChangedListener {
+//   _FilterChangedEvent({required Future Function(String? filter) run})
+//       : _run = run;
+
+//   final Future Function(String? filter) _run;
+
+//   @override
+//   Future onChanged(String? filter) async {
+//     _run(filter);
+//   }
+// }

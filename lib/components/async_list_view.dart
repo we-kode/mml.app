@@ -80,9 +80,6 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// The actual set subfilter on which the list will be filtered on data loading.
   dynamic _subfilterData;
 
-  /// Indicates, that the filter input is showing.
-  bool _filterOpened = false;
-
   @override
   void initState() {
     _reloadData();
@@ -113,50 +110,7 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: !_filterOpened
-            ? Text(widget.title)
-            : Container(
-                margin: const EdgeInsets.only(bottom: 4.0),
-                child: TextFormField(
-                  initialValue: _filter,
-                  decoration: InputDecoration(
-                    labelText: AppLocalizations.of(context)!.filter,
-                    icon: const Icon(Icons.filter_list_alt),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        setState(
-                          () {
-                            _filterOpened = false;
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                  onChanged: (String filterText) {
-                    setState(() {
-                      _filter = filterText;
-                    });
-
-                    _reloadData();
-                  },
-                ),
-              ),
-        automaticallyImplyLeading: false,
-        actions: [
-          if (!_filterOpened)
-            IconButton(
-                onPressed: () => setState(
-                      () {
-                        _filterOpened = !_filterOpened;
-                      },
-                    ),
-                icon: const Icon(Icons.search))
-        ],
-      ),
-      body: Column(
+    return Column(
         children: [
           // List header with filter and action buttons.
           _createListHeaderWidget(),
@@ -170,8 +124,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                     : _createNoDataWidget()),
           ),
         ],
-      ),
-    );
+      );
   }
 
   /// Reloads the data starting from inital offset with inital count.

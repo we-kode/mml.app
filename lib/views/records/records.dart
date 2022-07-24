@@ -5,7 +5,6 @@ import 'package:mml_app/view_models/records/records.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
 
-// TODO
 class RecordsScreen extends StatelessWidget {
   /// Initializes the instance.
   const RecordsScreen({Key? key}) : super(key: key);

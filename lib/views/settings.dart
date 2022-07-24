@@ -22,59 +22,51 @@ class SettingsScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  vm.locales.settings,
+            return ListView(
+              children: [
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.settings,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
                 ),
-                automaticallyImplyLeading: false,
-              ),
-              body: ListView(
-                children: [
-                  ListTile(
-                    dense: true,
-                    visualDensity: const VisualDensity(vertical: -4),
-                    title: Text(
-                      vm.locales.settings,
-                      style: Theme.of(context).textTheme.subtitle2,
+                ListTile(
+                  title: Text(vm.locales.changeServerConnection),
+                  onTap: vm.changeServerConnection,
+                ),
+                ListTile(
+                  title: Text(
+                    vm.locales.removeRegistration,
+                    style: TextStyle(
+                      color: Theme.of(context).errorColor,
                     ),
                   ),
-                  ListTile(
-                    title: Text(vm.locales.changeServerConnection),
-                    onTap: vm.changeServerConnection,
+                  onTap: vm.removeRegistration,
+                ),
+                const Divider(),
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.info,
+                    style: Theme.of(context).textTheme.subtitle2,
                   ),
-                  ListTile(
-                    title: Text(
-                      vm.locales.removeRegistration,
-                      style: TextStyle(
-                        color: Theme.of(context).errorColor,
-                      ),
-                    ),
-                    onTap: vm.removeRegistration,
-                  ),
-                  const Divider(),
-                  ListTile(
-                    dense: true,
-                    visualDensity: const VisualDensity(vertical: -4),
-                    title: Text(
-                      vm.locales.info,
-                      style: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ),
-                  ListTile(
-                    title: Text(vm.locales.privacyPolicy),
-                    onTap: vm.showPrivacyPolicy,
-                  ),
-                  ListTile(
-                    title: Text(vm.locales.legalInformation),
-                    onTap: vm.showLegalInformation,
-                  ),
-                  ListTile(
-                    title: Text(vm.locales.licenses),
-                    onTap: vm.showLicensesOverview,
-                  ),
-                ],
-              ),
+                ),
+                ListTile(
+                  title: Text(vm.locales.privacyPolicy),
+                  onTap: vm.showPrivacyPolicy,
+                ),
+                ListTile(
+                  title: Text(vm.locales.legalInformation),
+                  onTap: vm.showLegalInformation,
+                ),
+                ListTile(
+                  title: Text(vm.locales.licenses),
+                  onTap: vm.showLicensesOverview,
+                ),
+              ],
             );
           },
         );
