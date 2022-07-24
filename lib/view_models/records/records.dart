@@ -50,23 +50,4 @@ class RecordsViewModel extends ChangeNotifier {
   void filterChanged(ID3TagFilter? filter) {
     filterChangedStreamController.add(filter);
   }
-
-  
 }
-
-// FilterChangedListener createFilterChangedListener() {
-//     return _FilterChangedEvent(run: (String? filter) async {
-//       print(filter);
-//     });
-//   }
-// class _FilterChangedEvent implements FilterChangedListener {
-//   _FilterChangedEvent({required Future Function(String? filter) run})
-//       : _run = run;
-
-//   final Future Function(String? filter) _run;
-
-//   @override
-//   Future onChanged(String? filter) async {
-//     _run(filter);
-//   }
-// }
