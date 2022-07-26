@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
-import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/services/record.dart';
 
@@ -23,9 +22,6 @@ class RecordsViewModel extends ChangeNotifier {
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
 
-  /// [StreamController] to stream events on.
-  final StreamController filterChangedStreamController = StreamController();
-
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() {
@@ -44,10 +40,5 @@ class RecordsViewModel extends ChangeNotifier {
     dynamic subfilter,
   }) async {
     return _service.getRecords(filter, offset, take, subfilter);
-  }
-
-  /// Gets called when [ID3TagFilter] changes.
-  void filterChanged(ID3TagFilter? filter) {
-    filterChangedStreamController.add(filter);
   }
 }
