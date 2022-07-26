@@ -64,7 +64,7 @@ class Record extends ModelBase {
   }
 
   @override
-  String? getTimeInfo(BuildContext context) {
+  String? getMetadata(BuildContext context) {
     int seconds = ((duration / 1000) % 60).toInt();
     int minutes = ((duration / (1000 * 60)) % 60).toInt();
     int hours = ((duration / (1000 * 60 * 60)) % 24).toInt();

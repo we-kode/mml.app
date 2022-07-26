@@ -3,15 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
+import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// Function to load data with the passed [filter], starting from [offset] and
 /// loading an amount of [take] data. Also a [subfilter] can be added to filter the list more specific.
-typedef LoadDataFunction = Future<ModelList> Function(
-    {String? filter, int? offset, int? take, dynamic subfilter});
+typedef LoadDataFunction = Future<ModelList> Function({
+  String? filter,
+  int? offset,
+  int? take,
+  Subfilter? subfilter,
+});
 
 /// List that supports async loading of data, when necessary in chunks.
 class AsyncListView extends StatefulWidget {
@@ -20,12 +26,7 @@ class AsyncListView extends StatefulWidget {
   final LoadDataFunction loadData;
 
   /// A subfilter widget which can be used to add subfilters like chips for more filter posibilities.
-  final Widget? subfilter;
-
-  /// Event listener of type [StreamController] which listen on DataChanges from extern.
-  ///
-  /// If no [StreamController] is provided, data will not be relaoded, when data chnaged extern.
-  final StreamController<dynamic>? onDataChanged;
+  final ListSubfilterView? subfilter;
 
   /// The title shown above the list.
   final String title;
@@ -36,7 +37,6 @@ class AsyncListView extends StatefulWidget {
     required this.title,
     required this.loadData,
     this.subfilter,
-    this.onDataChanged,
   }) : super(key: key);
 
   @override
@@ -74,24 +74,13 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// The actual item group if list items should be grouped.
   String? _actualGroup;
 
-  /// [StreamSubscription] of the actual stream controller or null if no stream controller is provided.
-  StreamSubscription? _streamSubscription;
-
-  /// The actual set subfilter on which the list will be filtered on data loading.
-  dynamic _subfilterData;
-
   @override
   void initState() {
     _reloadData();
-    if (widget.onDataChanged != null) {
-      _streamSubscription = widget.onDataChanged!.stream.listen(
-        (event) {
-          if (event != null) {
-            _subfilterData = event;
-          }
-          _reloadData();
-        },
-      );
+    if (widget.subfilter != null) {
+      widget.subfilter!.filter.addListener(() {
+        _reloadData();
+      });
     }
     super.initState();
   }
@@ -99,32 +88,26 @@ class _AsyncListViewState extends State<AsyncListView> {
   @override
   void dispose() async {
     super.dispose();
-    if (widget.onDataChanged != null) {
-      await widget.onDataChanged!.close();
-    }
-
-    if (_streamSubscription != null) {
-      await _streamSubscription!.cancel();
-    }
+    widget.subfilter?.filter.removeListener(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-        children: [
-          // List header with filter and action buttons.
-          _createListHeaderWidget(),
+      children: [
+        // List header with filter and action buttons.
+        _createListHeaderWidget(),
 
-          // List, loading indicator or no data widget.
-          Expanded(
-            child: _isLoadingData
-                ? _createLoadingWidget()
-                : (_items!.totalCount > 0
-                    ? _createListViewWidget()
-                    : _createNoDataWidget()),
-          ),
-        ],
-      );
+        // List, loading indicator or no data widget.
+        Expanded(
+          child: _isLoadingData
+              ? _createLoadingWidget()
+              : (_items!.totalCount > 0
+                  ? _createListViewWidget()
+                  : _createNoDataWidget()),
+        ),
+      ],
+    );
   }
 
   /// Reloads the data starting from inital offset with inital count.
@@ -136,7 +119,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     _offset = _initialOffset;
     _take = _initialTake;
 
-    _loadData(subfilter: _subfilterData);
+    _loadData(subfilter: widget.subfilter?.filter);
   }
 
   /// Loads the data for the [_offset] and [_take] with the [_filter].
@@ -144,7 +127,10 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Shows a loading indicator instead of the list during load, if
   /// [showLoadingOverlay] is true.
   /// Otherwhise the data will be loaded lazy in the background.
-  void _loadData({bool showLoadingOverlay = true, dynamic subfilter}) {
+  void _loadData({
+    bool showLoadingOverlay = true,
+    Subfilter? subfilter,
+  }) {
     if (showLoadingOverlay) {
       setState(() {
         _isLoadingData = true;
@@ -152,7 +138,11 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     var dataFuture = widget.loadData(
-        filter: _filter, offset: _offset, take: _take, subfilter: subfilter);
+      filter: _filter,
+      offset: _offset,
+      take: _take,
+      subfilter: subfilter,
+    );
 
     dataFuture.then((value) {
       if (!mounted) {
@@ -264,7 +254,7 @@ class _AsyncListViewState extends State<AsyncListView> {
           Text(AppLocalizations.of(context)!.noData),
           horizontalSpacer,
           TextButton.icon(
-            onPressed: () => _loadData(subfilter: _subfilterData),
+            onPressed: () => _loadData(subfilter: widget.subfilter?.filter),
             icon: const Icon(Icons.refresh),
             label: Text(AppLocalizations.of(context)!.reload),
           ),
@@ -324,9 +314,9 @@ class _AsyncListViewState extends State<AsyncListView> {
       trailing: Column(
         children: [
           verticalSpacer,
-          item.getTimeInfo(context) != null
+          item.getMetadata(context) != null
               ? Text(
-                  item.getTimeInfo(context)!,
+                  item.getMetadata(context)!,
                   style: Theme.of(context).textTheme.bodySmall,
                 )
               : const SizedBox.shrink(),

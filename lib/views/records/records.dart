@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
-import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/view_models/records/records.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
 
+/// Overview screen of the uploaded records to the music lib.
 class RecordsScreen extends StatelessWidget {
   /// Initializes the instance.
   const RecordsScreen({Key? key}) : super(key: key);
@@ -26,14 +26,8 @@ class RecordsScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.records,
-              subfilter: RecordTagFilter(
-                onFilterChanged: (ID3TagFilter filter) async {
-                  vm.filterChanged(filter);
-                  return true;
-                },
-              ),
+              subfilter: RecordTagFilter(),
               loadData: vm.load,
-              onDataChanged: vm.filterChangedStreamController,
             );
           },
         );

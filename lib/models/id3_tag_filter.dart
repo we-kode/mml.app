@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mml_app/models/subfilter.dart';
 
 part 'id3_tag_filter.g.dart';
 
 /// ID§ tag filters for records.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class ID3TagFilter {
+class ID3TagFilter extends Subfilter {
   /// Ids opf artist tags.
   List<String> artists = [];
 
@@ -59,6 +60,7 @@ class ID3TagFilter {
         endDate = range.end;
         break;
     }
+    notifyListeners();
   }
 
   /// Returns the saved values of the [ID3TagFilters] identifier.
@@ -94,6 +96,7 @@ class ID3TagFilter {
         endDate = null;
         break;
     }
+    notifyListeners();
   }
 
   /// Checks if the value of the [identifier] is not empty.

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
-import 'package:mml_app/views/records/records.dart';
 
 class FilterAppBar extends StatefulWidget {
   final String title;
   final bool? enableFilter;
   final FilterChangedListener? filterChangedListener;
 
+  // TODO implement filter list on filter change
   const FilterAppBar({
     Key? key,
     required this.title,

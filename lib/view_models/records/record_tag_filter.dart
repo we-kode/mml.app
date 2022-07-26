@@ -3,12 +3,16 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/services/record.dart';
 
+/// View model for the records tag filter.
 class RecordTagFilterViewModel extends ChangeNotifier {
   /// The active [ID3TagFilter].
-  final tagFilter = ID3TagFilter();
+  final ID3TagFilter tagFilter;
 
   /// [RecordService] used to load data for the tag filter.
   final RecordService _service = RecordService.getInstance();
+
+  /// Initializes the view model.
+  RecordTagFilterViewModel(this.tagFilter);
 
   /// Clears the filter value of the [identifier].
   void clear(String identifier) {
