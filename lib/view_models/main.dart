@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/router.dart';
 
 /// View model for the main screen.
@@ -74,13 +75,12 @@ class MainViewModel extends ChangeNotifier {
   }
 
   Widget getAppBar() {
-    final routeArgs = RouterService.getInstance()
-        .getNestedRoutes()[RouterService.getInstance()
-            .getNestedRoutes()
-            .keys
-            .elementAt(_selectedIndex)]
+    final nestedRoutes = _routerService.getNestedRoutes();
+    final routeArgs = nestedRoutes[nestedRoutes.keys.elementAt(_selectedIndex)]
         ?.settings
         .arguments;
-    return routeArgs != null ? routeArgs as Widget : const SizedBox.shrink();
+    return routeArgs != null && routeArgs is FilterAppBar
+        ? routeArgs
+        : const SizedBox.shrink();
   }
 }

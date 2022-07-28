@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/filter.dart';
 
 class FilterAppBar extends StatefulWidget {
   final String title;
   final bool? enableFilter;
-  final FilterChangedListener? filterChangedListener;
+  final Filter filter = Filter();
 
-  // TODO implement filter list on filter change
-  const FilterAppBar({
+  FilterAppBar({
     Key? key,
     required this.title,
     this.enableFilter,
-    this.filterChangedListener,
   }) : super(key: key);
 
   @override
@@ -50,9 +49,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                     _filter = filterText;
                   });
 
-                  if (widget.filterChangedListener != null) {
-                    widget.filterChangedListener!.onChanged(_filter);
-                  }
+                  widget.filter.textFilter = filterText;
                 },
               ),
             ),
@@ -85,8 +82,4 @@ class FilterAppBarState extends State<FilterAppBar> {
         return "";
     }
   }
-}
-
-abstract class FilterChangedListener {
-  Future onChanged(String? filter);
 }

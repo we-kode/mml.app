@@ -5,6 +5,7 @@ import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
+import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/subfilter.dart';
@@ -31,12 +32,15 @@ class AsyncListView extends StatefulWidget {
   /// The title shown above the list.
   final String title;
 
+  final Filter? filter;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
     required this.title,
     required this.loadData,
     this.subfilter,
+    this.filter,
   }) : super(key: key);
 
   @override
@@ -58,9 +62,6 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// List of lazy loaded items.
   ModelList? _items;
 
-  /// Filter to send to the sever.
-  String? _filter;
-
   /// Offset to start loading data from.
   int _offset = 0;
 
@@ -77,18 +78,18 @@ class _AsyncListViewState extends State<AsyncListView> {
   @override
   void initState() {
     _reloadData();
-    if (widget.subfilter != null) {
-      widget.subfilter!.filter.addListener(() {
-        _reloadData();
-      });
-    }
+
+    widget.subfilter?.filter.addListener(_reloadData);
+    widget.filter?.addListener(_reloadData);
+
     super.initState();
   }
 
   @override
   void dispose() async {
     super.dispose();
-    widget.subfilter?.filter.removeListener(() {});
+    widget.subfilter?.filter.removeListener(_reloadData);
+    widget.filter?.removeListener(_reloadData);
   }
 
   @override
@@ -122,7 +123,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     _loadData(subfilter: widget.subfilter?.filter);
   }
 
-  /// Loads the data for the [_offset] and [_take] with the [_filter].
+  /// Loads the data for the [_offset] and [_take].
   ///
   /// Shows a loading indicator instead of the list during load, if
   /// [showLoadingOverlay] is true.
@@ -138,7 +139,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     var dataFuture = widget.loadData(
-      filter: _filter,
+      filter: widget.filter?.textFilter,
       offset: _offset,
       take: _take,
       subfilter: subfilter,

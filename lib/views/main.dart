@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/records/records.dart';
+import 'package:mml_app/view_models/records/overview.dart';
 import 'package:provider/provider.dart';
 
 /// Main screen.

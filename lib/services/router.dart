@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
@@ -6,7 +7,7 @@ import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/playlist.dart';
-import 'package:mml_app/view_models/records/records.dart';
+import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:mml_app/view_models/settings.dart';
@@ -16,7 +17,7 @@ import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/main.dart';
 import 'package:mml_app/views/playlist.dart';
-import 'package:mml_app/views/records/records.dart';
+import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
 import 'package:mml_app/views/server_connection.dart';
 import 'package:mml_app/views/settings.dart';
@@ -57,15 +58,22 @@ class RouterService {
       RecordsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: RecordsViewModel.route,
-          arguments: RecordsViewModel.routeArgs,
+          arguments: FilterAppBar(
+            title: "records",
+            enableFilter: true,
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
+        pageBuilder: (context, animation1, animation2) => RecordsScreen(
+          filterAppBar: getAppBar(0) as FilterAppBar,
+        ),
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: PlaylistViewModel.route,
-          arguments: PlaylistViewModel.routeArgs,
+          arguments: FilterAppBar(
+            title: "playlist",
+          ),
         ),
         pageBuilder: (context, animation1, animation2) =>
             const PlaylistScreen(),
@@ -74,7 +82,9 @@ class RouterService {
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: SettingsViewModel.routeArgs,
+          arguments: FilterAppBar(
+            title: "settings",
+          ),
         ),
         pageBuilder: (context, animation1, animation2) =>
             const SettingsScreen(),
@@ -160,5 +170,15 @@ class RouterService {
       ).animate(a),
       child: c,
     );
+  }
+
+  Widget getAppBar(selectedIndex) {
+    final nestedRoutes = getNestedRoutes();
+    final routeArgs = nestedRoutes[nestedRoutes.keys.elementAt(selectedIndex)]
+        ?.settings
+        .arguments;
+    return routeArgs != null && routeArgs is FilterAppBar
+        ? routeArgs
+        : const SizedBox.shrink();
   }
 }
