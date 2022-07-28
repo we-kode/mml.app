@@ -58,22 +58,15 @@ class RouterService {
       RecordsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: RecordsViewModel.route,
-          arguments: FilterAppBar(
-            title: "records",
-            enableFilter: true,
-          ),
+          arguments: RecordsViewModel.appBar,
         ),
-        pageBuilder: (context, animation1, animation2) => RecordsScreen(
-          filterAppBar: getAppBar(0) as FilterAppBar,
-        ),
+        pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: PlaylistViewModel.route,
-          arguments: FilterAppBar(
-            title: "playlist",
-          ),
+          arguments: PlaylistViewModel.appBar,
         ),
         pageBuilder: (context, animation1, animation2) =>
             const PlaylistScreen(),
@@ -82,9 +75,7 @@ class RouterService {
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: FilterAppBar(
-            title: "settings",
-          ),
+          arguments: SettingsViewModel.appBar,
         ),
         pageBuilder: (context, animation1, animation2) =>
             const SettingsScreen(),
