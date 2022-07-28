@@ -173,10 +173,13 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
   /// occured during loading of data.
   Widget _createNoDataWidget() {
     return Center(
-      child: Row(
+      child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(AppLocalizations.of(context)!.noData),
+          Text(
+            AppLocalizations.of(context)!.noData,
+            softWrap: true,
+          ),
           horizontalSpacer,
           TextButton.icon(
             onPressed: _loadData,
