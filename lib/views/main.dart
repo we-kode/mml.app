@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/records.dart';
+import 'package:mml_app/view_models/records/overview.dart';
 import 'package:provider/provider.dart';
 
 /// Main screen.
@@ -26,12 +26,11 @@ class MainScreen extends StatelessWidget {
             return WillPopScope(
               onWillPop: () => vm.popNestedRoute(context),
               child: Scaffold(
-                appBar: AppBar(
-                  title: Consumer<MainViewModel>(
+                appBar: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: Consumer<MainViewModel>(
                     builder: (context, vm, _) {
-                      return Text(
-                        vm.navItems.elementAt(vm.selectedIndex).label!,
-                      );
+                      return vm.getAppBar();
                     },
                   ),
                 ),

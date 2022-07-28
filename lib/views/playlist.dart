@@ -8,6 +8,9 @@ class PlaylistScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Playlist'));
+    //TODO implement
+    return Center(
+      child: Text('Playlist'),
+    );
   }
 }

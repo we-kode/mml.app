@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';

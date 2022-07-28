@@ -32,5 +32,15 @@
   "updateConnectionSettingsScan": "Чтобы изменить настройки, отсканируйте QR-код в администрации.",
   "updateConnectionSettingsError": "Во время cмены произошла ошибка. Пожалуйста, повторите попытку ещё раз!",
   "updateConnectionSettingsSuccess": "Настройки были успешно изменены!",
-  "updateConnectionSettingsProgress": "Смена настроек..."
+  "updateConnectionSettingsProgress": "Смена настроек...",
+  "unknown": "Неизвестный",
+  "save": "Сохранить",
+  "cancel": "Отменить",
+  "noData": "Никаких записей найдено не было!",
+  "reload": "Перезагрузить",
+  "date": "Дата",
+  "artist": "Исполнитель",
+  "genre": "Жанр",
+  "album": "Альбом",
+  "filter": "Фильтр"
 }
