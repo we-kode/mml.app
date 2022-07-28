@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
@@ -161,15 +160,5 @@ class RouterService {
       ).animate(a),
       child: c,
     );
-  }
-
-  Widget getAppBar(selectedIndex) {
-    final nestedRoutes = getNestedRoutes();
-    final routeArgs = nestedRoutes[nestedRoutes.keys.elementAt(selectedIndex)]
-        ?.settings
-        .arguments;
-    return routeArgs != null && routeArgs is FilterAppBar
-        ? routeArgs
-        : const SizedBox.shrink();
   }
 }

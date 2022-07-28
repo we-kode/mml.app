@@ -43,44 +43,9 @@ class FilterAppBarState extends State<FilterAppBar> {
           ? Text(_getLocalizedString(context))
           : Container(
               margin: const EdgeInsets.only(bottom: 4.0),
-              child: TextFormField(
-                initialValue: _filter,
-                decoration: InputDecoration(
-                  labelText: AppLocalizations.of(context)!.filter,
-                  icon: const Icon(Icons.filter_list_alt),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () {
-                      setState(
-                        () {
-                          _filterOpened = false;
-                        },
-                      );
-                    },
-                  ),
-                ),
-                onChanged: (String filterText) {
-                  setState(() {
-                    _filter = filterText;
-                  });
-
-                  widget.filter.textFilter = filterText;
-                },
-              ),
+              child: _createInput(),
             ),
-      actions: !(widget.enableFilter ?? false)
-          ? []
-          : [
-              if (!_filterOpened)
-                IconButton(
-                  onPressed: () => setState(
-                    () {
-                      _filterOpened = !_filterOpened;
-                    },
-                  ),
-                  icon: const Icon(Icons.search),
-                ),
-            ],
+      actions: _createActions(),
     );
   }
 
@@ -97,5 +62,52 @@ class FilterAppBarState extends State<FilterAppBar> {
       default:
         return "";
     }
+  }
+
+  /// Creates the input filter field.
+  Widget _createInput() {
+    return TextFormField(
+      initialValue: _filter,
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context)!.filter,
+        icon: const Icon(Icons.filter_list_alt),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            setState(
+              () {
+                _filterOpened = false;
+              },
+            );
+          },
+        ),
+      ),
+      onChanged: (String filterText) {
+        setState(
+          () {
+            _filter = filterText;
+          },
+        );
+
+        widget.filter.textFilter = filterText;
+      },
+    );
+  }
+
+  /// Creates the actions of the app bar.
+  List<Widget> _createActions() {
+    return !(widget.enableFilter ?? false)
+        ? []
+        : [
+            if (!_filterOpened)
+              IconButton(
+                onPressed: () => setState(
+                  () {
+                    _filterOpened = !_filterOpened;
+                  },
+                ),
+                icon: const Icon(Icons.search),
+              ),
+          ];
   }
 }

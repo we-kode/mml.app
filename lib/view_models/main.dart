@@ -74,6 +74,7 @@ class MainViewModel extends ChangeNotifier {
     await _routerService.pushNestedRoute(route);
   }
 
+  /// Returns the app bar of the actual loded nexted route.
   Widget getAppBar() {
     final nestedRoutes = _routerService.getNestedRoutes();
     final routeArgs = nestedRoutes[nestedRoutes.keys.elementAt(_selectedIndex)]
