@@ -11,6 +11,7 @@ class RecordsViewModel extends ChangeNotifier {
   /// Route of the records screen.
   static String route = '/records';
 
+  /// The [FilterApp] of the records overview screen.
   static FilterAppBar appBar = FilterAppBar(
     title: 'records',
     enableFilter: true,

@@ -32,6 +32,7 @@ class AsyncListView extends StatefulWidget {
   /// The title shown above the list.
   final String title;
 
+  /// [Filter] to filter the items by display description.
   final Filter? filter;
 
   /// Initializes the list view.

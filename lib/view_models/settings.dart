@@ -12,6 +12,7 @@ class SettingsViewModel extends ChangeNotifier {
   /// Route of the settings screen.
   static String route = '/settings';
 
+  /// [FilterAppBar] of the settings view.
   static FilterAppBar appBar = FilterAppBar(
     title: 'settings',
   );
