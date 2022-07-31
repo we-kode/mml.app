@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -39,6 +40,8 @@ class IntroViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     return Future<bool>.microtask(() async {
       locales = AppLocalizations.of(context)!;
+
+      await findSystemLocale();
 
       var skipTutorial = await _storage.get(
         SecureStorageService.skipIntroStorageKey,
