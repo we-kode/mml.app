@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/records/overview.dart';
@@ -44,6 +45,122 @@ class MainScreen extends StatelessWidget {
                       )[settings.name];
                     },
                   ),
+                ),
+                bottomSheet: BottomSheet(
+                  enableDrag: false,
+                  builder: (context) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).bottomAppBarColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        ),
+                        boxShadow: kElevationToShadow[8],
+                      ),
+                      height: 150,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: 25,
+                          right: 25,
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.close,
+                                    size: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "Titel",
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
+                                ),
+                                Text(
+                                  "Author",
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                                Text(
+                                  "0:00/0:00",
+                                  textAlign: TextAlign.right,
+                                  style:
+                                      Theme.of(context).textTheme.labelMedium,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Slider(
+                                    value: 0,
+                                    onChanged: (value) {},
+                                  ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(Icons.skip_previous_rounded),
+                                ),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.play_arrow_rounded,
+                                    size: 32,
+                                  ),
+                                ),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(Icons.skip_next_rounded),
+                                ),
+                                Spacer(),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.repeat,
+                                    size: 16,
+                                  ),
+                                ),
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.shuffle_rounded,
+                                    size: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisSize: MainAxisSize.max,
+                        ),
+                      ),
+                    );
+                  },
+                  onClosing: () {},
                 ),
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
