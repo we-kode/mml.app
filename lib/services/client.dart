@@ -203,7 +203,7 @@ class ClientService {
     } catch (e) {
       // Rethrow the error on login page, to abort the register process
       // correctly.
-      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey))) {
+      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey)) || (e is DioError && e.response?.statusCode != HttpStatus.unauthorized)) {
         rethrow;
       }
 

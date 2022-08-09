@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
+import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,10 @@ class RecordsScreen extends StatelessWidget {
               subfilter: RecordTagFilter(),
               loadData: vm.load,
               filter: RecordsViewModel.appBar.filter,
+              openItemFunction: (ModelBase item) => vm.playRecord(
+                context,
+                item,
+              ),
             );
           },
         );

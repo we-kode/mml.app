@@ -39,6 +39,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: !_filterOpened || !(widget.enableFilter ?? false)
           ? Text(_getLocalizedString(context))
           : Container(

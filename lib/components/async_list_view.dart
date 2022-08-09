@@ -12,7 +12,8 @@ import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// Function to load data with the passed [filter], starting from [offset] and
-/// loading an amount of [take] data. Also a [subfilter] can be added to filter the list more specific.
+/// loading an amount of [take] data. Also a [subfilter] can be added to filter
+/// the list more specific.
 typedef LoadDataFunction = Future<ModelList> Function({
   String? filter,
   int? offset,
@@ -20,13 +21,16 @@ typedef LoadDataFunction = Future<ModelList> Function({
   Subfilter? subfilter,
 });
 
+typedef OpenItemFunction = Function(ModelBase item);
+
 /// List that supports async loading of data, when necessary in chunks.
 class AsyncListView extends StatefulWidget {
   /// Function to load data with the passed [filter], starting from [offset] and
   /// loading an amount of [take] data.
   final LoadDataFunction loadData;
 
-  /// A subfilter widget which can be used to add subfilters like chips for more filter posibilities.
+  /// A subfilter widget which can be used to add subfilters like chips for more
+  /// filter posibilities.
   final ListSubfilterView? subfilter;
 
   /// The title shown above the list.
@@ -35,6 +39,8 @@ class AsyncListView extends StatefulWidget {
   /// [Filter] to filter the items by display description.
   final Filter? filter;
 
+  final OpenItemFunction? openItemFunction;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -42,6 +48,7 @@ class AsyncListView extends StatefulWidget {
     required this.loadData,
     this.subfilter,
     this.filter,
+    this.openItemFunction,
   }) : super(key: key);
 
   @override
@@ -268,7 +275,8 @@ class _AsyncListViewState extends State<AsyncListView> {
     );
   }
 
-  /// Creates a tile widget for one list item at the given [index] or a group widget.
+  /// Creates a tile widget for one list item at the given [index] or a group
+  /// widget.
   Widget _createListTile(int index) {
     var item = _items![index];
 
@@ -327,6 +335,9 @@ class _AsyncListViewState extends State<AsyncListView> {
               : const SizedBox.shrink(),
         ],
       ),
+      onTap: widget.openItemFunction != null ? () {
+        widget.openItemFunction!(item);
+      } : null,
     );
   }
 
