@@ -19,6 +19,7 @@
   "registrationSuccess": "Gerät wurde erfolgreich registriert!",
   "registrationProgress": "Gerät wird registriert...",
   "registrationEnterName": "Geben Sie Ihren Namen ein, um sich zu registrieren.",
+  "registrationRSA": "Sicherheitsschlüssel wird generiert. Das kann einen Augenblick dauern.",
   "reRegister": "Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!",
   "records": "Aufnahmen",
   "settings": "Einstellungen",
@@ -39,5 +40,11 @@
   "updateConnectionSettingsScan": "Scannen Sie den QR-Code in der Administration, um die Einstellungen zu ändern.",
   "updateConnectionSettingsError": "Ein Fehler ist bei der Änderung aufgetreten. Versuchen Sie es erneut!",
   "updateConnectionSettingsSuccess": "Einstellungen wurden erfolgreich geändert!",
-  "updateConnectionSettingsProgress": "Einstellungen werden geändert..."
+  "updateConnectionSettingsProgress": "Einstellungen werden geändert...",
+  "introTitleRegister": "Registrieren",
+  "introTextRegister": "Scannen Sie den QR-Code in der Administration, um Ihr Gerät zu registrieren.",
+  "introTitleRecords": "Hören",
+  "introTextRecords": "Greifen Sie auf verfügbare Audio-Aufnahmen zu, filtern Sie diese nach Belieben und hören Sie diese an.",
+  "introTitlePlaylist": "Mitnehmen",
+  "introTextPlaylist": "Fügen Sie Ihre lieblings Aufnahmen zu offline Playlisten hinzu und hören Sie diese auch wenn gerade kein Internet da ist."
 }

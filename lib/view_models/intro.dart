@@ -10,25 +10,6 @@ class IntroViewModel extends ChangeNotifier {
   /// Route for the intro screen.
   static String route = '/intro';
 
-  /// Pages for the intro screen.
-  final List<PageViewModel> pages = [
-    PageViewModel(
-      title: "Title of first page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    ),
-    PageViewModel(
-      title: "Title of second page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    ),
-    PageViewModel(
-      title: "Title of third page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    )
-  ];
-
   /// Locales of the application.
   late AppLocalizations locales;
 
@@ -67,5 +48,23 @@ class IntroViewModel extends ChangeNotifier {
   Future _nextScreen() async {
     await RouterService.getInstance()
         .pushReplacementNamed(RegisterViewModel.route);
+  }
+
+  /// Returns intro pages.
+  List<PageViewModel> get pages {
+    return [
+      PageViewModel(
+        title: locales.introTitleRegister,
+        body: locales.introTextRegister,
+      ),
+      PageViewModel(
+        title: locales.introTitleRecords,
+        body: locales.introTextRecords,
+      ),
+      PageViewModel(
+        title: locales.introTitlePlaylist,
+        body: locales.introTextPlaylist,
+      )
+    ];
   }
 }

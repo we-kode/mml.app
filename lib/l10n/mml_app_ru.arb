@@ -12,6 +12,7 @@
   "registrationSuccess": "Устройство успешно зарегистрировано!",
   "registrationProgress": "Регистрация устройства...",
   "registrationEnterName": "Введите своё имя, чтобы зарегистрироваться.",
+  "registrationRSA": "Генерируется ключ безопасности. Это может занять некоторое время.",
   "reRegister": "Ваша регистрация истекла. Зарегистрируйте своё устройство заново!",
   "records": "Записи",
   "settings": "Настройки",
@@ -32,5 +33,11 @@
   "updateConnectionSettingsScan": "Чтобы изменить настройки, отсканируйте QR-код в администрации.",
   "updateConnectionSettingsError": "Во время cмены произошла ошибка. Пожалуйста, повторите попытку ещё раз!",
   "updateConnectionSettingsSuccess": "Настройки были успешно изменены!",
-  "updateConnectionSettingsProgress": "Смена настроек..."
+  "updateConnectionSettingsProgress": "Смена настроек...",
+  "introTitleRegister": "Регистрироваться",
+  "introTextRegister": "Отсканируйте QR-код в администрации, чтобы зарегистрировать свое устройство.",
+  "introTitleRecords": "Слушать",
+  "introTextRecords": "Получите доступ к доступным аудиозаписям, отфильтруйте их по своему усмотрению и прослушайте их.",
+  "introTitlePlaylist": "Брать с собой",
+  "introTextPlaylist": "Добавляйте любимые записи в офлайн-плейлисты и слушайте их, даже если в данный момент нет интернета."
 }
