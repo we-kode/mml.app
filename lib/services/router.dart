@@ -6,7 +6,7 @@ import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/playlist.dart';
-import 'package:mml_app/view_models/records.dart';
+import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:mml_app/view_models/settings.dart';
@@ -16,7 +16,7 @@ import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/main.dart';
 import 'package:mml_app/views/playlist.dart';
-import 'package:mml_app/views/records.dart';
+import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
 import 'package:mml_app/views/server_connection.dart';
 import 'package:mml_app/views/settings.dart';
@@ -55,18 +55,27 @@ class RouterService {
   Map<String, PageRouteBuilder> getNestedRoutes({Object? arguments}) {
     return {
       RecordsViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: RecordsViewModel.route),
+        settings: RouteSettings(
+          name: RecordsViewModel.route,
+          arguments: RecordsViewModel.appBar,
+        ),
         pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: PlaylistViewModel.route),
+        settings: RouteSettings(
+          name: PlaylistViewModel.route,
+          arguments: PlaylistViewModel.appBar,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const PlaylistScreen(),
         transitionsBuilder: _buildTransition,
       ),
       SettingsViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: SettingsViewModel.route),
+        settings: RouteSettings(
+          name: SettingsViewModel.route,
+          arguments: SettingsViewModel.appBar,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const SettingsScreen(),
         transitionsBuilder: _buildTransition,

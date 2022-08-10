@@ -46,5 +46,15 @@
   "introTitleRecords": "Hören",
   "introTextRecords": "Greifen Sie auf verfügbare Audio-Aufnahmen zu, filtern Sie diese nach Belieben und hören Sie diese an.",
   "introTitlePlaylist": "Mitnehmen",
-  "introTextPlaylist": "Fügen Sie Ihre lieblings Aufnahmen zu offline Playlisten hinzu und hören Sie diese auch wenn gerade kein Internet da ist."
+  "introTextPlaylist": "Fügen Sie Ihre lieblings Aufnahmen zu offline Playlisten hinzu und hören Sie diese auch wenn gerade kein Internet da ist.",
+  "unknown": "Unbekannt",
+  "save": "Speichern",
+  "cancel": "Abbrechen",
+  "noData": "Keine Datensätze wurden gefunden!",
+  "reload": "Neu laden",
+  "date": "Datum",
+  "artist": "Interpret",
+  "genre": "Genre",
+  "album": "Album",
+  "filter": "Filter"
 }
