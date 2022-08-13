@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:mml_app/components/intro_playlist_animation.dart';
+import 'package:mml_app/components/intro_records_animation.dart';
+import 'package:mml_app/components/intro_register_animation.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/register.dart';
@@ -28,10 +31,10 @@ class IntroViewModel extends ChangeNotifier {
         SecureStorageService.skipIntroStorageKey,
       );
 
-      if (skipTutorial == true.toString()) {
-        _nextScreen();
-        return false;
-      }
+      // if (skipTutorial == true.toString()) {
+      //   _nextScreen();
+      //   return false;
+      // }
 
       return true;
     });
@@ -59,14 +62,29 @@ class IntroViewModel extends ChangeNotifier {
       PageViewModel(
         title: locales.introTitleRegister,
         body: locales.introTextRegister,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroRegisterAnimation(),
+        ),
       ),
       PageViewModel(
         title: locales.introTitleRecords,
         body: locales.introTextRecords,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroRecordsAnimation(),
+        ),
       ),
       PageViewModel(
         title: locales.introTitlePlaylist,
         body: locales.introTextPlaylist,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroPlaylistAnimation(),
+        ),
       )
     ];
   }

@@ -15,26 +15,42 @@ class IntroPlaylistAnimation extends StatelessWidget {
       onInit: (Artboard artboard) {
         artboard.forEachComponent(
           (child) {
-            if (child.name == 'shield') {
+            if (child.name == 'phone') {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
-                element.paint.color = Theme.of(context).colorScheme.primary;
+                element.paint.colorFilter = ColorFilter.mode(
+                  Theme.of(context).colorScheme.onBackground,
+                  BlendMode.srcIn,
+                );
               }
             }
 
-            if (child.name.startsWith('key_')) {
+            if (child.name == 'appbar') {
+              Shape shield = child as Shape;
+              for (var element in shield.fills) {
+                element.paint.colorFilter = ColorFilter.mode(
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
+                );
+              }
+            }
+
+            if (child.name == 'card') {
+              Shape shield = child as Shape;
+              for (var element in shield.fills) {
+                element.paint.colorFilter = ColorFilter.mode(
+                  Theme.of(context).cardColor,
+                  BlendMode.srcIn,
+                );
+              }
+            }
+
+            if (child.name == 'title' || child.name == 'subtitle') {
               Shape key = child as Shape;
               for (var element in key.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.secondary,
-                  BlendMode.xor,
-                );
-              }
-
-              for (var element in key.strokes) {
-                element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.secondary,
-                  BlendMode.xor,
+                  Theme.of(context).colorScheme.onSurface,
+                  BlendMode.srcIn,
                 );
               }
             }
@@ -42,7 +58,7 @@ class IntroPlaylistAnimation extends StatelessWidget {
         );
       },
       artboard: 'Intro_Playlists',
-      animations: const ['animation_playlist'],
+      animations: const ['animation_playlists'],
     );
   }
 }

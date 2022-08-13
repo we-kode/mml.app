@@ -15,26 +15,32 @@ class IntroRegisterAnimation extends StatelessWidget {
       onInit: (Artboard artboard) {
         artboard.forEachComponent(
           (child) {
-            if (child.name == 'shield') {
+            if (child.name == 'phone') {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
-                element.paint.color = Theme.of(context).colorScheme.primary;
+                element.paint.colorFilter = ColorFilter.mode(
+                  Theme.of(context).colorScheme.onBackground,
+                  BlendMode.srcIn,
+                );
               }
             }
 
-            if (child.name.startsWith('key_')) {
+            if (child.name == 'cam') {
+              Shape shield = child as Shape;
+              for (var element in shield.fills) {
+                element.paint.colorFilter = ColorFilter.mode(
+                  Theme.of(context).colorScheme.background,
+                  BlendMode.srcIn,
+                );
+              }
+            }
+
+            if (child.name == 'qr') {
               Shape key = child as Shape;
               for (var element in key.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.secondary,
-                  BlendMode.xor,
-                );
-              }
-
-              for (var element in key.strokes) {
-                element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.secondary,
-                  BlendMode.xor,
+                  Theme.of(context).colorScheme.primary,
+                  BlendMode.srcIn,
                 );
               }
             }
@@ -42,7 +48,7 @@ class IntroRegisterAnimation extends StatelessWidget {
         );
       },
       artboard: 'Intro_Scan',
-      animations: const ['animation_register'],
+      animations: const ['animation_scan'],
     );
   }
 }
