@@ -31,10 +31,10 @@ class IntroViewModel extends ChangeNotifier {
         SecureStorageService.skipIntroStorageKey,
       );
 
-      // if (skipTutorial == true.toString()) {
-      //   _nextScreen();
-      //   return false;
-      // }
+      if (skipTutorial == true.toString()) {
+        _nextScreen();
+        return false;
+      }
 
       return true;
     });

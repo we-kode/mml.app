@@ -13,6 +13,8 @@ class IntroPlaylistAnimation extends StatelessWidget {
     return RiveAnimation.asset(
       'assets/animations/mml.riv',
       onInit: (Artboard artboard) {
+        var brightness = MediaQuery.of(context).platformBrightness;
+        bool isDarkMode = brightness == Brightness.dark;
         artboard.forEachComponent(
           (child) {
             if (child.name == 'phone') {
@@ -29,7 +31,7 @@ class IntroPlaylistAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.primary,
+                  isDarkMode ? Theme.of(context).bottomAppBarColor : Theme.of(context).colorScheme.primary,
                   BlendMode.srcIn,
                 );
               }
