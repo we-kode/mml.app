@@ -21,7 +21,11 @@ typedef LoadDataFunction = Future<ModelList> Function({
   Subfilter? subfilter,
 });
 
-typedef OpenItemFunction = Function(ModelBase item);
+typedef OpenItemFunction = Function(
+  ModelBase item,
+  String? filter,
+  Subfilter? subFilter,
+);
 
 /// List that supports async loading of data, when necessary in chunks.
 class AsyncListView extends StatefulWidget {
@@ -335,9 +339,15 @@ class _AsyncListViewState extends State<AsyncListView> {
               : const SizedBox.shrink(),
         ],
       ),
-      onTap: widget.openItemFunction != null ? () {
-        widget.openItemFunction!(item);
-      } : null,
+      onTap: widget.openItemFunction != null
+          ? () {
+              widget.openItemFunction!(
+                item,
+                widget.filter?.textFilter,
+                widget.subfilter?.filter,
+              );
+            }
+          : null,
     );
   }
 

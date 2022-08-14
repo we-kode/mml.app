@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
+import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
-import 'package:mml_app/services/player.dart';
+import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 
 /// View model of the records screen.
@@ -46,7 +47,17 @@ class RecordsViewModel extends ChangeNotifier {
     return _service.getRecords(filter, offset, take, subfilter);
   }
 
-  void playRecord(BuildContext context, ModelBase record) {
-    PlayerService.getInstance().play(context, record as Record);
+  void playRecord(
+    BuildContext context,
+    ModelBase record,
+    String? filter,
+    ID3TagFilter? subfilter,
+  ) {
+    PlayerService.getInstance().play(
+      context,
+      record as Record,
+      filter,
+      subfilter,
+    );
   }
 }

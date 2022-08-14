@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/extensions/duration_double.dart';
-import 'package:mml_app/services/player.dart';
+import 'package:mml_app/services/player/player.dart';
+import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:provider/provider.dart';
 
 class PlayerSheet extends StatefulWidget {
