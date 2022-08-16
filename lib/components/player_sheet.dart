@@ -33,7 +33,7 @@ class PlayerSheetState extends State<PlayerSheet>
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PlayerService.getInstance(),
+      create: (_) => PlayerService.getInstance().playerState,
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
@@ -63,10 +63,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     padding: EdgeInsets.zero,
                     onPressed: () {
-                      Provider.of<PlayerService>(
-                        context,
-                        listen: false,
-                      ).closePlayer();
+                      PlayerService.getInstance().closePlayer();
                     },
                     icon: const Icon(Icons.close),
                   ),
@@ -83,19 +80,19 @@ class PlayerSheetState extends State<PlayerSheet>
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return Text(
-                          service.currentReocrd?.title ?? "Unbekannt",
+                          state.currentReocrd?.title ?? "Unbekannt",
                           style: Theme.of(context).textTheme.subtitle1,
                         );
                       },
                     ),
                     const Spacer(),
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return Text(
-                          "${service.currentSeekPosition.asFormattedDuration()}/${service.currentReocrd?.duration.asFormattedDuration()}",
+                          "${state.currentSeekPosition.asFormattedDuration()}/${state.currentReocrd?.duration.asFormattedDuration()}",
                           textAlign: TextAlign.right,
                           style: Theme.of(context).textTheme.bodySmall,
                         );
@@ -114,10 +111,10 @@ class PlayerSheetState extends State<PlayerSheet>
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return Text(
-                          service.currentReocrd?.artist ?? "Unbekannt",
+                          state.currentReocrd?.artist ?? "Unbekannt",
                           style: Theme.of(context).textTheme.bodySmall,
                         );
                       },
@@ -134,14 +131,14 @@ class PlayerSheetState extends State<PlayerSheet>
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Expanded(
-                      child: Consumer<PlayerService>(
-                        builder: (context, service, child) {
+                      child: Consumer<PlayerState>(
+                        builder: (context, state, child) {
                           return Slider(
-                            value: service.currentSeekPosition,
+                            value: state.currentSeekPosition,
                             min: 0,
-                            max: service.currentReocrd?.duration ?? 0,
+                            max: state.currentReocrd?.duration ?? 0,
                             onChanged: (value) {
-                              service.seek(value.asDuration());
+                              PlayerService.getInstance().seek(value.asDuration());
                             },
                           );
                         },
@@ -158,8 +155,8 @@ class PlayerSheetState extends State<PlayerSheet>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return IconButton(
                           constraints: const BoxConstraints.tightFor(
                             width: 24,
@@ -167,10 +164,10 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                           padding: EdgeInsets.zero,
                           onPressed: () {
-                            service.shuffle = !service.shuffle;
+                            PlayerService.getInstance().shuffle = !state.shuffle;
                           },
                           icon: Icon(
-                            service.shuffle
+                            state.shuffle
                                 ? Icons.shuffle_on_rounded
                                 : Icons.shuffle_rounded,
                           ),
@@ -180,17 +177,17 @@ class PlayerSheetState extends State<PlayerSheet>
                     const Spacer(
                       flex: 6,
                     ),
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return IconButton(
                           constraints: const BoxConstraints.tightFor(
                             width: 32,
                             height: 32,
                           ),
                           padding: EdgeInsets.zero,
-                          onPressed: service.shuffle
+                          onPressed: state.shuffle
                               ? null
-                              : () => service.playPrevious(),
+                              : () => PlayerService.getInstance().playPrevious(),
                           iconSize: 32,
                           icon: const Icon(Icons.skip_previous_rounded),
                         );
@@ -199,8 +196,14 @@ class PlayerSheetState extends State<PlayerSheet>
                     const Spacer(
                       flex: 1,
                     ),
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        if (!state.isPlaying && _controller.value == _controller.lowerBound) {
+                          _controller.forward();
+                        } else if (state.isPlaying && _controller.value == _controller.upperBound) {
+                          _controller.reverse();
+                        }
+
                         return IconButton(
                           constraints: const BoxConstraints.tightFor(
                             width: 36,
@@ -209,12 +212,10 @@ class PlayerSheetState extends State<PlayerSheet>
                           iconSize: 36,
                           padding: EdgeInsets.zero,
                           onPressed: () {
-                            if (service.isPlaying) {
-                              _controller.forward();
-                              service.pause();
+                            if (state.isPlaying) {
+                              PlayerService.getInstance().pause();
                             } else {
-                              _controller.reverse();
-                              service.resume();
+                              PlayerService.getInstance().resume();
                             }
                           },
                           icon: AnimatedIcon(
@@ -235,36 +236,33 @@ class PlayerSheetState extends State<PlayerSheet>
                       ),
                       iconSize: 32,
                       padding: EdgeInsets.zero,
-                      onPressed: () => Provider.of<PlayerService>(
-                        context,
-                        listen: false,
-                      ).playNext(),
+                      onPressed: () => PlayerService.getInstance().playNext(),
                       icon: const Icon(Icons.skip_next_rounded),
                     ),
                     const Spacer(
                       flex: 6,
                     ),
-                    Consumer<PlayerService>(
-                      builder: (context, service, child) {
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         return IconButton(
                           constraints: const BoxConstraints.tightFor(
                             width: 24,
                             height: 24,
                           ),
                           padding: EdgeInsets.zero,
-                          onPressed: service.shuffle
+                          onPressed: state.shuffle
                               ? null
                               : () {
                                   var nextModeIndex =
-                                      (service.repeat.index + 1) %
+                                      (state.repeat.index + 1) %
                                           PlayerRepeatMode.values.length;
-                                  service.repeat =
+                                  PlayerService.getInstance().repeat =
                                       PlayerRepeatMode.values[nextModeIndex];
                                 },
                           icon: Icon(
-                            service.repeat == PlayerRepeatMode.all
+                            state.repeat == PlayerRepeatMode.all
                                 ? Icons.repeat_on_rounded
-                                : (service.repeat == PlayerRepeatMode.one
+                                : (state.repeat == PlayerRepeatMode.one
                                     ? Icons.repeat_one_on_rounded
                                     : Icons.repeat_rounded),
                           ),

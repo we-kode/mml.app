@@ -32,14 +32,21 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Stream<Duration> get positionStream => _player.positionStream;
 
+  Stream<PlaybackEvent> get playbackEventStream => _player.playbackEventStream;
+
   bool get isPlaying => _player.playing;
 
   set filter(String? filter) => _filter = filter;
 
   set tagFilter(ID3TagFilter? filter) => _tagFilter = filter;
 
+  Future<void> playRecord(Record record) async {
+    currentRecord = record;
+    await _playCurrentRecord();
+  }
+
   @override
-  Future<void> play() => _playCurrentRecord();
+  Future<void> play() => _player.play();
 
   @override
   Future<void> pause() => _player.pause();
@@ -49,6 +56,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToNext() async {
+    if (repeat == PlayerRepeatMode.one) {
+      _player.seek(Duration.zero);
+      return;
+    }
+
     Record? nextRecord;
 
     var params = <String, dynamic>{};
@@ -79,11 +91,18 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (nextRecord != null) {
       currentRecord = nextRecord;
       await _playCurrentRecord();
+    } else {
+      _player.stop();
     }
   }
 
   @override
   Future<void> skipToPrevious() async {
+    if (repeat == PlayerRepeatMode.one) {
+      _player.seek(Duration.zero);
+      return;
+    }
+
     Record? previuousRecord;
 
     var params = <String, dynamic>{};
@@ -114,6 +133,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (previuousRecord != null) {
       currentRecord = previuousRecord;
       await _playCurrentRecord();
+    } else {
+      _player.stop();
     }
   }
 
@@ -156,11 +177,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _player.playerStateStream.listen(
       (event) {
         if (event.processingState == ProcessingState.completed) {
-          if (repeat == PlayerRepeatMode.one) {
-            _player.seek(Duration.zero);
-          } else {
-            skipToNext();
-          }
+          skipToNext();
         }
       },
     );
@@ -178,6 +195,19 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     } catch (e) {
       _handleError(e);
     }
+
+    mediaItem.add(
+      MediaItem(
+        id: '${baseUrl}media/stream/${currentRecord!.recordId!}',
+        album: currentRecord?.album,
+        title: currentRecord?.title ?? 'Unbekannt',
+        artist: currentRecord?.artist,
+        genre: currentRecord?.genre,
+        duration: Duration(
+          milliseconds: (currentRecord?.duration ?? 0).toInt(),
+        ),
+      ),
+    );
 
     _player.play();
   }

@@ -5,22 +5,14 @@ import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 
-class PlayerService extends ChangeNotifier {
+class PlayerService {
   static PlayerService? _instance;
 
   late MMLAudioHandler _audioHandler;
 
   PersistentBottomSheetController? _controller;
 
-  bool get shuffle => _audioHandler.shuffle;
-
-  PlayerRepeatMode get repeat => _audioHandler.repeat;
-
-  bool get isPlaying => _audioHandler.isPlaying;
-
-  Record? get currentReocrd => _audioHandler.currentRecord;
-
-  double get currentSeekPosition => _audioHandler.currentSeekPosition;
+  PlayerState? playerState;
 
   PlayerService._();
 
@@ -46,9 +38,10 @@ class PlayerService extends ChangeNotifier {
     String? filter,
     ID3TagFilter? tagFilter,
   ) async {
-    _audioHandler.currentRecord = record;
     _audioHandler.filter = filter;
     _audioHandler.tagFilter = tagFilter;
+
+    playerState ??= PlayerState(_audioHandler);
 
     _controller ??= showBottomSheet(
       enableDrag: false,
@@ -58,32 +51,32 @@ class PlayerService extends ChangeNotifier {
       },
     );
 
-    await _audioHandler.play();
+    await _audioHandler.playRecord(record);
   }
 
   void pause() {
     _audioHandler.pause();
-    notifyListeners();
+    playerState?.update();
   }
 
   void resume() {
     _audioHandler.play();
-    notifyListeners();
+    playerState?.update();
   }
 
   Future playNext() async {
     await _audioHandler.skipToNext();
-    notifyListeners();
+    playerState?.update();
   }
 
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
-    notifyListeners();
+    playerState?.update();
   }
 
   Future seek(Duration newDuration) async {
     await _audioHandler.seek(newDuration);
-    notifyListeners();
+    playerState?.update();
   }
 
   set shuffle(bool value) {
@@ -93,15 +86,16 @@ class PlayerService extends ChangeNotifier {
       _audioHandler.repeat = PlayerRepeatMode.none;
     }
 
-    notifyListeners();
+    playerState?.update();
   }
 
   set repeat(PlayerRepeatMode value) {
     _audioHandler.repeat = value;
-    notifyListeners();
+    playerState?.update();
   }
 
   Future _reset() async {
+    playerState = null;
     _controller = null;
     _audioHandler.currentSeekPosition = 0;
     _audioHandler.currentRecord = null;
@@ -117,8 +111,34 @@ class PlayerService extends ChangeNotifier {
 
         _audioHandler.currentSeekPosition = duration ?? 0;
 
-        notifyListeners();
+        playerState?.update();
       },
     );
+
+    _audioHandler.playbackEventStream.listen(
+      (event) {
+        playerState?.update();
+      },
+    );
+  }
+}
+
+class PlayerState extends ChangeNotifier {
+  final MMLAudioHandler _audioHandler;
+
+  bool get shuffle => _audioHandler.shuffle;
+
+  PlayerRepeatMode get repeat => _audioHandler.repeat;
+
+  bool get isPlaying => _audioHandler.isPlaying;
+
+  Record? get currentReocrd => _audioHandler.currentRecord;
+
+  double get currentSeekPosition => _audioHandler.currentSeekPosition;
+
+  PlayerState(this._audioHandler);
+
+  void update() {
+    notifyListeners();
   }
 }
