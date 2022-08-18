@@ -5,6 +5,7 @@ import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 
+
 class PlayerService {
   static PlayerService? _instance;
 
@@ -27,7 +28,11 @@ class PlayerService {
     _initializeListeners();
   }
 
-  Future closePlayer() async {
+  Future closePlayer({bool stopAudioHandler = true}) async {
+    if (stopAudioHandler) {
+      await _audioHandler.stop();
+    }
+
     _controller?.close();
     await _reset();
   }
@@ -44,11 +49,11 @@ class PlayerService {
     playerState ??= PlayerState(_audioHandler);
 
     _controller ??= showBottomSheet(
-      enableDrag: false,
       context: context,
       builder: (BuildContext context) {
         return PlayerSheet();
       },
+      enableDrag: false,
     );
 
     await _audioHandler.playRecord(record);

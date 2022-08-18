@@ -5,6 +5,7 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
+import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 
 class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
@@ -50,6 +51,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> pause() => _player.pause();
+
+  @override
+  Future<void> stop() async {
+    await _player.stop();
+    await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
+  }
+
+  @override
+  Future<void> onNotificationDeleted() async {
+    await _player.stop();
+  }
 
   @override
   Future<void> seek(Duration position) => _player.seek(position);
