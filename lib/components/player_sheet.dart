@@ -5,7 +5,7 @@ import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:provider/provider.dart';
 
 class PlayerSheet extends StatefulWidget {
-  PlayerSheet({Key? key}) : super(key: key);
+  const PlayerSheet({Key? key}) : super(key: key);
 
   @override
   PlayerSheetState createState() => PlayerSheetState();

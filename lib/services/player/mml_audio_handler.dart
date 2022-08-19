@@ -23,7 +23,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   double currentSeekPosition = 0.0;
 
-  bool shuffle = false;
+  bool _shuffle = false;
 
   PlayerRepeatMode repeat = PlayerRepeatMode.none;
 
@@ -37,9 +37,16 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   bool get isPlaying => _player.playing;
 
+  bool get shuffle => _shuffle;
+
   set filter(String? filter) => _filter = filter;
 
   set tagFilter(ID3TagFilter? filter) => _tagFilter = filter;
+
+  set shuffle(bool shuffle) {
+    _shuffle = shuffle;
+    _addPlaybackState();
+  }
 
   Future<void> playRecord(Record record) async {
     currentRecord = record;
@@ -68,118 +75,18 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToNext() async {
-    if (repeat == PlayerRepeatMode.one) {
-      _player.seek(Duration.zero);
-      return;
-    }
-
-    Record? nextRecord;
-
-    var params = <String, dynamic>{};
-    params['repeat'] = repeat == PlayerRepeatMode.all;
-    params['shuffle'] = shuffle;
-
-    if (_filter != null) {
-      params['filter'] = _filter;
-    }
-
-    try {
-      var response = await _apiService.request(
-        'media/stream/next/${currentRecord!.recordId!}',
-        queryParameters: params,
-        data: _tagFilter != null ? _tagFilter!.toJson() : {},
-        options: Options(
-          method: 'POST',
-        ),
-      );
-
-      if (response.data != null) {
-        nextRecord = Record.fromJson(response.data);
-      }
-    } catch (e) {
-      // Catch all errors and stop playing afterwards.
-    }
-
-    if (nextRecord != null) {
-      currentRecord = nextRecord;
-      await _playCurrentRecord();
-    } else {
-      _player.stop();
-    }
+    await _skipTo("next");
   }
 
   @override
   Future<void> skipToPrevious() async {
-    if (repeat == PlayerRepeatMode.one) {
-      _player.seek(Duration.zero);
-      return;
-    }
-
-    Record? previuousRecord;
-
-    var params = <String, dynamic>{};
-    params['repeat'] = repeat == PlayerRepeatMode.all;
-    params['shuffle'] = shuffle;
-
-    if (_filter != null) {
-      params['filter'] = _filter;
-    }
-
-    try {
-      var response = await _apiService.request(
-        'media/stream/previous/${currentRecord!.recordId!}',
-        queryParameters: params,
-        data: _tagFilter != null ? _tagFilter!.toJson() : {},
-        options: Options(
-          method: 'POST',
-        ),
-      );
-
-      if (response.data != null) {
-        previuousRecord = Record.fromJson(response.data);
-      }
-    } catch (e) {
-      // Catch all errors and stop playing afterwards.
-    }
-
-    if (previuousRecord != null) {
-      currentRecord = previuousRecord;
-      await _playCurrentRecord();
-    } else {
-      _player.stop();
-    }
+    await _skipTo("previous");
   }
 
   void _initializeListeners() {
     _player.playbackEventStream.listen(
       (PlaybackEvent event) {
-        final playing = _player.playing;
-        playbackState.add(
-          playbackState.value.copyWith(
-            controls: [
-              MediaControl.skipToPrevious,
-              if (playing) MediaControl.pause else MediaControl.play,
-              MediaControl.stop,
-              MediaControl.skipToNext,
-            ],
-            systemActions: const {
-              MediaAction.seek,
-            },
-            androidCompactActionIndices: const [0, 1, 2],
-            processingState: const {
-              ProcessingState.idle: AudioProcessingState.idle,
-              ProcessingState.loading: AudioProcessingState.loading,
-              ProcessingState.buffering: AudioProcessingState.buffering,
-              ProcessingState.ready: AudioProcessingState.ready,
-              ProcessingState.completed: AudioProcessingState.completed,
-            }[_player.processingState]!,
-            playing: playing,
-            updatePosition: _player.position,
-            bufferedPosition: _player.bufferedPosition,
-            speed: _player.speed,
-            queueIndex: event.currentIndex,
-          ),
-        );
+        _addPlaybackState();
       },
       onError: (Object e, StackTrace st) {
         _handleError(e);
@@ -193,6 +100,61 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         }
       },
     );
+  }
+
+  void _addPlaybackState() {
+    final playing = _player.playing;
+
+    List<MediaControl> controls = [];
+
+    if (!_shuffle) {
+      controls.add(MediaControl.skipToPrevious);
+    }
+
+    controls.addAll([
+      if (playing) MediaControl.pause else MediaControl.play,
+      MediaControl.stop,
+      MediaControl.skipToNext,
+    ]);
+
+    playbackState.add(
+      playbackState.value.copyWith(
+        controls: controls,
+        systemActions: const {
+          MediaAction.seek,
+        },
+        androidCompactActionIndices: const [0, 1, 2],
+        processingState: const {
+          ProcessingState.idle: AudioProcessingState.idle,
+          ProcessingState.loading: AudioProcessingState.loading,
+          ProcessingState.buffering: AudioProcessingState.buffering,
+          ProcessingState.ready: AudioProcessingState.ready,
+          ProcessingState.completed: AudioProcessingState.completed,
+        }[_player.processingState]!,
+        playing: playing,
+        updatePosition: _player.position,
+        bufferedPosition: _player.bufferedPosition,
+        speed: _player.speed,
+        queueIndex: _player.currentIndex,
+      ),
+    );
+  }
+
+  Future<void> _handleError(Object error) async {
+    try {
+      await _clientService.refreshToken();
+
+      var baseUrl = await _apiService.getBaseUrl();
+      var headers = await _apiService.getHeaders();
+
+      await _player.setUrl(
+        '${baseUrl}media/stream/${currentRecord!.recordId!}',
+        headers: headers,
+        initialPosition: Duration(milliseconds: currentSeekPosition.ceil()),
+      );
+    } catch (e) {
+      _player.stop();
+    }
   }
 
   Future<void> _playCurrentRecord() async {
@@ -224,19 +186,43 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _player.play();
   }
 
-  Future _handleError(Object error) async {
+  Future<void> _skipTo(String direction) async {
+    if (repeat == PlayerRepeatMode.one) {
+      _player.seek(Duration.zero);
+      return;
+    }
+
+    Record? record;
+
+    var params = <String, dynamic>{};
+    params['repeat'] = repeat == PlayerRepeatMode.all;
+    params['shuffle'] = _shuffle;
+
+    if (_filter != null) {
+      params['filter'] = _filter;
+    }
+
     try {
-      await _clientService.refreshToken();
-
-      var baseUrl = await _apiService.getBaseUrl();
-      var headers = await _apiService.getHeaders();
-
-      await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId!}',
-        headers: headers,
-        initialPosition: Duration(milliseconds: currentSeekPosition.ceil()),
+      var response = await _apiService.request(
+        'media/stream/$direction/${currentRecord!.recordId!}',
+        queryParameters: params,
+        data: _tagFilter != null ? _tagFilter!.toJson() : {},
+        options: Options(
+          method: 'POST',
+        ),
       );
+
+      if (response.data != null) {
+        record = Record.fromJson(response.data);
+      }
     } catch (e) {
+      // Catch all errors and stop playing afterwards.
+    }
+
+    if (record != null) {
+      currentRecord = record;
+      await _playCurrentRecord();
+    } else {
       _player.stop();
     }
   }
