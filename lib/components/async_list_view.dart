@@ -21,6 +21,8 @@ typedef LoadDataFunction = Future<ModelList> Function({
   Subfilter? subfilter,
 });
 
+/// Function to open one [item] in the list view, that corresponds to the given
+/// [filter] and [subFilter].
 typedef OpenItemFunction = Function(
   ModelBase item,
   String? filter,
@@ -43,6 +45,8 @@ class AsyncListView extends StatefulWidget {
   /// [Filter] to filter the items by display description.
   final Filter? filter;
 
+  /// Function to open one [item] in the list view, that corresponds to the given
+  /// [filter] and [subFilter].
   final OpenItemFunction? openItemFunction;
 
   /// Initializes the list view.

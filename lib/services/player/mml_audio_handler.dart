@@ -8,46 +8,70 @@ import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 
+/// Audio handler that interacts with the player background service and the
+/// notification bar.
+///
+/// Should not be used directly. Instead the playback should be modified with
+/// the [PlayerService].
 class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
+  /// [AudioPlayer] used to start  the native playback.
   final _player = AudioPlayer();
 
+  /// [ApiService] used to send requests to the server.
   final ApiService _apiService = ApiService.getInstance();
 
+  /// [ClientService] used to refresh the token if necessary.
   final ClientService _clientService = ClientService.getInstance();
 
+  /// [ID3TagFilter] set by the user.
   ID3TagFilter? _tagFilter;
 
+  /// Filter set by the user.
   String? _filter;
 
+  /// Currently played record.
   Record? currentRecord;
 
+  /// The current seek position of the playback.
   double currentSeekPosition = 0.0;
 
+  /// Bool, that indicates, whether shuffle is enabled or not.
   bool _shuffle = false;
 
+  /// Repeat mode that is currently set.
   PlayerRepeatMode repeat = PlayerRepeatMode.none;
 
+  /// Creates an instance of the [MMLAudioHandler] and initializes the
+  /// listeners.
   MMLAudioHandler() {
     _initializeListeners();
   }
 
+  /// Stream with the current playback position.
   Stream<Duration> get positionStream => _player.positionStream;
 
+  /// Stream with the current playback events.
   Stream<PlaybackEvent> get playbackEventStream => _player.playbackEventStream;
 
+  /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player.playing;
 
+  /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _shuffle;
 
+  /// Sets the given [filter].
   set filter(String? filter) => _filter = filter;
 
+  /// Sets the given [filter].
   set tagFilter(ID3TagFilter? filter) => _tagFilter = filter;
 
+  /// Sets the given [shuffle] mode.
   set shuffle(bool shuffle) {
     _shuffle = shuffle;
     _addPlaybackState();
   }
 
+  /// Plays the given [record].
   Future<void> playRecord(Record record) async {
     currentRecord = record;
     await _playCurrentRecord();
@@ -83,6 +107,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await _skipTo("previous");
   }
 
+  /// Initializes the listeners to handle errors, show notifications and skip to
+  /// the next record on playback end.
   void _initializeListeners() {
     _player.playbackEventStream.listen(
       (PlaybackEvent event) {
@@ -102,6 +128,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
+  /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
     final playing = _player.playing;
 
@@ -140,6 +167,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
+  /// Handles errors during playback and refreshes the token if necessary.
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
@@ -157,6 +185,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
   }
 
+  /// Plays the [currentRecord].
   Future<void> _playCurrentRecord() async {
     var baseUrl = await _apiService.getBaseUrl();
     var headers = await _apiService.getHeaders();
@@ -186,6 +215,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _player.play();
   }
 
+  /// Skips the playback in the given [direction] to the next or
+  /// previous record.
   Future<void> _skipTo(String direction) async {
     if (repeat == PlayerRepeatMode.one) {
       _player.seek(Duration.zero);

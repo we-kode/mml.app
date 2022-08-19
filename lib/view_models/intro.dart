@@ -84,7 +84,7 @@ class IntroViewModel extends ChangeNotifier {
       builder: () => MMLAudioHandler(),
       config: AudioServiceConfig(
         androidNotificationChannelId: 'de.wekode.mml.audio',
-        androidNotificationChannelName: 'MML Audio Channel',
+        androidNotificationChannelName: locales.appTitle,
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
         notificationColor: notificationColor,

@@ -4,30 +4,59 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/player/player_state.dart';
 
-
+/// Service that handles all actions for playing records.
 class PlayerService {
+  /// Instance of the [PlayerService].
   static PlayerService? _instance;
 
+  /// Audio handler that interacts with the player background service and the
+  /// notification bar.
   late MMLAudioHandler _audioHandler;
 
+  /// Controller of the current showed bottom sheet, used to close the bottom
+  /// sheet when necessary.
   PersistentBottomSheetController? _controller;
 
+  /// State of the player.
   PlayerState? playerState;
 
+  /// Private constructor of the [PlayerService].
   PlayerService._();
 
+  /// Returns the singleton instance of the [PlayerService] or creates a new
+  /// one.
   static PlayerService getInstance() {
     _instance ??= PlayerService._();
 
     return _instance!;
   }
 
+  /// Sets the given [audioHandler] and initializes the necessary listeners.
   set audioHandler(MMLAudioHandler audioHandler) {
     _audioHandler = audioHandler;
     _initializeListeners();
   }
 
+  /// Sets the repeat mode to the given [value].
+  set repeat(PlayerRepeatMode value) {
+    _audioHandler.repeat = value;
+    playerState?.update();
+  }
+
+  /// Sets the shuffle mode to the given [value].
+  set shuffle(bool value) {
+    _audioHandler.shuffle = value;
+
+    if (_audioHandler.shuffle) {
+      _audioHandler.repeat = PlayerRepeatMode.none;
+    }
+
+    playerState?.update();
+  }
+
+  /// Stops the music and closes the player bottom sheet.
   Future closePlayer({bool stopAudioHandler = true}) async {
     if (stopAudioHandler) {
       await _audioHandler.stop();
@@ -37,6 +66,8 @@ class PlayerService {
     await _reset();
   }
 
+  /// Plays the given [record] and opens the bottom [PlayerSheet] if not
+  /// already done.
   Future play(
     BuildContext context,
     Record record,
@@ -51,7 +82,7 @@ class PlayerService {
     _controller ??= showBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return PlayerSheet();
+        return const PlayerSheet();
       },
       enableDrag: false,
     );
@@ -59,53 +90,37 @@ class PlayerService {
     await _audioHandler.playRecord(record);
   }
 
+  /// Pauses the playback.
   void pause() {
     _audioHandler.pause();
     playerState?.update();
   }
 
+  /// Resumes the playback.
   void resume() {
     _audioHandler.play();
     playerState?.update();
   }
 
+  /// Plays the next record in the filtered record list.
   Future playNext() async {
     await _audioHandler.skipToNext();
     playerState?.update();
   }
 
+  /// Plays the previous record in the filtered record list.
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
     playerState?.update();
   }
 
+  /// Seeks the current playback to the passed [newDuration].
   Future seek(Duration newDuration) async {
     await _audioHandler.seek(newDuration);
     playerState?.update();
   }
 
-  set shuffle(bool value) {
-    _audioHandler.shuffle = value;
-
-    if (_audioHandler.shuffle) {
-      _audioHandler.repeat = PlayerRepeatMode.none;
-    }
-
-    playerState?.update();
-  }
-
-  set repeat(PlayerRepeatMode value) {
-    _audioHandler.repeat = value;
-    playerState?.update();
-  }
-
-  Future _reset() async {
-    playerState = null;
-    _controller = null;
-    _audioHandler.currentSeekPosition = 0;
-    _audioHandler.currentRecord = null;
-  }
-
+  /// Initializes the listeners used to update the [PlayerState] and the gui.
   _initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
@@ -126,24 +141,12 @@ class PlayerService {
       },
     );
   }
-}
 
-class PlayerState extends ChangeNotifier {
-  final MMLAudioHandler _audioHandler;
-
-  bool get shuffle => _audioHandler.shuffle;
-
-  PlayerRepeatMode get repeat => _audioHandler.repeat;
-
-  bool get isPlaying => _audioHandler.isPlaying;
-
-  Record? get currentReocrd => _audioHandler.currentRecord;
-
-  double get currentSeekPosition => _audioHandler.currentSeekPosition;
-
-  PlayerState(this._audioHandler);
-
-  void update() {
-    notifyListeners();
+  /// Resets the current player.
+  Future _reset() async {
+    playerState = null;
+    _controller = null;
+    _audioHandler.currentSeekPosition = 0;
+    _audioHandler.currentRecord = null;
   }
 }

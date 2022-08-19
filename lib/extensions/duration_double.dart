@@ -1,4 +1,7 @@
+/// Double extensions, that allows to convert double milliseconds to [Duration]
+/// objects or formatted duration strings.
 extension DurationDouble on double {
+  /// Formats a double duration to a formatted string.
   String asFormattedDuration() {
     int seconds = ((this / 1000) % 60).toInt();
     int minutes = ((this / (1000 * 60)) % 60).toInt();
@@ -6,6 +9,7 @@ extension DurationDouble on double {
     return "${_valueString(hours)}:${_valueString(minutes)}:${_valueString(seconds)}";
   }
 
+  /// Converts a double duration to a [Duration] object.
   Duration asDuration() {
     int seconds = ((this / 1000) % 60).toInt();
     int minutes = ((this / (1000 * 60)) % 60).toInt();

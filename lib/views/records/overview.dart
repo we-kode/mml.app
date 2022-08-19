@@ -36,13 +36,14 @@ class RecordsScreen extends StatelessWidget {
                 ModelBase item,
                 String? filter,
                 Subfilter? subfilter,
-              ) =>
-                  vm.playRecord(
-                context,
-                item,
-                filter,
-                subfilter as ID3TagFilter,
-              ),
+              ) {
+                vm.playRecord(
+                  context,
+                  item,
+                  filter,
+                  subfilter as ID3TagFilter,
+                );
+              },
             );
           },
         );

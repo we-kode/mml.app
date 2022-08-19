@@ -70,6 +70,7 @@ class ApiService {
     }
   }
 
+  /// Returns the headers that should be used for requests to the server.
   Future<Map<String, String>> getHeaders() async {
     Map<String, String> headers = {};
 
@@ -94,6 +95,7 @@ class ApiService {
     return headers;
   }
 
+  /// Returns the base url of the server to send requests to.
   Future<String> getBaseUrl() async {
     var serverName = await _store.get(
       SecureStorageService.serverNameStorageKey,

@@ -2,22 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/player/player_state.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
+/// Player sheet shown in the bottom sheet bar.
 class PlayerSheet extends StatefulWidget {
+  /// Initializes the player sheet.
   const PlayerSheet({Key? key}) : super(key: key);
 
   @override
   PlayerSheetState createState() => PlayerSheetState();
 }
 
+/// State of the player sheet.
 class PlayerSheetState extends State<PlayerSheet>
     with TickerProviderStateMixin {
+  /// Controller used to animate the play/pause button.
   late AnimationController _controller;
+
+  // Text to display for unknown values.
+  late String unknownText;
 
   @override
   void initState() {
     super.initState();
+
+    unknownText = AppLocalizations.of(context)!.unknown;
+
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -83,7 +95,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Text(
-                          state.currentReocrd?.title ?? "Unbekannt",
+                          state.currentReocrd?.title ?? unknownText,
                           style: Theme.of(context).textTheme.subtitle1,
                         );
                       },
@@ -114,7 +126,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Text(
-                          state.currentReocrd?.artist ?? "Unbekannt",
+                          state.currentReocrd?.artist ?? unknownText,
                           style: Theme.of(context).textTheme.bodySmall,
                         );
                       },
@@ -138,7 +150,8 @@ class PlayerSheetState extends State<PlayerSheet>
                             min: 0,
                             max: state.currentReocrd?.duration ?? 0,
                             onChanged: (value) {
-                              PlayerService.getInstance().seek(value.asDuration());
+                              PlayerService.getInstance()
+                                  .seek(value.asDuration());
                             },
                           );
                         },
@@ -164,7 +177,8 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                           padding: EdgeInsets.zero,
                           onPressed: () {
-                            PlayerService.getInstance().shuffle = !state.shuffle;
+                            PlayerService.getInstance().shuffle =
+                                !state.shuffle;
                           },
                           icon: Icon(
                             state.shuffle
@@ -187,7 +201,8 @@ class PlayerSheetState extends State<PlayerSheet>
                           padding: EdgeInsets.zero,
                           onPressed: state.shuffle
                               ? null
-                              : () => PlayerService.getInstance().playPrevious(),
+                              : () =>
+                                  PlayerService.getInstance().playPrevious(),
                           iconSize: 32,
                           icon: const Icon(Icons.skip_previous_rounded),
                         );
@@ -198,9 +213,11 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        if (!state.isPlaying && _controller.value == _controller.lowerBound) {
+                        if (!state.isPlaying &&
+                            _controller.value == _controller.lowerBound) {
                           _controller.forward();
-                        } else if (state.isPlaying && _controller.value == _controller.upperBound) {
+                        } else if (state.isPlaying &&
+                            _controller.value == _controller.upperBound) {
                           _controller.reverse();
                         }
 
@@ -253,9 +270,8 @@ class PlayerSheetState extends State<PlayerSheet>
                           onPressed: state.shuffle
                               ? null
                               : () {
-                                  var nextModeIndex =
-                                      (state.repeat.index + 1) %
-                                          PlayerRepeatMode.values.length;
+                                  var nextModeIndex = (state.repeat.index + 1) %
+                                      PlayerRepeatMode.values.length;
                                   PlayerService.getInstance().repeat =
                                       PlayerRepeatMode.values[nextModeIndex];
                                 },
