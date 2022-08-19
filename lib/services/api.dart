@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/messenger.dart';

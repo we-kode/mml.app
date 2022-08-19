@@ -21,14 +21,9 @@ class PlayerSheetState extends State<PlayerSheet>
   /// Controller used to animate the play/pause button.
   late AnimationController _controller;
 
-  // Text to display for unknown values.
-  late String unknownText;
-
   @override
   void initState() {
     super.initState();
-
-    unknownText = AppLocalizations.of(context)!.unknown;
 
     _controller = AnimationController(
       duration: const Duration(seconds: 1),
@@ -95,7 +90,8 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Text(
-                          state.currentReocrd?.title ?? unknownText,
+                          state.currentReocrd?.title ??
+                              AppLocalizations.of(context)!.unknown,
                           style: Theme.of(context).textTheme.subtitle1,
                         );
                       },
@@ -126,7 +122,8 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Text(
-                          state.currentReocrd?.artist ?? unknownText,
+                          state.currentReocrd?.artist ??
+                              AppLocalizations.of(context)!.unknown,
                           style: Theme.of(context).textTheme.bodySmall,
                         );
                       },
