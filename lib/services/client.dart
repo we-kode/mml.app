@@ -202,8 +202,11 @@ class ClientService {
       }
     } catch (e) {
       // Rethrow the error on login page, to abort the register process
-      // correctly.
-      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey))) {
+      // correctly or on not authorized errors to prevent logout on server
+      // errors.
+      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey)) ||
+          (e is DioError &&
+              e.response?.statusCode != HttpStatus.unauthorized)) {
         rethrow;
       }
 

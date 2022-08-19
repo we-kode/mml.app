@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -64,11 +62,44 @@ class ApiService {
     dio.options.receiveTimeout = 5000;
 
     _addRequestOptionsInterceptor(dio);
-    _initClientBadCertificateCallback(dio);
 
     if (addErrorHandling) {
       _addDefaultErrorHandlerInterceptor(dio);
     }
+  }
+
+  /// Returns the headers that should be used for requests to the server.
+  Future<Map<String, String>> getHeaders() async {
+    Map<String, String> headers = {};
+
+    headers['Accept-Language'] = Intl.shortLocale(
+      Platform.localeName,
+    );
+
+    var accessToken = await _store.get(
+      SecureStorageService.accessTokenStorageKey,
+    );
+
+    if (accessToken != null) {
+      headers['Authorization'] = "Bearer $accessToken";
+    }
+
+    var appKey = await _store.get(SecureStorageService.appKeyStorageKey);
+
+    if (appKey != null) {
+      headers['App-Key'] = appKey;
+    }
+
+    return headers;
+  }
+
+  /// Returns the base url of the server to send requests to.
+  Future<String> getBaseUrl() async {
+    var serverName = await _store.get(
+      SecureStorageService.serverNameStorageKey,
+    );
+
+    return 'https://$serverName/api/v1.0/';
   }
 
   /// Adds an interceptor to the [dio] instance, that adds all necessary headers
@@ -76,28 +107,8 @@ class ApiService {
   void _addRequestOptionsInterceptor(Dio dio) {
     dio.interceptors.add(
       InterceptorsWrapper(onRequest: (options, handler) async {
-        var serverName = await _store.get(
-          SecureStorageService.serverNameStorageKey,
-        );
-
-        options.baseUrl = 'https://$serverName/api/v1.0/';
-        options.headers['Accept-Language'] = Intl.shortLocale(
-          Platform.localeName,
-        );
-
-        var accessToken = await _store.get(
-          SecureStorageService.accessTokenStorageKey,
-        );
-
-        if (accessToken != null) {
-          options.headers['Authorization'] = "Bearer $accessToken";
-        }
-
-        var appKey = await _store.get(SecureStorageService.appKeyStorageKey);
-
-        if (appKey != null) {
-          options.headers['App-Key'] = appKey;
-        }
+        options.baseUrl = await getBaseUrl();
+        options.headers.addAll(await getHeaders());
 
         return handler.next(options);
       }),
@@ -181,27 +192,5 @@ class ApiService {
         return handler.reject(e);
       }),
     );
-  }
-
-  /// Adds an error hadnler to the passed [dio] instance, to handle errors
-  /// occured due to bad certificates.
-  void _initClientBadCertificateCallback(Dio dio) {
-    DefaultHttpClientAdapter httpClient =
-        dio.httpClientAdapter as DefaultHttpClientAdapter;
-    httpClient.onHttpClientCreate = (HttpClient client) {
-      client.badCertificateCallback = (
-        X509Certificate cert,
-        String host,
-        int port,
-      ) {
-        // Ignore bad certificates in debug mode!
-        if (kReleaseMode) {
-          _messenger.showMessage(_messenger.badCertificate);
-        }
-        return !kReleaseMode;
-      };
-
-      return client;
-    };
   }
 }

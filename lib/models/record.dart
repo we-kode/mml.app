@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
@@ -65,19 +66,11 @@ class Record extends ModelBase {
 
   @override
   String? getMetadata(BuildContext context) {
-    int seconds = ((duration / 1000) % 60).toInt();
-    int minutes = ((duration / (1000 * 60)) % 60).toInt();
-    int hours = ((duration / (1000 * 60 * 60)) % 24).toInt();
-    return "${_valueString(hours)}:${_valueString(minutes)}:${_valueString(seconds)}";
+    return duration.asFormattedDuration();
   }
 
   @override
   String? getGroup(BuildContext context) {
     return DateFormat.yMd().format(date!);
-  }
-
-  /// Adds a 0 before [value] if [value] is smaller than ten.
-  String _valueString(int value) {
-    return value < 10 ? "0$value" : "$value";
   }
 }
