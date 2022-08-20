@@ -91,6 +91,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Flexible(
+                          fit: FlexFit.tight,
                           flex: 8,
                           child: TextScroll(
                             state.currentReocrd?.title ??
