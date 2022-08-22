@@ -133,9 +133,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final playing = _player.playing;
 
     List<MediaControl> controls = [];
+    List<int> compatIndices = [0, 2];
 
     if (!_shuffle) {
       controls.add(MediaControl.skipToPrevious);
+      compatIndices = [0, 1, 3];
     }
 
     controls.addAll([
@@ -150,7 +152,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         systemActions: const {
           MediaAction.seek,
         },
-        androidCompactActionIndices: const [0, 1, 2],
+        androidCompactActionIndices: compatIndices,
         processingState: const {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
