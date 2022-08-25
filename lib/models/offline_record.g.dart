@@ -1,24 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'record.dart';
+part of 'offline_record.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Record _$RecordFromJson(Map<String, dynamic> json) => Record(
+OfflineRecord _$OfflineRecordFromJson(Map<String, dynamic> json) =>
+    OfflineRecord(
       recordId: json['recordId'] as String?,
       title: json['title'] as String?,
-      date:
-          json['date'] == null ? null : DateTime.parse(json['date'] as String),
       duration: (json['duration'] as num?)?.toDouble() ?? 0,
       album: json['album'] as String?,
       artist: json['artist'] as String?,
       genre: json['genre'] as String?,
-      isDeletable: json['isDeletable'] as bool? ?? false,
+      file: json['file'] as String?,
+      playlist: json['playlist'] == null
+          ? null
+          : Playlist.fromJson(json['playlist'] as Map<String, dynamic>),
+      isDeletable: json['isDeletable'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$RecordToJson(Record instance) {
+Map<String, dynamic> _$OfflineRecordToJson(OfflineRecord instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -30,10 +33,11 @@ Map<String, dynamic> _$RecordToJson(Record instance) {
   writeNotNull('isDeletable', instance.isDeletable);
   writeNotNull('recordId', instance.recordId);
   writeNotNull('title', instance.title);
-  writeNotNull('date', instance.date?.toIso8601String());
+  writeNotNull('file', instance.file);
   val['duration'] = instance.duration;
   writeNotNull('artist', instance.artist);
   writeNotNull('genre', instance.genre);
   writeNotNull('album', instance.album);
+  writeNotNull('playlist', instance.playlist?.toJson());
   return val;
 }

@@ -42,5 +42,11 @@
   "artist": "Artist",
   "genre": "Genre",
   "album": "Album",
-  "filter": "Filter"
+  "filter": "Filter",
+  "add": "Add",
+  "notFound": "The requested record wasn't found!",
+  "editPlaylist":"Edit playlist",
+  "addPlaylist":"Add playlist",
+  "invalidDisplayName": "Please enter a name!",
+  "playlistUniqueConstraintFailed": "Playlist already exists."
 }

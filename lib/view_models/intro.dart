@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/router.dart';

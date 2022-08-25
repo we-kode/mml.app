@@ -31,6 +31,11 @@ class MessengerService {
     return AppLocalizations.of(snackbarKey.currentContext!)!.badCertificate;
   }
 
+  /// Translated string for a message if a record is not found.
+  String get notFound {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.notFound;
+  }
+
   /// Returns the translated string for unexpected errors with the passed
   /// [message].
   String unexpectedError(String message) {

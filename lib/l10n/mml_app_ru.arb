@@ -42,5 +42,11 @@
   "artist": "Исполнитель",
   "genre": "Жанр",
   "album": "Альбом",
-  "filter": "Фильтр"
+  "filter": "Фильтр",
+  "add": "Добавить",
+  "notFound": "Запрошенная запись не найдена!",
+  "editPlaylist":"Изменить Плейлист",
+  "addPlaylist":"Добавить Плейлист",
+  "invalidDisplayName": "Пожалуйста введите имя!",
+  "playlistUniqueConstraintFailed": "Плейлист уже существует."
 }

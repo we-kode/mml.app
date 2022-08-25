@@ -29,11 +29,32 @@ typedef OpenItemFunction = Function(
   Subfilter? subFilter,
 );
 
+/// Function to edit the group of one [item].
+typedef EditGroupFunction = Function(
+  ModelBase item,
+);
+
+/// Function that creates an new item.
+///
+/// This function should return a [Future], that either resolves with true
+/// after successful creation or false on cancel.
+/// The list will reload the data starting from beginning, if true will be
+/// returned.
+typedef AddFunction = Future<bool> Function();
+
 /// List that supports async loading of data, when necessary in chunks.
 class AsyncListView extends StatefulWidget {
   /// Function to load data with the passed [filter], starting from [offset] and
   /// loading an amount of [take] data.
   final LoadDataFunction loadData;
+
+  /// Function that creates an new item.
+  ///
+  /// This function should return a [Future], that either resolves with true
+  /// after successful creation or false on cancel.
+  /// The list will reload the data starting from beginning, if true will be
+  /// returned.
+  final AddFunction? addItem;
 
   /// A subfilter widget which can be used to add subfilters like chips for more
   /// filter posibilities.
@@ -49,6 +70,9 @@ class AsyncListView extends StatefulWidget {
   /// [filter] and [subFilter].
   final OpenItemFunction? openItemFunction;
 
+  /// Function to edit the group of one [item].
+  final EditGroupFunction? editGroupFunction;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -57,6 +81,8 @@ class AsyncListView extends StatefulWidget {
     this.subfilter,
     this.filter,
     this.openItemFunction,
+    this.editGroupFunction,
+    this.addItem,
   }) : super(key: key);
 
   @override
@@ -110,20 +136,23 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // List header with filter and action buttons.
-        _createListHeaderWidget(),
+    return Scaffold(
+      body: Column(
+        children: [
+          // List header with filter and action buttons.
+          _createListHeaderWidget(),
 
-        // List, loading indicator or no data widget.
-        Expanded(
-          child: _isLoadingData
-              ? _createLoadingWidget()
-              : (_items!.totalCount > 0
-                  ? _createListViewWidget()
-                  : _createNoDataWidget()),
-        ),
-      ],
+          // List, loading indicator or no data widget.
+          Expanded(
+            child: _isLoadingData
+                ? _createLoadingWidget()
+                : (_items!.totalCount > 0
+                    ? _createListViewWidget()
+                    : _createNoDataWidget()),
+          ),
+        ],
+      ),
+      floatingActionButton: _createActionButton(),
     );
   }
 
@@ -180,6 +209,31 @@ class _AsyncListViewState extends State<AsyncListView> {
         _items = ModelList([], _initialOffset, 0);
       });
     });
+  }
+
+  /// Show a floating action button or an expanding fab.
+  ///
+  /// When no sub action buttons given, only the add action button is shown, when [widget.showAddButton] is true.
+  /// When a list of sub action buttons is provided, an expandable action button will be shown.
+  Widget _createActionButton() {
+    return Visibility(
+      visible: widget.addItem != null,
+      child: FloatingActionButton(
+        onPressed: () {
+          if (widget.addItem == null) {
+            return;
+          }
+
+          widget.addItem!().then((value) {
+            if (value) {
+              _reloadData();
+            }
+          });
+        },
+        tooltip: AppLocalizations.of(context)!.add,
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 
   /// Creates the list header widget with filter and remove action buttons.
@@ -305,12 +359,25 @@ class _AsyncListViewState extends State<AsyncListView> {
       _actualGroup = itemGroup;
       return Column(
         children: [
-          Chip(
-            label: Text(
-              item.getGroup(context)!,
-            ),
-          ),
-          _listTile(item, index),
+          widget.editGroupFunction != null
+              ? ActionChip(
+                  label: Text(
+                    item.getGroup(context)!,
+                  ),
+                  onPressed: () {
+                    widget.editGroupFunction!(item).then((value) {
+                      if (value) {
+                        _reloadData();
+                      }
+                    });
+                  },
+                )
+              : Chip(
+                  label: Text(
+                    item.getGroup(context)!,
+                  ),
+                ),
+          if (item.getIdentifier() != null) _listTile(item, index),
         ],
       );
     }

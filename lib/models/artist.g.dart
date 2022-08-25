@@ -9,6 +9,7 @@ part of 'artist.dart';
 Artist _$ArtistFromJson(Map<String, dynamic> json) => Artist(
       artistId: json['artistId'] as String?,
       name: json['name'] as String?,
+      isDeletable: json['isDeletable'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ArtistToJson(Artist instance) {
@@ -20,6 +21,7 @@ Map<String, dynamic> _$ArtistToJson(Artist instance) {
     }
   }
 
+  writeNotNull('isDeletable', instance.isDeletable);
   writeNotNull('artistId', instance.artistId);
   writeNotNull('name', instance.name);
   return val;

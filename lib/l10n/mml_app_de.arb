@@ -49,5 +49,11 @@
   "artist": "Interpret",
   "genre": "Genre",
   "album": "Album",
-  "filter": "Filter"
+  "filter": "Filter",
+  "add": "Hinzufügen",
+  "notFound": "Der aufgerufene Datensatz wurde nicht gefunden!",
+  "editPlaylist":"Wiedergabeliste bearbeiten",
+  "addPlaylist":"Wiedergabeliste hinzufügen",
+  "invalidDisplayName": "Bitte geben Sie einen Namen an!",
+  "playlistUniqueConstraintFailed": "Wiedergabeliste ist bereits vorhanden."
 }

@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
+import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/offline_record.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -81,6 +84,85 @@ class DBService {
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
       onDowngrade: onDatabaseDowngradeDelete,
+    );
+  }
+
+  /// Loads the saved records and returns a list of [OfflineRecords].
+  Future<ModelList> load(String? filter, int? offset, int? take) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+        SELECT p.id as playlistId, p.name as playlistName, r.* FROM playlists p
+        LEFT JOIN records_playlists rp ON rp.playlistId = p.id
+        LEFT JOIN records r ON rp.recordId = r.recordId
+        ORDER BY p.name, r.title
+        LIMIT ? OFFSET ?
+    ''', [
+      take ?? 0,
+      offset ?? 0,
+    ]);
+
+    return ModelList(
+      List.generate(
+        maps.length,
+        (index) => OfflineRecord(
+          recordId: maps[index]['recordId'],
+          album: maps[index]['album'],
+          artist: maps[index]['artist'],
+          genre: maps[index]['genre'],
+          title: maps[index]['title'],
+          file: maps[index]['file'],
+          duration: double.parse(maps[index]['duration'] ?? '0'),
+          playlist: Playlist(
+            id: maps[index]['playlistId'],
+            name: maps[index]['playlistName'],
+          ),
+        ),
+      ),
+      offset ?? 0,
+      maps.length,
+    );
+  }
+
+  /// Updates existing playlist.
+  Future updatePlaylist(Playlist playlist) async {
+    final db = await _database;
+    await db.update(
+      'playlists',
+      playlist.toMap(),
+      where: '"id" = ?',
+      whereArgs: [playlist.id],
+      conflictAlgorithm: ConflictAlgorithm.rollback,
+    );
+  }
+
+  /// creates a new playlist entry.
+  Future createPlaylist(Playlist playlist) async {
+    final db = await _database;
+    await db.insert(
+      'playlists',
+      playlist.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.rollback,
+    );
+  }
+
+  /// Loads one playlist.
+  Future<Playlist> getPlaylist(int playlistId) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'playlists',
+      where: '"id" = ?',
+      whereArgs: [playlistId],
+      limit: 1,
+    );
+
+    if (maps.isEmpty) {
+      return Playlist();
+    }
+
+    var result = maps.first;
+    return Playlist(
+      id: result['id'],
+      name: result['name'],
     );
   }
 }

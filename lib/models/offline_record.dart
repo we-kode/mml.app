@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
-part 'record.g.dart';
+part 'offline_record.g.dart';
 
-/// Record model that holds all information of a record.
+/// Record model that holds all information of an offline record.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
-class Record extends ModelBase {
-  /// Id of the client.
+class OfflineRecord extends ModelBase {
+  /// Id of the record.
   final String? recordId;
 
   /// Title of the record.
   String? title;
 
-  /// The date the record was created..
-  DateTime? date;
+  // The name of the file which belongs to this record.
+  String? file;
 
   /// The duration of the record in milliseconds.
   double duration;
@@ -31,23 +31,28 @@ class Record extends ModelBase {
   /// Album of the record or null if no one provided.
   String? album;
 
+  /// The playlist the record belongs to.
+  Playlist? playlist;
+
   /// Creates a new record instance with the given values.
-  Record({
+  OfflineRecord({
     required this.recordId,
     this.title,
-    this.date,
     this.duration = 0,
     this.album,
     this.artist,
     this.genre,
-    bool? isDeletable = false,
+    this.file,
+    this.playlist,
+    bool isDeletable = true,
   }) : super(isDeletable: isDeletable);
 
   /// Converts a json object/map to the record model.
-  factory Record.fromJson(Map<String, dynamic> json) => _$RecordFromJson(json);
+  factory OfflineRecord.fromJson(Map<String, dynamic> json) =>
+      _$OfflineRecordFromJson(json);
 
   /// Converts the current record model to a json object/map.
-  Map<String, dynamic> toJson() => _$RecordToJson(this);
+  Map<String, dynamic> toJson() => _$OfflineRecordToJson(this);
 
   @override
   String getDisplayDescription() {
@@ -72,6 +77,6 @@ class Record extends ModelBase {
 
   @override
   String? getGroup(BuildContext context) {
-    return DateFormat.yMd().format(date!);
+    return "${playlist!.name}";
   }
 }

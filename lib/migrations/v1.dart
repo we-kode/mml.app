@@ -12,7 +12,7 @@ class V1Migration implements DBMigration {
     // cretae playlists
     batch.execute('''CREATE TABLE Playlists (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT
+      name TEXT UNIQUE
     )''');
 
     // create records
@@ -27,7 +27,7 @@ class V1Migration implements DBMigration {
       album TEXT NULL
     )''');
 
-    // cretae n-to-m table
+    // create n-to-m table
     batch.execute('''CREATE TABLE Records_Playlists (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       recordId TEXT,
@@ -35,6 +35,8 @@ class V1Migration implements DBMigration {
       FOREIGN KEY (recordId) REFERENCES Records (recordId) ON DELETE NO ACTION ON UPDATE NO ACTION,
       FOREIGN KEY (playlistId) REFERENCES Playlists (id) ON DELETE NO ACTION ON UPDATE NO ACTION
     )''');
+
+    batch.execute('''INSERT INTO Playlists (name) VALUES('Favorites')''');
   }
 
   @override

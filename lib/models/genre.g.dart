@@ -9,6 +9,7 @@ part of 'genre.dart';
 Genre _$GenreFromJson(Map<String, dynamic> json) => Genre(
       genreId: json['genreId'] as String?,
       name: json['name'] as String?,
+      isDeletable: json['isDeletable'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$GenreToJson(Genre instance) {
@@ -20,6 +21,7 @@ Map<String, dynamic> _$GenreToJson(Genre instance) {
     }
   }
 
+  writeNotNull('isDeletable', instance.isDeletable);
   writeNotNull('genreId', instance.genreId);
   writeNotNull('name', instance.name);
   return val;

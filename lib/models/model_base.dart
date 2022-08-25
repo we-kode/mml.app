@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
 abstract class ModelBase {
+  /// Indicates whether the model object is deletable.
+  late bool? isDeletable;
 
   /// Creates a new instance of the model.
   ///
   /// Shouldn't be used directly but be invoked by constructor of implementing
   /// model classes.
-  ModelBase();
+  ModelBase({this.isDeletable = true});
 
   /// Returns a display description of the model object, that
   /// can be used in widgets, e.g. lists.
@@ -27,7 +29,7 @@ abstract class ModelBase {
     return null;
   }
 
-   /// Returns meta dara information, e.g. duration.
+  /// Returns meta dara information, e.g. duration.
   String? getMetadata(BuildContext context) {
     return null;
   }
