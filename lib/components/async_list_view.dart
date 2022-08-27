@@ -63,7 +63,7 @@ class AsyncListView extends StatefulWidget {
   final AddFunction? addItem;
 
   /// Function called when the corresponds function of the selected items is performed in the action bar.
-  /// 
+  ///
   /// This action must be set, if one [SelectedItemsAction] is given.
   final MultiSelectActionFunction? onMultiSelect;
 
@@ -417,11 +417,13 @@ class _AsyncListViewState extends State<AsyncListView> {
                     item.getGroup(context)!,
                   ),
                   onPressed: () {
-                    widget.editGroupFunction!(item).then((value) {
-                      if (value) {
-                        _reloadData();
-                      }
-                    });
+                    widget.editGroupFunction!(item).then(
+                      (value) {
+                        if (value) {
+                          _reloadData();
+                        }
+                      },
+                    );
                   },
                 )
               : Chip(
