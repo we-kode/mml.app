@@ -110,6 +110,12 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Amount of data that should be loaded starting from [_offset].
   int _take = 100;
 
+  /// Indicates, whether the list is currently in multi select mode.
+  bool _isInMultiSelectMode = false;
+
+  /// Identifiers of the selected items in the list.
+  List<dynamic> _selectedItems = [];
+
   /// Indicates, whether data is loading and an loading indicator should be
   /// shown.
   bool _isLoadingData = true;
@@ -387,7 +393,17 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
+    var leadingTile = !_isInMultiSelectMode
+        ? null
+        : Checkbox(
+            onChanged: (_) {
+              _onItemChecked(index);
+            },
+            value: _selectedItems.contains(item.getIdentifier()),
+          );
+
     return ListTile(
+      leading: leadingTile,
       minVerticalPadding: 0,
       visualDensity: const VisualDensity(vertical: 0),
       title: Row(
@@ -410,16 +426,44 @@ class _AsyncListViewState extends State<AsyncListView> {
               : const SizedBox.shrink(),
         ],
       ),
-      onTap: widget.openItemFunction != null
-          ? () {
-              widget.openItemFunction!(
+      onTap: () {
+        if (_isInMultiSelectMode) {
+          _onItemChecked(index);
+          return;
+        }
+
+        widget.openItemFunction != null
+            ? widget.openItemFunction!(
                 item,
                 widget.filter?.textFilter,
                 widget.subfilter?.filter,
-              );
-            }
-          : null,
+              )
+            : null;
+      },
+      onLongPress: () {
+        if (!_isInMultiSelectMode) {
+          setState(() {
+            _isInMultiSelectMode = true;
+          });
+        }
+
+        _onItemChecked(index);
+      },
     );
+  }
+
+  /// Stores the identifer of the item at the [index] or removes it, when
+  /// the identifier was in the list of selected items.
+  void _onItemChecked(int index) {
+    if (_selectedItems.contains(_items![index]?.getIdentifier())) {
+      _selectedItems.remove(_items![index]?.getIdentifier());
+    } else if (_items![index] != null) {
+      _selectedItems.add(_items![index]!.getIdentifier());
+    }
+
+    setState(() {
+      _selectedItems = _selectedItems;
+    });
   }
 
   /// Cretaes a suffix widget of the title if suffix exists.
