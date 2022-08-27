@@ -12,6 +12,7 @@ class PlaylistViewModel extends ChangeNotifier {
   /// The [FilterAppBar] of the playlist view.
   static FilterAppBar appBar = FilterAppBar(
     title: 'playlist',
+    listActionIcon: const Icon(Icons.remove),
   );
 
   /// [RecordService] used to load data for the records uplaod dialog.

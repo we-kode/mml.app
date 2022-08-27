@@ -27,6 +27,12 @@ class PlaylistScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.playlist,
+              selectedItemsAction: PlaylistViewModel.appBar.listAction,
+              onMultiSelect: (selectedItems) async {
+                // TODO remove records from playlists and delete cached files.
+                print("selectItems");
+                return true;
+              },
               loadData: vm.load,
               addItem: () async {
                 return await showDialog(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 
 /// An appbar containing one expandable filter input.
 class FilterAppBar extends StatefulWidget {
@@ -15,11 +16,21 @@ class FilterAppBar extends StatefulWidget {
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
 
+  /// Action icon shown in the app bar if the multiselect mode is enabled in list.
+  ///
+  /// If no icon is provided no action will be performed in multi select mode.
+  final Icon? listActionIcon;
+
+  /// [SelectedItemsAction] which controls the app bar if a list with muiltselection 
+  /// is available in the widget, the app bar belongs to.
+  final SelectedItemsAction listAction = SelectedItemsAction();
+
   /// Initiales the app bar.
   FilterAppBar({
     Key? key,
     required this.title,
     this.enableFilter,
+    this.listActionIcon,
   }) : super(key: key);
 
   @override
@@ -37,15 +48,49 @@ class FilterAppBarState extends State<FilterAppBar> {
   String? _filter;
 
   @override
+  void initState() {
+    widget.listAction.addListener(_updateState);
+    super.initState();
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    widget.listAction.removeListener(_updateState);
+  }
+
+  /// Updates the state if the [SelectedItemsAction] state changed.
+  void _updateState() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: !_filterOpened || !(widget.enableFilter ?? false)
-          ? Text(_getLocalizedString(context))
-          : Container(
-              margin: const EdgeInsets.only(bottom: 4.0),
-              child: _createInput(),
-            ),
+      leading: widget.listAction.enabled && widget.listActionIcon != null
+          ? Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    widget.listAction.clear();
+                  },
+                  icon: const Icon(Icons.close),
+                  tooltip: AppLocalizations.of(context)!.cancel,
+                ),
+                Text("${widget.listAction.count}")
+              ],
+            )
+          : null,
+      title: Visibility(
+        visible: !widget.listAction.enabled && widget.listActionIcon != null,
+        child: !_filterOpened || !(widget.enableFilter ?? false)
+            ? Text(_getLocalizedString(context))
+            : Container(
+                margin: const EdgeInsets.only(bottom: 4.0),
+                child: _createInput(),
+              ),
+      ),
       actions: _createActions(),
     );
   }
@@ -112,7 +157,7 @@ class FilterAppBarState extends State<FilterAppBar> {
     return !(widget.enableFilter ?? false)
         ? []
         : [
-            if (!_filterOpened)
+            if (!_filterOpened && !widget.listAction.enabled)
               IconButton(
                 onPressed: () => setState(
                   () {
@@ -120,6 +165,15 @@ class FilterAppBarState extends State<FilterAppBar> {
                   },
                 ),
                 icon: const Icon(Icons.search),
+              ),
+            if (widget.listAction.enabled && widget.listActionIcon != null)
+              IconButton(
+                onPressed: () => setState(
+                  () {
+                    widget.listAction.actionPerformed = true;
+                  },
+                ),
+                icon: widget.listActionIcon!,
               ),
           ];
   }

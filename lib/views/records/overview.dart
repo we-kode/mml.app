@@ -32,6 +32,12 @@ class RecordsScreen extends StatelessWidget {
               subfilter: RecordTagFilter(),
               loadData: vm.load,
               filter: RecordsViewModel.appBar.filter,
+              selectedItemsAction: RecordsViewModel.appBar.listAction,
+              onMultiSelect: (selectedItems) async {
+                // TODO download records and add them to playlists
+                print("selectItems");
+                return true;
+              },
               openItemFunction: (
                 ModelBase item,
                 String? filter,

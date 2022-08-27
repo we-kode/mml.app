@@ -8,6 +8,7 @@ import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -34,6 +35,11 @@ typedef EditGroupFunction = Function(
   ModelBase item,
 );
 
+/// Function called when the corresponds function of the selected items is performed in the action bar.
+typedef MultiSelectActionFunction = Future<bool> Function(
+  List<dynamic> selectedItems,
+);
+
 /// Function that creates an new item.
 ///
 /// This function should return a [Future], that either resolves with true
@@ -56,6 +62,11 @@ class AsyncListView extends StatefulWidget {
   /// returned.
   final AddFunction? addItem;
 
+  /// Function called when the corresponds function of the selected items is performed in the action bar.
+  /// 
+  /// This action must be set, if one [SelectedItemsAction] is given.
+  final MultiSelectActionFunction? onMultiSelect;
+
   /// A subfilter widget which can be used to add subfilters like chips for more
   /// filter posibilities.
   final ListSubfilterView? subfilter;
@@ -73,6 +84,9 @@ class AsyncListView extends StatefulWidget {
   /// Function to edit the group of one [item].
   final EditGroupFunction? editGroupFunction;
 
+  /// [SelectedItemsAction] of the action bar the list belongs to.
+  final SelectedItemsAction? selectedItemsAction;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -83,6 +97,8 @@ class AsyncListView extends StatefulWidget {
     this.openItemFunction,
     this.editGroupFunction,
     this.addItem,
+    this.selectedItemsAction,
+    this.onMultiSelect,
   }) : super(key: key);
 
   @override
@@ -126,9 +142,12 @@ class _AsyncListViewState extends State<AsyncListView> {
   @override
   void initState() {
     _reloadData();
-
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
+    widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
+
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => widget.selectedItemsAction?.clear());
 
     super.initState();
   }
@@ -138,6 +157,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     super.dispose();
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
+    widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
   }
 
   @override
@@ -160,6 +180,32 @@ class _AsyncListViewState extends State<AsyncListView> {
       ),
       floatingActionButton: _createActionButton(),
     );
+  }
+
+  /// Calls the [SelectedItemsAction] if one is provided, when the action is called in the app bar.
+  void _performSelectedItemsAction() {
+    if (!widget.selectedItemsAction!.enabled) {
+      _disableMultiSelectMode();
+      return;
+    }
+
+    if (widget.selectedItemsAction!.actionPerformed) {
+      widget.onMultiSelect!(_selectedItems).then((value) {
+        if (value) {
+          widget.selectedItemsAction!.clear();
+          _disableMultiSelectMode();
+        }
+      });
+      return;
+    }
+  }
+
+  /// Disables multiselect mode and removes selected items.
+  void _disableMultiSelectMode() {
+    setState(() {
+      _isInMultiSelectMode = false;
+      _selectedItems = [];
+    });
   }
 
   /// Reloads the data starting from inital offset with inital count.
@@ -445,6 +491,7 @@ class _AsyncListViewState extends State<AsyncListView> {
           setState(() {
             _isInMultiSelectMode = true;
           });
+          widget.selectedItemsAction?.enabled = true;
         }
 
         _onItemChecked(index);
@@ -464,6 +511,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     setState(() {
       _selectedItems = _selectedItems;
     });
+    widget.selectedItemsAction?.count = _selectedItems.length;
   }
 
   /// Cretaes a suffix widget of the title if suffix exists.

@@ -19,6 +19,7 @@ class RecordsViewModel extends ChangeNotifier {
   static FilterAppBar appBar = FilterAppBar(
     title: 'records',
     enableFilter: true,
+    listActionIcon: const Icon(Icons.star),
   );
 
   /// App locales.
