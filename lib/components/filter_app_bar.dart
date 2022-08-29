@@ -16,21 +16,16 @@ class FilterAppBar extends StatefulWidget {
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
 
-  /// Action icon shown in the app bar if the multiselect mode is enabled in list.
-  ///
-  /// If no icon is provided no action will be performed in multi select mode.
-  final Icon? listActionIcon;
-
-  /// [SelectedItemsAction] which controls the app bar if a list with muiltselection 
+  /// [SelectedItemsAction] which controls the app bar if a list with muiltselection
   /// is available in the widget, the app bar belongs to.
-  final SelectedItemsAction listAction = SelectedItemsAction();
+  final SelectedItemsAction? listAction;
 
   /// Initiales the app bar.
   FilterAppBar({
     Key? key,
     required this.title,
+    this.listAction,
     this.enableFilter,
-    this.listActionIcon,
   }) : super(key: key);
 
   @override
@@ -49,14 +44,24 @@ class FilterAppBarState extends State<FilterAppBar> {
 
   @override
   void initState() {
-    widget.listAction.addListener(_updateState);
+    widget.listAction?.addListener(_updateState);
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(FilterAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.listAction != widget.listAction) {
+      widget.listAction?.removeListener(_updateState);
+      widget.listAction?.addListener(_updateState);
+    }
   }
 
   @override
   void dispose() async {
     super.dispose();
-    widget.listAction.removeListener(_updateState);
+    widget.listAction?.removeListener(_updateState);
   }
 
   /// Updates the state if the [SelectedItemsAction] state changed.
@@ -68,22 +73,22 @@ class FilterAppBarState extends State<FilterAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      leading: widget.listAction.enabled && widget.listActionIcon != null
+      leading: widget.listAction != null && widget.listAction!.enabled
           ? Row(
               children: [
                 IconButton(
                   onPressed: () {
-                    widget.listAction.clear();
+                    widget.listAction?.clear();
                   },
                   icon: const Icon(Icons.close),
                   tooltip: AppLocalizations.of(context)!.cancel,
                 ),
-                Text("${widget.listAction.count}")
+                Text("${widget.listAction!.count}")
               ],
             )
           : null,
       title: Visibility(
-        visible: !widget.listAction.enabled && widget.listActionIcon != null,
+        visible: widget.listAction == null || !widget.listAction!.enabled,
         child: !_filterOpened || !(widget.enableFilter ?? false)
             ? Text(_getLocalizedString(context))
             : Container(
@@ -154,10 +159,13 @@ class FilterAppBarState extends State<FilterAppBar> {
 
   /// Creates the actions of the app bar.
   List<Widget> _createActions() {
-    return !(widget.enableFilter ?? false)
+    var enableFilter = widget.enableFilter ?? false;
+    return !enableFilter && widget.listAction == null
         ? []
         : [
-            if (!_filterOpened && !widget.listAction.enabled)
+            if (enableFilter &&
+                !_filterOpened &&
+                (widget.listAction != null && !widget.listAction!.enabled))
               IconButton(
                 onPressed: () => setState(
                   () {
@@ -166,14 +174,14 @@ class FilterAppBarState extends State<FilterAppBar> {
                 ),
                 icon: const Icon(Icons.search),
               ),
-            if (widget.listAction.enabled && widget.listActionIcon != null)
+            if (widget.listAction != null && widget.listAction!.enabled)
               IconButton(
                 onPressed: () => setState(
                   () {
-                    widget.listAction.actionPerformed = true;
+                    widget.listAction!.actionPerformed = true;
                   },
                 ),
-                icon: widget.listActionIcon!,
+                icon: widget.listAction!.icon,
               ),
           ];
   }

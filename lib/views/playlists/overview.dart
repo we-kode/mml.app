@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
+import 'package:mml_app/components/delete_dialog.dart';
+import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/offline_record.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/views/playlists/edit.dart';
@@ -29,9 +31,13 @@ class PlaylistScreen extends StatelessWidget {
               title: vm.locales.playlist,
               selectedItemsAction: PlaylistViewModel.appBar.listAction,
               onMultiSelect: (selectedItems) async {
-                // TODO remove records from playlists and delete cached files.
-                print("selectItems");
-                return true;
+                var shouldDelete = await showDeleteDialog(context);
+
+                if (shouldDelete) {
+                  await vm.deleteRecords(selectedItems as List<ModelBase?>);
+                }
+
+                return shouldDelete;
               },
               loadData: vm.load,
               addItem: () async {

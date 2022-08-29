@@ -190,10 +190,16 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     if (widget.selectedItemsAction!.actionPerformed) {
-      widget.onMultiSelect!(_selectedItems).then((value) {
+      var selected = _items?.where(
+          (element) => _selectedItems.contains(element?.getIdentifier()));
+      widget.onMultiSelect!(selected?.toList() ?? []).then((value) {
+        widget.selectedItemsAction!.actionPerformedFinished();
         if (value) {
           widget.selectedItemsAction!.clear();
           _disableMultiSelectMode();
+          if (widget.selectedItemsAction!.reload) {
+            _reloadData();
+          }
         }
       });
       return;

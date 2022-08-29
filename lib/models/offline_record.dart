@@ -34,8 +34,12 @@ class OfflineRecord extends ModelBase {
   /// The playlist the record belongs to.
   Playlist? playlist;
 
+  ///Id of offline record
+  final int? id;
+
   /// Creates a new record instance with the given values.
   OfflineRecord({
+    required this.id,
     required this.recordId,
     this.title,
     this.duration = 0,
@@ -61,7 +65,7 @@ class OfflineRecord extends ModelBase {
 
   @override
   dynamic getIdentifier() {
-    return recordId;
+    return id;
   }
 
   @override

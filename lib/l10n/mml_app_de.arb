@@ -55,5 +55,8 @@
   "editPlaylist":"Wiedergabeliste bearbeiten",
   "addPlaylist":"Wiedergabeliste hinzufügen",
   "invalidDisplayName": "Bitte geben Sie einen Namen an!",
-  "playlistUniqueConstraintFailed": "Wiedergabeliste ist bereits vorhanden."
+  "playlistUniqueConstraintFailed": "Wiedergabeliste ist bereits vorhanden.",
+  "remove": "Löschen",
+  "yes": "Ja",
+  "deleteConfirmation": "Möchten Sie tatsächlich die gewählten Datensätze löschen?"
 }

@@ -7,6 +7,8 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 
@@ -19,7 +21,7 @@ class RecordsViewModel extends ChangeNotifier {
   static FilterAppBar appBar = FilterAppBar(
     title: 'records',
     enableFilter: true,
-    listActionIcon: const Icon(Icons.star),
+    listAction: SelectedItemsAction(const Icon(Icons.star)),
   );
 
   /// App locales.
@@ -27,6 +29,9 @@ class RecordsViewModel extends ChangeNotifier {
 
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
+
+  /// [RecordService] used to load data for the records uplaod dialog.
+  final DBService _dbService = DBService.getInstance();
 
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
@@ -48,6 +53,7 @@ class RecordsViewModel extends ChangeNotifier {
     return _service.getRecords(filter, offset, take, subfilter);
   }
 
+  /// Plays one record.
   void playRecord(
     BuildContext context,
     ModelBase record,
@@ -60,5 +66,27 @@ class RecordsViewModel extends ChangeNotifier {
       filter,
       subfilter,
     );
+  }
+
+  /// loads all available playlists.
+  Future<ModelList> loadPlaylists(
+      {String? filter, int? offset, int? take}) async {
+    return _dbService.getPlaylists(
+      filter,
+      offset,
+      take,
+    );
+  }
+
+  /// Downloads and adds the selected [records] into the selected [playlists].
+  Future<bool> addRecords(
+    List<ModelBase?> records,
+    List<dynamic> playlists,
+  ) async {
+    for (var record in records) {
+      // TODO download file and encrypt
+      await _dbService.addRecord(record as Record, '', playlists);
+    }
+    return true;
   }
 }

@@ -8,6 +8,7 @@ part of 'offline_record.dart';
 
 OfflineRecord _$OfflineRecordFromJson(Map<String, dynamic> json) =>
     OfflineRecord(
+      id: json['id'] as int?,
       recordId: json['recordId'] as String?,
       title: json['title'] as String?,
       duration: (json['duration'] as num?)?.toDouble() ?? 0,
@@ -39,5 +40,6 @@ Map<String, dynamic> _$OfflineRecordToJson(OfflineRecord instance) {
   writeNotNull('genre', instance.genre);
   writeNotNull('album', instance.album);
   writeNotNull('playlist', instance.playlist?.toJson());
+  writeNotNull('id', instance.id);
   return val;
 }

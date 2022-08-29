@@ -5,6 +5,7 @@ import 'package:mml_app/migrations/v1.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/offline_record.dart';
 import 'package:mml_app/models/playlist.dart';
+import 'package:mml_app/models/record.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -91,7 +92,7 @@ class DBService {
   Future<ModelList> load(String? filter, int? offset, int? take) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT p.id as playlistId, p.name as playlistName, r.* FROM playlists p
+        SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM playlists p
         LEFT JOIN records_playlists rp ON rp.playlistId = p.id
         LEFT JOIN records r ON rp.recordId = r.recordId
         ORDER BY p.name, r.title
@@ -105,6 +106,7 @@ class DBService {
       List.generate(
         maps.length,
         (index) => OfflineRecord(
+          id: maps[index]['id'],
           recordId: maps[index]['recordId'],
           album: maps[index]['album'],
           artist: maps[index]['artist'],
@@ -163,6 +165,100 @@ class DBService {
     return Playlist(
       id: result['id'],
       name: result['name'],
+    );
+  }
+
+  /// Loads all available playlists from database.
+  Future<ModelList> getPlaylists(String? filter, int? offset, int? take) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'playlists',
+      where: '? = 1 OR "name" LIKE ?',
+      whereArgs: [(filter ?? '').isEmpty ? 1 : 0, "%${filter ?? ''}%"],
+      orderBy: 'name',
+      limit: take ?? 0,
+      offset: offset ?? 0,
+    );
+
+    return ModelList(
+      List.generate(
+        maps.length,
+        (index) => Playlist(
+          id: maps[index]['id'],
+          name: maps[index]['name'],
+        ),
+      ),
+      offset ?? 0,
+      maps.length,
+    );
+  }
+
+  /// Adds [record] to [playlists] with given [fileName] of downloaded file.
+  Future addRecord(
+      Record record, String fileName, List<dynamic> playlists) async {
+    final db = await _database;
+    await db.insert(
+      'records',
+      Map.of({
+        'recordId': record.recordId,
+        'album': record.album,
+        'artist': record.artist,
+        'genre': record.genre,
+        'title': record.title,
+        'file': fileName,
+        'duration': record.duration
+      }),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    for (var playlist in playlists) {
+      final List<Map<String, dynamic>> maps = await db.query(
+        'records_playlists',
+        where: 'recordId = ? AND playlistId = ?',
+        whereArgs: [record.recordId, playlist],
+      );
+
+      if (maps.isEmpty) {
+        await db.insert(
+          'records_playlists',
+          Map.of({
+            'recordId': record.recordId,
+            'playlistId': playlist,
+          }),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      }
+    }
+  }
+
+  /// Removes one playlist from playlist.
+  Future removeFromPlaylist(String recordId, int playlistId) async {
+    final db = await _database;
+    await db.delete(
+      'records_playlists',
+      where: 'recordId = ? AND playlistId = ?',
+      whereArgs: [recordId, playlistId],
+    );
+  }
+
+  /// Checks if one record is in any playlist.
+  Future isInPlaylist(String recordId) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'records_playlists',
+      where: 'recordId = ?',
+      whereArgs: [recordId],
+    );
+
+    return maps.isNotEmpty;
+  }
+
+  /// Removes record.
+  Future removeRecord(String recordId) async {
+    final db = await _database;
+    await db.delete(
+      'records',
+      where: 'recordId = ?',
+      whereArgs: [recordId],
     );
   }
 }

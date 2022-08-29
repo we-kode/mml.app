@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
+import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
@@ -34,9 +36,26 @@ class RecordsScreen extends StatelessWidget {
               filter: RecordsViewModel.appBar.filter,
               selectedItemsAction: RecordsViewModel.appBar.listAction,
               onMultiSelect: (selectedItems) async {
-                // TODO download records and add them to playlists
-                print("selectItems");
-                return true;
+                List<dynamic>? selectedPlaylists = await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AsyncSelectListDialog(
+                      loadData: ({filter, offset, take}) => vm.loadPlaylists(
+                        filter: filter,
+                        offset: offset,
+                        take: take,
+                      ),
+                      initialSelected: [],
+                    );
+                  },
+                );
+                
+                if (selectedPlaylists == null || selectedPlaylists.isEmpty) {
+                  return false;
+                }
+                
+                return await vm.addRecords(selectedItems as List<ModelBase?>, selectedPlaylists);
               },
               openItemFunction: (
                 ModelBase item,

@@ -48,5 +48,8 @@
   "editPlaylist":"Edit playlist",
   "addPlaylist":"Add playlist",
   "invalidDisplayName": "Please enter a name!",
-  "playlistUniqueConstraintFailed": "Playlist already exists."
+  "playlistUniqueConstraintFailed": "Playlist already exists.",
+  "remove": "Remove",
+  "yes": "Yes",
+  "deleteConfirmation": "Are you really want to delete the selected records?"
 }

@@ -48,5 +48,8 @@
   "editPlaylist":"Изменить Плейлист",
   "addPlaylist":"Добавить Плейлист",
   "invalidDisplayName": "Пожалуйста введите имя!",
-  "playlistUniqueConstraintFailed": "Плейлист уже существует."
+  "playlistUniqueConstraintFailed": "Плейлист уже существует.",
+  "remove": "Удалить",
+  "yes": "Да",
+  "deleteConfirmation": "Вы действительно хотите удалить выбранные записи?"
 }

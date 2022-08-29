@@ -13,6 +13,14 @@ class SelectedItemsAction extends ChangeNotifier {
   /// Returns the actual count of selected items.
   int get count => _count;
 
+  /// Icon of the action, shown in the action bar.
+  final Icon icon;
+
+  final bool reload;
+
+  /// Creates instants of the action.
+  SelectedItemsAction(this.icon, {this.reload = false});
+
   /// Updates the [count].
   set count(int count) {
     _count = count;
@@ -43,5 +51,10 @@ class SelectedItemsAction extends ChangeNotifier {
     _selectionEnabled = false;
     _actionPerformed = false;
     notifyListeners();
+  }
+
+  /// Called,when action call finished.
+  void actionPerformedFinished() {
+    _actionPerformed = false;
   }
 }
