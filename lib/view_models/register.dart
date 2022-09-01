@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
@@ -84,6 +86,7 @@ class RegisterViewModel extends ChangeNotifier {
       var keyPair = await RSA.generate(4096);
       var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
       var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
+      var cryptoKey = _cryptoRandom();
 
       await _storage.set(
         SecureStorageService.rsaPrivateStorageKey,
@@ -92,6 +95,10 @@ class RegisterViewModel extends ChangeNotifier {
       await _storage.set(
         SecureStorageService.rsaPublicStorageKey,
         public,
+      );
+      await _storage.set(
+        SecureStorageService.cryptoKey,
+        cryptoKey,
       );
 
       state = RegistrationState.init;
@@ -182,6 +189,14 @@ class RegisterViewModel extends ChangeNotifier {
       _state = RegistrationState.scan;
       notifyListeners();
     }
+  }
+
+  /// Generates a random 512 byte string as base64 encoded string of given [length].
+  String _cryptoRandom([int length = 32]) {
+    var random = Random.secure();
+    var values = List<int>.generate(length, (i) => random.nextInt(512));
+
+    return base64Url.encode(values);
   }
 }
 

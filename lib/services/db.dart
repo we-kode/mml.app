@@ -17,6 +17,15 @@ class DBService {
   /// the databse name on device.
   final String _dbName = 'wekode_mml.db';
 
+  /// Table name of the playlist table.
+  final String _tPlaylists = 'playlists';
+
+  /// Table name of the records table.
+  final String _tRecords = 'records';
+
+  /// Table name of the records playlist many-to-many table.
+  final String _tRecordsPlaylists = 'records_playlists';
+
   /// The databse instance.
   Database? _db;
 
@@ -92,9 +101,9 @@ class DBService {
   Future<ModelList> load(String? filter, int? offset, int? take) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM playlists p
-        LEFT JOIN records_playlists rp ON rp.playlistId = p.id
-        LEFT JOIN records r ON rp.recordId = r.recordId
+        SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM $_tPlaylists p
+        LEFT JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
+        LEFT JOIN $_tRecords r ON rp.recordId = r.recordId
         ORDER BY p.name, r.title
         LIMIT ? OFFSET ?
     ''', [
@@ -129,7 +138,7 @@ class DBService {
   Future updatePlaylist(Playlist playlist) async {
     final db = await _database;
     await db.update(
-      'playlists',
+      _tPlaylists,
       playlist.toMap(),
       where: '"id" = ?',
       whereArgs: [playlist.id],
@@ -141,7 +150,7 @@ class DBService {
   Future createPlaylist(Playlist playlist) async {
     final db = await _database;
     await db.insert(
-      'playlists',
+      _tPlaylists,
       playlist.toMap(),
       conflictAlgorithm: ConflictAlgorithm.rollback,
     );
@@ -151,7 +160,7 @@ class DBService {
   Future<Playlist> getPlaylist(int playlistId) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(
-      'playlists',
+      _tPlaylists,
       where: '"id" = ?',
       whereArgs: [playlistId],
       limit: 1,
@@ -172,7 +181,7 @@ class DBService {
   Future<ModelList> getPlaylists(String? filter, int? offset, int? take) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(
-      'playlists',
+      _tPlaylists,
       where: '? = 1 OR "name" LIKE ?',
       whereArgs: [(filter ?? '').isEmpty ? 1 : 0, "%${filter ?? ''}%"],
       orderBy: 'name',
@@ -198,7 +207,7 @@ class DBService {
       Record record, String fileName, List<dynamic> playlists) async {
     final db = await _database;
     await db.insert(
-      'records',
+      _tRecords,
       Map.of({
         'recordId': record.recordId,
         'album': record.album,
@@ -212,14 +221,14 @@ class DBService {
     );
     for (var playlist in playlists) {
       final List<Map<String, dynamic>> maps = await db.query(
-        'records_playlists',
+        _tRecordsPlaylists,
         where: 'recordId = ? AND playlistId = ?',
         whereArgs: [record.recordId, playlist],
       );
 
       if (maps.isEmpty) {
         await db.insert(
-          'records_playlists',
+          _tRecordsPlaylists,
           Map.of({
             'recordId': record.recordId,
             'playlistId': playlist,
@@ -234,17 +243,17 @@ class DBService {
   Future removeFromPlaylist(String recordId, int playlistId) async {
     final db = await _database;
     await db.delete(
-      'records_playlists',
+      _tRecordsPlaylists,
       where: 'recordId = ? AND playlistId = ?',
       whereArgs: [recordId, playlistId],
     );
   }
 
   /// Checks if one record is in any playlist.
-  Future isInPlaylist(String recordId) async {
+  Future<bool> isInPlaylist(String recordId) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(
-      'records_playlists',
+      _tRecordsPlaylists,
       where: 'recordId = ?',
       whereArgs: [recordId],
     );
@@ -256,9 +265,103 @@ class DBService {
   Future removeRecord(String recordId) async {
     final db = await _database;
     await db.delete(
-      'records',
+      _tRecords,
       where: 'recordId = ?',
       whereArgs: [recordId],
     );
+  }
+
+  /// Returns the file name which belongs to the [recordId].
+  Future<String?> file(String recordId) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tRecords,
+      where: 'recordId = ?',
+      whereArgs: [recordId],
+    );
+
+    return maps.isNotEmpty ? maps.first['file'] : null;
+  }
+
+  /// Retunrs the [Record] of the [recordId] from db or null if no record found.
+  Future<Record?> getRecord(String recordId) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tRecords,
+      where: 'recordId = ?',
+      whereArgs: [recordId],
+    );
+
+    if (maps.isEmpty) {
+      return null;
+    }
+
+    return _mapRecord(maps.first);
+  }
+
+  /// Retunrs the next or previous [Record] of the [recordId] or null if no record exists.
+  ///
+  /// Default returns the next record in playlist. if [reverse] is set to true, the previous record will be returned.
+  /// [shuffle] configures if the records should be mixed. If [repeat] is set, the playlist will be running in endless
+  /// thread until stopped.
+  Future<Record?> next(
+    String recordId,
+    int playlistId, {
+    bool reverse = false,
+    bool shuffle = false,
+    bool repeat = false,
+  }) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+        SELECT r.*, 
+               LEAD(r.recordId, 1, 0) OVER (ORDER BY r.title) as nextId,
+               LAG(r.recordId, 1, 0) OVER (ORDER BY r.title) as previousId, 
+        FROM $_tPlaylists p
+        INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
+        INNER JOIN $_tRecords r ON rp.recordId = r.recordId
+        WHERE p.id = ? ${!repeat ? 'AND r.recordId = ?' : ''}
+        ORDER BY ${shuffle ? 'RANDOM() LIMIT 1' : 'r.title'}
+    ''', [
+      playlistId,
+      recordId,
+    ]);
+
+    if (maps.isEmpty) {
+      return null;
+    }
+
+    Map<String, dynamic> result = maps.first;
+    if (shuffle) {
+      return _mapRecord(result);
+    }
+
+    if (!reverse && !repeat) {
+      return result['nextId'] != null ? await getRecord(result['nextId']) : null;
+    } else if (reverse && !repeat) {
+      result = maps.last;
+      return result['previousId'] != null ? await getRecord(result['previousId']) : null;
+    }
+
+    return _mapRecord(result);
+  }
+
+  /// Mpas a database [result] to a [Record] object.
+  Record _mapRecord(Map<String, dynamic> result) {
+    return Record(
+      recordId: result['recordId'],
+      album: result['album'],
+      artist: result['artist'],
+      duration: result['dduration'],
+      genre: result['genre'],
+      title: result['title'],
+    );
+  }
+
+  /// Removes all database entries.
+  Future clean() async {
+    final db = await _database;
+    db.delete(_tRecordsPlaylists);
+    db.delete(_tPlaylists);
+    db.delete(_tRecords);
   }
 }
