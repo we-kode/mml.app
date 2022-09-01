@@ -39,6 +39,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: !_filterOpened || !(widget.enableFilter ?? false)
           ? Text(_getLocalizedString(context))
           : Container(
@@ -68,11 +69,23 @@ class FilterAppBarState extends State<FilterAppBar> {
   Widget _createInput() {
     return TextFormField(
       initialValue: _filter,
+      style: const TextStyle(color: Colors.white),
+      cursorColor: Colors.white,
       decoration: InputDecoration(
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white),
+        ),
+        labelStyle: const TextStyle(color: Colors.white),
         labelText: AppLocalizations.of(context)!.filter,
-        icon: const Icon(Icons.filter_list_alt),
+        icon: const Icon(
+          Icons.filter_list_alt,
+          color: Colors.white,
+        ),
         suffixIcon: IconButton(
-          icon: const Icon(Icons.clear),
+          icon: const Icon(
+            Icons.clear,
+            color: Colors.white,
+          ),
           onPressed: () {
             setState(
               () {
