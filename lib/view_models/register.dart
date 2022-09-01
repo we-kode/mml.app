@@ -83,28 +83,37 @@ class RegisterViewModel extends ChangeNotifier {
         deviceIdentifier = (await DeviceInfoPlugin().iosInfo).name ?? '';
       }
 
-      var keyPair = await RSA.generate(4096);
-      var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
-      var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
-      var cryptoKey = _cryptoRandom();
-
-      await _storage.set(
-        SecureStorageService.rsaPrivateStorageKey,
-        private,
-      );
-      await _storage.set(
-        SecureStorageService.rsaPublicStorageKey,
-        public,
-      );
-      await _storage.set(
-        SecureStorageService.cryptoKey,
-        cryptoKey,
-      );
-
-      state = RegistrationState.init;
+      state = RegistrationState.rsa;
+      Future.microtask(() async {
+        await generateRSA();
+      });
 
       return true;
     });
+  }
+
+  /// Generates rsa key.
+  Future generateRSA() async {
+    var keyPair = await RSA.generate(4096);
+    var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
+    var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
+    var cryptoKey = _cryptoRandom();
+
+    await _storage.set(
+      SecureStorageService.rsaPrivateStorageKey,
+      private,
+    );
+    await _storage.set(
+      SecureStorageService.rsaPublicStorageKey,
+      public,
+    );
+    await _storage.set(
+      SecureStorageService.cryptoKey,
+      cryptoKey,
+    );
+
+    state = RegistrationState.init;
+    notifyListeners();
   }
 
   /// Redirects the route with main route after successfull registration.
@@ -117,6 +126,9 @@ class RegisterViewModel extends ChangeNotifier {
     _state = state;
 
     switch (_state) {
+      case RegistrationState.rsa:
+        infoMessage = locales.registrationRSA;
+        break;
       case RegistrationState.init:
         infoMessage = locales.registrationEnterName;
         break;
@@ -202,6 +214,7 @@ class RegisterViewModel extends ChangeNotifier {
 
 /// State of the registration process.
 enum RegistrationState {
+  rsa,
   init,
   scan,
   register,

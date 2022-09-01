@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
+import 'package:mml_app/components/intro_playlist_animation.dart';
+import 'package:mml_app/components/intro_records_animation.dart';
+import 'package:mml_app/components/intro_register_animation.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/router.dart';
@@ -13,25 +16,6 @@ import 'package:mml_app/view_models/register.dart';
 class IntroViewModel extends ChangeNotifier {
   /// Route for the intro screen.
   static String route = '/intro';
-
-  /// Pages for the intro screen.
-  final List<PageViewModel> pages = [
-    PageViewModel(
-      title: "Title of first page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    ),
-    PageViewModel(
-      title: "Title of second page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    ),
-    PageViewModel(
-      title: "Title of third page",
-      body:
-          "Here you can write the description of the page, to explain someting...",
-    )
-  ];
 
   /// Locales of the application.
   late AppLocalizations locales;
@@ -75,6 +59,39 @@ class IntroViewModel extends ChangeNotifier {
         .pushReplacementNamed(RegisterViewModel.route);
   }
 
+  /// Returns intro pages.
+  List<PageViewModel> get pages {
+    return [
+      PageViewModel(
+        title: locales.introTitleRegister,
+        body: locales.introTextRegister,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroRegisterAnimation(),
+        ),
+      ),
+      PageViewModel(
+        title: locales.introTitleRecords,
+        body: locales.introTextRecords,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroRecordsAnimation(),
+        ),
+      ),
+      PageViewModel(
+        title: locales.introTitlePlaylist,
+        body: locales.introTextPlaylist,
+        image: const SizedBox(
+          height: 256,
+          width: 256,
+          child: IntroPlaylistAnimation(),
+        ),
+      )
+    ];
+  }
+  
   Future _initApp(BuildContext context) async {
     var notificationColor = Theme.of(context).colorScheme.inverseSurface;
 

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/check_animation.dart';
 import 'package:mml_app/components/error_animation.dart';
+import 'package:mml_app/components/generate_rsa_animation.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/rive.dart';
 
 /// Register screen.
 class RegisterScreen extends StatelessWidget {
@@ -58,6 +60,12 @@ class RegisterScreen extends StatelessWidget {
                       child: Consumer<RegisterViewModel>(
                         builder: (context, vm, _) {
                           switch (vm.state) {
+                            case RegistrationState.rsa:
+                              return const SizedBox(
+                                height: 256,
+                                width: 256,
+                                child: GenerateRSAAnimation(),
+                              );
                             case RegistrationState.init:
                               return SizedBox(
                                 width: 256,
