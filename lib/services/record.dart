@@ -117,6 +117,7 @@ class RecordService {
   }
 
   /// Downloads file for [recordId].
+  /// TODO use filedownlaoder instead
   Future download(String recordId) async {
     var response = await _apiService.request(
       '/media/record/download/$recordId',
