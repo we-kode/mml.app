@@ -115,4 +115,16 @@ class RecordService {
       response.data["totalCount"],
     );
   }
+
+  /// Downloads file for [recordId].
+  Future download(String recordId) async {
+    var response = await _apiService.request(
+      '/media/record/download/$recordId',
+      options: Options(
+        method: 'GET',
+      ),
+    );
+
+    return null;
+  }
 }

@@ -85,7 +85,9 @@ class RecordsViewModel extends ChangeNotifier {
   ) async {
     for (var record in records) {
       // TODO download file and encrypt
-      await _dbService.addRecord(record as Record, '', playlists);
+      var r = record as Record;
+      // await _service.download(r.recordId!);
+      await _dbService.addRecord(r, '', playlists);
     }
     return true;
   }
