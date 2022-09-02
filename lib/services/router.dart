@@ -77,6 +77,10 @@ class RouterService {
           name: PlaylistViewModel.route,
           arguments: () => FilterAppBar(
             title: 'playlist',
+            listAction: SelectedItemsAction(
+              const Icon(Icons.remove),
+              reload: true,
+            ),
           ),
         ),
         pageBuilder: (context, animation1, animation2) {

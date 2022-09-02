@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/offline_record.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
@@ -9,8 +10,10 @@ import 'package:provider/provider.dart';
 
 /// Overview screen of the playlists of the music lib.
 class PlaylistScreen extends StatelessWidget {
+  final FilterAppBar? appBar;
+
   /// Initializes the instance.
-  const PlaylistScreen({Key? key}) : super(key: key);
+  const PlaylistScreen({Key? key, this.appBar}) : super(key: key);
 
   /// Builds the screen.
   @override
@@ -29,7 +32,7 @@ class PlaylistScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.playlist,
-              selectedItemsAction: PlaylistViewModel.appBar.listAction,
+              selectedItemsAction: appBar?.listAction,
               onMultiSelect: (selectedItems) async {
                 var shouldDelete = await showDeleteDialog(context);
 
