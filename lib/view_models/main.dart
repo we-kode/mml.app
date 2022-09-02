@@ -8,6 +8,8 @@ class MainViewModel extends ChangeNotifier {
   /// Route of the main screen.
   static String route = '/';
 
+  static FilterAppBar? appBar;
+
   /// Current build context.
   late BuildContext _context;
 
@@ -72,16 +74,5 @@ class MainViewModel extends ChangeNotifier {
   void loadPage(int index) async {
     var route = _routerService.getNestedRoutes().keys.elementAt(index);
     await _routerService.pushNestedRoute(route);
-  }
-
-  /// Returns the app bar of the actual loded nexted route.
-  Widget getAppBar() {
-    final nestedRoutes = _routerService.getNestedRoutes();
-    final routeArgs = nestedRoutes[nestedRoutes.keys.elementAt(_selectedIndex)]
-        ?.settings
-        .arguments;
-    return routeArgs != null && routeArgs is FilterAppBar
-        ? routeArgs
-        : const SizedBox.shrink();
   }
 }

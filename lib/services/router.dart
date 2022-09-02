@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
@@ -57,27 +59,41 @@ class RouterService {
       RecordsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: RecordsViewModel.route,
-          arguments: RecordsViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'records',
+            enableFilter: true,
+            listAction: SelectedItemsAction(const Icon(Icons.star)),
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return RecordsScreen(
+            appBar: MainViewModel.appBar,
+          );
+        },
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: PlaylistViewModel.route,
-          arguments: PlaylistViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'playlist',
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) =>
-            const PlaylistScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return const PlaylistScreen();
+        },
         transitionsBuilder: _buildTransition,
       ),
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: SettingsViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'settings',
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) =>
-            const SettingsScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return const SettingsScreen();
+        },
         transitionsBuilder: _buildTransition,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(

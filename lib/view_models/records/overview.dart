@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
-import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
@@ -16,13 +15,6 @@ import 'package:mml_app/services/record.dart';
 class RecordsViewModel extends ChangeNotifier {
   /// Route of the records screen.
   static String route = '/records';
-
-  /// The [FilterApp] of the records overview screen.
-  static FilterAppBar appBar = FilterAppBar(
-    title: 'records',
-    enableFilter: true,
-    listAction: SelectedItemsAction(const Icon(Icons.star)),
-  );
 
   /// App locales.
   late AppLocalizations locales;
