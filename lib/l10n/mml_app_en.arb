@@ -58,5 +58,6 @@
   "playlistUniqueConstraintFailed": "Playlist already exists.",
   "remove": "Remove",
   "yes": "Yes",
-  "deleteConfirmation": "Are you really want to delete the selected records?"
+  "deleteConfirmation": "Are you really want to delete the selected records?",
+  "download":"Download"
 }

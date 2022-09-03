@@ -6,6 +6,7 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/records/overview.dart';
+import 'package:mml_app/views/records/download.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
 
@@ -48,7 +49,7 @@ class RecordsScreen extends StatelessWidget {
                         offset: offset,
                         take: take,
                       ),
-                      initialSelected: [],
+                      initialSelected: const [],
                     );
                   },
                 );
@@ -57,7 +58,17 @@ class RecordsScreen extends StatelessWidget {
                   return false;
                 }
 
-                return await vm.addRecords(selectedItems as List<ModelBase?>, selectedPlaylists);
+                return await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return RecordDownloadDialog(
+                      records: selectedItems as List<ModelBase?>,
+                      playlists: selectedPlaylists,
+                    );
+                  },
+                ); 
+                // await vm.addRecords(selectedItems as List<ModelBase?>, selectedPlaylists);
               },
               openItemFunction: (
                 ModelBase item,

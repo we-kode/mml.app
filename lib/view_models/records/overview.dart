@@ -68,18 +68,4 @@ class RecordsViewModel extends ChangeNotifier {
       take,
     );
   }
-
-  /// Downloads and adds the selected [records] into the selected [playlists].
-  Future<bool> addRecords(
-    List<ModelBase?> records,
-    List<dynamic> playlists,
-  ) async {
-    for (var record in records) {
-      // TODO download file and encrypt
-      var r = record as Record;
-      // await _service.download(r.recordId!);
-      await _dbService.addRecord(r, '', playlists);
-    }
-    return true;
-  }
 }

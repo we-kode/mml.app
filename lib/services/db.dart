@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
 import 'package:mml_app/models/model_list.dart';
-import 'package:mml_app/models/offline_record.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:sqflite/sqflite.dart';
@@ -114,8 +113,8 @@ class DBService {
     return ModelList(
       List.generate(
         maps.length,
-        (index) => OfflineRecord(
-          id: maps[index]['id'],
+        (index) => Record(
+          offlineId: maps[index]['id'],
           recordId: maps[index]['recordId'],
           album: maps[index]['album'],
           artist: maps[index]['artist'],
@@ -204,7 +203,7 @@ class DBService {
 
   /// Adds [record] to [playlists] with given [fileName] of downloaded file.
   Future addRecord(
-      Record record, String fileName, List<dynamic> playlists) async {
+      Record record, List<dynamic> playlists) async {
     final db = await _database;
     await db.insert(
       _tRecords,
@@ -214,7 +213,7 @@ class DBService {
         'artist': record.artist,
         'genre': record.genre,
         'title': record.title,
-        'file': fileName,
+        'file': record.file,
         'duration': record.duration
       }),
       conflictAlgorithm: ConflictAlgorithm.replace,

@@ -6,6 +6,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/components/intro_playlist_animation.dart';
 import 'package:mml_app/components/intro_records_animation.dart';
 import 'package:mml_app/components/intro_register_animation.dart';
+import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/router.dart';
@@ -91,22 +92,22 @@ class IntroViewModel extends ChangeNotifier {
       )
     ];
   }
-  
+
   Future _initApp(BuildContext context) async {
     var notificationColor = Theme.of(context).colorScheme.inverseSurface;
 
     await findSystemLocale();
+    await FileService.getInstance().createFolder();
 
     PlayerService.getInstance().audioHandler = await AudioService.init(
       builder: () => MMLAudioHandler(),
       config: AudioServiceConfig(
-        androidNotificationChannelId: 'de.wekode.mml.audio',
-        androidNotificationChannelName: locales.appTitle,
-        androidNotificationOngoing: true,
-        androidStopForegroundOnPause: true,
-        notificationColor: notificationColor,
-        androidNotificationIcon: 'mipmap/ic_notification'
-      ),
+          androidNotificationChannelId: 'de.wekode.mml.audio',
+          androidNotificationChannelName: locales.appTitle,
+          androidNotificationOngoing: true,
+          androidStopForegroundOnPause: true,
+          notificationColor: notificationColor,
+          androidNotificationIcon: 'mipmap/ic_notification'),
     );
   }
 }

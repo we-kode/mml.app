@@ -58,5 +58,6 @@
   "playlistUniqueConstraintFailed": "Плейлист уже существует.",
   "remove": "Удалить",
   "yes": "Да",
-  "deleteConfirmation": "Вы действительно хотите удалить выбранные записи?"
+  "deleteConfirmation": "Вы действительно хотите удалить выбранные записи?",
+  "download":"Загрузка"
 }

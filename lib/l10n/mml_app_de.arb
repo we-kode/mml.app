@@ -65,5 +65,6 @@
   "playlistUniqueConstraintFailed": "Wiedergabeliste ist bereits vorhanden.",
   "remove": "Löschen",
   "yes": "Ja",
-  "deleteConfirmation": "Möchten Sie tatsächlich die gewählten Datensätze löschen?"
+  "deleteConfirmation": "Möchten Sie tatsächlich die gewählten Datensätze löschen?",
+  "download":"Download"
 }

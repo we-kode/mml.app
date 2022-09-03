@@ -3,7 +3,7 @@ import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/model_base.dart';
-import 'package:mml_app/models/offline_record.dart';
+import 'package:mml_app/models/record.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/views/playlists/edit.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +58,7 @@ class PlaylistScreen extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return PlaylistEditDialog(
-                      playlistId: (item as OfflineRecord).playlist!.id,
+                      playlistId: (item as Record).playlist!.id,
                     );
                   },
                 );

@@ -115,17 +115,4 @@ class RecordService {
       response.data["totalCount"],
     );
   }
-
-  /// Downloads file for [recordId].
-  /// TODO use filedownlaoder instead
-  Future download(String recordId) async {
-    var response = await _apiService.request(
-      '/media/record/download/$recordId',
-      options: Options(
-        method: 'GET',
-      ),
-    );
-
-    return null;
-  }
 }
