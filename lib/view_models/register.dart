@@ -206,7 +206,7 @@ class RegisterViewModel extends ChangeNotifier {
   /// Generates a random 512 byte string as base64 encoded string of given [length].
   String _cryptoRandom([int length = 32]) {
     var random = Random.secure();
-    var values = List<int>.generate(length, (i) => random.nextInt(512));
+    var values = List<int>.generate(length, (i) => random.nextInt(256));
 
     return base64Url.encode(values);
   }

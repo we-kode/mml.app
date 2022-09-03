@@ -5,6 +5,8 @@ import 'package:fast_rsa/fast_rsa.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/api.dart';
+import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -123,6 +125,8 @@ class ClientService {
     }
 
     if (successfull || automatic) {
+      await FileService.getInstance().clear();
+      await DBService.getInstance().clean();
       await _storage.clearTokens();
       await RouterService.getInstance().pushReplacementNamed(
         RegisterViewModel.route,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/view_models/records/download.dart';
@@ -59,7 +58,7 @@ class RecordDownloadDialog extends StatelessWidget {
     );
   }
 
-  /// Creates the upload content that should be shown in the dialog.
+  /// Creates the download content that should be shown in the dialog.
   Widget _createDownloadContent(
       BuildContext context, RecordsDownloadDialogViewModel vm) {
     return Column(

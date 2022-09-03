@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/progress_indicator.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/information.dart';
@@ -27,8 +28,9 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   /// Calls the service method to remove the client registration.
-  void removeRegistration() {
-    ClientService.getInstance().removeRegistration();
+  Future removeRegistration() async{
+    showProgressIndicator();
+    await ClientService.getInstance().removeRegistration();
   }
 
   /// Redirects to the connection update screen.
