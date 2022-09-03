@@ -46,7 +46,7 @@ class FileService {
     }
   }
 
-  /// Loads file with [fileName]
+  /// Loads file with [fileName] as decrypted byte stream.
   Future getFile(String fileName) async {
     // TODO decrypt file and return byteStream do not load whole file into memory. cause of memeory exception on large files.
   }

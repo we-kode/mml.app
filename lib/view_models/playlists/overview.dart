@@ -54,4 +54,20 @@ class PlaylistViewModel extends ChangeNotifier {
     }
     RouterService.getInstance().navigatorKey.currentState!.pop();
   }
+
+  /// Deletes playlist with [playlistId].
+  Future deletePlaylist(int playlistId) async {
+    showProgressIndicator();
+    var records = await _service.getRecords(playlistId);
+    for (var record in records) {
+      await _service.removeFromPlaylist(record.recordId!, playlistId);
+
+      if (!(await _service.isInPlaylist(record.recordId!))) {
+        await _service.removeRecord(record.recordId!);
+        await FileService.getInstance().remove(record.file!);
+      }
+    }
+    await _service.removePlaylist(playlistId);
+    RouterService.getInstance().navigatorKey.currentState!.pop();
+  }
 }

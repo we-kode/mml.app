@@ -5,6 +5,7 @@ import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
+import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:mml_app/views/playlists/edit.dart';
 import 'package:provider/provider.dart';
 
@@ -44,24 +45,32 @@ class PlaylistScreen extends StatelessWidget {
               },
               loadData: vm.load,
               addItem: () async {
-                return await showDialog(
+                final state = await showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return const PlaylistEditDialog(playlistId: null);
                   },
                 );
+                return state== EditState.save;
               },
               editGroupFunction: (item) async {
-                return await showDialog(
+                var playlistId = (item as Record).playlist!.id;
+                final state = await showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
                     return PlaylistEditDialog(
-                      playlistId: (item as Record).playlist!.id,
+                      playlistId: playlistId,
                     );
                   },
                 );
+
+                if (state == EditState.delete && playlistId != null) {
+                  await vm.deletePlaylist(playlistId);
+                }
+
+                return state == EditState.save || state == EditState.delete;
               },
               // TODO ply records in playlist
               // openItemFunction: (

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/view_models/playlists/edit.dart';
+import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
@@ -94,11 +95,25 @@ class PlaylistEditDialog extends StatelessWidget {
     var locales = AppLocalizations.of(context)!;
 
     return [
+      if (playlistId != null)
+        Consumer<PlaylistEditDialogViewModel>(
+          builder: (context, value, child) {
+            return TextButton(
+              onPressed: value.playlistLoadedSuccessfully
+                  ? () => Navigator.pop(context, EditState.delete)
+                  : null,
+              child: Text(
+                locales.remove,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            );
+          },
+        ),
       Consumer<PlaylistEditDialogViewModel>(
         builder: (context, value, child) {
           return TextButton(
             onPressed: value.playlistLoadedSuccessfully
-                ? () => Navigator.pop(context, false)
+                ? () => Navigator.pop(context, EditState.cancel)
                 : null,
             child: Text(locales.cancel),
           );

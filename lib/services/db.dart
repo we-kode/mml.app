@@ -202,8 +202,7 @@ class DBService {
   }
 
   /// Adds [record] to [playlists] with given [fileName] of downloaded file.
-  Future addRecord(
-      Record record, List<dynamic> playlists) async {
+  Future addRecord(Record record, List<dynamic> playlists) async {
     final db = await _database;
     await db.insert(
       _tRecords,
@@ -335,10 +334,14 @@ class DBService {
     }
 
     if (!reverse && !repeat) {
-      return result['nextId'] != null ? await getRecord(result['nextId']) : null;
+      return result['nextId'] != null
+          ? await getRecord(result['nextId'])
+          : null;
     } else if (reverse && !repeat) {
       result = maps.last;
-      return result['previousId'] != null ? await getRecord(result['previousId']) : null;
+      return result['previousId'] != null
+          ? await getRecord(result['previousId'])
+          : null;
     }
 
     return _mapRecord(result);
@@ -350,9 +353,10 @@ class DBService {
       recordId: result['recordId'],
       album: result['album'],
       artist: result['artist'],
-      duration: result['dduration'],
+      duration: double.parse(result['duration'] ?? '0'),
       genre: result['genre'],
       title: result['title'],
+      file: result['file']
     );
   }
 
@@ -362,5 +366,32 @@ class DBService {
     db.delete(_tRecordsPlaylists);
     db.delete(_tPlaylists);
     db.delete(_tRecords);
+  }
+
+  /// Get all records by a [playlistId].
+  Future<List<Record>> getRecords(int playlistId) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      '''
+        SELECT r.* from $_tRecords r
+        INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
+        INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
+    ''',
+    );
+
+    return List.generate(
+      maps.length,
+      (index) => _mapRecord(maps[index]),
+    );
+  }
+
+  /// Delets one playlist by [playlistId].
+  Future removePlaylist(int playlistId) async {
+    final db = await _database;
+    await db.delete(
+      _tPlaylists,
+      where: 'id = ?',
+      whereArgs: [playlistId],
+    );
   }
 }
