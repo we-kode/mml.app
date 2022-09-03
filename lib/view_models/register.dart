@@ -13,6 +13,7 @@ import 'package:mml_app/services/secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 
 /// View model for the register screen.
 class RegisterViewModel extends ChangeNotifier {
@@ -97,7 +98,7 @@ class RegisterViewModel extends ChangeNotifier {
     var keyPair = await RSA.generate(4096);
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
-    var cryptoKey = _cryptoRandom();
+    var cryptoKey = encrypt.Key.fromSecureRandom(32);
 
     await _storage.set(
       SecureStorageService.rsaPrivateStorageKey,
@@ -109,7 +110,7 @@ class RegisterViewModel extends ChangeNotifier {
     );
     await _storage.set(
       SecureStorageService.cryptoKey,
-      cryptoKey,
+      cryptoKey.base64,
     );
 
     state = RegistrationState.init;
@@ -201,14 +202,6 @@ class RegisterViewModel extends ChangeNotifier {
       _state = RegistrationState.scan;
       notifyListeners();
     }
-  }
-
-  /// Generates a random 512 byte string as base64 encoded string of given [length].
-  String _cryptoRandom([int length = 32]) {
-    var random = Random.secure();
-    var values = List<int>.generate(length, (i) => random.nextInt(256));
-
-    return base64Url.encode(values);
   }
 }
 

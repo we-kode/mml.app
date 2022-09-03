@@ -61,10 +61,9 @@ class ApiService {
     Map<String, dynamic>? queryParameters,
     CancelToken? cancelToken,
     Options? options,
-    ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-  }) {
-    return _dio.download(
+  }) async {
+   await _dio.download(
       urlPath,
       savePath,
       data: data,
