@@ -84,7 +84,9 @@ class RouterService {
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
-          return const PlaylistScreen();
+          return PlaylistScreen(
+            appBar: MainViewModel.appBar,
+          );
         },
         transitionsBuilder: _buildTransition,
       ),
