@@ -53,27 +53,6 @@ class ApiService {
     );
   }
 
-  /// Sends a download file request with given parameters to the server.
-  Future download(
-    String urlPath,
-    String savePath, {
-    data,
-    Map<String, dynamic>? queryParameters,
-    CancelToken? cancelToken,
-    Options? options,
-    ProgressCallback? onReceiveProgress,
-  }) async {
-   await _dio.download(
-      urlPath,
-      savePath,
-      data: data,
-      queryParameters: queryParameters,
-      cancelToken: cancelToken,
-      options: options,
-      onReceiveProgress: onReceiveProgress,
-    );
-  }
-
   /// Initializes the [dio] instance with interceptors for the default handling.
   ///
   /// Adds interceptors for error handling if [addErrorHandling] is set to true.

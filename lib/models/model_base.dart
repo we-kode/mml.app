@@ -9,7 +9,7 @@ abstract class ModelBase {
   ///
   /// Shouldn't be used directly but be invoked by constructor of implementing
   /// model classes.
-  ModelBase({this.isDeletable = true});
+  ModelBase({this.isDeletable = false});
 
   /// Returns a display description of the model object, that
   /// can be used in widgets, e.g. lists.

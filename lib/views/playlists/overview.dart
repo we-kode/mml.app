@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
+import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
-import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:mml_app/views/playlists/edit.dart';
@@ -55,7 +57,7 @@ class PlaylistScreen extends StatelessWidget {
                 return state== EditState.save;
               },
               editGroupFunction: (item) async {
-                var playlistId = (item as Record).playlist!.id;
+                var playlistId = (item as LocalRecord).playlist.id;
                 final state = await showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -72,19 +74,18 @@ class PlaylistScreen extends StatelessWidget {
 
                 return state == EditState.save || state == EditState.delete;
               },
-              // TODO ply records in playlist
-              // openItemFunction: (
-              //   ModelBase item,
-              //   String? filter,
-              //   Subfilter? subfilter,
-              // ) {
-              //   vm.playRecord(
-              //     context,
-              //     item,
-              //     filter,
-              //     subfilter as ID3TagFilter,
-              //   );
-              // },
+              openItemFunction: (
+                ModelBase item,
+                String? filter,
+                Subfilter? subfilter,
+              ) {
+                vm.playRecord(
+                  context,
+                  item,
+                  filter,
+                  null,
+                );
+              },
             );
           },
         );

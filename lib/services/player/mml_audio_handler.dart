@@ -1,10 +1,14 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
+import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 
@@ -173,15 +177,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-
-      var baseUrl = await _apiService.getBaseUrl();
-      var headers = await _apiService.getHeaders();
-
-      await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId!}',
-        headers: headers,
-        initialPosition: Duration(milliseconds: currentSeekPosition.ceil()),
-      );
+      await setPlayerSoruce();
     } catch (e) {
       _player.stop();
     }
@@ -189,22 +185,13 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Plays the [currentRecord].
   Future<void> _playCurrentRecord() async {
-    var baseUrl = await _apiService.getBaseUrl();
-    var headers = await _apiService.getHeaders();
-
-    try {
-      await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId!}',
-        headers: headers,
-      );
-    } catch (e) {
-      _handleError(e);
-    }
+    await setPlayerSoruce();
 
     mediaItem.add(
       MediaItem(
-        id: '${baseUrl}media/stream/${currentRecord!.recordId!}',
+        id: currentRecord!.recordId!,
         album: currentRecord?.album,
+        // TODO Use locales
         title: currentRecord?.title ?? 'Unbekannt',
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
@@ -225,7 +212,26 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
-    Record? record;
+    Record? record = await getRecord(direction);
+
+    if (record != null) {
+      currentRecord = record;
+      await _playCurrentRecord();
+    } else {
+      _player.stop();
+    }
+  }
+
+  Future<Record?> getRecord(String direction) async {
+    if (currentRecord is LocalRecord) {
+      return DBService.getInstance().next(
+        currentRecord!.recordId!,
+        (currentRecord! as LocalRecord).playlist.id!,
+        repeat: repeat == PlayerRepeatMode.all,
+        reverse: direction == 'previous',
+        shuffle: shuffle,
+      );
+    }
 
     var params = <String, dynamic>{};
     params['repeat'] = repeat == PlayerRepeatMode.all;
@@ -246,17 +252,35 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
 
       if (response.data != null) {
-        record = Record.fromJson(response.data);
+        return Record.fromJson(response.data);
       }
     } catch (e) {
       // Catch all errors and stop playing afterwards.
     }
 
-    if (record != null) {
-      currentRecord = record;
-      await _playCurrentRecord();
-    } else {
-      _player.stop();
+    return null;
+  }
+
+  Future<void> setPlayerSoruce() async {
+    if (currentRecord is LocalRecord) {
+      _player.setAudioSource(
+        MMLAudioSource(currentRecord!.checksum!),
+        preload: false,
+      );
+
+      return;
+    }
+
+    var baseUrl = await _apiService.getBaseUrl();
+    var headers = await _apiService.getHeaders();
+
+    try {
+      await _player.setUrl(
+        '${baseUrl}media/stream/${currentRecord!.recordId}',
+        headers: headers,
+      );
+    } catch (e) {
+      _handleError(e);
     }
   }
 }

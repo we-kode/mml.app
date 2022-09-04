@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/db.dart';
@@ -47,14 +48,16 @@ class RecordsDownloadDialogViewModel extends ChangeNotifier {
     for (var record in records) {
       var r = record as Record;
       downloadFileName = record.title ?? locales.unknown;
-      await FileService.getInstance().download(r,
-          onProgress: (count, total) async {
-        downloadProgress = ((count / total) * 100).toInt();
-        if (downloadProgress == 100) {
-          await DBService.getInstance().addRecord(r, playlists);
-        }
-        notifyListeners();
-      });
+      await FileService.getInstance().download(
+        r,
+        onProgress: (count, total) async {
+          downloadProgress = ((count / total) * 100).toInt();
+          if (downloadProgress == 100) {
+            await DBService.getInstance().addRecord(r, playlists);
+          }
+          notifyListeners();
+        },
+      );
     }
     nav.pop(true);
     return true;

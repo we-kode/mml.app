@@ -8,7 +8,7 @@ class V1Migration implements DBMigration {
     batch.execute('DROP TABLE IF EXISTS Records');
     batch.execute('DROP TABLE IF EXISTS Playlists');
     batch.execute('DROP TABLE IF EXISTS Records_Playlists');
-    
+
     // cretae playlists
     batch.execute('''CREATE TABLE Playlists (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +19,7 @@ class V1Migration implements DBMigration {
     batch.execute('''CREATE TABLE Records (
       recordId TEXT PRIMARY KEY UNIQUE,
       title TEXT,
-      file TEXT,
+      checksum TEXT,
       date TEXT,
       duration TEXT,
       artist TEXT NULL,

@@ -4,7 +4,6 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
-import 'package:mml_app/models/playlist.dart';
 
 part 'record.g.dart';
 
@@ -32,27 +31,19 @@ class Record extends ModelBase {
   /// Album of the record or null if no one provided.
   String? album;
 
-  /// File name on disk.
-  String? file;
-
-  /// The playlist the record belongs to.
-  Playlist? playlist;
-
-  ///Id of offline record
-  final int? offlineId;
+  /// Checksum of the record data.
+  String? checksum;
 
   /// Creates a new record instance with the given values.
   Record({
     required this.recordId,
+    required this.checksum,
     this.title,
     this.date,
     this.duration = 0,
     this.album,
     this.artist,
     this.genre,
-    this.file,
-    this.playlist,
-    this.offlineId,
     bool? isDeletable = false,
   }) : super(isDeletable: isDeletable);
 
@@ -69,7 +60,7 @@ class Record extends ModelBase {
 
   @override
   dynamic getIdentifier() {
-    return offlineId ?? recordId;
+    return recordId;
   }
 
   @override
@@ -85,8 +76,6 @@ class Record extends ModelBase {
 
   @override
   String? getGroup(BuildContext context) {
-    return playlist != null
-        ? "${playlist!.name}"
-        : DateFormat.yMd().format(date!);
+    return DateFormat.yMd().format(date!);
   }
 }

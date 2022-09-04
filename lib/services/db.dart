@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
+import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/record.dart';
@@ -113,14 +114,13 @@ class DBService {
     return ModelList(
       List.generate(
         maps.length,
-        (index) => Record(
-          offlineId: maps[index]['id'],
+        (index) => LocalRecord(
           recordId: maps[index]['recordId'],
           album: maps[index]['album'],
           artist: maps[index]['artist'],
           genre: maps[index]['genre'],
           title: maps[index]['title'],
-          file: maps[index]['file'],
+          checksum: maps[index]['checksum'],
           duration: double.parse(maps[index]['duration'] ?? '0'),
           playlist: Playlist(
             id: maps[index]['playlistId'],
@@ -212,7 +212,7 @@ class DBService {
         'artist': record.artist,
         'genre': record.genre,
         'title': record.title,
-        'file': record.file,
+        'checksum': record.checksum,
         'duration': record.duration
       }),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -278,7 +278,7 @@ class DBService {
       whereArgs: [recordId],
     );
 
-    return maps.isNotEmpty ? maps.first['file'] : null;
+    return maps.isNotEmpty ? maps.first['checksum'] : null;
   }
 
   /// Retunrs the [Record] of the [recordId] from db or null if no record found.
@@ -311,9 +311,9 @@ class DBService {
   }) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT r.*, 
+        SELECT r.*,
                LEAD(r.recordId, 1, 0) OVER (ORDER BY r.title) as nextId,
-               LAG(r.recordId, 1, 0) OVER (ORDER BY r.title) as previousId, 
+               LAG(r.recordId, 1, 0) OVER (ORDER BY r.title) as previousId,
         FROM $_tPlaylists p
         INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
         INNER JOIN $_tRecords r ON rp.recordId = r.recordId
@@ -348,15 +348,19 @@ class DBService {
   }
 
   /// Mpas a database [result] to a [Record] object.
-  Record _mapRecord(Map<String, dynamic> result) {
-    return Record(
+  LocalRecord _mapRecord(Map<String, dynamic> result) {
+    return LocalRecord(
       recordId: result['recordId'],
+      playlist: Playlist(
+        id: result['playlistId'],
+        name: result['playlistName'],
+      ),
       album: result['album'],
       artist: result['artist'],
       duration: double.parse(result['duration'] ?? '0'),
       genre: result['genre'],
       title: result['title'],
-      file: result['file']
+      checksum: result['checksum'],
     );
   }
 
@@ -369,7 +373,7 @@ class DBService {
   }
 
   /// Get all records by a [playlistId].
-  Future<List<Record>> getRecords(int playlistId) async {
+  Future<List<LocalRecord>> getRecords(int playlistId) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       '''

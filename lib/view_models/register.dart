@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +11,6 @@ import 'package:mml_app/services/secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
 
 /// View model for the register screen.
 class RegisterViewModel extends ChangeNotifier {
@@ -98,7 +95,6 @@ class RegisterViewModel extends ChangeNotifier {
     var keyPair = await RSA.generate(4096);
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
-    var cryptoKey = encrypt.Key.fromSecureRandom(32);
 
     await _storage.set(
       SecureStorageService.rsaPrivateStorageKey,
@@ -107,10 +103,6 @@ class RegisterViewModel extends ChangeNotifier {
     await _storage.set(
       SecureStorageService.rsaPublicStorageKey,
       public,
-    );
-    await _storage.set(
-      SecureStorageService.cryptoKey,
-      cryptoKey.base64,
     );
 
     state = RegistrationState.init;
