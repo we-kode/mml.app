@@ -102,9 +102,9 @@ class FileService {
 
   /// Loads file with [fileName] as decrypted byte chunked stream.
   Future<Stream<Uint8List>> getFile(String fileName) async {
-    final cryptFile = File(fileName);
+    final cryptFile = File('${await _folder}/$fileName');
     final privateKey = await SecureStorageService.getInstance().get(
-      SecureStorageService.rsaPublicStorageKey,
+      SecureStorageService.rsaPrivateStorageKey,
     );
 
     return cryptFile.openRead().asyncMap((List<int> input) {
