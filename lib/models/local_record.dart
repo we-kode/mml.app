@@ -20,7 +20,7 @@ class LocalRecord extends Record {
 
   @override
   dynamic getIdentifier() {
-    return (recordId ?? '') + playlist.id.toString();
+    return recordId == null ? null : '$recordId${playlist.id}';
   }
 
   @override

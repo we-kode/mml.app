@@ -47,7 +47,7 @@ class FileService {
 
   /// Removes saved file with [fileName] from disk.
   Future<void> remove(String fileName) async {
-    final file = File('${await _folder}/$fileName.mml');
+    final file = File('${await _folder}/$fileName');
     if (await file.exists()) {
       await file.delete();
     }
