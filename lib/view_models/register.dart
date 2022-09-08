@@ -15,7 +15,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 /// View model for the register screen.
 class RegisterViewModel extends ChangeNotifier {
   /// Route of the register screen.
-  static String route = '/register';
+  static const String route = '/register';
 
   /// [RegistrationState] of the current process.
   late RegistrationState _state;

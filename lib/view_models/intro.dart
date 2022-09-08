@@ -16,7 +16,7 @@ import 'package:mml_app/view_models/register.dart';
 /// View model for the intro screen.
 class IntroViewModel extends ChangeNotifier {
   /// Route for the intro screen.
-  static String route = '/intro';
+  static const String route = '/intro';
 
   /// Locales of the application.
   late AppLocalizations locales;

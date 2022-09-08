@@ -6,7 +6,7 @@ import 'package:mml_app/services/router.dart';
 /// View model for the main screen.
 class MainViewModel extends ChangeNotifier {
   /// Route of the main screen.
-  static String route = '/';
+  static const String route = '/main';
 
   static FilterAppBar? appBar;
 
