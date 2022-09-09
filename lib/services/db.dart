@@ -349,7 +349,6 @@ class DBService {
             ? null
             : records.elementAt(records.length - 1)
         : records.elementAt(actualIndex - 1);
-    ;
   }
 
   /// Mpas a database [result] to a [Record] object.

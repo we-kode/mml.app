@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
-import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/subfilter.dart';
