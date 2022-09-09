@@ -191,8 +191,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       MediaItem(
         id: currentRecord!.recordId!,
         album: currentRecord?.album,
-        // TODO Use locales
-        title: currentRecord?.title ?? 'Unkown',
+        title: currentRecord?.title ?? 'Unknown',
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
         duration: Duration(
