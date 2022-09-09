@@ -1,6 +1,5 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -11,6 +10,7 @@ import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/secure_storage.dart';
 
 /// Audio handler that interacts with the player background service and the
 /// notification bar.
@@ -192,7 +192,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         id: currentRecord!.recordId!,
         album: currentRecord?.album,
         // TODO Use locales
-        title: currentRecord?.title ?? 'Unbekannt',
+        title: currentRecord?.title ?? 'Unkown',
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
         duration: Duration(
@@ -263,8 +263,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> setPlayerSoruce() async {
     if (currentRecord is LocalRecord) {
+      final file =
+          await FileService.getInstance().getFile(currentRecord!.checksum!);
+      final privateKey = await SecureStorageService.getInstance()
+          .get(SecureStorageService.rsaPrivateStorageKey);
       _player.setAudioSource(
-        MMLAudioSource(currentRecord!.checksum!),
+        MMLAudioSource(file, privateKey!),
         preload: false,
       );
 

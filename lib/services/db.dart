@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
@@ -311,40 +312,44 @@ class DBService {
   }) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT r.*,
-               LEAD(r.recordId, 1, 0) OVER (ORDER BY r.title) as nextId,
-               LAG(r.recordId, 1, 0) OVER (ORDER BY r.title) as previousId,
+        SELECT r.*, p.id as playlistId, p.name as playlistName
         FROM $_tPlaylists p
         INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
         INNER JOIN $_tRecords r ON rp.recordId = r.recordId
-        WHERE p.id = ? ${!repeat ? 'AND r.recordId = ?' : ''}
-        ORDER BY ${shuffle ? 'RANDOM() LIMIT 1' : 'r.title'}
-    ''', [
-      playlistId,
-      recordId,
-    ]);
+        WHERE p.id = ? 
+        ORDER BY r.title
+    ''', [playlistId]);
 
     if (maps.isEmpty) {
       return null;
     }
 
-    Map<String, dynamic> result = maps.first;
+    final records = List.generate(
+      maps.length,
+      (index) => _mapRecord(maps[index]),
+    );
+
     if (shuffle) {
-      return _mapRecord(result);
+      final random = Random();
+      return records.elementAt(random.nextInt(records.length - 1));
     }
 
-    if (!reverse && !repeat) {
-      return result['nextId'] != null
-          ? await getRecord(result['nextId'])
-          : null;
-    } else if (reverse && !repeat) {
-      result = maps.last;
-      return result['previousId'] != null
-          ? await getRecord(result['previousId'])
-          : null;
+    final actualIndex =
+        records.indexWhere((element) => element.recordId == recordId);
+    if (!reverse) {
+      return actualIndex == (records.length - 1)
+          ? !repeat
+              ? null
+              : records.elementAt(0)
+          : records.elementAt(actualIndex + 1);
     }
 
-    return _mapRecord(result);
+    return actualIndex == 0
+        ? !repeat
+            ? null
+            : records.elementAt(records.length - 1)
+        : records.elementAt(actualIndex - 1);
+    ;
   }
 
   /// Mpas a database [result] to a [Record] object.

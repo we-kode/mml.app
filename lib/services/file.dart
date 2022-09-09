@@ -63,9 +63,9 @@ class FileService {
       SecureStorageService.rsaPublicStorageKey,
     );
 
-    /*if (await cryptFile.exists()) {
+    if (await cryptFile.exists()) {
       return;
-    }*/
+    }
 
     Response<ResponseBody> response =
         await ApiService.getInstance().request<ResponseBody>(
@@ -101,38 +101,38 @@ class FileService {
   }
 
   /// Loads file with [fileName] as decrypted byte chunked stream.
-  Future<Stream<Uint8List>> getFile(String fileName) async {
-    final cryptFile = File('${await _folder}/$fileName');
-    final privateKey = await SecureStorageService.getInstance().get(
-      SecureStorageService.rsaPrivateStorageKey,
-    );
+  Future<File> getFile(String fileName) async {
+    return File('${await _folder}/$fileName');
+    // final privateKey = await SecureStorageService.getInstance().get(
+    //   SecureStorageService.rsaPrivateStorageKey,
+    // );
 
-    return cryptFile.openRead().asyncMap((List<int> input) {
-      return RSA.decryptPKCS1v15Bytes(Uint8List.fromList(input), privateKey!);
-    }).asBroadcastStream();
+    // return cryptFile.openRead();
+    // .asyncMap((List<int> input) {
+    //   // return RSA.decryptPKCS1v15Bytes(Uint8List.fromList(input), privateKey!);
+    //   return input;
+    // }).asBroadcastStream();
   }
 }
 
 class MMLAudioSource extends StreamAudioSource {
-  late Future<Stream<Uint8List>> stream;
+  final File file;
+  final String privateKey;
 
-  MMLAudioSource(String filename) : super(tag: "MMLAudioSource") {
-    stream = FileService.getInstance().getFile(filename);
-  }
+  MMLAudioSource(this.file, this.privateKey) : super(tag: "MMLAudioSource");
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {
-    var streamData = await stream;
-    var length = await streamData.length;
-    end = min(length, end ?? 0);
-    start = start ?? 0;
-
+    start ??= 0;
+    end ??= await file.length();
     return StreamAudioResponse(
-      sourceLength: length,
-      contentLength: start - end,
+      sourceLength: await file.length(),
+      contentLength: end - start,
       offset: start,
-      stream: streamData.skip(start).take(end - start),
-      contentType: "audio/mpeg",
+      stream: file.openRead(start, end).asyncMap((List<int> input) {
+        return RSA.decryptPKCS1v15Bytes(Uint8List.fromList(input), privateKey);
+      }).asBroadcastStream(),
+      contentType: 'audio/mpeg',
     );
   }
 }
