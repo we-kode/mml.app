@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:just_audio/just_audio.dart';
@@ -178,7 +180,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-      await _setPlayerSoruce();
+      await _setPlayerSource();
     } catch (e) {
       _player.stop();
     }
@@ -186,26 +188,26 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Plays the [currentRecord].
   Future<void> _playCurrentRecord() async {
-    try {
-      await _setPlayerSoruce();
+    var success = await _setPlayerSource();
 
-      mediaItem.add(
-        MediaItem(
-          id: currentRecord!.recordId!,
-          album: currentRecord?.album,
-          title: currentRecord?.title ?? 'Unknown',
-          artist: currentRecord?.artist,
-          genre: currentRecord?.genre,
-          duration: Duration(
-            milliseconds: (currentRecord?.duration ?? 0).toInt(),
-          ),
-        ),
-      );
-
-      _player.play();
-    } catch (e) {
-      _player.stop();
+    if (!success) {
+      return;
     }
+
+    mediaItem.add(
+      MediaItem(
+        id: currentRecord!.recordId!,
+        album: currentRecord?.album,
+        title: currentRecord?.title ?? 'Unknown',
+        artist: currentRecord?.artist,
+        genre: currentRecord?.genre,
+        duration: Duration(
+          milliseconds: (currentRecord?.duration ?? 0).toInt(),
+        ),
+      ),
+    );
+
+    _player.play();
   }
 
   /// Skips the playback in the given [direction] to the next or
@@ -267,11 +269,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Sets the source format of the player depending on the record type to be played.
-  Future<void> _setPlayerSoruce() async {
+  Future<bool> _setPlayerSource() async {
     if (currentRecord is LocalRecord) {
-      final file = await FileService.getInstance().getFile(
-        currentRecord!.checksum!,
-      );
+      File file;
+      try {
+        file = await FileService.getInstance().getFile(
+          currentRecord!.checksum!,
+        );
+      } catch (e) {
+        await PlayerService.getInstance().closePlayer();
+        return false;
+      }
 
       final cryptKey = await SecureStorageService.getInstance().get(
         SecureStorageService.cryptoKey,
@@ -281,7 +289,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         preload: false,
       );
 
-      return;
+      return true;
     }
 
     var baseUrl = await _apiService.getBaseUrl();
@@ -295,5 +303,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     } catch (e) {
       _handleError(e);
     }
+
+    return true;
   }
 }
