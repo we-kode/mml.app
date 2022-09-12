@@ -6,6 +6,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/components/intro_playlist_animation.dart';
 import 'package:mml_app/components/intro_records_animation.dart';
 import 'package:mml_app/components/intro_register_animation.dart';
+import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/router.dart';
@@ -15,7 +16,7 @@ import 'package:mml_app/view_models/register.dart';
 /// View model for the intro screen.
 class IntroViewModel extends ChangeNotifier {
   /// Route for the intro screen.
-  static String route = '/intro';
+  static const String route = '/intro';
 
   /// Locales of the application.
   late AppLocalizations locales;
@@ -91,11 +92,13 @@ class IntroViewModel extends ChangeNotifier {
       )
     ];
   }
-  
+
+  /// Inits the app. All initalizing processes run here.
   Future _initApp(BuildContext context) async {
     var notificationColor = Theme.of(context).colorScheme.inverseSurface;
 
     await findSystemLocale();
+    await FileService.getInstance().createFolder();
 
     PlayerService.getInstance().audioHandler = await AudioService.init(
       builder: () => MMLAudioHandler(),
@@ -105,7 +108,7 @@ class IntroViewModel extends ChangeNotifier {
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
         notificationColor: notificationColor,
-        androidNotificationIcon: 'mipmap/ic_notification'
+        androidNotificationIcon: 'mipmap/ic_notification',
       ),
     );
   }

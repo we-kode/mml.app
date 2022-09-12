@@ -56,5 +56,17 @@
   "artist": "Interpret",
   "genre": "Genre",
   "album": "Album",
-  "filter": "Filter"
+  "filter": "Filter",
+  "add": "Hinzufügen",
+  "notFound": "Der aufgerufene Datensatz wurde nicht gefunden!",
+  "editPlaylist":"Wiedergabeliste bearbeiten",
+  "addPlaylist":"Wiedergabeliste hinzufügen",
+  "invalidDisplayName": "Bitte geben Sie einen Namen an!",
+  "playlistUniqueConstraintFailed": "Wiedergabeliste ist bereits vorhanden.",
+  "remove": "Löschen",
+  "yes": "Ja",
+  "deleteConfirmation": "Möchten Sie tatsächlich die gewählten Datensätze löschen?",
+  "download":"Download",
+  "fileNotFound":"Datei konnte nicht gefunden werden. Fügen Sie die Aufnahme erneut zu einer Playlist hinzu.",
+  "downloadError":"Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut."
 }

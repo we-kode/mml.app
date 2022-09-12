@@ -8,6 +8,7 @@ import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -29,11 +30,42 @@ typedef OpenItemFunction = Function(
   Subfilter? subFilter,
 );
 
+/// Function to edit the group of one [item].
+typedef EditGroupFunction = Function(
+  ModelBase item,
+);
+
+/// Function called when the corresponds function of the selected items is performed in the action bar.
+typedef MultiSelectActionFunction = Future<bool> Function(
+  List<dynamic> selectedItems,
+);
+
+/// Function that creates an new item.
+///
+/// This function should return a [Future], that either resolves with true
+/// after successful creation or false on cancel.
+/// The list will reload the data starting from beginning, if true will be
+/// returned.
+typedef AddFunction = Future<bool> Function();
+
 /// List that supports async loading of data, when necessary in chunks.
 class AsyncListView extends StatefulWidget {
   /// Function to load data with the passed [filter], starting from [offset] and
   /// loading an amount of [take] data.
   final LoadDataFunction loadData;
+
+  /// Function that creates an new item.
+  ///
+  /// This function should return a [Future], that either resolves with true
+  /// after successful creation or false on cancel.
+  /// The list will reload the data starting from beginning, if true will be
+  /// returned.
+  final AddFunction? addItem;
+
+  /// Function called when the corresponds function of the selected items is performed in the action bar.
+  ///
+  /// This action must be set, if one [SelectedItemsAction] is given.
+  final MultiSelectActionFunction? onMultiSelect;
 
   /// A subfilter widget which can be used to add subfilters like chips for more
   /// filter posibilities.
@@ -49,6 +81,12 @@ class AsyncListView extends StatefulWidget {
   /// [filter] and [subFilter].
   final OpenItemFunction? openItemFunction;
 
+  /// Function to edit the group of one [item].
+  final EditGroupFunction? editGroupFunction;
+
+  /// [SelectedItemsAction] of the action bar the list belongs to.
+  final SelectedItemsAction? selectedItemsAction;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -57,6 +95,10 @@ class AsyncListView extends StatefulWidget {
     this.subfilter,
     this.filter,
     this.openItemFunction,
+    this.editGroupFunction,
+    this.addItem,
+    this.selectedItemsAction,
+    this.onMultiSelect,
   }) : super(key: key);
 
   @override
@@ -84,6 +126,12 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Amount of data that should be loaded starting from [_offset].
   int _take = 100;
 
+  /// Indicates, whether the list is currently in multi select mode.
+  bool _isInMultiSelectMode = false;
+
+  /// Identifiers of the selected items in the list.
+  List<dynamic> _selectedItems = [];
+
   /// Indicates, whether data is loading and an loading indicator should be
   /// shown.
   bool _isLoadingData = true;
@@ -94,9 +142,13 @@ class _AsyncListViewState extends State<AsyncListView> {
   @override
   void initState() {
     _reloadData();
-
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
+    widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => widget.selectedItemsAction?.clear(),
+    );
 
     super.initState();
   }
@@ -106,25 +158,64 @@ class _AsyncListViewState extends State<AsyncListView> {
     super.dispose();
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
+    widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // List header with filter and action buttons.
-        _createListHeaderWidget(),
+    return Scaffold(
+      body: Column(
+        children: [
+          // List header with filter and action buttons.
+          _createListHeaderWidget(),
 
-        // List, loading indicator or no data widget.
-        Expanded(
-          child: _isLoadingData
-              ? _createLoadingWidget()
-              : (_items!.totalCount > 0
-                  ? _createListViewWidget()
-                  : _createNoDataWidget()),
-        ),
-      ],
+          // List, loading indicator or no data widget.
+          Expanded(
+            child: _isLoadingData
+                ? _createLoadingWidget()
+                : (_items!.totalCount > 0
+                    ? _createListViewWidget()
+                    : _createNoDataWidget()),
+          ),
+        ],
+      ),
+      floatingActionButton: _createActionButton(),
     );
+  }
+
+  /// Calls the [SelectedItemsAction] if one is provided, when the action is called in the app bar.
+  void _performSelectedItemsAction() {
+    if (!widget.selectedItemsAction!.enabled) {
+      _disableMultiSelectMode();
+      return;
+    }
+
+    if (widget.selectedItemsAction!.actionPerformed) {
+      var selected = _items?.where(
+        (element) => _selectedItems.contains(
+          element?.getIdentifier(),
+        ),
+      );
+      widget.onMultiSelect!(selected?.toList() ?? []).then((value) {
+        widget.selectedItemsAction!.actionPerformedFinished();
+        if (value) {
+          widget.selectedItemsAction!.clear();
+          _disableMultiSelectMode();
+          if (widget.selectedItemsAction!.reload) {
+            _reloadData();
+          }
+        }
+      });
+      return;
+    }
+  }
+
+  /// Disables multiselect mode and removes selected items.
+  void _disableMultiSelectMode() {
+    setState(() {
+      _isInMultiSelectMode = false;
+      _selectedItems = [];
+    });
   }
 
   /// Reloads the data starting from inital offset with inital count.
@@ -180,6 +271,31 @@ class _AsyncListViewState extends State<AsyncListView> {
         _items = ModelList([], _initialOffset, 0);
       });
     });
+  }
+
+  /// Show a floating action button or an expanding fab.
+  ///
+  /// When no sub action buttons given, only the add action button is shown, when [widget.showAddButton] is true.
+  /// When a list of sub action buttons is provided, an expandable action button will be shown.
+  Widget _createActionButton() {
+    return Visibility(
+      visible: widget.addItem != null,
+      child: FloatingActionButton(
+        onPressed: () {
+          if (widget.addItem == null) {
+            return;
+          }
+
+          widget.addItem!().then((value) {
+            if (value) {
+              _reloadData();
+            }
+          });
+        },
+        tooltip: AppLocalizations.of(context)!.add,
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 
   /// Creates the list header widget with filter and remove action buttons.
@@ -305,12 +421,27 @@ class _AsyncListViewState extends State<AsyncListView> {
       _actualGroup = itemGroup;
       return Column(
         children: [
-          Chip(
-            label: Text(
-              item.getGroup(context)!,
-            ),
-          ),
-          _listTile(item, index),
+          widget.editGroupFunction != null
+              ? ActionChip(
+                  label: Text(
+                    item.getGroup(context)!,
+                  ),
+                  onPressed: () {
+                    widget.editGroupFunction!(item).then(
+                      (value) {
+                        if (value) {
+                          _reloadData();
+                        }
+                      },
+                    );
+                  },
+                )
+              : Chip(
+                  label: Text(
+                    item.getGroup(context)!,
+                  ),
+                ),
+          if (item.getIdentifier() != null) _listTile(item, index),
         ],
       );
     }
@@ -320,17 +451,37 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
+    var leadingTile = !_isInMultiSelectMode
+        ? null
+        : Checkbox(
+            onChanged: (_) {
+              _onItemChecked(index);
+            },
+            value: _selectedItems.contains(item.getIdentifier()),
+          );
+
     return ListTile(
+      leading: leadingTile,
       minVerticalPadding: 0,
       visualDensity: const VisualDensity(vertical: 0),
-      title: Row(
+      title: Wrap(
         children: [
-          Text(item.getDisplayDescription()),
+          Text(
+            item.getDisplayDescription(),
+            overflow: TextOverflow.fade,
+            maxLines: 1,
+            softWrap: false,
+          ),
           _createTitleSuffix(item),
         ],
       ),
       subtitle: item.getSubtitle(context) != null
-          ? Text(item.getSubtitle(context)!)
+          ? Text(
+              item.getSubtitle(context)!,
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+              softWrap: false,
+            )
           : null,
       trailing: Column(
         children: [
@@ -343,16 +494,46 @@ class _AsyncListViewState extends State<AsyncListView> {
               : const SizedBox.shrink(),
         ],
       ),
-      onTap: widget.openItemFunction != null
-          ? () {
-              widget.openItemFunction!(
+      onTap: () {
+        if (_isInMultiSelectMode) {
+          _onItemChecked(index);
+          return;
+        }
+
+        widget.openItemFunction != null
+            ? widget.openItemFunction!(
                 item,
                 widget.filter?.textFilter,
                 widget.subfilter?.filter,
-              );
-            }
-          : null,
+              )
+            : null;
+      },
+      onLongPress: () {
+        if (!_isInMultiSelectMode) {
+          setState(() {
+            _isInMultiSelectMode = true;
+          });
+          widget.selectedItemsAction?.enabled = true;
+        }
+
+        _onItemChecked(index);
+      },
     );
+  }
+
+  /// Stores the identifer of the item at the [index] or removes it, when
+  /// the identifier was in the list of selected items.
+  void _onItemChecked(int index) {
+    if (_selectedItems.contains(_items![index]?.getIdentifier())) {
+      _selectedItems.remove(_items![index]?.getIdentifier());
+    } else if (_items![index] != null) {
+      _selectedItems.add(_items![index]!.getIdentifier());
+    }
+
+    setState(() {
+      _selectedItems = _selectedItems;
+    });
+    widget.selectedItemsAction?.count = _selectedItems.length;
   }
 
   /// Cretaes a suffix widget of the title if suffix exists.

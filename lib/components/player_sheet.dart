@@ -5,6 +5,7 @@ import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:text_scroll/text_scroll.dart';
 
 /// Player sheet shown in the bottom sheet bar.
 class PlayerSheet extends StatefulWidget {
@@ -89,10 +90,16 @@ class PlayerSheetState extends State<PlayerSheet>
                   children: [
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return Text(
-                          state.currentReocrd?.title ??
-                              AppLocalizations.of(context)!.unknown,
-                          style: Theme.of(context).textTheme.subtitle1,
+                        return Flexible(
+                          fit: FlexFit.tight,
+                          flex: 8,
+                          child: TextScroll(
+                            state.currentReocrd?.title ??
+                                AppLocalizations.of(context)!.unknown,
+                            style: Theme.of(context).textTheme.subtitle1,
+                            velocity: const Velocity(pixelsPerSecond: Offset(15, 0)),
+                            mode: TextScrollMode.bouncing,
+                          ),
                         );
                       },
                     ),

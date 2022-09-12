@@ -6,7 +6,6 @@ import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:provider/provider.dart';
-import 'package:rive/rive.dart';
 
 /// Register screen.
 class RegisterScreen extends StatelessWidget {

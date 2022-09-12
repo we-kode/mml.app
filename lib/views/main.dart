@@ -30,7 +30,7 @@ class MainScreen extends StatelessWidget {
                   preferredSize: const Size.fromHeight(kToolbarHeight),
                   child: Consumer<MainViewModel>(
                     builder: (context, vm, _) {
-                      return vm.getAppBar();
+                      return MainViewModel.appBar ?? Container();
                     },
                   ),
                 ),
@@ -82,6 +82,10 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
   @override
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
+
+    if (route.settings.arguments is Function) {
+      MainViewModel.appBar = (route.settings.arguments as Function)();
+    }
 
     vm.selectedIndex = getSelectedIndex(route);
   }

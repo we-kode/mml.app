@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
-import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 
@@ -15,17 +15,14 @@ class RecordsViewModel extends ChangeNotifier {
   /// Route of the records screen.
   static String route = '/records';
 
-  /// The [FilterApp] of the records overview screen.
-  static FilterAppBar appBar = FilterAppBar(
-    title: 'records',
-    enableFilter: true,
-  );
-
   /// App locales.
   late AppLocalizations locales;
 
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
+
+  /// [RecordService] used to load data for the records uplaod dialog.
+  final DBService _dbService = DBService.getInstance();
 
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
@@ -47,6 +44,7 @@ class RecordsViewModel extends ChangeNotifier {
     return _service.getRecords(filter, offset, take, subfilter);
   }
 
+  /// Plays one record.
   void playRecord(
     BuildContext context,
     ModelBase record,
@@ -58,6 +56,19 @@ class RecordsViewModel extends ChangeNotifier {
       record as Record,
       filter,
       subfilter,
+    );
+  }
+
+  /// loads all available playlists.
+  Future<ModelList> loadPlaylists({
+    String? filter,
+    int? offset,
+    int? take,
+  }) async {
+    return _dbService.getPlaylists(
+      filter,
+      offset,
+      take,
     );
   }
 }

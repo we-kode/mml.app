@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
+import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/file.dart';
+import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/secure_storage.dart';
 
 /// Audio handler that interacts with the player background service and the
 /// notification bar.
@@ -133,9 +140,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final playing = _player.playing;
 
     List<MediaControl> controls = [];
+    List<int> compatIndices = [0, 2];
 
     if (!_shuffle) {
       controls.add(MediaControl.skipToPrevious);
+      compatIndices = [0, 1, 3];
     }
 
     controls.addAll([
@@ -150,7 +159,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         systemActions: const {
           MediaAction.seek,
         },
-        androidCompactActionIndices: const [0, 1, 2],
+        androidCompactActionIndices: compatIndices,
         processingState: const {
           ProcessingState.idle: AudioProcessingState.idle,
           ProcessingState.loading: AudioProcessingState.loading,
@@ -171,15 +180,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-
-      var baseUrl = await _apiService.getBaseUrl();
-      var headers = await _apiService.getHeaders();
-
-      await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId!}',
-        headers: headers,
-        initialPosition: Duration(milliseconds: currentSeekPosition.ceil()),
-      );
+      await _setPlayerSource();
     } catch (e) {
       _player.stop();
     }
@@ -187,23 +188,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Plays the [currentRecord].
   Future<void> _playCurrentRecord() async {
-    var baseUrl = await _apiService.getBaseUrl();
-    var headers = await _apiService.getHeaders();
+    var success = await _setPlayerSource();
 
-    try {
-      await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId!}',
-        headers: headers,
-      );
-    } catch (e) {
-      _handleError(e);
+    if (!success) {
+      return;
     }
 
     mediaItem.add(
       MediaItem(
-        id: '${baseUrl}media/stream/${currentRecord!.recordId!}',
+        id: currentRecord!.recordId!,
         album: currentRecord?.album,
-        title: currentRecord?.title ?? 'Unbekannt',
+        title: currentRecord?.title ?? 'Unknown',
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
         duration: Duration(
@@ -223,7 +218,27 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
-    Record? record;
+    Record? record = await getRecord(direction);
+
+    if (record != null) {
+      currentRecord = record;
+      await _playCurrentRecord();
+    } else {
+      _player.stop();
+    }
+  }
+
+  /// Returns next or previous record in range depending on [direction] to be played.
+  Future<Record?> getRecord(String direction) async {
+    if (currentRecord is LocalRecord) {
+      return DBService.getInstance().next(
+        currentRecord!.recordId!,
+        (currentRecord! as LocalRecord).playlist.id!,
+        repeat: repeat == PlayerRepeatMode.all,
+        reverse: direction == 'previous',
+        shuffle: shuffle,
+      );
+    }
 
     var params = <String, dynamic>{};
     params['repeat'] = repeat == PlayerRepeatMode.all;
@@ -244,17 +259,51 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
 
       if (response.data != null) {
-        record = Record.fromJson(response.data);
+        return Record.fromJson(response.data);
       }
     } catch (e) {
       // Catch all errors and stop playing afterwards.
     }
 
-    if (record != null) {
-      currentRecord = record;
-      await _playCurrentRecord();
-    } else {
-      _player.stop();
+    return null;
+  }
+
+  /// Sets the source format of the player depending on the record type to be played.
+  Future<bool> _setPlayerSource() async {
+    if (currentRecord is LocalRecord) {
+      File file;
+      try {
+        file = await FileService.getInstance().getFile(
+          currentRecord!.checksum!,
+        );
+      } catch (e) {
+        await PlayerService.getInstance().closePlayer();
+        return false;
+      }
+
+      final cryptKey = await SecureStorageService.getInstance().get(
+        SecureStorageService.cryptoKey,
+      );
+      _player.setAudioSource(
+        MMLAudioSource(file, int.parse(cryptKey!)),
+        preload: false,
+      );
+
+      return true;
     }
+
+    var baseUrl = await _apiService.getBaseUrl();
+    var headers = await _apiService.getHeaders();
+
+    try {
+      await _player.setUrl(
+        '${baseUrl}media/stream/${currentRecord!.recordId}',
+        headers: headers,
+      );
+    } catch (e) {
+      _handleError(e);
+    }
+
+    return true;
   }
 }

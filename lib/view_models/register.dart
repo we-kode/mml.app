@@ -9,13 +9,14 @@ import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 /// View model for the register screen.
 class RegisterViewModel extends ChangeNotifier {
   /// Route of the register screen.
-  static String route = '/register';
+  static const String route = '/register';
 
   /// [RegistrationState] of the current process.
   late RegistrationState _state;
@@ -83,7 +84,7 @@ class RegisterViewModel extends ChangeNotifier {
 
       state = RegistrationState.rsa;
       Future.microtask(() async {
-        await generateRSA();
+        await generateKeys();
       });
 
       return true;
@@ -91,7 +92,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   /// Generates rsa key.
-  Future generateRSA() async {
+  Future generateKeys() async {
     var keyPair = await RSA.generate(4096);
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
@@ -103,6 +104,12 @@ class RegisterViewModel extends ChangeNotifier {
     await _storage.set(
       SecureStorageService.rsaPublicStorageKey,
       public,
+    );
+
+    final crypt = XorEncryptor.generateKey();
+    await _storage.set(
+      SecureStorageService.cryptoKey,
+      crypt.toString(),
     );
 
     state = RegistrationState.init;

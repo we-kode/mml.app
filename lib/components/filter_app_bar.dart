@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 
 /// An appbar containing one expandable filter input.
 class FilterAppBar extends StatefulWidget {
@@ -15,10 +16,15 @@ class FilterAppBar extends StatefulWidget {
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
 
+  /// [SelectedItemsAction] which controls the app bar if a list with muiltselection
+  /// is available in the widget, the app bar belongs to.
+  final SelectedItemsAction? listAction;
+
   /// Initiales the app bar.
   FilterAppBar({
     Key? key,
     required this.title,
+    this.listAction,
     this.enableFilter,
   }) : super(key: key);
 
@@ -37,15 +43,59 @@ class FilterAppBarState extends State<FilterAppBar> {
   String? _filter;
 
   @override
+  void initState() {
+    widget.listAction?.addListener(_updateState);
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(FilterAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.listAction != widget.listAction) {
+      widget.listAction?.removeListener(_updateState);
+      widget.listAction?.addListener(_updateState);
+    }
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
+    widget.listAction?.removeListener(_updateState);
+  }
+
+  /// Updates the state if the [SelectedItemsAction] state changed.
+  void _updateState() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: !_filterOpened || !(widget.enableFilter ?? false)
-          ? Text(_getLocalizedString(context))
-          : Container(
-              margin: const EdgeInsets.only(bottom: 4.0),
-              child: _createInput(),
-            ),
+      leading: widget.listAction != null && widget.listAction!.enabled
+          ? Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    widget.listAction?.clear();
+                  },
+                  icon: const Icon(Icons.close),
+                  tooltip: AppLocalizations.of(context)!.cancel,
+                ),
+                Text("${widget.listAction!.count}")
+              ],
+            )
+          : null,
+      title: Visibility(
+        visible: widget.listAction == null || !widget.listAction!.enabled,
+        child: !_filterOpened || !(widget.enableFilter ?? false)
+            ? Text(_getLocalizedString(context))
+            : Container(
+                margin: const EdgeInsets.only(bottom: 4.0),
+                child: _createInput(),
+              ),
+      ),
       actions: _createActions(),
     );
   }
@@ -109,10 +159,13 @@ class FilterAppBarState extends State<FilterAppBar> {
 
   /// Creates the actions of the app bar.
   List<Widget> _createActions() {
-    return !(widget.enableFilter ?? false)
+    var enableFilter = widget.enableFilter ?? false;
+    return !enableFilter && widget.listAction == null
         ? []
         : [
-            if (!_filterOpened)
+            if (enableFilter &&
+                !_filterOpened &&
+                (widget.listAction != null && !widget.listAction!.enabled))
               IconButton(
                 onPressed: () => setState(
                   () {
@@ -120,6 +173,15 @@ class FilterAppBarState extends State<FilterAppBar> {
                   },
                 ),
                 icon: const Icon(Icons.search),
+              ),
+            if (widget.listAction != null && widget.listAction!.enabled)
+              IconButton(
+                onPressed: () => setState(
+                  () {
+                    widget.listAction!.actionPerformed = true;
+                  },
+                ),
+                icon: widget.listAction!.icon,
               ),
           ];
   }

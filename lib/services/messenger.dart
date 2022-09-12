@@ -31,6 +31,11 @@ class MessengerService {
     return AppLocalizations.of(snackbarKey.currentContext!)!.badCertificate;
   }
 
+  /// Translated string for a message if a record is not found.
+  String get notFound {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.notFound;
+  }
+
   /// Returns the translated string for unexpected errors with the passed
   /// [message].
   String unexpectedError(String message) {
@@ -51,5 +56,15 @@ class MessengerService {
   /// Translated string for server not reachable.
   String get notReachable {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notReachable;
+  }
+
+  /// Translated string for file not found.
+  String get fileNotFound {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.fileNotFound;
+  }
+
+  /// Translated string for error on downloading.
+  String get downloadError {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.downloadError;
   }
 }

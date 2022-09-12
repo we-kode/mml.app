@@ -31,16 +31,21 @@ class Record extends ModelBase {
   /// Album of the record or null if no one provided.
   String? album;
 
+  /// Checksum of the record data.
+  String? checksum;
+
   /// Creates a new record instance with the given values.
   Record({
     required this.recordId,
+    required this.checksum,
     this.title,
     this.date,
     this.duration = 0,
     this.album,
     this.artist,
     this.genre,
-  }) : super();
+    bool? isDeletable = false,
+  }) : super(isDeletable: isDeletable);
 
   /// Converts a json object/map to the record model.
   factory Record.fromJson(Map<String, dynamic> json) => _$RecordFromJson(json);

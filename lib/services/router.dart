@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/playlist.dart';
+import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mml_app/view_models/server_connection.dart';
@@ -15,7 +17,7 @@ import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/main.dart';
-import 'package:mml_app/views/playlist.dart';
+import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
 import 'package:mml_app/views/server_connection.dart';
@@ -57,27 +59,47 @@ class RouterService {
       RecordsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: RecordsViewModel.route,
-          arguments: RecordsViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'records',
+            enableFilter: true,
+            listAction: SelectedItemsAction(const Icon(Icons.star)),
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) => const RecordsScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return RecordsScreen(
+            appBar: MainViewModel.appBar,
+          );
+        },
         transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: PlaylistViewModel.route,
-          arguments: PlaylistViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'playlist',
+            listAction: SelectedItemsAction(
+              const Icon(Icons.remove),
+              reload: true,
+            ),
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) =>
-            const PlaylistScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return PlaylistScreen(
+            appBar: MainViewModel.appBar,
+          );
+        },
         transitionsBuilder: _buildTransition,
       ),
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: SettingsViewModel.appBar,
+          arguments: () => FilterAppBar(
+            title: 'settings',
+          ),
         ),
-        pageBuilder: (context, animation1, animation2) =>
-            const SettingsScreen(),
+        pageBuilder: (context, animation1, animation2) {
+          return const SettingsScreen();
+        },
         transitionsBuilder: _buildTransition,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(

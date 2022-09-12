@@ -1,18 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'album.dart';
+part of 'playlist.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Album _$AlbumFromJson(Map<String, dynamic> json) => Album(
-      albumId: json['albumId'] as String?,
-      albumName: json['albumName'] as String?,
-      isDeletable: json['isDeletable'] as bool? ?? false,
+Playlist _$PlaylistFromJson(Map<String, dynamic> json) => Playlist(
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      isDeletable: json['isDeletable'] as bool? ?? true,
     );
 
-Map<String, dynamic> _$AlbumToJson(Album instance) {
+Map<String, dynamic> _$PlaylistToJson(Playlist instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -22,7 +22,7 @@ Map<String, dynamic> _$AlbumToJson(Album instance) {
   }
 
   writeNotNull('isDeletable', instance.isDeletable);
-  writeNotNull('albumId', instance.albumId);
-  writeNotNull('albumName', instance.albumName);
+  writeNotNull('id', instance.id);
+  writeNotNull('name', instance.name);
   return val;
 }

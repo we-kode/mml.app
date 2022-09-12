@@ -26,7 +26,11 @@ class RecordService {
   /// Returns a list of records with the amount of [take] that match the given
   /// [filter] starting from the [offset].
   Future<ModelList> getRecords(
-      String? filter, int? offset, int? take, ID3TagFilter? tagFilter) async {
+    String? filter,
+    int? offset,
+    int? take,
+    ID3TagFilter? tagFilter,
+  ) async {
     var params = <String, String?>{};
 
     if (filter != null) {
