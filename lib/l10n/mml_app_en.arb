@@ -59,5 +59,7 @@
   "remove": "Remove",
   "yes": "Yes",
   "deleteConfirmation": "Are you really want to delete the selected records?",
-  "download":"Download"
+  "download":"Download",
+  "fileNotFound":"File could not be found. Add the recording to a playlist again.",
+  "downloadError":"Download failed. Check your connection and storage space and try again."
 }

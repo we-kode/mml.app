@@ -56,6 +56,7 @@ class RecordsDownloadDialogViewModel extends ChangeNotifier {
           }
           notifyListeners();
         },
+        onError: () => nav.pop(false),
       );
     }
     nav.pop(true);

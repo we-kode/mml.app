@@ -460,14 +460,24 @@ class _AsyncListViewState extends State<AsyncListView> {
       leading: leadingTile,
       minVerticalPadding: 0,
       visualDensity: const VisualDensity(vertical: 0),
-      title: Row(
+      title: Wrap(
         children: [
-          Text(item.getDisplayDescription()),
+          Text(
+            item.getDisplayDescription(),
+            overflow: TextOverflow.fade,
+            maxLines: 1,
+            softWrap: false,
+          ),
           _createTitleSuffix(item),
         ],
       ),
       subtitle: item.getSubtitle(context) != null
-          ? Text(item.getSubtitle(context)!)
+          ? Text(
+              item.getSubtitle(context)!,
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+              softWrap: false,
+            )
           : null,
       trailing: Column(
         children: [

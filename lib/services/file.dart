@@ -3,9 +3,12 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mime/mime.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:path_provider/path_provider.dart';
@@ -24,6 +27,9 @@ class FileService {
     final directory = await getApplicationDocumentsDirectory();
     return '${directory.path}/records';
   }
+
+  // Service to show messages.
+  final MessengerService _messengerService = MessengerService.getInstance();
 
   /// Private constructor of the service.
   FileService._();
@@ -54,7 +60,8 @@ class FileService {
   /// Downloads the [record] from server if not already available on disk.
   ///
   /// [onProgress] shows the progress of downloading.
-  Future<void> download(Record record, {ProgressCallback? onProgress}) async {
+  Future<void> download(Record record,
+      {ProgressCallback? onProgress, VoidCallback? onError}) async {
     var savePath = '${await _folder}/${record.checksum}';
     final cryptFile = File(savePath);
 
@@ -79,27 +86,38 @@ class FileService {
         int.tryParse(response.headers["content-length"]?.first ?? "") ?? 0;
     var downloadedAndEncryptedSize = 0;
 
-    await (response.data?.stream as Stream<Uint8List>)
-        .asyncMap((Uint8List chunk) async {
-          final encryptChunk =
-              XorEncryptor.encrypt(chunk, int.parse(cryptKey!));
+    try {
+      await (response.data?.stream as Stream<Uint8List>)
+          .asyncMap((Uint8List chunk) async {
+            final encryptChunk =
+                XorEncryptor.encrypt(chunk, int.parse(cryptKey!));
 
-          await cryptFile.writeAsBytes(encryptChunk, mode: FileMode.append);
+            await cryptFile.writeAsBytes(encryptChunk, mode: FileMode.append);
 
-          if (onProgress != null) {
-            downloadedAndEncryptedSize += chunk.length;
-            onProgress(downloadedAndEncryptedSize, size);
-          }
+            if (onProgress != null) {
+              downloadedAndEncryptedSize += chunk.length;
+              onProgress(downloadedAndEncryptedSize, size);
+            }
 
-          return encryptChunk;
-        })
-        .listen((event) {})
-        .asFuture();
+            return encryptChunk;
+          })
+          .listen((event) {})
+          .asFuture();
+    } catch (e) {
+      _messengerService.showMessage(_messengerService.downloadError);
+      cryptFile.delete();
+      onError?.call();
+    }
   }
 
   /// Loads file with [fileName] as decrypted byte chunked stream.
   Future<File> getFile(String fileName) async {
-    return File('${await _folder}/$fileName');
+    final file = File('${await _folder}/$fileName');
+    if (!(await file.exists())) {
+      _messengerService.showMessage(_messengerService.fileNotFound);
+    }
+
+    return file;
   }
 }
 

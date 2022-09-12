@@ -264,6 +264,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (currentRecord is LocalRecord) {
       final file =
           await FileService.getInstance().getFile(currentRecord!.checksum!);
+
       final cryptKey = await SecureStorageService.getInstance().get(
         SecureStorageService.cryptoKey,
       );

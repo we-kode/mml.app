@@ -57,4 +57,24 @@ class MessengerService {
   String get notReachable {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notReachable;
   }
+
+  /// Translated string for file not found.
+  String get fileNotFound {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.fileNotFound;
+  }
+
+  /// Translated string for file invalid format.
+  String get fileInvalid {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.fileInvalid;
+  }
+
+  /// Translated string for error on downloading.
+  String get downloadError {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.downloadError;
+  }
+
+  /// Translated string for no spce left on device.
+  String get noSpaceLeft {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.noSpaceLeft;
+  }
 }
