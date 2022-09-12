@@ -264,10 +264,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (currentRecord is LocalRecord) {
       final file =
           await FileService.getInstance().getFile(currentRecord!.checksum!);
-      final privateKey = await SecureStorageService.getInstance()
-          .get(SecureStorageService.rsaPrivateStorageKey);
+      final cryptKey = await SecureStorageService.getInstance().get(
+        SecureStorageService.cryptoKey,
+      );
       _player.setAudioSource(
-        MMLAudioSource(file, privateKey!),
+        MMLAudioSource(file, int.parse(cryptKey!)),
         preload: false,
       );
 

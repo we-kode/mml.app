@@ -7,8 +7,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:fast_rsa/fast_rsa.dart';
 
 /// Service which handles operations on files on disk.
 class FileService {
@@ -57,13 +57,14 @@ class FileService {
   Future<void> download(Record record, {ProgressCallback? onProgress}) async {
     var savePath = '${await _folder}/${record.checksum}';
     final cryptFile = File(savePath);
-    final publicKey = await SecureStorageService.getInstance().get(
-      SecureStorageService.rsaPublicStorageKey,
-    );
 
     if (await cryptFile.exists()) {
       return;
     }
+
+    final cryptKey = await SecureStorageService.getInstance().get(
+      SecureStorageService.cryptoKey,
+    );
 
     Response<ResponseBody> response =
         await ApiService.getInstance().request<ResponseBody>(
@@ -80,10 +81,8 @@ class FileService {
 
     await (response.data?.stream as Stream<Uint8List>)
         .asyncMap((Uint8List chunk) async {
-          final encryptChunk = await RSA.encryptPKCS1v15Bytes(
-            Uint8List.fromList(chunk),
-            publicKey!,
-          );
+          final encryptChunk =
+              XorEncryptor.encrypt(chunk, int.parse(cryptKey!));
 
           await cryptFile.writeAsBytes(encryptChunk, mode: FileMode.append);
 
@@ -106,9 +105,9 @@ class FileService {
 
 class MMLAudioSource extends StreamAudioSource {
   final File file;
-  final String privateKey;
+  final int cryptKey;
 
-  MMLAudioSource(this.file, this.privateKey) : super(tag: "MMLAudioSource");
+  MMLAudioSource(this.file, this.cryptKey) : super(tag: "MMLAudioSource");
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {
@@ -119,7 +118,7 @@ class MMLAudioSource extends StreamAudioSource {
       contentLength: end - start,
       offset: start,
       stream: file.openRead(start, end).asyncMap((List<int> input) {
-        return RSA.decryptPKCS1v15Bytes(Uint8List.fromList(input), privateKey);
+        return XorEncryptor.decrypt(Uint8List.fromList(input), cryptKey);
       }).asBroadcastStream(),
       contentType: 'audio/mpeg',
     );

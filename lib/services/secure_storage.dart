@@ -74,5 +74,6 @@ class SecureStorageService {
     await delete(rsaPrivateStorageKey);
     await delete(rsaPublicStorageKey);
     await delete(serverNameStorageKey);
+    await delete(cryptoKey);
   }
 }
