@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 /// This encryptor just runs the logical xor-Function to encrypt bytes.
 ///
-/// This encryptro is not a high security encryptor. It just obfuscates one saved record, so a normal user can
+/// This encryptor is not a high security encryptor. It just obfuscates one saved record, so a normal user can
 /// not retrive the file data from just coping the file and share it with others.
 class XorEncryptor {
   /// Generates a random byte.
@@ -30,7 +30,7 @@ class XorEncryptor {
   ///
   /// [key] must be a value between 0 and 255.
   static Uint8List _xor(Uint8List value, int key) {
-    if (key > 255) {
+    if (key < 0 || key > 255) {
       throw RangeError.range(255, 0, 255);
     }
 

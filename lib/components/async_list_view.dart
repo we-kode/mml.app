@@ -146,8 +146,9 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
 
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) => widget.selectedItemsAction?.clear());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => widget.selectedItemsAction?.clear(),
+    );
 
     super.initState();
   }
@@ -191,7 +192,10 @@ class _AsyncListViewState extends State<AsyncListView> {
 
     if (widget.selectedItemsAction!.actionPerformed) {
       var selected = _items?.where(
-          (element) => _selectedItems.contains(element?.getIdentifier()));
+        (element) => _selectedItems.contains(
+          element?.getIdentifier(),
+        ),
+      );
       widget.onMultiSelect!(selected?.toList() ?? []).then((value) {
         widget.selectedItemsAction!.actionPerformedFinished();
         if (value) {

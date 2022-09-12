@@ -4,8 +4,6 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:mime/mime.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -23,6 +21,7 @@ class FileService {
     return _instance;
   }
 
+  /// Returns the actual folder to store the offline records.
   Future<String> get _folder async {
     final directory = await getApplicationDocumentsDirectory();
     return '${directory.path}/records';
@@ -60,8 +59,11 @@ class FileService {
   /// Downloads the [record] from server if not already available on disk.
   ///
   /// [onProgress] shows the progress of downloading.
-  Future<void> download(Record record,
-      {ProgressCallback? onProgress, VoidCallback? onError}) async {
+  Future<void> download(
+    Record record, {
+    ProgressCallback? onProgress,
+    VoidCallback? onError,
+  }) async {
     var savePath = '${await _folder}/${record.checksum}';
     final cryptFile = File(savePath);
 
@@ -82,15 +84,19 @@ class FileService {
       ),
     );
 
-    var size =
-        int.tryParse(response.headers["content-length"]?.first ?? "") ?? 0;
+    var size = int.tryParse(
+          response.headers["content-length"]?.first ?? "",
+        ) ??
+        0;
     var downloadedAndEncryptedSize = 0;
 
     try {
       await (response.data?.stream as Stream<Uint8List>)
           .asyncMap((Uint8List chunk) async {
-            final encryptChunk =
-                XorEncryptor.encrypt(chunk, int.parse(cryptKey!));
+            final encryptChunk = XorEncryptor.encrypt(
+              chunk,
+              int.parse(cryptKey!),
+            );
 
             await cryptFile.writeAsBytes(encryptChunk, mode: FileMode.append);
 
@@ -115,30 +121,9 @@ class FileService {
     final file = File('${await _folder}/$fileName');
     if (!(await file.exists())) {
       _messengerService.showMessage(_messengerService.fileNotFound);
+      throw Exception("File not found!");
     }
 
     return file;
-  }
-}
-
-class MMLAudioSource extends StreamAudioSource {
-  final File file;
-  final int cryptKey;
-
-  MMLAudioSource(this.file, this.cryptKey) : super(tag: "MMLAudioSource");
-
-  @override
-  Future<StreamAudioResponse> request([int? start, int? end]) async {
-    start ??= 0;
-    end ??= await file.length();
-    return StreamAudioResponse(
-      sourceLength: await file.length(),
-      contentLength: end - start,
-      offset: start,
-      stream: file.openRead(start, end).asyncMap((List<int> input) {
-        return XorEncryptor.decrypt(Uint8List.fromList(input), cryptKey);
-      }).asBroadcastStream(),
-      contentType: 'audio/mpeg',
-    );
   }
 }

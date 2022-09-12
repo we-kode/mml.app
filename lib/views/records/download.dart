@@ -6,7 +6,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
-/// View of the downlaod dialog for records.
+/// View of the download dialog for records.
 class RecordDownloadDialog extends StatelessWidget {
   /// Records to be downloaded.
   final List<ModelBase?> records;
@@ -27,8 +27,10 @@ class RecordDownloadDialog extends StatelessWidget {
     return ChangeNotifierProvider<RecordsDownloadDialogViewModel>(
       create: (context) => RecordsDownloadDialogViewModel(),
       builder: (context, _) {
-        var vm =
-            Provider.of<RecordsDownloadDialogViewModel>(context, listen: false);
+        var vm = Provider.of<RecordsDownloadDialogViewModel>(
+          context,
+          listen: false,
+        );
         var locales = AppLocalizations.of(context)!;
 
         return AlertDialog(
@@ -60,7 +62,9 @@ class RecordDownloadDialog extends StatelessWidget {
 
   /// Creates the download content that should be shown in the dialog.
   Widget _createDownloadContent(
-      BuildContext context, RecordsDownloadDialogViewModel vm) {
+    BuildContext context,
+    RecordsDownloadDialogViewModel vm,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,

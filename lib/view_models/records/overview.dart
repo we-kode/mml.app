@@ -60,8 +60,11 @@ class RecordsViewModel extends ChangeNotifier {
   }
 
   /// loads all available playlists.
-  Future<ModelList> loadPlaylists(
-      {String? filter, int? offset, int? take}) async {
+  Future<ModelList> loadPlaylists({
+    String? filter,
+    int? offset,
+    int? take,
+  }) async {
     return _dbService.getPlaylists(
       filter,
       offset,

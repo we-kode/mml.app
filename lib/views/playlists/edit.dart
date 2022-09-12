@@ -21,8 +21,10 @@ class PlaylistEditDialog extends StatelessWidget {
     return ChangeNotifierProvider<PlaylistEditDialogViewModel>(
       create: (context) => PlaylistEditDialogViewModel(),
       builder: (context, _) {
-        var vm =
-            Provider.of<PlaylistEditDialogViewModel>(context, listen: false);
+        var vm = Provider.of<PlaylistEditDialogViewModel>(
+          context,
+          listen: false,
+        );
         var locales = AppLocalizations.of(context)!;
 
         return AlertDialog(
@@ -109,15 +111,9 @@ class PlaylistEditDialog extends StatelessWidget {
             );
           },
         ),
-      Consumer<PlaylistEditDialogViewModel>(
-        builder: (context, value, child) {
-          return TextButton(
-            onPressed: value.playlistLoadedSuccessfully
-                ? () => Navigator.pop(context, EditState.cancel)
-                : null,
-            child: Text(locales.cancel),
-          );
-        },
+      TextButton(
+        onPressed: () => Navigator.pop(context, EditState.cancel),
+        child: Text(locales.cancel),
       ),
       Consumer<PlaylistEditDialogViewModel>(
         builder: (context, value, child) {

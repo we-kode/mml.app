@@ -8,6 +8,7 @@ class MainViewModel extends ChangeNotifier {
   /// Route of the main screen.
   static const String route = '/main';
 
+  // Appbar of the main view.
   static FilterAppBar? appBar;
 
   /// Current build context.

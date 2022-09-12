@@ -84,7 +84,7 @@ class RegisterViewModel extends ChangeNotifier {
 
       state = RegistrationState.rsa;
       Future.microtask(() async {
-        await generateRSA();
+        await generateKeys();
       });
 
       return true;
@@ -92,7 +92,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   /// Generates rsa key.
-  Future generateRSA() async {
+  Future generateKeys() async {
     var keyPair = await RSA.generate(4096);
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);

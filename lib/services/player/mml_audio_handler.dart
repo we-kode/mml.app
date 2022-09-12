@@ -8,6 +8,7 @@ import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
+import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -177,7 +178,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-      await setPlayerSoruce();
+      await _setPlayerSoruce();
     } catch (e) {
       _player.stop();
     }
@@ -185,22 +186,26 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Plays the [currentRecord].
   Future<void> _playCurrentRecord() async {
-    await setPlayerSoruce();
+    try {
+      await _setPlayerSoruce();
 
-    mediaItem.add(
-      MediaItem(
-        id: currentRecord!.recordId!,
-        album: currentRecord?.album,
-        title: currentRecord?.title ?? 'Unknown',
-        artist: currentRecord?.artist,
-        genre: currentRecord?.genre,
-        duration: Duration(
-          milliseconds: (currentRecord?.duration ?? 0).toInt(),
+      mediaItem.add(
+        MediaItem(
+          id: currentRecord!.recordId!,
+          album: currentRecord?.album,
+          title: currentRecord?.title ?? 'Unknown',
+          artist: currentRecord?.artist,
+          genre: currentRecord?.genre,
+          duration: Duration(
+            milliseconds: (currentRecord?.duration ?? 0).toInt(),
+          ),
         ),
-      ),
-    );
+      );
 
-    _player.play();
+      _player.play();
+    } catch (e) {
+      _player.stop();
+    }
   }
 
   /// Skips the playback in the given [direction] to the next or
@@ -221,6 +226,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
   }
 
+  /// Returns next or previous record in range depending on [direction] to be played.
   Future<Record?> getRecord(String direction) async {
     if (currentRecord is LocalRecord) {
       return DBService.getInstance().next(
@@ -260,10 +266,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     return null;
   }
 
-  Future<void> setPlayerSoruce() async {
+  /// Sets the source format of the player depending on the record type to be played.
+  Future<void> _setPlayerSoruce() async {
     if (currentRecord is LocalRecord) {
-      final file =
-          await FileService.getInstance().getFile(currentRecord!.checksum!);
+      final file = await FileService.getInstance().getFile(
+        currentRecord!.checksum!,
+      );
 
       final cryptKey = await SecureStorageService.getInstance().get(
         SecureStorageService.cryptoKey,

@@ -93,6 +93,7 @@ class IntroViewModel extends ChangeNotifier {
     ];
   }
 
+  /// Inits the app. All initalizing processes run here.
   Future _initApp(BuildContext context) async {
     var notificationColor = Theme.of(context).colorScheme.inverseSurface;
 
@@ -102,12 +103,13 @@ class IntroViewModel extends ChangeNotifier {
     PlayerService.getInstance().audioHandler = await AudioService.init(
       builder: () => MMLAudioHandler(),
       config: AudioServiceConfig(
-          androidNotificationChannelId: 'de.wekode.mml.audio',
-          androidNotificationChannelName: locales.appTitle,
-          androidNotificationOngoing: true,
-          androidStopForegroundOnPause: true,
-          notificationColor: notificationColor,
-          androidNotificationIcon: 'mipmap/ic_notification'),
+        androidNotificationChannelId: 'de.wekode.mml.audio',
+        androidNotificationChannelName: locales.appTitle,
+        androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true,
+        notificationColor: notificationColor,
+        androidNotificationIcon: 'mipmap/ic_notification',
+      ),
     );
   }
 }

@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 /// Overview screen of the playlists of the music lib.
 class PlaylistScreen extends StatelessWidget {
+  /// App bar of the playlist overview screen.
   final FilterAppBar? appBar;
 
   /// Initializes the instance.

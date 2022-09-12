@@ -41,20 +41,11 @@ class PlaylistViewModel extends ChangeNotifier {
     return _service.load(filter, offset, take);
   }
 
-  /// Removes the [offlineRecords] from local databse and deltes cahced file, if record is not available anymore.
+  /// Removes the [offlineRecords] from local database and deletes cached file, if record is not available anymore.
   Future deleteRecords(List<ModelBase?> offlineRecords) async {
     showProgressIndicator();
     for (var record in offlineRecords) {
-      var offlineRecord = record as LocalRecord;
-      await _service.removeFromPlaylist(
-        offlineRecord.recordId!,
-        offlineRecord.playlist.id!,
-      );
-
-      if (!(await _service.isInPlaylist(offlineRecord.recordId!))) {
-        await _service.removeRecord(offlineRecord.recordId!);
-        await FileService.getInstance().remove(offlineRecord.checksum!);
-      }
+      await _removeRecord(record as LocalRecord);
     }
     RouterService.getInstance().navigatorKey.currentState!.pop();
   }
@@ -64,15 +55,23 @@ class PlaylistViewModel extends ChangeNotifier {
     showProgressIndicator();
     var records = await _service.getRecords(playlistId);
     for (var record in records) {
-      await _service.removeFromPlaylist(record.recordId!, playlistId);
-
-      if (!(await _service.isInPlaylist(record.recordId!))) {
-        await _service.removeRecord(record.recordId!);
-        await FileService.getInstance().remove(record.checksum!);
-      }
+      await _removeRecord(record);
     }
     await _service.removePlaylist(playlistId);
     RouterService.getInstance().navigatorKey.currentState!.pop();
+  }
+
+  /// Removes one record from playlist.
+  Future _removeRecord(LocalRecord record) async {
+    await _service.removeFromPlaylist(
+      record.recordId!,
+      record.playlist.id!,
+    );
+
+    if (!(await _service.isInPlaylist(record.recordId!))) {
+      await _service.removeRecord(record.recordId!);
+      await FileService.getInstance().remove(record.checksum!);
+    }
   }
 
   /// Plays one record.

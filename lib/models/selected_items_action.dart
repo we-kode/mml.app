@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+/// Action which is whoen in the app bar when items are selected in a selection list.
 class SelectedItemsAction extends ChangeNotifier {
   /// The actual count of selected items.
   int _count = 0;
@@ -16,6 +17,7 @@ class SelectedItemsAction extends ChangeNotifier {
   /// Icon of the action, shown in the action bar.
   final Icon icon;
 
+  /// True, if the parent list of this action should be reloaded after action performed.
   final bool reload;
 
   /// Creates instants of the action.

@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 
 /// Overview screen of the uploaded records to the music lib.
 class RecordsScreen extends StatelessWidget {
+  /// The app bar of the records view.
   final FilterAppBar? appBar;
 
   /// Initializes the instance.
@@ -67,8 +68,7 @@ class RecordsScreen extends StatelessWidget {
                       playlists: selectedPlaylists,
                     );
                   },
-                ); 
-                // await vm.addRecords(selectedItems as List<ModelBase?>, selectedPlaylists);
+                );
               },
               openItemFunction: (
                 ModelBase item,

@@ -10,19 +10,18 @@ class RecordsDownloadDialogViewModel extends ChangeNotifier {
   /// Locales of the application.
   late AppLocalizations locales;
 
-  /// The [BuildContext] of this vie model.
+  /// The [BuildContext] of this view model.
   late BuildContext _context;
 
   /// The progress of downloading the current record.
   int downloadProgress = 0;
 
-  /// Name of the record which is current downlaoding.
+  /// Name of the record which is current downloading.
   String downloadFileName = '';
 
   /// Initializes the ViewModel and starts the downloading process.
   ///
-  /// If no [folderPath] is provided, files from the [fileList] will be uploaded, else
-  /// all files from the [folderPath] will be uploaded recursive.
+  /// [records] will be downloaded and added to [playlists].
   Future<bool> init(
     BuildContext context,
     List<ModelBase?> records,
