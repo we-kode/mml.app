@@ -29,7 +29,6 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Calls the service method to remove the client registration.
   Future removeRegistration() async{
-    showProgressIndicator();
     await ClientService.getInstance().removeRegistration();
   }
 
