@@ -7,8 +7,8 @@ part of 'record.dart';
 // **************************************************************************
 
 Record _$RecordFromJson(Map<String, dynamic> json) => Record(
-      recordId: json['recordId'] as String,
-      checksum: json['checksum'] as String,
+      recordId: json['recordId'] as String?,
+      checksum: json['checksum'] as String?,
       title: json['title'] as String?,
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
@@ -29,13 +29,13 @@ Map<String, dynamic> _$RecordToJson(Record instance) {
   }
 
   writeNotNull('isDeletable', instance.isDeletable);
-  val['recordId'] = instance.recordId;
+  writeNotNull('recordId', instance.recordId);
   writeNotNull('title', instance.title);
   writeNotNull('date', instance.date?.toIso8601String());
   val['duration'] = instance.duration;
   writeNotNull('artist', instance.artist);
   writeNotNull('genre', instance.genre);
   writeNotNull('album', instance.album);
-  val['checksum'] = instance.checksum;
+  writeNotNull('checksum', instance.checksum);
   return val;
 }
