@@ -17,6 +17,10 @@ class SettingsViewModel extends ChangeNotifier {
   /// Router service used for navigation.
   final RouterService _routerService = RouterService.getInstance();
 
+  final String privacyLink = "";
+
+  final String legalInfoLink = "";
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() {
@@ -43,19 +47,17 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Redirects to the legal information webview screen.
   void showLegalInformation() {
-    // TODO: Use real and configurable route.
     _routerService.pushNestedRoute(
       InformationViewModel.route,
-      arguments: 'https://we-kode.github.io/',
+      arguments: legalInfoLink,
     );
   }
 
   /// Redirects to the privacy policy webview screen.
   void showPrivacyPolicy() {
-    // TODO: Use real and configurable route.
     _routerService.pushNestedRoute(
       InformationViewModel.route,
-      arguments: 'https://we-kode.github.io/',
+      arguments: privacyLink,
     );
   }
 }
