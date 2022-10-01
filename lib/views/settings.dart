@@ -54,14 +54,16 @@ class SettingsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ),
-                ListTile(
-                  title: Text(vm.locales.privacyPolicy),
-                  onTap: vm.showPrivacyPolicy,
-                ),
-                ListTile(
-                  title: Text(vm.locales.legalInformation),
-                  onTap: vm.showLegalInformation,
-                ),
+                if (vm.privacyLink.isNotEmpty)
+                  ListTile(
+                    title: Text(vm.locales.privacyPolicy),
+                    onTap: vm.showPrivacyPolicy,
+                  ),
+                if (vm.legalInfoLink.isNotEmpty)
+                  ListTile(
+                    title: Text(vm.locales.legalInformation),
+                    onTap: vm.showLegalInformation,
+                  ),
                 ListTile(
                   title: Text(vm.locales.licenses),
                   onTap: vm.showLicensesOverview,
