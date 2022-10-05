@@ -59,6 +59,7 @@ android {
         compileSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        vectorDrawables.useSupportLibrary = true
     }
 
     signingConfigs {
