@@ -70,7 +70,6 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 ListTile(
                   title: Text(vm.version),
-                  onTap: null,
                 ),
               ],
             );
