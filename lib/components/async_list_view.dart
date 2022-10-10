@@ -421,26 +421,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       _actualGroup = itemGroup;
       return Column(
         children: [
-          widget.editGroupFunction != null
-              ? ActionChip(
-                  label: Text(
-                    item.getGroup(context)!,
-                  ),
-                  onPressed: () {
-                    widget.editGroupFunction!(item).then(
-                      (value) {
-                        if (value) {
-                          _reloadData();
-                        }
-                      },
-                    );
-                  },
-                )
-              : Chip(
-                  label: Text(
-                    item.getGroup(context)!,
-                  ),
-                ),
+          Chip(
+            label: Text(
+              item.getGroup(context)!,
+            ),
+          ),
           if (item.getIdentifier() != null) _listTile(item, index),
         ],
       );
@@ -452,7 +437,22 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
     var leadingTile = !_isInMultiSelectMode
-        ? item.getPrefixIcon(context)
+        ? item.getPrefixIcon(context) != null
+            ? IconButton(
+                onPressed: () => {
+                  widget.editGroupFunction != null
+                      ? widget.editGroupFunction!(item).then(
+                          (value) {
+                            if (value) {
+                              _reloadData();
+                            }
+                          },
+                        )
+                      : null
+                },
+                icon: item.getPrefixIcon(context)!,
+              )
+            : null
         : Checkbox(
             onChanged: (_) {
               _onItemChecked(index);

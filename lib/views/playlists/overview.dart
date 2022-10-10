@@ -37,6 +37,7 @@ class PlaylistScreen extends StatelessWidget {
             return AsyncListView(
               title: vm.locales.playlist,
               selectedItemsAction: appBar?.listAction,
+              filter: appBar?.filter,
               onMultiSelect: (selectedItems) async {
                 var shouldDelete = await showDeleteDialog(context);
 
@@ -57,26 +58,24 @@ class PlaylistScreen extends StatelessWidget {
                 );
                 return state == EditState.save;
               },
-              // TODO: Edit function for playlists should be performed in another way
-              // edit group functionn not needed anymore,
-              // editGroupFunction: (item) async {
-              //   var playlistId = (item as LocalRecord).playlist.id;
-              //   final state = await showDialog(
-              //     barrierDismissible: false,
-              //     context: context,
-              //     builder: (BuildContext context) {
-              //       return PlaylistEditDialog(
-              //         playlistId: playlistId,
-              //       );
-              //     },
-              //   );
+              editGroupFunction: (item) async {
+                var playlistId = (item as Playlist).id;
+                final state = await showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PlaylistEditDialog(
+                      playlistId: playlistId,
+                    );
+                  },
+                );
 
-              //   if (state == EditState.delete && playlistId != null) {
-              //     await vm.deletePlaylist(playlistId);
-              //   }
+                if (state == EditState.delete && playlistId != null) {
+                  await vm.deletePlaylist(playlistId);
+                }
 
-              //   return state == EditState.save || state == EditState.delete;
-              // },
+                return state == EditState.save || state == EditState.delete;
+              },
               openItemFunction: (
                 ModelBase item,
                 String? filter,
@@ -91,6 +90,7 @@ class PlaylistScreen extends StatelessWidget {
                   );
                 } else if (item is Playlist) {
                   vm.playlist = item.id;
+                  appBar?.filter.textFilter = "";
                 }
               },
             );
