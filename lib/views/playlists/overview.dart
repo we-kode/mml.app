@@ -4,6 +4,7 @@ import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
@@ -54,37 +55,43 @@ class PlaylistScreen extends StatelessWidget {
                     return const PlaylistEditDialog(playlistId: null);
                   },
                 );
-                return state== EditState.save;
+                return state == EditState.save;
               },
-              editGroupFunction: (item) async {
-                var playlistId = (item as LocalRecord).playlist.id;
-                final state = await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return PlaylistEditDialog(
-                      playlistId: playlistId,
-                    );
-                  },
-                );
+              // TODO: Edit function for playlists should be performed in another way
+              // edit group functionn not needed anymore,
+              // editGroupFunction: (item) async {
+              //   var playlistId = (item as LocalRecord).playlist.id;
+              //   final state = await showDialog(
+              //     barrierDismissible: false,
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return PlaylistEditDialog(
+              //         playlistId: playlistId,
+              //       );
+              //     },
+              //   );
 
-                if (state == EditState.delete && playlistId != null) {
-                  await vm.deletePlaylist(playlistId);
-                }
+              //   if (state == EditState.delete && playlistId != null) {
+              //     await vm.deletePlaylist(playlistId);
+              //   }
 
-                return state == EditState.save || state == EditState.delete;
-              },
+              //   return state == EditState.save || state == EditState.delete;
+              // },
               openItemFunction: (
                 ModelBase item,
                 String? filter,
                 Subfilter? subfilter,
               ) {
-                vm.playRecord(
-                  context,
-                  item,
-                  filter,
-                  null,
-                );
+                if (item is LocalRecord) {
+                  vm.playRecord(
+                    context,
+                    item,
+                    filter,
+                    null,
+                  );
+                } else if (item is Playlist) {
+                  vm.playlist = item.id;
+                }
               },
             );
           },

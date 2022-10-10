@@ -25,6 +25,6 @@ class LocalRecord extends Record {
 
   @override
   String? getGroup(BuildContext context) {
-    return playlist.name;
+    return null;
   }
 }

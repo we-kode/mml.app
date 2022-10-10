@@ -5,6 +5,7 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/player.dart';
@@ -20,6 +21,9 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// App locales.
   late AppLocalizations locales;
+
+  /// Actual selected playlist.
+  int? playlist;
 
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
@@ -38,14 +42,18 @@ class PlaylistViewModel extends ChangeNotifier {
     int? take,
     dynamic subfilter,
   }) async {
-    return _service.load(filter, offset, take);
+    return _service.load(filter, offset, take, playlist);
   }
 
   /// Removes the [offlineRecords] from local database and deletes cached file, if record is not available anymore.
   Future deleteRecords(List<ModelBase?> offlineRecords) async {
     showProgressIndicator();
     for (var record in offlineRecords) {
-      await _removeRecord(record as LocalRecord);
+      if (record is LocalRecord) {
+        await _removeRecord(record);
+      } else if (record is Playlist) {
+        await deletePlaylist(record.id!);
+      }
     }
     RouterService.getInstance().navigatorKey.currentState!.pop();
   }

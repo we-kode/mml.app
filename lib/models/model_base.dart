@@ -38,4 +38,9 @@ abstract class ModelBase {
   String? getGroup(BuildContext context) {
     return null;
   }
+
+  /// Returns an icon which can be used as prefix in list.
+  Icon? getPrefixIcon(BuildContext context) {
+    return null;
+  }
 }

@@ -452,7 +452,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
     var leadingTile = !_isInMultiSelectMode
-        ? null
+        ? item.getPrefixIcon(context)
         : Checkbox(
             onChanged: (_) {
               _onItemChecked(index);
