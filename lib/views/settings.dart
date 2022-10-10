@@ -68,6 +68,9 @@ class SettingsScreen extends StatelessWidget {
                   title: Text(vm.locales.licenses),
                   onTap: vm.showLicensesOverview,
                 ),
+                ListTile(
+                  title: Text(vm.version),
+                ),
               ],
             );
           },
