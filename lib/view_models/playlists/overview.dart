@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/arguments/playlists.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/components/progress_indicator.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
+import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/player/player.dart';
@@ -23,13 +26,13 @@ class PlaylistViewModel extends ChangeNotifier {
   late AppLocalizations locales;
 
   /// Actual selected playlist.
-  int? playlist;
+  late int? playlist;
 
   /// Initializes the view model.
-  Future<bool> init(BuildContext context) {
+  Future<bool> init(BuildContext context, int? playlistId) {
     return Future.microtask(() {
       locales = AppLocalizations.of(context)!;
-
+      playlist = playlistId;
       return true;
     });
   }
@@ -94,6 +97,24 @@ class PlaylistViewModel extends ChangeNotifier {
       record as LocalRecord,
       filter,
       subfilter,
+    );
+  }
+
+  /// navigates to folder of [playlist].
+  void navigate(Playlist playlist) async {
+    var routerService = RouterService.getInstance();
+    await routerService.pushNestedRoute(
+      route,
+      arguments: PlaylistArguments(
+        appBar: FilterAppBar(
+          title: playlist.name!,
+          listAction: SelectedItemsAction(
+            const Icon(Icons.remove),
+            reload: true,
+          ),
+        ),
+        playlist: playlist,
+      ),
     );
   }
 }

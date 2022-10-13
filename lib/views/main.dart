@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/arguments/navigation_arguments.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/records/overview.dart';
@@ -40,7 +41,7 @@ class MainScreen extends StatelessWidget {
                     observers: [_NestedRouteObserver(vm: vm)],
                     onGenerateRoute: (settings) {
                       return RouterService.getInstance().getNestedRoutes(
-                        arguments: settings.arguments,
+                        args: settings.arguments,
                       )[settings.name];
                     },
                   ),
@@ -83,8 +84,9 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
   void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPush(route, previousRoute);
 
-    if (route.settings.arguments is Function) {
-      MainViewModel.appBar = (route.settings.arguments as Function)();
+    if (route.settings.arguments is NavigationArguments) {
+      MainViewModel.appBar =
+          (route.settings.arguments as NavigationArguments).appBar;
     }
 
     vm.selectedIndex = getSelectedIndex(route);
@@ -100,7 +102,10 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
   @override
   void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
     super.didPop(route, previousRoute);
-
+    if (previousRoute?.settings.arguments is NavigationArguments) {
+      MainViewModel.appBar =
+          (previousRoute?.settings.arguments as NavigationArguments).appBar;
+    }
     vm.selectedIndex = getSelectedIndex(previousRoute);
   }
 
