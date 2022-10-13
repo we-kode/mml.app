@@ -100,26 +100,12 @@ class DBService {
 
   /// Loads the saved records and returns a list of [OfflineRecords].
   Future<ModelList> load(
-      String? filter, int? offset, int? take, int? playlist) async {
+    String? filter,
+    int? offset,
+    int? take,
+    int? playlist,
+  ) async {
     final db = await _database;
-
-    if (playlist == null) {
-      final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT p.id as playlistId, p.name as playlistName FROM $_tPlaylists p
-    ''');
-
-      return ModelList(
-        List.generate(
-          maps.length,
-          (index) => Playlist(
-            id: maps[index]['playlistId'],
-            name: maps[index]['playlistName'],
-          ),
-        ),
-        0,
-        maps.length,
-      );
-    }
 
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
         SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM $_tRecords r

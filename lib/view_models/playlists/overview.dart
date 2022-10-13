@@ -45,7 +45,9 @@ class PlaylistViewModel extends ChangeNotifier {
     int? take,
     dynamic subfilter,
   }) async {
-    return _service.load(filter, offset, take, playlist);
+    return playlist == null
+        ? _service.getPlaylists(filter, offset, take)
+        : _service.load(filter, offset, take, playlist);
   }
 
   /// Removes the [offlineRecords] from local database and deletes cached file, if record is not available anymore.
