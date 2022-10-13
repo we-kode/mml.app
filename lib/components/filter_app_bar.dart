@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/services/router.dart';
 
 /// An appbar containing one expandable filter input.
 class FilterAppBar extends StatefulWidget {
   /// Title shown in the app bar.
   final String title;
 
-  /// Falg, thats enables the filter button of this app bar.
+  /// Flag, thats enables the filter button of this app bar.
   ///
   /// If false or not provided the filter button will not be shown.
   final bool? enableFilter;
+
+  /// Flag, that enables the back button on the app bar.
+  final bool enableBack;
 
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
@@ -26,6 +30,7 @@ class FilterAppBar extends StatefulWidget {
     required this.title,
     this.listAction,
     this.enableFilter,
+    this.enableBack = false,
   }) : super(key: key);
 
   @override
@@ -86,7 +91,15 @@ class FilterAppBarState extends State<FilterAppBar> {
                 Text("${widget.listAction!.count}")
               ],
             )
-          : null,
+          : widget.enableBack
+              ? IconButton(
+                  onPressed: () {
+                    RouterService.getInstance().popNestedRoute();
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: AppLocalizations.of(context)!.back,
+                )
+              : null,
       title: Visibility(
         visible: widget.listAction == null || !widget.listAction!.enabled,
         child: !_filterOpened || !(widget.enableFilter ?? false)
@@ -111,7 +124,7 @@ class FilterAppBarState extends State<FilterAppBar> {
       case "settings":
         return locales.settings;
       default:
-        return "";
+        return widget.title;
     }
   }
 

@@ -99,15 +99,23 @@ class DBService {
   }
 
   /// Loads the saved records and returns a list of [OfflineRecords].
-  Future<ModelList> load(String? filter, int? offset, int? take) async {
+  Future<ModelList> load(
+    String? filter,
+    int? offset,
+    int? take,
+    int? playlist,
+  ) async {
     final db = await _database;
+
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-        SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM $_tPlaylists p
-        LEFT JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
-        LEFT JOIN $_tRecords r ON rp.recordId = r.recordId
+        SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM $_tRecords r
+        INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
+        INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
+        WHERE p.id = ?
         ORDER BY p.name, r.title
         LIMIT ? OFFSET ?
     ''', [
+      playlist,
       take ?? 0,
       offset ?? 0,
     ]);
@@ -381,10 +389,14 @@ class DBService {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.rawQuery(
       '''
-        SELECT r.* from $_tRecords r
+        SELECT r.*, p.id as playlistId, p.name as playlistName from $_tRecords r
         INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
         INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
+        WHERE p.id = ?
     ''',
+      [
+        playlistId,
+      ],
     );
 
     return List.generate(
