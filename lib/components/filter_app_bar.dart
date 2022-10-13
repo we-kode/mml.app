@@ -14,7 +14,7 @@ class FilterAppBar extends StatefulWidget {
   /// If false or not provided the filter button will not be shown.
   final bool? enableFilter;
 
-  /// Flag, thats eneables the back button on the app bar.
+  /// Flag, that enables the back button on the app bar.
   final bool enableBack;
 
   /// [Filter], which holds the entered text in the app bar.
