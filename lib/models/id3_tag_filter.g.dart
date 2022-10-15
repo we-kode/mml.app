@@ -19,6 +19,7 @@ ID3TagFilter _$ID3TagFilterFromJson(Map<String, dynamic> json) => ID3TagFilter(
       endDate: json['endDate'] == null
           ? null
           : DateTime.parse(json['endDate'] as String),
+      isFolderView: json['isFodlerView'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$ID3TagFilterToJson(ID3TagFilter instance) {
@@ -36,5 +37,6 @@ Map<String, dynamic> _$ID3TagFilterToJson(ID3TagFilter instance) {
 
   writeNotNull('startDate', instance.startDate?.toIso8601String());
   writeNotNull('endDate', instance.endDate?.toIso8601String());
+  val['isFodlerView'] = instance.isFolderView;
   return val;
 }

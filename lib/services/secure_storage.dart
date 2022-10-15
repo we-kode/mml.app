@@ -30,11 +30,14 @@ class SecureStorageService {
   /// Key under which the servername is persisted.
   static const String serverNameStorageKey = 'serverName';
 
-  /// Key under which the skip intro flag is stored
+  /// Key under which the skip intro flag is stored.
   static const String skipIntroStorageKey = 'skipIntro';
 
   /// Key under which the access token is persisted.
   static const String accessTokenStorageKey = 'a';
+
+  /// Key under which the hierarchical folder view flag is stored.
+  static const String folderViewStorageKey = 'isFolderView';
 
   /// Private constructor of the service.
   SecureStorageService._();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/services/record.dart';
+import 'package:mml_app/services/secure_storage.dart';
 
 /// View model for the records tag filter.
 class RecordTagFilterViewModel extends ChangeNotifier {
@@ -11,8 +12,23 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// [RecordService] used to load data for the tag filter.
   final RecordService _service = RecordService.getInstance();
 
+  final SecureStorageService _storage = SecureStorageService.getInstance();
+
   /// Initializes the view model.
   RecordTagFilterViewModel(this.tagFilter);
+
+  /// Initializes the view model.
+  Future<bool> init(BuildContext context) {
+    return Future.microtask(() async {
+      bool isFolderView = (await _storage.get(
+            SecureStorageService.folderViewStorageKey,
+          ))
+              ?.toLowerCase() ==
+          'true';
+      tagFilter[ID3TagFilters.folderView] = isFolderView;
+      return true;
+    });
+  }
 
   /// Clears the filter value of the [identifier].
   void clear(String identifier) {
@@ -23,6 +39,12 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// Updates the tag filter [identifier] with the [selectedValues].
   void updateFilter(String identifier, dynamic selectedValues) {
     tagFilter[identifier] = selectedValues;
+    if (identifier == ID3TagFilters.folderView) {
+      _storage.set(
+        SecureStorageService.folderViewStorageKey,
+        (selectedValues as bool).toString(),
+      );
+    }
     notifyListeners();
   }
 
