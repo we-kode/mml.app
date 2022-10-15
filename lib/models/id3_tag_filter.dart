@@ -62,6 +62,8 @@ class ID3TagFilter extends Subfilter {
         endDate = range.end;
         break;
       case ID3TagFilters.folderView:
+        startDate = null;
+        endDate = null;
         isGrouped = value as bool;
         break;
     }
@@ -103,6 +105,8 @@ class ID3TagFilter extends Subfilter {
         endDate = null;
         break;
       case ID3TagFilters.folderView:
+        startDate = null;
+        endDate = null;
         isGrouped = false;
         break;
     }
