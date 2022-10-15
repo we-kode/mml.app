@@ -14,9 +14,16 @@ class RecordTagFilter extends ListSubfilterView {
   /// Initializes the [RecordTagFilter].
   RecordTagFilter({
     Key? key,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool isFolderView = false,
   }) : super(
           key: key,
-          filter: ID3TagFilter(),
+          filter: ID3TagFilter(
+            startDate: startDate,
+            endDate: endDate,
+            isFolderView: isFolderView,
+          ),
         );
 
   @override
@@ -25,64 +32,53 @@ class RecordTagFilter extends ListSubfilterView {
       create: (context) => RecordTagFilterViewModel(filter as ID3TagFilter),
       builder: (context, _) {
         var locales = AppLocalizations.of(context)!;
-        var vm = Provider.of<RecordTagFilterViewModel>(context, listen: false);
 
-        return FutureBuilder(
-          future: vm.init(context),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center();
-            }
-
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _createTagFilter(
-                    ID3TagFilters.folderView,
-                    locales.folder,
-                    const Icon(Icons.folder),
-                    Colors.indigoAccent,
-                  ),
-                  Consumer<RecordTagFilterViewModel>(
-                    builder: (context, vm, child) {
-                      var isFolderView =
-                          (filter as ID3TagFilter).isFolderView;
-                      return !isFolderView ? horizontalSpacer : Container();
-                    },
-                  ),
-                  _createTagFilter(
-                    ID3TagFilters.date,
-                    locales.date,
-                    const Icon(Icons.calendar_month),
-                    Colors.blueGrey,
-                  ),
-                  horizontalSpacer,
-                  _createTagFilter(
-                    ID3TagFilters.artists,
-                    locales.artist,
-                    const Icon(Icons.person),
-                    Colors.teal,
-                  ),
-                  horizontalSpacer,
-                  _createTagFilter(
-                    ID3TagFilters.genres,
-                    locales.genre,
-                    const Icon(Icons.discount),
-                    Colors.red,
-                  ),
-                  horizontalSpacer,
-                  _createTagFilter(
-                    ID3TagFilters.albums,
-                    locales.album,
-                    const Icon(Icons.library_music),
-                    Colors.amber,
-                  ),
-                  horizontalSpacer,
-                ],
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _createTagFilter(
+                ID3TagFilters.folderView,
+                locales.folder,
+                const Icon(Icons.folder),
+                Colors.indigoAccent,
               ),
-            );
-          },
+              Consumer<RecordTagFilterViewModel>(
+                builder: (context, vm, child) {
+                  var isFolderView = (filter as ID3TagFilter).isGrouped;
+                  return !isFolderView ? horizontalSpacer : Container();
+                },
+              ),
+              _createTagFilter(
+                ID3TagFilters.date,
+                locales.date,
+                const Icon(Icons.calendar_month),
+                Colors.blueGrey,
+              ),
+              horizontalSpacer,
+              _createTagFilter(
+                ID3TagFilters.artists,
+                locales.artist,
+                const Icon(Icons.person),
+                Colors.teal,
+              ),
+              horizontalSpacer,
+              _createTagFilter(
+                ID3TagFilters.genres,
+                locales.genre,
+                const Icon(Icons.discount),
+                Colors.red,
+              ),
+              horizontalSpacer,
+              _createTagFilter(
+                ID3TagFilters.albums,
+                locales.album,
+                const Icon(Icons.library_music),
+                Colors.amber,
+              ),
+              horizontalSpacer,
+            ],
+          ),
         );
       },
     );
@@ -100,7 +96,7 @@ class RecordTagFilter extends ListSubfilterView {
     return Consumer<RecordTagFilterViewModel>(
       builder: (context, vm, child) {
         var isFolderView = identifier == ID3TagFilters.date &&
-            (filter as ID3TagFilter).isFolderView;
+            (filter as ID3TagFilter).isGrouped;
         return isFolderView
             ? Container()
             : InputChip(
@@ -128,8 +124,8 @@ class RecordTagFilter extends ListSubfilterView {
     BuildContext context,
     RecordTagFilterViewModel vm,
   ) async {
-    var isFolderView = !(filter as ID3TagFilter).isFolderView;
-    vm.updateFilter(ID3TagFilters.folderView, isFolderView);
+    var isFolderView = !(filter as ID3TagFilter).isGrouped;
+    await vm.updateFilter(ID3TagFilters.folderView, isFolderView);
   }
 
   /// Creates a [showDateRangePicker] to handle the date filter.

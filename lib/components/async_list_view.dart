@@ -409,7 +409,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     var itemGroup = item.getGroup(context) ?? '';
-    if (itemGroup.isEmpty) {
+    if (itemGroup.isEmpty || (widget.subfilter?.filter.isGrouped ?? false)) {
       return _listTile(item, index);
     }
 
@@ -508,16 +508,18 @@ class _AsyncListViewState extends State<AsyncListView> {
               )
             : null;
       },
-      onLongPress: () {
-        if (!_isInMultiSelectMode) {
-          setState(() {
-            _isInMultiSelectMode = true;
-          });
-          widget.selectedItemsAction?.enabled = true;
-        }
+      onLongPress: !(item.isSelectable ?? true)
+          ? null
+          : () {
+              if (!_isInMultiSelectMode) {
+                setState(() {
+                  _isInMultiSelectMode = true;
+                });
+                widget.selectedItemsAction?.enabled = true;
+              }
 
-        _onItemChecked(index);
-      },
+              _onItemChecked(index);
+            },
     );
   }
 

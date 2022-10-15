@@ -22,9 +22,6 @@ class ID3TagFilter extends Subfilter {
   /// End date of a date interval or null if not set.
   DateTime? endDate;
 
-  /// True, if hierarchical folder view is eneabled.
-  bool isFolderView;
-
   /// Initializes the model.
   ID3TagFilter({
     List<String>? artists,
@@ -32,11 +29,12 @@ class ID3TagFilter extends Subfilter {
     List<String>? albums,
     this.startDate,
     this.endDate,
-    this.isFolderView = false,
+    isFolderView = false,
   }) {
     this.artists = artists ?? [];
     this.genres = genres ?? [];
     this.albums = albums ?? [];
+    isGrouped = isFolderView;
   }
 
   /// Converts a json object/map to the model.
@@ -64,7 +62,7 @@ class ID3TagFilter extends Subfilter {
         endDate = range.end;
         break;
       case ID3TagFilters.folderView:
-        isFolderView = value as bool;
+        isGrouped = value as bool;
         break;
     }
     notifyListeners();
@@ -84,7 +82,7 @@ class ID3TagFilter extends Subfilter {
             ? DateTimeRange(start: startDate!, end: endDate!)
             : null;
       case ID3TagFilters.folderView:
-        return isFolderView;
+        return isGrouped;
     }
   }
 
@@ -105,7 +103,7 @@ class ID3TagFilter extends Subfilter {
         endDate = null;
         break;
       case ID3TagFilters.folderView:
-        isFolderView = false;
+        isGrouped = false;
         break;
     }
     notifyListeners();
@@ -123,7 +121,7 @@ class ID3TagFilter extends Subfilter {
       case ID3TagFilters.date:
         return startDate != null;
       case ID3TagFilters.folderView:
-        return isFolderView;
+        return isGrouped;
       default:
         return true;
     }

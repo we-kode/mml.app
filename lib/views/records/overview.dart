@@ -4,6 +4,8 @@ import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/views/records/download.dart';
@@ -35,7 +37,9 @@ class RecordsScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.records,
-              subfilter: RecordTagFilter(),
+              subfilter: RecordTagFilter(
+                isFolderView: vm.isFolderView,
+              ),
               loadData: vm.load,
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
@@ -75,12 +79,16 @@ class RecordsScreen extends StatelessWidget {
                 String? filter,
                 Subfilter? subfilter,
               ) {
-                vm.playRecord(
-                  context,
-                  item,
-                  filter,
-                  subfilter as ID3TagFilter,
-                );
+                if (item is Record) {
+                  vm.playRecord(
+                    context,
+                    item,
+                    filter,
+                    subfilter as ID3TagFilter,
+                  );
+                } else if (item is RecordFolder) {
+                  // TODO push to new navigation route and pass Folder as argument, so a new list with this filter can be created.
+                }
               },
             );
           },

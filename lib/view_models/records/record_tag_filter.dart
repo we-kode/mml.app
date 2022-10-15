@@ -17,30 +17,23 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// Initializes the view model.
   RecordTagFilterViewModel(this.tagFilter);
 
-  /// Initializes the view model.
-  Future<bool> init(BuildContext context) {
-    return Future.microtask(() async {
-      bool isFolderView = (await _storage.get(
-            SecureStorageService.folderViewStorageKey,
-          ))
-              ?.toLowerCase() ==
-          'true';
-      tagFilter[ID3TagFilters.folderView] = isFolderView;
-      return true;
-    });
-  }
-
   /// Clears the filter value of the [identifier].
   void clear(String identifier) {
     tagFilter.clear(identifier);
+     if (identifier == ID3TagFilters.folderView) {
+     _storage.set(
+        SecureStorageService.folderViewStorageKey,
+        false.toString(),
+      );
+    }
     notifyListeners();
   }
 
   /// Updates the tag filter [identifier] with the [selectedValues].
-  void updateFilter(String identifier, dynamic selectedValues) {
+  Future updateFilter(String identifier, dynamic selectedValues) async{
     tagFilter[identifier] = selectedValues;
     if (identifier == ID3TagFilters.folderView) {
-      _storage.set(
+     await _storage.set(
         SecureStorageService.folderViewStorageKey,
         (selectedValues as bool).toString(),
       );
