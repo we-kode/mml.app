@@ -40,7 +40,35 @@ class RecordsScreen extends StatelessWidget {
               subfilter: RecordTagFilter(
                 isFolderView: vm.isFolderView,
               ),
-              loadData: vm.load,
+              navState: appBar?.navigationState,
+              moveUp: (subFilter) {
+                vm.moveFolderUp(subFilter as ID3TagFilter);
+                appBar?.navigationState.path = RecordFolder.fromDate(
+                  subFilter.startDate,
+                  subFilter.endDate,
+                )?.getIdentifier();
+              },
+              loadData: ({
+                String? filter,
+                int? offset,
+                int? take,
+                dynamic subfilter,
+              }) {
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    if (!(subfilter as ID3TagFilter).isGrouped) {
+                      appBar?.navigationState.path = null;
+                    }
+                  },
+                );
+
+                return vm.load(
+                  filter: filter,
+                  offset: offset,
+                  take: take,
+                  subfilter: subfilter,
+                );
+              },
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
               onMultiSelect: (selectedItems) async {
@@ -87,7 +115,24 @@ class RecordsScreen extends StatelessWidget {
                     subfilter as ID3TagFilter,
                   );
                 } else if (item is RecordFolder) {
-                  // TODO push to new navigation route and pass Folder as argument, so a new list with this filter can be created.
+                  appBar?.navigationState.path = item.getIdentifier();
+                  (subfilter as ID3TagFilter)[ID3TagFilters.date] =
+                      DateTimeRange(
+                    start: DateTime(
+                      item.year,
+                      item.month ?? 1,
+                      item.day ?? 1,
+                    ),
+                    end: DateTime(
+                      item.year,
+                      item.month ?? 12,
+                      item.day ??
+                          DateUtils.getDaysInMonth(
+                            item.year,
+                            item.month ?? 12,
+                          ),
+                    ),
+                  );
                 }
               },
             );

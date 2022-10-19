@@ -4,7 +4,7 @@ import 'package:mml_app/models/model_base.dart';
 
 part 'record_folder.g.dart';
 
-/// Playlist model that holds all informations of a playlist.
+/// Model holds the actual fodler view, when in hieracrchical navigation.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class RecordFolder extends ModelBase {
   final int year;
@@ -53,5 +53,22 @@ class RecordFolder extends ModelBase {
   @override
   Icon? getPrefixIcon(BuildContext context) {
     return const Icon(Icons.folder);
+  }
+
+  /// returns the [RecordFolder] converted from range of [startDate] and [endDate] or null if one date is not provided.
+  static RecordFolder? fromDate(DateTime? startDate, DateTime? endDate) {
+    if (startDate == null || endDate == null) {
+      return null;
+    }
+
+    if (startDate == endDate) {
+      return RecordFolder(year: startDate.year, month: startDate.month, day: startDate.day);
+    }
+
+    if (startDate.month == endDate.month) {
+      return RecordFolder(year: startDate.year, month: startDate.month);
+    }
+
+    return RecordFolder(year: startDate.year);
   }
 }

@@ -81,7 +81,9 @@ class RouterService {
           name: PlaylistViewModel.route,
           arguments: PlaylistArguments(
             appBar: FilterAppBar(
-              title: (args is PlaylistArguments) && args.playlist != null ? args.playlist!.name! : 'playlist',
+              title: (args is PlaylistArguments) && args.playlist != null
+                  ? args.playlist!.name!
+                  : 'playlist',
               enableBack: (args is PlaylistArguments) && args.playlist != null,
               listAction: SelectedItemsAction(
                 const Icon(Icons.remove),

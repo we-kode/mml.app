@@ -87,4 +87,41 @@ class RecordsViewModel extends ChangeNotifier {
       take,
     );
   }
+
+  /// Loads the next folder which is before actual date range filtered by [subFilter].
+  moveFolderUp(ID3TagFilter subFilter) {
+    if (subFilter.startDate == null) {
+      return;
+    }
+    if (subFilter.startDate == subFilter.endDate) {
+      subFilter[ID3TagFilters.date] = DateTimeRange(
+        start: DateTime(
+          subFilter.startDate!.year,
+          subFilter.startDate!.month,
+          1,
+        ),
+        end: DateTime(
+          subFilter.endDate!.year,
+          subFilter.endDate!.month,
+          DateUtils.getDaysInMonth(
+              subFilter.endDate!.year, subFilter.endDate!.month),
+        ),
+      );
+    } else if (subFilter.startDate!.month == subFilter.endDate!.month) {
+      subFilter[ID3TagFilters.date] = DateTimeRange(
+        start: DateTime(
+          subFilter.startDate!.year,
+          1,
+          1,
+        ),
+        end: DateTime(
+          subFilter.endDate!.year,
+          12,
+          31,
+        ),
+      );
+    } else {
+      subFilter.clear(ID3TagFilters.date);
+    }
+  }
 }
