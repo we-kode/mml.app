@@ -48,7 +48,7 @@ dependencies:
   device_info_plus: ^5.0.5
   webview_flutter: ^3.0.4
   shimmer: ^2.0.0
-  just_audio: ^0.9.29
+  just_audio: ^0.9.30
   audio_service: ^0.18.7
   text_scroll: ^0.1.0
   sqflite: ^2.1.0
