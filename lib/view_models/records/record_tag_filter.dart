@@ -18,10 +18,10 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   RecordTagFilterViewModel(this.tagFilter);
 
   /// Clears the filter value of the [identifier].
-  void clear(String identifier) {
+  void clear(String identifier) async{
     tagFilter.clear(identifier);
      if (identifier == ID3TagFilters.folderView) {
-     _storage.set(
+     await _storage.set(
         SecureStorageService.folderViewStorageKey,
         false.toString(),
       );

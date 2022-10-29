@@ -5,7 +5,7 @@ abstract class ModelBase {
   /// Indicates whether the model object is deletable.
   late bool? isDeletable;
 
-  /// Indicates whether the model object is deletable.
+  /// Indicates whether the model object is selectable.
   late bool? isSelectable;
 
   /// Creates a new instance of the model.
