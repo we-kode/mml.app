@@ -1,18 +1,20 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'album.dart';
+part of 'record_folder.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Album _$AlbumFromJson(Map<String, dynamic> json) => Album(
-      albumId: json['albumId'] as String?,
-      albumName: json['albumName'] as String?,
+RecordFolder _$RecordFolderFromJson(Map<String, dynamic> json) => RecordFolder(
+      year: json['year'] as int,
+      month: json['month'] as int?,
+      day: json['day'] as int?,
       isDeletable: json['isDeletable'] as bool? ?? false,
-    )..isSelectable = json['isSelectable'] as bool?;
+      isSelectable: json['isSelectable'] as bool? ?? false,
+    );
 
-Map<String, dynamic> _$AlbumToJson(Album instance) {
+Map<String, dynamic> _$RecordFolderToJson(RecordFolder instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -23,7 +25,8 @@ Map<String, dynamic> _$AlbumToJson(Album instance) {
 
   writeNotNull('isDeletable', instance.isDeletable);
   writeNotNull('isSelectable', instance.isSelectable);
-  writeNotNull('albumId', instance.albumId);
-  writeNotNull('albumName', instance.albumName);
+  val['year'] = instance.year;
+  writeNotNull('month', instance.month);
+  writeNotNull('day', instance.day);
   return val;
 }

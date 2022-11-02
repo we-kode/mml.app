@@ -4,6 +4,8 @@ import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/views/records/download.dart';
@@ -35,8 +37,38 @@ class RecordsScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.records,
-              subfilter: RecordTagFilter(),
-              loadData: vm.load,
+              subfilter: RecordTagFilter(
+                isFolderView: vm.isFolderView,
+              ),
+              navState: appBar?.navigationState,
+              moveUp: (subFilter) {
+                vm.moveFolderUp(subFilter as ID3TagFilter);
+                appBar?.navigationState.path = RecordFolder.fromDate(
+                  subFilter.startDate,
+                  subFilter.endDate,
+                )?.getIdentifier();
+              },
+              loadData: ({
+                String? filter,
+                int? offset,
+                int? take,
+                dynamic subfilter,
+              }) {
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    if (!(subfilter as ID3TagFilter).isGrouped) {
+                      appBar?.navigationState.path = null;
+                    }
+                  },
+                );
+
+                return vm.load(
+                  filter: filter,
+                  offset: offset,
+                  take: take,
+                  subfilter: subfilter,
+                );
+              },
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
               onMultiSelect: (selectedItems) async {
@@ -75,12 +107,33 @@ class RecordsScreen extends StatelessWidget {
                 String? filter,
                 Subfilter? subfilter,
               ) {
-                vm.playRecord(
-                  context,
-                  item,
-                  filter,
-                  subfilter as ID3TagFilter,
-                );
+                if (item is Record) {
+                  vm.playRecord(
+                    context,
+                    item,
+                    filter,
+                    subfilter as ID3TagFilter,
+                  );
+                } else if (item is RecordFolder) {
+                  appBar?.navigationState.path = item.getIdentifier();
+                  (subfilter as ID3TagFilter)[ID3TagFilters.date] =
+                      DateTimeRange(
+                    start: DateTime(
+                      item.year,
+                      item.month ?? 1,
+                      item.day ?? 1,
+                    ),
+                    end: DateTime(
+                      item.year,
+                      item.month ?? 12,
+                      item.day ??
+                          DateUtils.getDaysInMonth(
+                            item.year,
+                            item.month ?? 12,
+                          ),
+                    ),
+                  );
+                }
               },
             );
           },

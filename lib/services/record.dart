@@ -5,6 +5,7 @@ import 'package:mml_app/models/genre.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/services/api.dart';
 
 /// Service that handles the records data of the server.
@@ -114,6 +115,48 @@ class RecordService {
     return ModelList(
       List<Genre>.from(
         response.data['items'].map((item) => Genre.fromJson(item)),
+      ),
+      offset ?? 0,
+      response.data["totalCount"],
+    );
+  }
+
+  /// Returns a list of record folder group with the amount of [take] that match the given
+  /// [filter] starting from the [offset].
+  Future<ModelList> getRecordsFolder(
+    String? filter,
+    int? offset,
+    int? take,
+    ID3TagFilter subfilter,
+  ) async {
+    var params = <String, String?>{};
+
+    if (filter != null) {
+      params['filter'] = filter;
+    }
+
+    if (offset != null) {
+      params['skip'] = offset.toString();
+    }
+
+    if (take != null) {
+      params['take'] = take.toString();
+    }
+
+    var response = await _apiService.request(
+      '/media/record/listFolder',
+      queryParameters: params,
+      data: subfilter.toJson(),
+      options: Options(
+        method: 'POST',
+      ),
+    );
+
+    return ModelList(
+      List<RecordFolder>.from(
+        response.data['items'].map(
+          (item) => RecordFolder.fromJson(item),
+        ),
       ),
       offset ?? 0,
       response.data["totalCount"],

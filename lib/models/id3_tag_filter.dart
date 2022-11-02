@@ -29,10 +29,12 @@ class ID3TagFilter extends Subfilter {
     List<String>? albums,
     this.startDate,
     this.endDate,
+    isFolderView = false,
   }) {
     this.artists = artists ?? [];
     this.genres = genres ?? [];
     this.albums = albums ?? [];
+    isGrouped = isFolderView;
   }
 
   /// Converts a json object/map to the model.
@@ -59,6 +61,11 @@ class ID3TagFilter extends Subfilter {
         startDate = range.start;
         endDate = range.end;
         break;
+      case ID3TagFilters.folderView:
+        startDate = null;
+        endDate = null;
+        isGrouped = value as bool;
+        break;
     }
     notifyListeners();
   }
@@ -76,6 +83,8 @@ class ID3TagFilter extends Subfilter {
         return startDate != null && endDate != null
             ? DateTimeRange(start: startDate!, end: endDate!)
             : null;
+      case ID3TagFilters.folderView:
+        return isGrouped;
     }
   }
 
@@ -95,6 +104,11 @@ class ID3TagFilter extends Subfilter {
         startDate = null;
         endDate = null;
         break;
+      case ID3TagFilters.folderView:
+        startDate = null;
+        endDate = null;
+        isGrouped = false;
+        break;
     }
     notifyListeners();
   }
@@ -110,6 +124,8 @@ class ID3TagFilter extends Subfilter {
         return albums.isNotEmpty;
       case ID3TagFilters.date:
         return startDate != null;
+      case ID3TagFilters.folderView:
+        return isGrouped;
       default:
         return true;
     }
@@ -129,4 +145,7 @@ abstract class ID3TagFilters {
 
   /// Genres tag identifier.
   static const String genres = "genres";
+
+  /// Folder view identifier.
+  static const String folderView = "folderView";
 }
