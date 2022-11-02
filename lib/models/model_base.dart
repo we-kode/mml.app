@@ -5,11 +5,17 @@ abstract class ModelBase {
   /// Indicates whether the model object is deletable.
   late bool? isDeletable;
 
+  /// Indicates whether the model object is selectable.
+  late bool? isSelectable;
+
   /// Creates a new instance of the model.
   ///
   /// Shouldn't be used directly but be invoked by constructor of implementing
   /// model classes.
-  ModelBase({this.isDeletable = false});
+  ModelBase({
+    this.isDeletable = false,
+    this.isSelectable = true,
+  });
 
   /// Returns a display description of the model object, that
   /// can be used in widgets, e.g. lists.
@@ -36,6 +42,11 @@ abstract class ModelBase {
 
   /// Returns the group this item belongs to.
   String? getGroup(BuildContext context) {
+    return null;
+  }
+
+  /// Returns an icon which can be used as prefix in list.
+  Icon? getPrefixIcon(BuildContext context) {
     return null;
   }
 }

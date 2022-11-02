@@ -5,6 +5,7 @@ import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 /// View model of the settings screen.
 class SettingsViewModel extends ChangeNotifier {
@@ -21,17 +22,21 @@ class SettingsViewModel extends ChangeNotifier {
 
   final String legalInfoLink = "";
 
+  /// version of the running app.
+  late String version;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
-    return Future.microtask(() {
+    return Future.microtask(() async {
       locales = AppLocalizations.of(context)!;
-
+      var pkgInfo = await PackageInfo.fromPlatform();
+      version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       return true;
     });
   }
 
   /// Calls the service method to remove the client registration.
-  Future removeRegistration() async{
+  Future removeRegistration() async {
     await ClientService.getInstance().removeRegistration();
   }
 

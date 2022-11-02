@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/arguments/navigation_arguments.dart';
+import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
@@ -54,15 +56,17 @@ class RouterService {
   }
 
   /// Routes of the nested navigator.
-  Map<String, PageRouteBuilder> getNestedRoutes({Object? arguments}) {
+  Map<String, PageRouteBuilder> getNestedRoutes({Object? args}) {
     return {
       RecordsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: RecordsViewModel.route,
-          arguments: () => FilterAppBar(
-            title: 'records',
-            enableFilter: true,
-            listAction: SelectedItemsAction(const Icon(Icons.star)),
+          arguments: NavigationArguments(
+            FilterAppBar(
+              title: 'records',
+              enableFilter: true,
+              listAction: SelectedItemsAction(const Icon(Icons.star)),
+            ),
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
@@ -75,17 +79,23 @@ class RouterService {
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: PlaylistViewModel.route,
-          arguments: () => FilterAppBar(
-            title: 'playlist',
-            listAction: SelectedItemsAction(
-              const Icon(Icons.remove),
-              reload: true,
+          arguments: PlaylistArguments(
+            appBar: FilterAppBar(
+              title: (args is PlaylistArguments) && args.playlist != null
+                  ? args.playlist!.name!
+                  : 'playlist',
+              enableBack: (args is PlaylistArguments) && args.playlist != null,
+              listAction: SelectedItemsAction(
+                const Icon(Icons.remove),
+                reload: true,
+              ),
             ),
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
           return PlaylistScreen(
             appBar: MainViewModel.appBar,
+            playlistId: (args is PlaylistArguments) ? args.playlist?.id : null,
           );
         },
         transitionsBuilder: _buildTransition,
@@ -93,8 +103,10 @@ class RouterService {
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: () => FilterAppBar(
-            title: 'settings',
+          arguments: NavigationArguments(
+            FilterAppBar(
+              title: 'settings',
+            ),
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
@@ -111,7 +123,7 @@ class RouterService {
       InformationViewModel.route: PageRouteBuilder(
         settings: RouteSettings(name: InformationViewModel.route),
         pageBuilder: (context, animation1, animation2) => InformationScreen(
-          url: (arguments as String),
+          url: (args as String),
         ),
         transitionsBuilder: _buildTransition,
       ),
@@ -124,7 +136,7 @@ class RouterService {
       LicenseViewModel.route: PageRouteBuilder(
         settings: RouteSettings(name: LicenseViewModel.route),
         pageBuilder: (context, animation1, animation2) => LicenseScreen(
-          package: (arguments as Package),
+          package: (args as Package),
         ),
         transitionsBuilder: _buildTransition,
       ),

@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/services/router.dart';
 
 /// An appbar containing one expandable filter input.
 class FilterAppBar extends StatefulWidget {
   /// Title shown in the app bar.
   final String title;
 
-  /// Falg, thats enables the filter button of this app bar.
+  /// Flag, thats enables the filter button of this app bar.
   ///
   /// If false or not provided the filter button will not be shown.
   final bool? enableFilter;
+
+  /// Flag, that enables the back button on the app bar.
+  final bool enableBack;
 
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
@@ -20,12 +25,16 @@ class FilterAppBar extends StatefulWidget {
   /// is available in the widget, the app bar belongs to.
   final SelectedItemsAction? listAction;
 
+  /// [NavigationState] to show the path of navigation in the appbar.
+  final NavigationState navigationState = NavigationState();
+
   /// Initiales the app bar.
   FilterAppBar({
     Key? key,
     required this.title,
     this.listAction,
     this.enableFilter,
+    this.enableBack = false,
   }) : super(key: key);
 
   @override
@@ -45,6 +54,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   void initState() {
     widget.listAction?.addListener(_updateState);
+    widget.navigationState.addListener(_updateState);
     super.initState();
   }
 
@@ -56,12 +66,18 @@ class FilterAppBarState extends State<FilterAppBar> {
       widget.listAction?.removeListener(_updateState);
       widget.listAction?.addListener(_updateState);
     }
+
+    if (oldWidget.navigationState != widget.navigationState) {
+      widget.navigationState.removeListener(_updateState);
+      widget.navigationState.addListener(_updateState);
+    }
   }
 
   @override
   void dispose() async {
     super.dispose();
     widget.listAction?.removeListener(_updateState);
+    widget.navigationState.removeListener(_updateState);
   }
 
   /// Updates the state if the [SelectedItemsAction] state changed.
@@ -86,11 +102,25 @@ class FilterAppBarState extends State<FilterAppBar> {
                 Text("${widget.listAction!.count}")
               ],
             )
-          : null,
+          : widget.enableBack || widget.navigationState.path != null
+              ? IconButton(
+                  onPressed: () async {
+                    if (widget.navigationState.path != null) {
+                      widget.navigationState.returnPressed();
+                    } else {
+                      await RouterService.getInstance().popNestedRoute();
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_back),
+                  tooltip: AppLocalizations.of(context)!.back,
+                )
+              : null,
       title: Visibility(
         visible: widget.listAction == null || !widget.listAction!.enabled,
         child: !_filterOpened || !(widget.enableFilter ?? false)
-            ? Text(_getLocalizedString(context))
+            ? Text(
+                widget.navigationState.path ?? _getLocalizedString(context),
+              )
             : Container(
                 margin: const EdgeInsets.only(bottom: 4.0),
                 child: _createInput(),
@@ -111,7 +141,7 @@ class FilterAppBarState extends State<FilterAppBar> {
       case "settings":
         return locales.settings;
       default:
-        return "";
+        return widget.title;
     }
   }
 

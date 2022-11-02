@@ -19,14 +19,10 @@ ID3TagFilter _$ID3TagFilterFromJson(Map<String, dynamic> json) => ID3TagFilter(
       endDate: json['endDate'] == null
           ? null
           : DateTime.parse(json['endDate'] as String),
-    );
+    )..isGrouped = json['isGrouped'] as bool;
 
 Map<String, dynamic> _$ID3TagFilterToJson(ID3TagFilter instance) {
-  final val = <String, dynamic>{
-    'artists': instance.artists,
-    'genres': instance.genres,
-    'albums': instance.albums,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -34,6 +30,10 @@ Map<String, dynamic> _$ID3TagFilterToJson(ID3TagFilter instance) {
     }
   }
 
+  writeNotNull('isGrouped', instance.isGrouped);
+  val['artists'] = instance.artists;
+  val['genres'] = instance.genres;
+  val['albums'] = instance.albums;
   writeNotNull('startDate', instance.startDate?.toIso8601String());
   writeNotNull('endDate', instance.endDate?.toIso8601String());
   return val;

@@ -68,5 +68,7 @@
   "deleteConfirmation": "Möchten Sie tatsächlich die gewählten Datensätze löschen?",
   "download":"Download",
   "fileNotFound":"Datei konnte nicht gefunden werden. Fügen Sie die Aufnahme erneut zu einer Playlist hinzu.",
-  "downloadError":"Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut."
+  "downloadError":"Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut.",
+  "back":"zurück",
+  "folder":"Ordner"
 }

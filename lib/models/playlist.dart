@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mml_app/models/model_base.dart';
 
@@ -34,6 +35,11 @@ class Playlist extends ModelBase {
   @override
   getIdentifier() {
     return "$id";
+  }
+
+  @override
+  Icon? getPrefixIcon(BuildContext context) {
+    return const Icon(Icons.folder_special);
   }
 
   /// Converts a map of the model for inserting into db.

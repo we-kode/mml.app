@@ -8,6 +8,7 @@ import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
@@ -27,6 +28,11 @@ typedef LoadDataFunction = Future<ModelList> Function({
 typedef OpenItemFunction = Function(
   ModelBase item,
   String? filter,
+  Subfilter? subFilter,
+);
+
+/// Function to be called when the back button is pressed. And the list should navigate up in folder structure.
+typedef MoveUpFunction = Function(
   Subfilter? subFilter,
 );
 
@@ -87,6 +93,12 @@ class AsyncListView extends StatefulWidget {
   /// [SelectedItemsAction] of the action bar the list belongs to.
   final SelectedItemsAction? selectedItemsAction;
 
+  /// Navigation state if a hierarchical view is used.
+  final NavigationState? navState;
+
+  /// Function to be called when the back button is pressed. And the list should navigate up in folder structure.
+  final MoveUpFunction? moveUp;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -99,6 +111,8 @@ class AsyncListView extends StatefulWidget {
     this.addItem,
     this.selectedItemsAction,
     this.onMultiSelect,
+    this.navState,
+    this.moveUp,
   }) : super(key: key);
 
   @override
@@ -145,6 +159,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
+    widget.navState?.addListener(_backPressed);
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => widget.selectedItemsAction?.clear(),
@@ -159,6 +174,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
+    widget.navState?.removeListener(_backPressed);
   }
 
   @override
@@ -181,6 +197,18 @@ class _AsyncListViewState extends State<AsyncListView> {
       ),
       floatingActionButton: _createActionButton(),
     );
+  }
+
+  /// Called when hierarchical view in list is used and the back button is pressed.
+  void _backPressed() {
+    if (!widget.navState!.returnClicked) {
+      return;
+    }
+
+    if (widget.navState!.returnClicked) {
+      widget.navState!.returnReleased();
+      widget.moveUp != null ? widget.moveUp!(widget.subfilter?.filter) : null;
+    }
   }
 
   /// Calls the [SelectedItemsAction] if one is provided, when the action is called in the app bar.
@@ -409,7 +437,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     var itemGroup = item.getGroup(context) ?? '';
-    if (itemGroup.isEmpty) {
+    if (itemGroup.isEmpty || (widget.subfilter?.filter.isGrouped ?? false)) {
       return _listTile(item, index);
     }
 
@@ -421,26 +449,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       _actualGroup = itemGroup;
       return Column(
         children: [
-          widget.editGroupFunction != null
-              ? ActionChip(
-                  label: Text(
-                    item.getGroup(context)!,
-                  ),
-                  onPressed: () {
-                    widget.editGroupFunction!(item).then(
-                      (value) {
-                        if (value) {
-                          _reloadData();
-                        }
-                      },
-                    );
-                  },
-                )
-              : Chip(
-                  label: Text(
-                    item.getGroup(context)!,
-                  ),
-                ),
+          Chip(
+            label: Text(
+              item.getGroup(context)!,
+            ),
+          ),
           if (item.getIdentifier() != null) _listTile(item, index),
         ],
       );
@@ -452,7 +465,22 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
     var leadingTile = !_isInMultiSelectMode
-        ? null
+        ? item.getPrefixIcon(context) != null
+            ? IconButton(
+                onPressed: () => {
+                  widget.editGroupFunction != null
+                      ? widget.editGroupFunction!(item).then(
+                          (value) {
+                            if (value) {
+                              _reloadData();
+                            }
+                          },
+                        )
+                      : null
+                },
+                icon: item.getPrefixIcon(context)!,
+              )
+            : null
         : Checkbox(
             onChanged: (_) {
               _onItemChecked(index);
@@ -508,16 +536,18 @@ class _AsyncListViewState extends State<AsyncListView> {
               )
             : null;
       },
-      onLongPress: () {
-        if (!_isInMultiSelectMode) {
-          setState(() {
-            _isInMultiSelectMode = true;
-          });
-          widget.selectedItemsAction?.enabled = true;
-        }
+      onLongPress: !(item.isSelectable ?? true)
+          ? null
+          : () {
+              if (!_isInMultiSelectMode) {
+                setState(() {
+                  _isInMultiSelectMode = true;
+                });
+                widget.selectedItemsAction?.enabled = true;
+              }
 
-        _onItemChecked(index);
-      },
+              _onItemChecked(index);
+            },
     );
   }
 

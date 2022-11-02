@@ -17,7 +17,7 @@ Record _$RecordFromJson(Map<String, dynamic> json) => Record(
       artist: json['artist'] as String?,
       genre: json['genre'] as String?,
       isDeletable: json['isDeletable'] as bool? ?? false,
-    );
+    )..isSelectable = json['isSelectable'] as bool?;
 
 Map<String, dynamic> _$RecordToJson(Record instance) {
   final val = <String, dynamic>{};
@@ -29,6 +29,7 @@ Map<String, dynamic> _$RecordToJson(Record instance) {
   }
 
   writeNotNull('isDeletable', instance.isDeletable);
+  writeNotNull('isSelectable', instance.isSelectable);
   writeNotNull('recordId', instance.recordId);
   writeNotNull('title', instance.title);
   writeNotNull('date', instance.date?.toIso8601String());

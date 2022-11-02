@@ -4,6 +4,7 @@ import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
@@ -15,8 +16,12 @@ class PlaylistScreen extends StatelessWidget {
   /// App bar of the playlist overview screen.
   final FilterAppBar? appBar;
 
+  /// Id of actual playlist
+  final int? playlistId;
+
   /// Initializes the instance.
-  const PlaylistScreen({Key? key, this.appBar}) : super(key: key);
+  const PlaylistScreen({Key? key, this.appBar, this.playlistId})
+      : super(key: key);
 
   /// Builds the screen.
   @override
@@ -27,7 +32,7 @@ class PlaylistScreen extends StatelessWidget {
         var vm = Provider.of<PlaylistViewModel>(context, listen: false);
 
         return FutureBuilder(
-          future: vm.init(context),
+          future: vm.init(context, playlistId),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -36,6 +41,7 @@ class PlaylistScreen extends StatelessWidget {
             return AsyncListView(
               title: vm.locales.playlist,
               selectedItemsAction: appBar?.listAction,
+              filter: appBar?.filter,
               onMultiSelect: (selectedItems) async {
                 var shouldDelete = await showDeleteDialog(context);
 
@@ -46,18 +52,20 @@ class PlaylistScreen extends StatelessWidget {
                 return shouldDelete;
               },
               loadData: vm.load,
-              addItem: () async {
-                final state = await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return const PlaylistEditDialog(playlistId: null);
-                  },
-                );
-                return state== EditState.save;
-              },
+              addItem: playlistId != null
+                  ? null
+                  : () async {
+                      final state = await showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const PlaylistEditDialog(playlistId: null);
+                        },
+                      );
+                      return state == EditState.save;
+                    },
               editGroupFunction: (item) async {
-                var playlistId = (item as LocalRecord).playlist.id;
+                var playlistId = (item as Playlist).id;
                 final state = await showDialog(
                   barrierDismissible: false,
                   context: context,
@@ -79,12 +87,16 @@ class PlaylistScreen extends StatelessWidget {
                 String? filter,
                 Subfilter? subfilter,
               ) {
-                vm.playRecord(
-                  context,
-                  item,
-                  filter,
-                  null,
-                );
+                if (item is LocalRecord) {
+                  vm.playRecord(
+                    context,
+                    item,
+                    filter,
+                    null,
+                  );
+                } else if (item is Playlist) {
+                  vm.navigate(item);
+                }
               },
             );
           },
