@@ -210,7 +210,8 @@ class ClientService {
       // errors.
       if (!(await _storage.has(SecureStorageService.accessTokenStorageKey)) ||
           (e is DioError &&
-              e.response?.statusCode != HttpStatus.unauthorized)) {
+              (e.response?.statusCode != HttpStatus.unauthorized &&
+                  e.response?.data['error'] != 'Error occurred 333'))) {
         rethrow;
       }
 
