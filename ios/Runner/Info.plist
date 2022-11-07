@@ -40,9 +40,11 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-  <key>UIBackgroundModes</key>
-  <array>
-    <string>audio</string>
-  </array>
+	<key>NSCameraUsageDescription</key>
+	<string>For qr code scanning prupose</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 </dict>
 </plist>
