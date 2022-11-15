@@ -42,12 +42,12 @@ do
 		sed -i -E "s/    <string name=\"app_title\">.*<\/string>/    <string name=\"app_title\">$value<\/string>/" "$DIR/android/app/src/main/res/values-de/strings.xml"
 		;;
 	appTitle)
-        sed -i -E "s/    <string>Mml App<\/string>/    <string>$value<\/string>/" "$DIR/ios/Runner/Info.plist"
-	    sed -i -E "s/                INFOPLIST_KEY_CFBundleDisplayName = \"My Media Lib\";/                INFOPLIST_KEY_CFBundleDisplayName = \"$value\";/" "$DIR/ios/Runner.xcodeproj/project.pbxproj"
+        sed -i -E "s/	<string>Mml App<\/string>/	<string>$value<\/string>/" "$DIR/ios/Runner/Info.plist"
+	    sed -i -E "s/				INFOPLIST_KEY_CFBundleDisplayName = \"My Media Lib\";/				INFOPLIST_KEY_CFBundleDisplayName = \"$value\";/" "$DIR/ios/Runner.xcodeproj/project.pbxproj"
 		;;
 	appId)
 		sed -i -E "s/        applicationId \".*\"/        applicationId \"$value\"/" "$DIR/android/app/build.gradle"
-        sed -i -E "s/                  PRODUCT_BUNDLE_IDENTIFIER = de.wekode.mmlApp;/                PRODUCT_BUNDLE_IDENTIFIER = $value;/" "$DIR/ios/Runner.xcodeproj/project.pbxproj"
+        sed -i -E "s/				PRODUCT_BUNDLE_IDENTIFIER = de.wekode.mmlApp;/				PRODUCT_BUNDLE_IDENTIFIER = $value;/" "$DIR/ios/Runner.xcodeproj/project.pbxproj"
 		;;
 	privacyUrl)
 		sed -i -E "s/  final String privacyLink = \".*\";/  final String privacyLink = \"$value\";/" "$DIR/lib/view_models/settings.dart"
