@@ -46,6 +46,7 @@ class Playlist extends ModelBase {
   Map<String, Object?> toMap() {
     var map = toJson();
     map.remove('isDeletable');
+    map.remove('isSelectable');
     return map;
   }
 }
