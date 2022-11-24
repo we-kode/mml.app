@@ -21,7 +21,7 @@ class MessengerService {
   showMessage(String text) {
     final SnackBar snackBar = SnackBar(
       content: Text(text),
-      duration: const Duration(seconds: 15),
+      duration: const Duration(seconds: 5),
     );
     snackbarKey.currentState?.showSnackBar(snackBar);
   }
