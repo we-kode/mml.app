@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
 import 'package:mml_app/arguments/playlists.dart';
+import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
@@ -115,28 +116,40 @@ class RouterService {
         transitionsBuilder: _buildTransition,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: ServerConnectionViewModel.route),
+        settings: RouteSettings(
+          name: ServerConnectionViewModel.route,
+          arguments: args,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const ServerConnectionScreen(),
         transitionsBuilder: _buildTransition,
       ),
       InformationViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: InformationViewModel.route),
+        settings: RouteSettings(
+          name: InformationViewModel.route,
+          arguments: args,
+        ),
         pageBuilder: (context, animation1, animation2) => InformationScreen(
-          url: (args as String),
+          url: ((args as SubrouteArguments).arg as String),
         ),
         transitionsBuilder: _buildTransition,
       ),
       LicensesOverviewViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: LicensesOverviewViewModel.route),
+        settings: RouteSettings(
+          name: LicensesOverviewViewModel.route,
+          arguments: args,
+        ),
         pageBuilder: (context, animation1, animation2) =>
             const LicensesOverviewScreen(),
         transitionsBuilder: _buildTransition,
       ),
       LicenseViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(name: LicenseViewModel.route),
+        settings: RouteSettings(
+          name: LicenseViewModel.route,
+          arguments: args,
+        ),
         pageBuilder: (context, animation1, animation2) => LicenseScreen(
-          package: (args as Package),
+          package: ((args as SubrouteArguments).arg as Package),
         ),
         transitionsBuilder: _buildTransition,
       ),
