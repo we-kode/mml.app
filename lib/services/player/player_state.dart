@@ -26,6 +26,9 @@ class PlayerState extends ChangeNotifier {
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _audioHandler.shuffle;
 
+  /// Indicates, that the source to be played is loading.
+  bool get isLoading => _audioHandler.isLoading;
+
   /// Notifies for changes the listeners.
   ///
   /// Should be used if the state changes.

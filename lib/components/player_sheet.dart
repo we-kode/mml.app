@@ -161,13 +161,15 @@ class PlayerSheetState extends State<PlayerSheet>
                                 value,
                               );
                             },
-                            onChangeStart: (value) =>
-                                PlayerService.getInstance().startSeekDrag(),
-                            onChangeEnd: (value) =>
-                                PlayerService.getInstance().seek(
-                              value,
-                              updatePlayerSeek: true,
-                            ),
+                            onChangeStart: (value) {
+                              PlayerService.getInstance().startSeekDrag();
+                            },
+                            onChangeEnd: (value) {
+                              PlayerService.getInstance().seek(
+                                value,
+                                updatePlayerSeek: true,
+                              );
+                            },
                           );
                         },
                       ),
@@ -214,7 +216,7 @@ class PlayerSheetState extends State<PlayerSheet>
                             height: 32,
                           ),
                           padding: EdgeInsets.zero,
-                          onPressed: state.shuffle
+                          onPressed: state.shuffle || state.isLoading
                               ? null
                               : () =>
                                   PlayerService.getInstance().playPrevious(),
@@ -243,13 +245,15 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                           iconSize: 36,
                           padding: EdgeInsets.zero,
-                          onPressed: () {
-                            if (state.isPlaying) {
-                              PlayerService.getInstance().pause();
-                            } else {
-                              PlayerService.getInstance().resume();
-                            }
-                          },
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  if (state.isPlaying) {
+                                    PlayerService.getInstance().pause();
+                                  } else {
+                                    PlayerService.getInstance().resume();
+                                  }
+                                },
                           icon: AnimatedIcon(
                             icon: AnimatedIcons.pause_play,
                             progress: _controller,
@@ -261,15 +265,23 @@ class PlayerSheetState extends State<PlayerSheet>
                     const Spacer(
                       flex: 1,
                     ),
-                    IconButton(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      iconSize: 32,
-                      padding: EdgeInsets.zero,
-                      onPressed: () => PlayerService.getInstance().playNext(),
-                      icon: const Icon(Icons.skip_next_rounded),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  PlayerService.getInstance().playNext();
+                                },
+                          icon: const Icon(Icons.skip_next_rounded),
+                        );
+                      },
                     ),
                     const Spacer(
                       flex: 6,
