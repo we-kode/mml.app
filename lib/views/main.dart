@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
+import 'package:mml_app/arguments/subroute_arguments.dart';
+import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/records/overview.dart';
@@ -87,6 +89,11 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
     if (route.settings.arguments is NavigationArguments) {
       MainViewModel.appBar =
           (route.settings.arguments as NavigationArguments).appBar;
+    } else if (route.settings.arguments is SubrouteArguments) {
+      MainViewModel.appBar = FilterAppBar(
+        title: MainViewModel.appBar?.title ?? '',
+        enableBack: true,
+      );
     }
 
     vm.selectedIndex = getSelectedIndex(route);
