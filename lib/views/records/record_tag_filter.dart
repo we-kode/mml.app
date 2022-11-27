@@ -1,3 +1,4 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
@@ -133,18 +134,43 @@ class RecordTagFilter extends ListSubfilterView {
     BuildContext context,
     RecordTagFilterViewModel vm,
   ) async {
-    var dateUpdated = await showDateRangePicker(
+    var locales = AppLocalizations.of(context)!;
+    var dateUpdated = await showCalendarDatePicker2Dialog(
       context: context,
-      initialEntryMode: DatePickerEntryMode.calendar,
-      firstDate: DateTime(1970),
-      lastDate: DateTime.now(),
+      config: CalendarDatePicker2WithActionButtonsConfig(
+        calendarType: CalendarDatePicker2Type.range,
+        lastDate: DateTime.now(),
+        cancelButton: Text(
+          locales.cancel,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        okButton: Text(
+          locales.save,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ),
+      dialogSize: Size(
+        MediaQuery.of(context).size.height * 0.4,
+        MediaQuery.of(context).size.width * 0.2,
+      ),
+      borderRadius: BorderRadius.circular(0),
     );
 
-    if (dateUpdated == null) {
+    if (dateUpdated == null || dateUpdated.isEmpty) {
       return;
     }
 
-    vm.updateFilter(ID3TagFilters.date, dateUpdated);
+    vm.updateFilter(
+      ID3TagFilters.date,
+      DateTimeRange(
+        start: dateUpdated.first!,
+        end: dateUpdated.last!,
+      ),
+    );
   }
 
   /// Creates an [AsyncSelectListDialog] to handle list filters.
