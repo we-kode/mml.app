@@ -56,6 +56,7 @@ dependencies:
   path_provider: ^2.0.11
   percent_indicator: ^4.2.2
   package_info_plus: ^3.0.1
+  calendar_date_picker2: ^0.3.3
 
 dev_dependencies:
   flutter_test:
