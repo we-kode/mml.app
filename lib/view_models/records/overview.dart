@@ -6,7 +6,6 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
-import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -21,9 +20,6 @@ class RecordsViewModel extends ChangeNotifier {
 
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
-
-  /// [RecordService] used to load data for the records uplaod dialog.
-  final DBService _dbService = DBService.getInstance();
 
   /// Indicates if the folder view is active or not.
   bool isFolderView = false;
@@ -72,19 +68,6 @@ class RecordsViewModel extends ChangeNotifier {
       record as Record,
       filter,
       subfilter,
-    );
-  }
-
-  /// loads all available playlists.
-  Future<ModelList> loadPlaylists({
-    String? filter,
-    int? offset,
-    int? take,
-  }) async {
-    return _dbService.getPlaylists(
-      filter,
-      offset,
-      take,
     );
   }
 
