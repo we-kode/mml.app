@@ -466,20 +466,20 @@ class _AsyncListViewState extends State<AsyncListView> {
   ListTile _listTile(ModelBase item, int index) {
     var leadingTile = !_isInMultiSelectMode
         ? item.getPrefixIcon(context) != null
-            ? IconButton(
-                onPressed: () => {
-                  widget.editGroupFunction != null
-                      ? widget.editGroupFunction!(item).then(
-                          (value) {
-                            if (value) {
-                              _reloadData();
-                            }
-                          },
-                        )
-                      : null
-                },
-                icon: item.getPrefixIcon(context)!,
-              )
+            ? widget.editGroupFunction != null
+                ? IconButton(
+                    onPressed: () => {
+                      widget.editGroupFunction!(item).then(
+                        (value) {
+                          if (value) {
+                            _reloadData();
+                          }
+                        },
+                      )
+                    },
+                    icon: item.getPrefixIcon(context)!,
+                  )
+                : item.getPrefixIcon(context)!
             : null
         : Checkbox(
             onChanged: (_) {
