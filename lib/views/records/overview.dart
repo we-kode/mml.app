@@ -107,6 +107,7 @@ class RecordsScreen extends StatelessWidget {
                 String? filter,
                 Subfilter? subfilter,
               ) {
+                FocusManager.instance.primaryFocus?.unfocus();
                 if (item is Record) {
                   vm.playRecord(
                     context,
