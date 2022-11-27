@@ -10,8 +10,8 @@ class SecureStorageService {
   final _storage = const FlutterSecureStorage();
 
   /// Option to allow secure storage access the keychain of ios when phone is locked and app runs in background.
-  final iOSOptions =
-      const IOSOptions(accessibility: KeychainAccessibility.first_unlock);
+  final iOSOptions = const IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device);
 
   /// Key under which the app key is persisted.
   static const String appKeyStorageKey = 'appKey';
