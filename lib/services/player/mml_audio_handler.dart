@@ -45,6 +45,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool _shuffle = false;
 
+  /// Indicates, that the source to be played is loading.
+  bool _isLoading = false;
+
   /// Repeat mode that is currently set.
   PlayerRepeatMode repeat = PlayerRepeatMode.none;
 
@@ -62,6 +65,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player.playing;
+
+  /// Indicates, that the source to be played is loading.
+  bool get isLoading => _isLoading;
 
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _shuffle;
@@ -213,11 +219,16 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Skips the playback in the given [direction] to the next or
   /// previous record.
   Future<void> _skipTo(String direction) async {
+    if (_isLoading) {
+      return;
+    }
+
     if (repeat == PlayerRepeatMode.one) {
       _player.seek(Duration.zero);
       return;
     }
 
+    _isLoading = true;
     Record? record = await getRecord(direction);
 
     if (record != null) {
@@ -300,6 +311,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         '${baseUrl}media/stream/${currentRecord!.recordId}',
         headers: headers,
       );
+      _isLoading = false;
     } catch (e) {
       _handleError(e);
     }
