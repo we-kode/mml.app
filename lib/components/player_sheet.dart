@@ -157,9 +157,17 @@ class PlayerSheetState extends State<PlayerSheet>
                             min: 0,
                             max: state.currentReocrd?.duration ?? 0,
                             onChanged: (value) {
-                              PlayerService.getInstance()
-                                  .seek(value.asDuration());
+                              PlayerService.getInstance().seek(
+                                value,
+                              );
                             },
+                            onChangeStart: (value) =>
+                                PlayerService.getInstance().startSeekDrag(),
+                            onChangeEnd: (value) =>
+                                PlayerService.getInstance().seek(
+                              value,
+                              updatePlayerSeek: true,
+                            ),
                           );
                         },
                       ),
@@ -273,14 +281,11 @@ class PlayerSheetState extends State<PlayerSheet>
                       ),
                       padding: EdgeInsets.zero,
                       onPressed: () async {
-                        PlaylistService.getInstance().downloadRecords(
-                          [
-                            PlayerService.getInstance()
-                                .playerState
-                                ?.currentReocrd,
-                          ],
-                          context
-                        );
+                        PlaylistService.getInstance().downloadRecords([
+                          PlayerService.getInstance()
+                              .playerState
+                              ?.currentReocrd,
+                        ], context);
                       },
                       icon: const Icon(Icons.star),
                     ),
