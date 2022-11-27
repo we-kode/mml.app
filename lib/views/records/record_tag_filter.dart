@@ -160,7 +160,7 @@ class RecordTagFilter extends ListSubfilterView {
       borderRadius: BorderRadius.circular(0),
     );
 
-    if (dateUpdated == null || dateUpdated.isEmpty || dateUpdated.length < 2) {
+    if (dateUpdated == null || dateUpdated.isEmpty) {
       return;
     }
 
