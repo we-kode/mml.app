@@ -169,9 +169,12 @@ class FilterAppBarState extends State<FilterAppBar> {
           onPressed: () {
             setState(
               () {
+                _filter = '';
                 _filterOpened = false;
               },
             );
+
+            widget.filter.textFilter = '';
           },
         ),
       ),

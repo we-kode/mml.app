@@ -3,6 +3,7 @@ import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
+import 'package:mml_app/services/playlist.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:text_scroll/text_scroll.dart';
@@ -97,7 +98,9 @@ class PlayerSheetState extends State<PlayerSheet>
                             state.currentReocrd?.title ??
                                 AppLocalizations.of(context)!.unknown,
                             style: Theme.of(context).textTheme.subtitle1,
-                            velocity: const Velocity(pixelsPerSecond: Offset(15, 0)),
+                            velocity: const Velocity(
+                              pixelsPerSecond: Offset(15, 0),
+                            ),
                             mode: TextScrollMode.bouncing,
                           ),
                         );
@@ -193,7 +196,7 @@ class PlayerSheetState extends State<PlayerSheet>
                       },
                     ),
                     const Spacer(
-                      flex: 6,
+                      flex: 16,
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
@@ -259,6 +262,27 @@ class PlayerSheetState extends State<PlayerSheet>
                       padding: EdgeInsets.zero,
                       onPressed: () => PlayerService.getInstance().playNext(),
                       icon: const Icon(Icons.skip_next_rounded),
+                    ),
+                    const Spacer(
+                      flex: 6,
+                    ),
+                    IconButton(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 32,
+                        height: 32,
+                      ),
+                      padding: EdgeInsets.zero,
+                      onPressed: () async {
+                        PlaylistService.getInstance().downloadRecords(
+                          [
+                            PlayerService.getInstance()
+                                .playerState
+                                ?.currentReocrd,
+                          ],
+                          context
+                        );
+                      },
+                      icon: const Icon(Icons.star),
                     ),
                     const Spacer(
                       flex: 6,
