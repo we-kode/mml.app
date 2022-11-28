@@ -242,13 +242,15 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Returns next or previous record in range depending on [direction] to be played.
   Future<Record?> getRecord(String direction) async {
     if (currentRecord is LocalRecord) {
-      return DBService.getInstance().next(
+      var record = await DBService.getInstance().next(
         currentRecord!.recordId!,
         (currentRecord! as LocalRecord).playlist.id!,
         repeat: repeat == PlayerRepeatMode.all,
         reverse: direction == 'previous',
         shuffle: shuffle,
       );
+      _isLoading = record != null;
+      return record;
     }
 
     var params = <String, dynamic>{};
@@ -276,6 +278,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       // Catch all errors and stop playing afterwards.
     }
 
+    _isLoading = false;
     return null;
   }
 
@@ -299,7 +302,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         MMLAudioSource(file, int.parse(cryptKey!)),
         preload: false,
       );
-
+      _isLoading = false;
       return true;
     }
 
