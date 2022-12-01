@@ -126,7 +126,7 @@ packages:
       name: calendar_date_picker2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.3.3"
+    version: "0.3.4"
   characters:
     dependency: transitive
     description:
