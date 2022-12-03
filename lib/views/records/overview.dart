@@ -55,7 +55,8 @@ class RecordsScreen extends StatelessWidget {
               }) {
                 WidgetsBinding.instance.addPostFrameCallback(
                   (_) {
-                    if (!(subfilter as ID3TagFilter).isGrouped) {
+                    if (subfilter != null &&
+                        !(subfilter as ID3TagFilter).isGrouped) {
                       appBar?.navigationState.path = null;
                     }
                   },
