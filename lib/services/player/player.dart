@@ -1,5 +1,7 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/player_sheet.dart';
+import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
@@ -18,6 +20,9 @@ class PlayerService {
   /// Controller of the current showed bottom sheet, used to close the bottom
   /// sheet when necessary.
   PersistentBottomSheetController? _controller;
+
+  /// State if the seek bar is dragged by the user.
+  bool _isSeeking = false;
 
   /// State of the player.
   PlayerState? playerState;
@@ -114,9 +119,28 @@ class PlayerService {
     playerState?.update();
   }
 
+  /// Forwards the current playback by the defined
+  /// [AudioServiceConfig.fastForwardInterval].
+  Future fastForward() async {
+    await _audioHandler.fastForward();
+    playerState?.update();
+  }
+
+  /// Rewinds the current playback by the defined
+  /// [AudioServiceConfig.rewindInterval].
+  Future rewind() async {
+    await _audioHandler.rewind();
+    playerState?.update();
+  }
+
   /// Seeks the current playback to the passed [newDuration].
-  Future seek(Duration newDuration) async {
-    await _audioHandler.seek(newDuration);
+  Future seek(double newDuration, {bool updatePlayerSeek = false}) async {
+    if (updatePlayerSeek) {
+      _isSeeking = false;
+      await _audioHandler.seek(newDuration.asDuration());
+    } else {
+      _audioHandler.currentSeekPosition = newDuration;
+    }
     playerState?.update();
   }
 
@@ -124,6 +148,10 @@ class PlayerService {
   _initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
+        if (_isSeeking) {
+          return;
+        }
+
         var recordDuration = _audioHandler.currentRecord?.duration ?? 0;
         var duration = double.tryParse(
           '${event.inMilliseconds.clamp(0, recordDuration)}',
@@ -148,5 +176,10 @@ class PlayerService {
     _controller = null;
     _audioHandler.currentSeekPosition = 0;
     _audioHandler.currentRecord = null;
+  }
+
+  /// Activtes the state, that the seek bar is actually be dragged by the user.
+  startSeekDrag() {
+    _isSeeking = true;
   }
 }

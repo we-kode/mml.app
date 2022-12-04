@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
-import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/models/subfilter.dart';
+import 'package:mml_app/services/playlist.dart';
 import 'package:mml_app/view_models/records/overview.dart';
-import 'package:mml_app/views/records/download.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
 
@@ -72,34 +71,9 @@ class RecordsScreen extends StatelessWidget {
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
               onMultiSelect: (selectedItems) async {
-                List<dynamic>? selectedPlaylists = await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AsyncSelectListDialog(
-                      loadData: ({filter, offset, take}) => vm.loadPlaylists(
-                        filter: filter,
-                        offset: offset,
-                        take: take,
-                      ),
-                      initialSelected: const [],
-                    );
-                  },
-                );
-
-                if (selectedPlaylists == null || selectedPlaylists.isEmpty) {
-                  return false;
-                }
-
-                return await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return RecordDownloadDialog(
-                      records: selectedItems as List<ModelBase?>,
-                      playlists: selectedPlaylists,
-                    );
-                  },
+                return await PlaylistService.getInstance().downloadRecords(
+                  selectedItems as List<ModelBase?>,
+                  context,
                 );
               },
               openItemFunction: (
@@ -107,6 +81,7 @@ class RecordsScreen extends StatelessWidget {
                 String? filter,
                 Subfilter? subfilter,
               ) {
+                FocusManager.instance.primaryFocus?.unfocus();
                 if (item is Record) {
                   vm.playRecord(
                     context,

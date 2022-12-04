@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/information.dart';
@@ -42,19 +43,25 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Redirects to the connection update screen.
   void changeServerConnection() {
-    _routerService.pushNestedRoute(ServerConnectionViewModel.route);
+    _routerService.pushNestedRoute(
+      ServerConnectionViewModel.route,
+      arguments: SubrouteArguments(),
+    );
   }
 
   /// Redirects to the license overview screen.
   void showLicensesOverview() {
-    _routerService.pushNestedRoute(LicensesOverviewViewModel.route);
+    _routerService.pushNestedRoute(
+      LicensesOverviewViewModel.route,
+      arguments: SubrouteArguments(),
+    );
   }
 
   /// Redirects to the legal information webview screen.
   void showLegalInformation() {
     _routerService.pushNestedRoute(
       InformationViewModel.route,
-      arguments: legalInfoLink,
+      arguments: SubrouteArguments(arg: legalInfoLink),
     );
   }
 
@@ -62,7 +69,7 @@ class SettingsViewModel extends ChangeNotifier {
   void showPrivacyPolicy() {
     _routerService.pushNestedRoute(
       InformationViewModel.route,
-      arguments: privacyLink,
+      arguments: SubrouteArguments(arg: privacyLink),
     );
   }
 }

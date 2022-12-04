@@ -9,6 +9,11 @@ class SecureStorageService {
   /// secure storage.
   final _storage = const FlutterSecureStorage();
 
+  /// Option to allow secure storage access the keychain of ios when phone is locked and app runs in background.
+  final iOSOptions = const IOSOptions(
+    accessibility: KeychainAccessibility.first_unlock_this_device,
+  );
+
   /// Key under which the app key is persisted.
   static const String appKeyStorageKey = 'appKey';
 
@@ -49,7 +54,10 @@ class SecureStorageService {
 
   /// Returns the value persisted under the given [key].
   Future<String?> get(String key) async {
-    return await _storage.read(key: key);
+    return await _storage.read(
+      key: key,
+      iOptions: iOSOptions,
+    );
   }
 
   /// Returns a boolean, that indicates whether a value is persisted under
@@ -60,12 +68,19 @@ class SecureStorageService {
 
   /// Stores the [value] under the given [key].
   Future<void> set(String key, String? value) async {
-    return await _storage.write(key: key, value: value);
+    return await _storage.write(
+      key: key,
+      value: value,
+      iOptions: iOSOptions,
+    );
   }
 
   /// Deletes the value under the given [key] from the secure storage.
   Future<void> delete(String key) async {
-    await _storage.delete(key: key);
+    await _storage.delete(
+      key: key,
+      iOptions: iOSOptions,
+    );
   }
 
   /// Deletes all tokens and secure information except the skip intro flag.

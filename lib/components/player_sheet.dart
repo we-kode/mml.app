@@ -3,6 +3,7 @@ import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
+import 'package:mml_app/services/playlist.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:text_scroll/text_scroll.dart';
@@ -97,7 +98,9 @@ class PlayerSheetState extends State<PlayerSheet>
                             state.currentReocrd?.title ??
                                 AppLocalizations.of(context)!.unknown,
                             style: Theme.of(context).textTheme.subtitle1,
-                            velocity: const Velocity(pixelsPerSecond: Offset(15, 0)),
+                            velocity: const Velocity(
+                              pixelsPerSecond: Offset(15, 0),
+                            ),
                             mode: TextScrollMode.bouncing,
                           ),
                         );
@@ -154,8 +157,18 @@ class PlayerSheetState extends State<PlayerSheet>
                             min: 0,
                             max: state.currentReocrd?.duration ?? 0,
                             onChanged: (value) {
-                              PlayerService.getInstance()
-                                  .seek(value.asDuration());
+                              PlayerService.getInstance().seek(
+                                value,
+                              );
+                            },
+                            onChangeStart: (value) {
+                              PlayerService.getInstance().startSeekDrag();
+                            },
+                            onChangeEnd: (value) {
+                              PlayerService.getInstance().seek(
+                                value,
+                                updatePlayerSeek: true,
+                              );
                             },
                           );
                         },
@@ -193,7 +206,7 @@ class PlayerSheetState extends State<PlayerSheet>
                       },
                     ),
                     const Spacer(
-                      flex: 6,
+                      flex: 16,
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
@@ -203,12 +216,33 @@ class PlayerSheetState extends State<PlayerSheet>
                             height: 32,
                           ),
                           padding: EdgeInsets.zero,
-                          onPressed: state.shuffle
+                          onPressed: state.shuffle || state.isLoading
                               ? null
                               : () =>
                                   PlayerService.getInstance().playPrevious(),
                           iconSize: 32,
                           icon: const Icon(Icons.skip_previous_rounded),
+                        );
+                      },
+                    ),
+                    const Spacer(
+                      flex: 1,
+                    ),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  PlayerService.getInstance().rewind();
+                                },
+                          icon: const Icon(Icons.replay_10),
                         );
                       },
                     ),
@@ -232,13 +266,15 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                           iconSize: 36,
                           padding: EdgeInsets.zero,
-                          onPressed: () {
-                            if (state.isPlaying) {
-                              PlayerService.getInstance().pause();
-                            } else {
-                              PlayerService.getInstance().resume();
-                            }
-                          },
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  if (state.isPlaying) {
+                                    PlayerService.getInstance().pause();
+                                  } else {
+                                    PlayerService.getInstance().resume();
+                                  }
+                                },
                           icon: AnimatedIcon(
                             icon: AnimatedIcons.pause_play,
                             progress: _controller,
@@ -250,15 +286,44 @@ class PlayerSheetState extends State<PlayerSheet>
                     const Spacer(
                       flex: 1,
                     ),
-                    IconButton(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      iconSize: 32,
-                      padding: EdgeInsets.zero,
-                      onPressed: () => PlayerService.getInstance().playNext(),
-                      icon: const Icon(Icons.skip_next_rounded),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  PlayerService.getInstance().fastForward();
+                                },
+                          icon: const Icon(Icons.forward_10),
+                        );
+                      },
+                    ),
+                    const Spacer(
+                      flex: 1,
+                    ),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  PlayerService.getInstance().playNext();
+                                },
+                          icon: const Icon(Icons.skip_next_rounded),
+                        );
+                      },
                     ),
                     const Spacer(
                       flex: 6,
@@ -288,6 +353,24 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                         );
                       },
+                    ),
+                    const Spacer(
+                      flex: 6,
+                    ),
+                    IconButton(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 32,
+                        height: 32,
+                      ),
+                      padding: EdgeInsets.zero,
+                      onPressed: () async {
+                        PlaylistService.getInstance().downloadRecords([
+                          PlayerService.getInstance()
+                              .playerState
+                              ?.currentReocrd,
+                        ], context);
+                      },
+                      icon: const Icon(Icons.star),
                     ),
                   ],
                 ),

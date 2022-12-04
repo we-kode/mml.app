@@ -45,6 +45,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool _shuffle = false;
 
+  /// Indicates, that the source to be played is loading.
+  bool _isLoading = false;
+
   /// Repeat mode that is currently set.
   PlayerRepeatMode repeat = PlayerRepeatMode.none;
 
@@ -62,6 +65,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player.playing;
+
+  /// Indicates, that the source to be played is loading.
+  bool get isLoading => _isLoading;
 
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _shuffle;
@@ -148,8 +154,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     controls.addAll([
+      MediaControl.rewind,
       if (playing) MediaControl.pause else MediaControl.play,
       MediaControl.stop,
+      MediaControl.fastForward,
       MediaControl.skipToNext,
     ]);
 
@@ -213,11 +221,16 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Skips the playback in the given [direction] to the next or
   /// previous record.
   Future<void> _skipTo(String direction) async {
+    if (_isLoading) {
+      return;
+    }
+
     if (repeat == PlayerRepeatMode.one) {
       _player.seek(Duration.zero);
       return;
     }
 
+    _isLoading = true;
     Record? record = await getRecord(direction);
 
     if (record != null) {
@@ -231,13 +244,15 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Returns next or previous record in range depending on [direction] to be played.
   Future<Record?> getRecord(String direction) async {
     if (currentRecord is LocalRecord) {
-      return DBService.getInstance().next(
+      var record = await DBService.getInstance().next(
         currentRecord!.recordId!,
         (currentRecord! as LocalRecord).playlist.id!,
         repeat: repeat == PlayerRepeatMode.all,
         reverse: direction == 'previous',
         shuffle: shuffle,
       );
+      _isLoading = record != null;
+      return record;
     }
 
     var params = <String, dynamic>{};
@@ -265,6 +280,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       // Catch all errors and stop playing afterwards.
     }
 
+    _isLoading = false;
     return null;
   }
 
@@ -288,7 +304,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         MMLAudioSource(file, int.parse(cryptKey!)),
         preload: false,
       );
-
+      _isLoading = false;
       return true;
     }
 
@@ -300,6 +316,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         '${baseUrl}media/stream/${currentRecord!.recordId}',
         headers: headers,
       );
+      _isLoading = false;
     } catch (e) {
       _handleError(e);
     }
