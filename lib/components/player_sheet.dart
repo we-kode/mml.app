@@ -355,7 +355,7 @@ class PlayerSheetState extends State<PlayerSheet>
                       },
                     ),
                     const Spacer(
-                      flex: 6,
+                      flex: 4,
                     ),
                     IconButton(
                       constraints: const BoxConstraints.tightFor(
