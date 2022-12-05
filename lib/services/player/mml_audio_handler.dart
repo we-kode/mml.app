@@ -161,10 +161,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     controls.addAll([
-      MediaControl.rewind,
       if (playing) MediaControl.pause else MediaControl.play,
       MediaControl.stop,
-      MediaControl.fastForward,
       MediaControl.skipToNext,
     ]);
 
