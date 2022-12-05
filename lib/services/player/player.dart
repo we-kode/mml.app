@@ -1,3 +1,4 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/player_sheet.dart';
 import 'package:mml_app/extensions/duration_double.dart';
@@ -115,6 +116,20 @@ class PlayerService {
   /// Plays the previous record in the filtered record list.
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
+    playerState?.update();
+  }
+
+  /// Forwards the current playback by the defined
+  /// [AudioServiceConfig.fastForwardInterval].
+  Future fastForward() async {
+    await _audioHandler.fastForward();
+    playerState?.update();
+  }
+
+  /// Rewinds the current playback by the defined
+  /// [AudioServiceConfig.rewindInterval].
+  Future rewind() async {
+    await _audioHandler.rewind();
     playerState?.update();
   }
 

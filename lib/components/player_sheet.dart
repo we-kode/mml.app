@@ -230,6 +230,27 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  PlayerService.getInstance().rewind();
+                                },
+                          icon: const Icon(Icons.replay_10),
+                        );
+                      },
+                    ),
+                    const Spacer(
+                      flex: 1,
+                    ),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
                         if (!state.isPlaying &&
                             _controller.value == _controller.lowerBound) {
                           _controller.forward();
@@ -277,29 +298,32 @@ class PlayerSheetState extends State<PlayerSheet>
                           onPressed: state.isLoading
                               ? null
                               : () {
+                                  PlayerService.getInstance().fastForward();
+                                },
+                          icon: const Icon(Icons.forward_10),
+                        );
+                      },
+                    ),
+                    const Spacer(
+                      flex: 1,
+                    ),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return IconButton(
+                          constraints: const BoxConstraints.tightFor(
+                            width: 32,
+                            height: 32,
+                          ),
+                          iconSize: 32,
+                          padding: EdgeInsets.zero,
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
                                   PlayerService.getInstance().playNext();
                                 },
                           icon: const Icon(Icons.skip_next_rounded),
                         );
                       },
-                    ),
-                    const Spacer(
-                      flex: 6,
-                    ),
-                    IconButton(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                      onPressed: () async {
-                        PlaylistService.getInstance().downloadRecords([
-                          PlayerService.getInstance()
-                              .playerState
-                              ?.currentReocrd,
-                        ], context);
-                      },
-                      icon: const Icon(Icons.star),
                     ),
                     const Spacer(
                       flex: 6,
@@ -329,6 +353,24 @@ class PlayerSheetState extends State<PlayerSheet>
                           ),
                         );
                       },
+                    ),
+                    const Spacer(
+                      flex: 6,
+                    ),
+                    IconButton(
+                      constraints: const BoxConstraints.tightFor(
+                        width: 32,
+                        height: 32,
+                      ),
+                      padding: EdgeInsets.zero,
+                      onPressed: () async {
+                        PlaylistService.getInstance().downloadRecords([
+                          PlayerService.getInstance()
+                              .playerState
+                              ?.currentReocrd,
+                        ], context);
+                      },
+                      icon: const Icon(Icons.star),
                     ),
                   ],
                 ),

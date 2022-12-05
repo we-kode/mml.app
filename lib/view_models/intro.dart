@@ -109,6 +109,8 @@ class IntroViewModel extends ChangeNotifier {
         androidStopForegroundOnPause: true,
         notificationColor: notificationColor,
         androidNotificationIcon: 'mipmap/ic_notification',
+        fastForwardInterval: const Duration(seconds: 10),
+        rewindInterval: const Duration(seconds: 10),
       ),
     );
   }
