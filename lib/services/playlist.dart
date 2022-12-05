@@ -54,4 +54,9 @@ class PlaylistService {
       },
     );
   }
+
+  /// Returns if [recordId] is in one playlist already.
+  Future<bool> isFavorite(String? recordId) async{
+    return recordId?.isNotEmpty == true ? await DBService.getInstance().isInPlaylist(recordId!) : false;
+  }
 }

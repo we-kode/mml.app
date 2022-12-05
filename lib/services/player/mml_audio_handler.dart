@@ -99,6 +99,13 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> stop() async {
     await _player.stop();
+    playbackState.add(
+      playbackState.value.copyWith(
+        processingState: const {
+          ProcessingState.idle: AudioProcessingState.idle,
+        }[_player.processingState]!,
+      ),
+    );
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
   }
 
@@ -154,10 +161,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     controls.addAll([
-      MediaControl.rewind,
       if (playing) MediaControl.pause else MediaControl.play,
       MediaControl.stop,
-      MediaControl.fastForward,
       MediaControl.skipToNext,
     ]);
 
@@ -169,7 +174,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         },
         androidCompactActionIndices: compatIndices,
         processingState: const {
-          ProcessingState.idle: AudioProcessingState.idle,
+          ProcessingState.idle: AudioProcessingState.loading,
           ProcessingState.loading: AudioProcessingState.loading,
           ProcessingState.buffering: AudioProcessingState.buffering,
           ProcessingState.ready: AudioProcessingState.ready,

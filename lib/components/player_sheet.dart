@@ -355,7 +355,7 @@ class PlayerSheetState extends State<PlayerSheet>
                       },
                     ),
                     const Spacer(
-                      flex: 6,
+                      flex: 4,
                     ),
                     IconButton(
                       constraints: const BoxConstraints.tightFor(
@@ -370,7 +370,24 @@ class PlayerSheetState extends State<PlayerSheet>
                               ?.currentReocrd,
                         ], context);
                       },
-                      icon: const Icon(Icons.star),
+                      icon: Consumer<PlayerState>(
+                        builder: (context, state, child) {
+                          return FutureBuilder<bool>(
+                            future: PlaylistService.getInstance().isFavorite(
+                              PlayerService.getInstance()
+                                  .playerState
+                                  ?.currentReocrd
+                                  ?.recordId,
+                            ),
+                            builder: (context, snapshot) {
+                              return snapshot.hasData &&
+                                      (snapshot.data ?? false)
+                                  ? const Icon(Icons.star)
+                                  : const Icon(Icons.star_outline);
+                            },
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

@@ -66,7 +66,9 @@ class RouterService {
             FilterAppBar(
               title: 'records',
               enableFilter: true,
-              listAction: SelectedItemsAction(const Icon(Icons.star)),
+              listAction: SelectedItemsAction(
+                const Icon(Icons.star_outline),
+              ),
             ),
           ),
         ),
