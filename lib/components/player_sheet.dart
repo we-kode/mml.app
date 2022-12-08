@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/extensions/duration_double.dart';
+import 'package:mml_app/models/local_record.dart';
+import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
@@ -325,8 +327,18 @@ class PlayerSheetState extends State<PlayerSheet>
                         );
                       },
                     ),
-                    const Spacer(
-                      flex: 6,
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return PlayerService.getInstance()
+                                .playerState
+                                ?.currentReocrd is LocalRecord
+                            ? const Spacer(
+                                flex: 18,
+                              )
+                            : const Spacer(
+                                flex: 6,
+                              );
+                      },
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
@@ -354,40 +366,54 @@ class PlayerSheetState extends State<PlayerSheet>
                         );
                       },
                     ),
-                    const Spacer(
-                      flex: 4,
-                    ),
-                    IconButton(
-                      constraints: const BoxConstraints.tightFor(
-                        width: 32,
-                        height: 32,
-                      ),
-                      padding: EdgeInsets.zero,
-                      onPressed: () async {
-                        PlaylistService.getInstance().downloadRecords([
-                          PlayerService.getInstance()
-                              .playerState
-                              ?.currentReocrd,
-                        ], context);
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return PlayerService.getInstance()
+                                .playerState
+                                ?.currentReocrd is LocalRecord
+                            ? Container()
+                            : const Spacer(
+                                flex: 4,
+                              );
                       },
-                      icon: Consumer<PlayerState>(
-                        builder: (context, state, child) {
-                          return FutureBuilder<bool>(
-                            future: PlaylistService.getInstance().isFavorite(
-                              PlayerService.getInstance()
-                                  .playerState
-                                  ?.currentReocrd
-                                  ?.recordId,
-                            ),
-                            builder: (context, snapshot) {
-                              return snapshot.hasData &&
-                                      (snapshot.data ?? false)
-                                  ? const Icon(Icons.star)
-                                  : const Icon(Icons.star_outline);
-                            },
-                          );
-                        },
-                      ),
+                    ),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return PlayerService.getInstance()
+                                .playerState
+                                ?.currentReocrd is LocalRecord
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: () async {
+                                  PlaylistService.getInstance()
+                                      .downloadRecords([
+                                    PlayerService.getInstance()
+                                        .playerState
+                                        ?.currentReocrd,
+                                  ], context);
+                                },
+                                icon: FutureBuilder<bool>(
+                                  future:
+                                      PlaylistService.getInstance().isFavorite(
+                                    PlayerService.getInstance()
+                                        .playerState
+                                        ?.currentReocrd
+                                        ?.recordId,
+                                  ),
+                                  builder: (context, snapshot) {
+                                    return snapshot.hasData &&
+                                            (snapshot.data ?? false)
+                                        ? const Icon(Icons.star)
+                                        : const Icon(Icons.star_outline);
+                                  },
+                                ),
+                              );
+                      },
                     ),
                   ],
                 ),
