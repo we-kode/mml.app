@@ -111,7 +111,7 @@ class PlaylistViewModel extends ChangeNotifier {
         appBar: FilterAppBar(
           title: playlist.name!,
           listAction: SelectedItemsAction(
-            const Icon(Icons.remove),
+            const Icon(Icons.delete),
             reload: true,
           ),
         ),
