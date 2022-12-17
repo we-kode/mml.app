@@ -89,7 +89,7 @@ class RouterService {
                   : 'playlist',
               enableBack: (args is PlaylistArguments) && args.playlist != null,
               listAction: SelectedItemsAction(
-                const Icon(Icons.remove),
+                const Icon(Icons.delete),
                 reload: true,
               ),
             ),
