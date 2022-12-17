@@ -86,6 +86,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Plays the given [record].
   Future<void> playRecord(Record record) async {
+    if (_isLoading) {
+      return;
+    }
+    _isLoading = true;
     currentRecord = record;
     await _playCurrentRecord();
   }
