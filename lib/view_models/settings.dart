@@ -7,6 +7,7 @@ import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:mml_app/components/delete_dialog.dart';
 
 /// View model of the settings screen.
 class SettingsViewModel extends ChangeNotifier {
@@ -15,6 +16,9 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// App locales.
   late AppLocalizations locales;
+
+  /// Build context.
+  late BuildContext _context;
 
   /// Router service used for navigation.
   final RouterService _routerService = RouterService.getInstance();
@@ -29,6 +33,7 @@ class SettingsViewModel extends ChangeNotifier {
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
+      _context = context;
       locales = AppLocalizations.of(context)!;
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
@@ -38,7 +43,11 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Calls the service method to remove the client registration.
   Future removeRegistration() async {
-    await ClientService.getInstance().removeRegistration();
+    var shouldDelete = await showDeleteDialog(_context);
+
+    if (shouldDelete) {
+      await ClientService.getInstance().removeRegistration();
+    }
   }
 
   /// Redirects to the connection update screen.
