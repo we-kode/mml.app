@@ -31,6 +31,9 @@ class Record extends ModelBase {
   /// Album of the record or null if no one provided.
   String? album;
 
+  /// Language of the record or null if no one provided.
+  String? language;
+
   /// Checksum of the record data.
   String? checksum;
 
@@ -44,6 +47,7 @@ class Record extends ModelBase {
     this.album,
     this.artist,
     this.genre,
+    this.language,
     bool? isDeletable = false,
   }) : super(isDeletable: isDeletable);
 

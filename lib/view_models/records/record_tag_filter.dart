@@ -18,10 +18,10 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   RecordTagFilterViewModel(this.tagFilter);
 
   /// Clears the filter value of the [identifier].
-  void clear(String identifier) async{
+  void clear(String identifier) async {
     tagFilter.clear(identifier);
-     if (identifier == ID3TagFilters.folderView) {
-     await _storage.set(
+    if (identifier == ID3TagFilters.folderView) {
+      await _storage.set(
         SecureStorageService.folderViewStorageKey,
         false.toString(),
       );
@@ -30,10 +30,10 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   }
 
   /// Updates the tag filter [identifier] with the [selectedValues].
-  Future updateFilter(String identifier, dynamic selectedValues) async{
+  Future updateFilter(String identifier, dynamic selectedValues) async {
     tagFilter[identifier] = selectedValues;
     if (identifier == ID3TagFilters.folderView) {
-     await _storage.set(
+      await _storage.set(
         SecureStorageService.folderViewStorageKey,
         (selectedValues as bool).toString(),
       );
@@ -55,6 +55,8 @@ class RecordTagFilterViewModel extends ChangeNotifier {
         return _service.getGenres(filter, offset, take);
       case ID3TagFilters.albums:
         return _service.getAlbums(filter, offset, take);
+      case ID3TagFilters.languages:
+        return _service.getLanguages(filter, offset, take);
     }
 
     throw UnimplementedError();

@@ -3,6 +3,7 @@ import 'package:mml_app/models/album.dart';
 import 'package:mml_app/models/artist.dart';
 import 'package:mml_app/models/genre.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/language.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
@@ -115,6 +116,25 @@ class RecordService {
     return ModelList(
       List<Genre>.from(
         response.data['items'].map((item) => Genre.fromJson(item)),
+      ),
+      offset ?? 0,
+      response.data["totalCount"],
+    );
+  }
+
+  /// Returns a list of languages with the amount of [take] starting from the [offset] with the passed [filter],
+  Future<ModelList> getLanguages(String? filter, int? offset, int? take) async {
+    var response = await _apiService.request(
+      '/media/record/languages',
+      queryParameters: {"filter": filter, "skip": offset, "take": take},
+      options: Options(
+        method: 'GET',
+      ),
+    );
+
+    return ModelList(
+      List<Language>.from(
+        response.data['items'].map((item) => Language.fromJson(item)),
       ),
       offset ?? 0,
       response.data["totalCount"],

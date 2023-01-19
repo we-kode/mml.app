@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
+import 'package:mml_app/migrations/v2.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
@@ -38,6 +39,7 @@ class DBService {
   /// Holds all information for the migrations of the versions of the databse.
   final Map<int, DBMigration Function()> _migrations = {
     1: () => V1Migration(),
+    2: () => V2Migration(),
   };
 
   /// Private constructor of the service.
@@ -66,6 +68,7 @@ class DBService {
     var batch = db.batch();
     _migrations[version]!().onCreate(batch);
     await batch.commit();
+    await _onUpgrade(db, 1, _migrations.keys.last);
   }
 
   /// Is called on upgrading the database.
@@ -129,6 +132,7 @@ class DBService {
           artist: maps[index]['artist'],
           genre: maps[index]['genre'],
           title: maps[index]['title'],
+          language: maps[index]['language'],
           checksum: maps[index]['checksum'],
           duration: double.parse(maps[index]['duration'] ?? '0'),
           playlist: Playlist(
@@ -221,6 +225,7 @@ class DBService {
         'artist': record.artist,
         'genre': record.genre,
         'title': record.title,
+        'language': record.language,
         'checksum': record.checksum,
         'duration': record.duration
       }),
@@ -371,6 +376,7 @@ class DBService {
       artist: result['artist'],
       duration: double.parse(result['duration'] ?? '0'),
       genre: result['genre'],
+      language: result['language'],
       title: result['title'],
       checksum: result['checksum'],
     );

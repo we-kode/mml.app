@@ -78,6 +78,13 @@ class RecordTagFilter extends ListSubfilterView {
                 Colors.amber,
               ),
               horizontalSpacer,
+              _createTagFilter(
+                ID3TagFilters.languages,
+                locales.language,
+                const Icon(Icons.translate),
+                Colors.deepOrange,
+              ),
+              horizontalSpacer,
             ],
           ),
         );
