@@ -41,8 +41,7 @@ class RecordTagFilter extends ListSubfilterView {
               _createTagFilter(
                 ID3TagFilters.folderView,
                 locales.folder,
-                const Icon(Icons.folder),
-                Colors.indigoAccent,
+                Icons.folder,
               ),
               Consumer<RecordTagFilterViewModel>(
                 builder: (context, vm, child) {
@@ -53,29 +52,31 @@ class RecordTagFilter extends ListSubfilterView {
               _createTagFilter(
                 ID3TagFilters.date,
                 locales.date,
-                const Icon(Icons.calendar_month),
-                Colors.blueGrey,
+                Icons.calendar_month,
               ),
               horizontalSpacer,
               _createTagFilter(
                 ID3TagFilters.artists,
                 locales.artist,
-                const Icon(Icons.person),
-                Colors.teal,
+                Icons.person,
               ),
               horizontalSpacer,
               _createTagFilter(
                 ID3TagFilters.genres,
                 locales.genre,
-                const Icon(Icons.discount),
-                Colors.red,
+                Icons.discount,
               ),
               horizontalSpacer,
               _createTagFilter(
                 ID3TagFilters.albums,
                 locales.album,
-                const Icon(Icons.library_music),
-                Colors.amber,
+                Icons.library_music,
+              ),
+              horizontalSpacer,
+              _createTagFilter(
+                ID3TagFilters.languages,
+                locales.language,
+                Icons.translate,
               ),
               horizontalSpacer,
             ],
@@ -91,20 +92,28 @@ class RecordTagFilter extends ListSubfilterView {
   Widget _createTagFilter(
     String identifier,
     String label,
-    Icon icon,
-    Color activeBGColor,
+    IconData icon,
   ) {
     return Consumer<RecordTagFilterViewModel>(
       builder: (context, vm, child) {
         var isFolderView = identifier == ID3TagFilters.date &&
             (filter as ID3TagFilter).isGrouped;
+        final isActive = vm.tagFilter.isNotEmpty(identifier);
+        final brightness = Theme.of(context).brightness;
+        final isDarkMode = brightness == Brightness.dark;
+        var activeColor = isDarkMode ? Colors.black54 : Colors.white;
         return isFolderView
             ? Container()
             : InputChip(
                 label: Text(label),
-                avatar: icon,
+                labelStyle: isActive ? TextStyle(color: activeColor) : null,
                 backgroundColor:
-                    vm.tagFilter.isNotEmpty(identifier) ? activeBGColor : null,
+                    isActive ? Theme.of(context).colorScheme.secondary : null,
+                avatar: Icon(
+                  icon,
+                  color: isActive ? activeColor : null,
+                ),
+                deleteIconColor: isActive ? activeColor : null,
                 onPressed: () => identifier == ID3TagFilters.date
                     ? _handleDateFilter(context, vm)
                     : identifier == ID3TagFilters.folderView

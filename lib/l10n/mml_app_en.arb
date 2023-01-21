@@ -63,5 +63,6 @@
   "fileNotFound":"File could not be found. Add the recording to a playlist again.",
   "downloadError":"Download failed. Check your connection and storage space and try again.",
   "back":"back",
-  "folder":"Folder"
+  "folder":"Folder",
+  "language": "Language"
 }

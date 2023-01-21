@@ -70,5 +70,6 @@
   "fileNotFound":"Datei konnte nicht gefunden werden. Fügen Sie die Aufnahme erneut zu einer Playlist hinzu.",
   "downloadError":"Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut.",
   "back":"zurück",
-  "folder":"Ordner"
+  "folder":"Ordner",
+  "language": "Sprache"
 }
