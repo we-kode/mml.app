@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
@@ -80,6 +81,6 @@ class Record extends ModelBase {
 
   @override
   String? getGroup(BuildContext context) {
-    return DateFormat.yMd().format(date!);
+    return '${DateFormat.yMd().format(date!)} - ${date!.weekdayName()}';
   }
 }

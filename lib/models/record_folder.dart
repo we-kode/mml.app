@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/models/model_base.dart';
 
 part 'record_folder.g.dart';
@@ -33,7 +34,7 @@ class RecordFolder extends ModelBase {
   @override
   String getDisplayDescription() {
     if (day != null) {
-      return "$day";
+      return "$day - ${DateTime(year, month!, day!).weekdayName()}";
     }
 
     if (month != null) {
@@ -46,7 +47,7 @@ class RecordFolder extends ModelBase {
   @override
   getIdentifier() {
     final m = month != null ? "-$month" : "";
-    final d = day != null ? "-$day" : "";
+    final d = day != null ? "-$day - ${DateTime(year, month!, day!).weekdayName()}" : "";
     return "$year$m$d";
   }
 
