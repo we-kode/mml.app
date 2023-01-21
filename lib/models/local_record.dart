@@ -16,6 +16,7 @@ class LocalRecord extends Record {
     super.album,
     super.artist,
     super.genre,
+    super.language,
   });
 
   @override

@@ -15,6 +15,9 @@ class ID3TagFilter extends Subfilter {
 
   /// Ids of album tags.
   List<String> albums = [];
+  
+  /// Ids of language tags.
+  List<String> languages = [];
 
   /// Start date of a date interval or null if not set.
   DateTime? startDate;
@@ -27,6 +30,7 @@ class ID3TagFilter extends Subfilter {
     List<String>? artists,
     List<String>? genres,
     List<String>? albums,
+    List<String>? languages,
     this.startDate,
     this.endDate,
     isFolderView = false,
@@ -34,6 +38,7 @@ class ID3TagFilter extends Subfilter {
     this.artists = artists ?? [];
     this.genres = genres ?? [];
     this.albums = albums ?? [];
+    this.languages = languages ?? [];
     isGrouped = isFolderView;
   }
 
@@ -55,6 +60,9 @@ class ID3TagFilter extends Subfilter {
         break;
       case ID3TagFilters.albums:
         albums = value as List<String>;
+        break;
+      case ID3TagFilters.languages:
+        languages = value as List<String>;
         break;
       case ID3TagFilters.date:
         var range = value as DateTimeRange;
@@ -79,6 +87,8 @@ class ID3TagFilter extends Subfilter {
         return genres;
       case ID3TagFilters.albums:
         return albums;
+      case ID3TagFilters.languages:
+        return languages;
       case ID3TagFilters.date:
         return startDate != null && endDate != null
             ? DateTimeRange(start: startDate!, end: endDate!)
@@ -99,6 +109,9 @@ class ID3TagFilter extends Subfilter {
         break;
       case ID3TagFilters.albums:
         albums.clear();
+        break;
+      case ID3TagFilters.languages:
+        languages.clear();
         break;
       case ID3TagFilters.date:
         startDate = null;
@@ -122,6 +135,8 @@ class ID3TagFilter extends Subfilter {
         return genres.isNotEmpty;
       case ID3TagFilters.albums:
         return albums.isNotEmpty;
+      case ID3TagFilters.languages:
+        return languages.isNotEmpty;
       case ID3TagFilters.date:
         return startDate != null;
       case ID3TagFilters.folderView:
@@ -148,4 +163,7 @@ abstract class ID3TagFilters {
 
   /// Folder view identifier.
   static const String folderView = "folderView";
+
+  /// Languages tag identifier.
+  static const String languages = "languages";
 }
