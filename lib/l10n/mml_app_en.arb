@@ -64,5 +64,6 @@
   "downloadError":"Download failed. Check your connection and storage space and try again.",
   "back":"back",
   "folder":"Folder",
-  "language": "Language"
+  "language": "Language",
+  "notReachableRecord": "The record could not be loaded! Please retry later."
 }

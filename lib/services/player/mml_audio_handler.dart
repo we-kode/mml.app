@@ -10,6 +10,7 @@ import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
@@ -197,9 +198,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-      await _setPlayerSource();
+      await _setPlayerSource(isRetry: true);
     } catch (e) {
-      _player.stop();
+      _errorOnLoadingRecord();
     }
   }
 
@@ -294,7 +295,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Sets the source format of the player depending on the record type to be played.
-  Future<bool> _setPlayerSource() async {
+  Future<bool> _setPlayerSource({bool isRetry = false}) async {
+    if (currentRecord == null) {
+      await PlayerService.getInstance().closePlayer();
+      return false;
+    }
+
     if (currentRecord is LocalRecord) {
       File file;
       try {
@@ -327,9 +333,22 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _isLoading = false;
     } catch (e) {
+      if (isRetry) {
+        _errorOnLoadingRecord();
+        return false;
+      }
+
       _handleError(e);
     }
 
     return true;
+  }
+
+  Future<void> _errorOnLoadingRecord() async {
+    _isLoading = false;
+    _player.stop();
+    await PlayerService.getInstance().closePlayer();
+    final ms = MessengerService.getInstance();
+    ms.showMessage(ms.notReachableRecord);
   }
 }
