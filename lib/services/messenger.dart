@@ -58,6 +58,11 @@ class MessengerService {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notReachable;
   }
 
+  /// Translated string for not available records.
+  String get notReachableRecord {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.notReachableRecord;
+  }
+
   /// Translated string for file not found.
   String get fileNotFound {
     return AppLocalizations.of(snackbarKey.currentContext!)!.fileNotFound;
