@@ -40,7 +40,7 @@ dependencies:
   flutter_secure_storage: ^6.1.0
   http: ^0.13.4
   dio: ^4.0.6
-  json_annotation: ^4.5.0
+  json_annotation: ^4.8.0
   introduction_screen: ^3.1.0
   mobile_scanner: ^2.1.0
   fast_rsa: ^3.5.1
