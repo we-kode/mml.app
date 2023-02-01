@@ -43,7 +43,7 @@ dependencies:
   json_annotation: ^4.5.0
   introduction_screen: ^3.1.0
   mobile_scanner: ^2.1.0
-  fast_rsa: ^3.5.1
+  fast_rsa: ^3.5.3
   rive: ^0.10.1
   device_info_plus: ^8.0.0
   webview_flutter: ^3.0.4
