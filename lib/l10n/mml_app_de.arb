@@ -71,5 +71,6 @@
   "downloadError":"Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut.",
   "back":"zurück",
   "folder":"Ordner",
-  "language": "Sprache"
+  "language": "Sprache",
+  "notReachableRecord": "Die Aufnahme konnte nicht geladen werden! Versuchen Sie es später nocheinmal."
 }
