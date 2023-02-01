@@ -1,11 +1,12 @@
 import 'package:mml_app/migrations/migration.dart';
+import 'package:mml_app/migrations/v1.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 /// First version of the databse.
 class V2Migration implements DBMigration {
   @override
   void onCreate(Batch batch) {
-    // should be created in version 1
+    V1Migration().onCreate(batch);
   }
 
   @override
