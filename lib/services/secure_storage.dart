@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Service that handles data of the secure storage for the app.
@@ -52,12 +54,28 @@ class SecureStorageService {
     return _instance;
   }
 
+  // Caching values in map for ios phones only, cause when app is inactive for
+  // long time in background ios will lock the keychain, so we can not read or
+  // write anything until the user restarts the app again.
+  final Map<String, String?> _cache = {};
+
   /// Returns the value persisted under the given [key].
   Future<String?> get(String key) async {
-    return await _storage.read(
-      key: key,
-      iOptions: iOSOptions,
-    );
+    if (!Platform.isIOS) {
+      return await _storage.read(
+        key: key,
+        iOptions: iOSOptions,
+      );
+    }
+
+    var cachedValue = _cache[key];
+    if (cachedValue == null) {
+      _cache[key] = await _storage.read(
+        key: key,
+        iOptions: iOSOptions,
+      );
+    }
+    return _cache[key];
   }
 
   /// Returns a boolean, that indicates whether a value is persisted under
@@ -68,6 +86,9 @@ class SecureStorageService {
 
   /// Stores the [value] under the given [key].
   Future<void> set(String key, String? value) async {
+    if (Platform.isIOS && key == accessTokenStorageKey) {
+      _cache[key] = value;
+    }
     return await _storage.write(
       key: key,
       value: value,
@@ -77,6 +98,10 @@ class SecureStorageService {
 
   /// Deletes the value under the given [key] from the secure storage.
   Future<void> delete(String key) async {
+    if (Platform.isIOS) {
+      _cache.remove(key);
+    }
+
     await _storage.delete(
       key: key,
       iOptions: iOSOptions,
