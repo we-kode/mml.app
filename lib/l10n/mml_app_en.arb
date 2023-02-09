@@ -65,5 +65,6 @@
   "back":"back",
   "folder":"Folder",
   "language": "Language",
-  "notReachableRecord": "The record could not be loaded! Please retry later."
+  "notReachableRecord": "The record could not be loaded! Please retry later.",
+  "sendFeedback": "Send feedback"
 }

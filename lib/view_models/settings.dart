@@ -8,6 +8,7 @@ import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:mml_app/components/delete_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// View model of the settings screen.
 class SettingsViewModel extends ChangeNotifier {
@@ -23,9 +24,14 @@ class SettingsViewModel extends ChangeNotifier {
   /// Router service used for navigation.
   final RouterService _routerService = RouterService.getInstance();
 
+  /// Link of the privacy policy.
   final String privacyLink = "";
 
+  /// Link of the legal informations.
   final String legalInfoLink = "";
+
+  /// E-Mail adress for support requests.
+  final String supportEMail = "";
 
   /// version of the running app.
   late String version;
@@ -80,5 +86,31 @@ class SettingsViewModel extends ChangeNotifier {
       InformationViewModel.route,
       arguments: SubrouteArguments(arg: privacyLink),
     );
+  }
+
+  /// Opens mail program to send feedback.
+  Future<void> sendFeedback() async {
+    if (supportEMail.isEmpty) {
+      return;
+    }
+    final Uri uri = Uri(
+      scheme: 'mailto',
+      path: supportEMail,
+      query: _encodeQueryParameters(
+        <String, String>{
+          'subject': locales.appTitle,
+        },
+      ),
+    );
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
+  }
+
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
   }
 }

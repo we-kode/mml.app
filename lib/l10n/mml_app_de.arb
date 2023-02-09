@@ -72,5 +72,6 @@
   "back":"zurück",
   "folder":"Ordner",
   "language": "Sprache",
-  "notReachableRecord": "Die Aufnahme konnte nicht geladen werden! Versuchen Sie es später nocheinmal."
+  "notReachableRecord": "Die Aufnahme konnte nicht geladen werden! Versuchen Sie es später nocheinmal.",
+  "sendFeedback":"Feedback senden"
 }
