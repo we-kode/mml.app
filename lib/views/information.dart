@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -9,17 +7,16 @@ class InformationScreen extends StatelessWidget {
   final String url;
 
   /// Initializes the instance.
-  InformationScreen({Key? key, required this.url}) : super(key: key) {
-    if (Platform.isAndroid) {
-      WebView.platform = AndroidWebView();
-    }
-  }
+  const InformationScreen({Key? key, required this.url}) : super(key: key);
 
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      initialUrl: url,
+    final controller = WebViewController();
+    controller.loadRequest(Uri.parse(url));
+
+    return WebViewWidget(
+      controller: controller,
     );
   }
 }
