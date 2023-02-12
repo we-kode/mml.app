@@ -33,10 +33,15 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),
                   onTap: vm.changeServerConnection,
                 ),
                 ListTile(
+                  leading: Icon(
+                    Icons.app_blocking,
+                    color: Theme.of(context).errorColor,
+                  ),
                   title: Text(
                     vm.locales.removeRegistration,
                     style: TextStyle(
@@ -56,24 +61,29 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 if (vm.supportEMail.isNotEmpty)
                   ListTile(
+                    leading: const Icon(Icons.feedback),
                     title: Text(vm.locales.sendFeedback),
                     onTap: vm.sendFeedback,
                   ),
                 if (vm.privacyLink.isNotEmpty)
                   ListTile(
+                    leading: const Icon(Icons.verified_user),
                     title: Text(vm.locales.privacyPolicy),
                     onTap: vm.showPrivacyPolicy,
                   ),
                 if (vm.legalInfoLink.isNotEmpty)
                   ListTile(
+                    leading: const Icon(Icons.privacy_tip),
                     title: Text(vm.locales.legalInformation),
                     onTap: vm.showLegalInformation,
                   ),
                 ListTile(
+                  leading: const Icon(Icons.key),
                   title: Text(vm.locales.licenses),
                   onTap: vm.showLicensesOverview,
                 ),
                 ListTile(
+                  leading: const Icon(Icons.new_releases),
                   title: Text(vm.version),
                 ),
               ],
