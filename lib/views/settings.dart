@@ -35,6 +35,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: Text(vm.locales.displayDescription),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.numbers),
                   title: Text(vm.locales.showTrackNumber),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -49,6 +50,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.discount),
                   title: Text(vm.locales.showGenre),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -63,6 +65,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.translate),
                   title: Text(vm.locales.showLanguage),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
