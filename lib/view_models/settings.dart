@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
+import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
@@ -79,6 +80,14 @@ class SettingsViewModel extends ChangeNotifier {
     _routerService.pushNestedRoute(
       InformationViewModel.route,
       arguments: SubrouteArguments(arg: privacyLink),
+    );
+  }
+
+  /// Redirects to the faq screen.
+  void showFAQ() {
+    _routerService.pushNestedRoute(
+      FAQViewModel.route,
+      arguments: SubrouteArguments(),
     );
   }
 }
