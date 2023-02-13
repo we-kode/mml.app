@@ -17,10 +17,10 @@ class V3Migration implements DBMigration {
     batch.execute('''
       CREATE TABLE RecordViewSettings (
         id INTEGER DEFAULT 1 PRIMARY KEY,
-        genre INTEGER DEFAULT 0 NOT NULL,
-        album INTEGER DEFAULT 0 NOT NULL,
-        language INTEGER DEFAULT 0 NOT NULL,
-        tracknumber INTEGER DEFAULT 0 NOT NULL
+        genre INTEGER DEFAULT 1 NOT NULL,
+        album INTEGER DEFAULT 1 NOT NULL,
+        language INTEGER DEFAULT 1 NOT NULL,
+        tracknumber INTEGER DEFAULT 1 NOT NULL
     )
     ''');
   }

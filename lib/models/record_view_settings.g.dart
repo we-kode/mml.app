@@ -8,10 +8,10 @@ part of 'record_view_settings.dart';
 
 RecordViewSettings _$RecordViewSettingsFromJson(Map<String, dynamic> json) =>
     RecordViewSettings(
-      genre: json['genre'] as bool? ?? false,
-      album: json['album'] as bool? ?? false,
-      language: json['language'] as bool? ?? false,
-      tracknumber: json['tracknumber'] as bool? ?? false,
+      genre: json['genre'] as bool? ?? true,
+      album: json['album'] as bool? ?? true,
+      language: json['language'] as bool? ?? true,
+      tracknumber: json['tracknumber'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$RecordViewSettingsToJson(RecordViewSettings instance) =>

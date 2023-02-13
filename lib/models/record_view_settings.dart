@@ -18,10 +18,10 @@ class RecordViewSettings {
   bool tracknumber;
 
   RecordViewSettings({
-    this.genre = false,
-    this.album = false,
-    this.language = false,
-    this.tracknumber = false,
+    this.genre = true,
+    this.album = true,
+    this.language = true,
+    this.tracknumber = true,
   });
 
   /// Converts a json object/map to the model.
