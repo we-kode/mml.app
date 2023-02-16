@@ -6,6 +6,7 @@ import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/subfilter.dart';
+import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:mml_app/views/playlists/edit.dart';
@@ -42,6 +43,8 @@ class PlaylistScreen extends StatelessWidget {
               title: vm.locales.playlist,
               selectedItemsAction: appBar?.listAction,
               filter: appBar?.filter,
+              activeItem: PlayerService.getInstance().playerState?.currentReocrd,
+              onActiveItemChanged: PlayerService.getInstance().onRecordChanged.stream,
               onMultiSelect: (selectedItems) async {
                 var shouldDelete = await showDeleteDialog(context);
 
