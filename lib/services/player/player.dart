@@ -30,7 +30,7 @@ class PlayerService {
   PlayerState? playerState;
 
   /// Event stream, when actual playing record changes.
-  StreamController<Record?> onRecordChanged = StreamController();
+  StreamController<Record?> onRecordChanged = StreamController.broadcast();
 
   /// Private constructor of the [PlayerService].
   PlayerService._();
@@ -196,6 +196,6 @@ class PlayerService {
   /// Resets the Stream controller for actual playing records.
   Future resetOnRecordChange() async {
     await onRecordChanged.close();
-    onRecordChanged = StreamController();
+    onRecordChanged = StreamController.broadcast();
   }
 }
