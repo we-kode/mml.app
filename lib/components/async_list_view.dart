@@ -99,6 +99,12 @@ class AsyncListView extends StatefulWidget {
   /// Function to be called when the back button is pressed. And the list should navigate up in folder structure.
   final MoveUpFunction? moveUp;
 
+  /// The actual active item in list.
+  final Stream<ModelBase?>? onActiveItemChanged;
+
+  /// Active item, when list is just in create mode.
+  final ModelBase? activeItem;
+
   /// Initializes the list view.
   const AsyncListView({
     Key? key,
@@ -113,6 +119,8 @@ class AsyncListView extends StatefulWidget {
     this.onMultiSelect,
     this.navState,
     this.moveUp,
+    this.onActiveItemChanged,
+    this.activeItem,
   }) : super(key: key);
 
   @override
@@ -153,6 +161,12 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// The actual item group if list items should be grouped.
   String? _actualGroup;
 
+  /// The active item in list.
+  dynamic _activeItemId;
+
+  /// The stream subscription for changed active item.
+  StreamSubscription<ModelBase?>? _onActiveItemChangedSub;
+
   @override
   void initState() {
     _reloadData();
@@ -160,6 +174,10 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
     widget.navState?.addListener(_backPressed);
+    _activeItemId = widget.activeItem?.getIdentifier();
+    _onActiveItemChangedSub ??= widget.onActiveItemChanged?.listen((event) {
+      _changeActiveItem(event);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => widget.selectedItemsAction?.clear(),
@@ -175,6 +193,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.filter?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
     widget.navState?.removeListener(_backPressed);
+    _onActiveItemChangedSub?.cancel();
   }
 
   @override
@@ -256,6 +275,13 @@ class _AsyncListViewState extends State<AsyncListView> {
     _take = _initialTake;
 
     _loadData(subfilter: widget.subfilter?.filter);
+  }
+
+  /// Changes the active item in list.
+  void _changeActiveItem(ModelBase? item) {
+    setState(() {
+      _activeItemId = item?.getIdentifier();
+    });
   }
 
   /// Loads the data for the [_offset] and [_take].
@@ -489,6 +515,8 @@ class _AsyncListViewState extends State<AsyncListView> {
           );
 
     return ListTile(
+      selected: item.getIdentifier() == _activeItemId,
+      selectedTileColor: Theme.of(context).focusColor,
       leading: leadingTile,
       minVerticalPadding: 0,
       visualDensity: const VisualDensity(vertical: 0),

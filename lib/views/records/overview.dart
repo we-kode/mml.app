@@ -6,6 +6,7 @@ import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/models/subfilter.dart';
+import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/playlist.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/views/records/record_tag_filter.dart';
@@ -40,6 +41,8 @@ class RecordsScreen extends StatelessWidget {
                 isFolderView: vm.isFolderView,
               ),
               navState: appBar?.navigationState,
+              activeItem: PlayerService.getInstance().playerState?.currentReocrd,
+              onActiveItemChanged: PlayerService.getInstance().onRecordChanged.stream,
               moveUp: (subFilter) {
                 vm.moveFolderUp(subFilter as ID3TagFilter);
                 appBar?.navigationState.path = RecordFolder.fromDate(

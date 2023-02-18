@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
 import 'package:mml_app/arguments/playlists.dart';
@@ -5,6 +7,7 @@ import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
+import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
@@ -173,6 +176,7 @@ class RouterService {
   /// Pushes the route with the passed [name] and [arguments] to the nested
   /// navigator.
   Future pushNestedRoute(String name, {Object? arguments}) async {
+    await PlayerService.getInstance().resetOnRecordChange();
     await _getNestedNavigatorState()!.pushNamed(name, arguments: arguments);
   }
 
