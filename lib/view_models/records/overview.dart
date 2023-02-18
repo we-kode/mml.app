@@ -6,6 +6,8 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -21,8 +23,14 @@ class RecordsViewModel extends ChangeNotifier {
   /// [RecordService] used to load data for the records uplaod dialog.
   final RecordService _service = RecordService.getInstance();
 
+  /// DB service to update settings in db.
+  final DBService _dbService = DBService.getInstance();
+
   /// Indicates if the folder view is active or not.
   bool isFolderView = false;
+
+  /// settings for the records view.
+  late RecordViewSettings recordViewSettings;
 
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
@@ -34,6 +42,7 @@ class RecordsViewModel extends ChangeNotifier {
           ))
               ?.toLowerCase() ==
           'true';
+      recordViewSettings = await _dbService.loadRecordViewSettings();
       return true;
     });
   }
@@ -53,17 +62,17 @@ class RecordsViewModel extends ChangeNotifier {
       return _service.getRecordsFolder(filter, offset, take, subfilter);
     }
 
-    return _service.getRecords(filter, offset, take, subfilter);
+    return _service.getRecords(filter, offset, take, subfilter, recordViewSettings);
   }
 
   /// Plays one record.
-  void playRecord(
+  Future<void> playRecord(
     BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
-  ) {
-    PlayerService.getInstance().play(
+  ) async{
+    await PlayerService.getInstance().play(
       context,
       record as Record,
       filter,

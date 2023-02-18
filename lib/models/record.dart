@@ -3,8 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/extensions/duration_double.dart';
+import 'package:mml_app/extensions/flag.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 
 part 'record.g.dart';
 
@@ -16,6 +18,9 @@ class Record extends ModelBase {
 
   /// Title of the record.
   String? title;
+
+  /// Track number of the record.
+  int? trackNumber;
 
   /// The date the record was created..
   DateTime? date;
@@ -38,11 +43,14 @@ class Record extends ModelBase {
   /// Checksum of the record data.
   String? checksum;
 
+  RecordViewSettings? _viewSettings;
+
   /// Creates a new record instance with the given values.
   Record({
     required this.recordId,
     required this.checksum,
     this.title,
+    this.trackNumber,
     this.date,
     this.duration = 0,
     this.album,
@@ -55,12 +63,19 @@ class Record extends ModelBase {
   /// Converts a json object/map to the record model.
   factory Record.fromJson(Map<String, dynamic> json) => _$RecordFromJson(json);
 
+  set viewSettings(RecordViewSettings viewSettings) {
+    _viewSettings = viewSettings;
+  }
+
   /// Converts the current record model to a json object/map.
   Map<String, dynamic> toJson() => _$RecordToJson(this);
 
   @override
   String getDisplayDescription() {
-    return "$title";
+    final tn = _viewSettings != null && _viewSettings!.tracknumber
+        ? '$trackNumber - '
+        : '';
+    return "$tn$title";
   }
 
   @override
@@ -77,6 +92,21 @@ class Record extends ModelBase {
   @override
   String? getMetadata(BuildContext context) {
     return duration.asFormattedDuration();
+  }
+
+  @override
+  String? getSubMetadata(BuildContext context) {
+    if (_viewSettings == null) {
+      return null;
+    }
+    var g = _viewSettings!.genre ? genre : '';
+
+    var lang = '';
+    if (_viewSettings!.language) {
+      lang = "${language?.asFlag().join(' ')}";
+    }
+
+    return "$g${lang.isEmpty ? '' : ' '}$lang";
   }
 
   @override

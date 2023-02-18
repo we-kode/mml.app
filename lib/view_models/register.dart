@@ -174,7 +174,7 @@ class RegisterViewModel extends ChangeNotifier {
     try {
       await _clientService.register(
         clientRegistration,
-        "$firstName $lastName",
+        "${firstName!.trim()} ${lastName!.trim()}",
         deviceIdentifier,
       );
       state = RegistrationState.success;
