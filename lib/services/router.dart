@@ -8,6 +8,7 @@ import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/services/player/player.dart';
+import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
@@ -18,6 +19,7 @@ import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:mml_app/view_models/settings.dart';
+import 'package:mml_app/views/faq.dart';
 import 'package:mml_app/views/information.dart';
 import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
@@ -156,6 +158,14 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) => LicenseScreen(
           package: ((args as SubrouteArguments).arg as Package),
         ),
+        transitionsBuilder: _buildTransition,
+      ),
+      FAQViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: FAQViewModel.route,
+          arguments: args,
+        ),
+        pageBuilder: (context, animation1, animation2) => const FAQScreen(),
         transitionsBuilder: _buildTransition,
       ),
     };

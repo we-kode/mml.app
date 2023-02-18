@@ -5,6 +5,7 @@ import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/router.dart';
+import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
@@ -29,7 +30,7 @@ class SettingsViewModel extends ChangeNotifier {
   /// DB service to update settings in db.
   final DBService _dbService = DBService.getInstance();
 
- /// Link of the privacy policy.
+  /// Link of the privacy policy.
   final String privacyLink = "";
 
   /// Link of the legal informations.
@@ -97,6 +98,14 @@ class SettingsViewModel extends ChangeNotifier {
     );
   }
 
+  /// Redirects to the faq screen.
+  void showFAQ() {
+    _routerService.pushNestedRoute(
+      FAQViewModel.route,
+      arguments: SubrouteArguments(),
+    );
+  }
+
   /// Opens mail program to send feedback.
   Future<void> sendFeedback() async {
     if (supportEMail.isEmpty) {
@@ -121,9 +130,9 @@ class SettingsViewModel extends ChangeNotifier {
         .map((MapEntry<String, String> e) =>
             '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
         .join('&');
-}
+  }
 
-Future updateRecordViewSettings() async {
+  Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
     notifyListeners();
   }

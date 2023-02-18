@@ -117,6 +117,11 @@ class SettingsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ),
+                ListTile(
+                  leading: const Icon(Icons.help),
+                  title: Text(vm.locales.faq),
+                  onTap: vm.showFAQ,
+                ),
                 if (vm.supportEMail.isNotEmpty)
                   ListTile(
                     leading: const Icon(Icons.feedback),
