@@ -65,5 +65,16 @@
   "back":"back",
   "folder":"Folder",
   "language": "Language",
-  "notReachableRecord": "The record could not be loaded! Please retry later."
+  "notReachableRecord": "The record could not be loaded! Please retry later.",
+  "sendFeedback": "Send feedback",
+  "display": "Display",
+  "displayDescription": "Which elements should be displayed in the list of records?",
+  "showGenre": "Genre",
+  "showLanguage": "Language",
+  "showTrackNumber": "Track-Number",
+  "faq": "Help",
+  "faqAddFavorites": "How do I save records?",
+  "faqAddFavoritesDescription": "Several folders can be created where records are stored. To do this, click on the plus symbol in the 'Saved Titles' view at the bottom right and specify a name for the folder. Records can be saved by long pressing on a record in the list. The option to select several elements at the same time appears. Press the star in the upper right corner and then select the folder in which you want to save the records. The currently playing record can be saved in the player at the bottom right.",
+  "faqRemoveFavorites": "How do I delete saved records?",
+  "faqRemoveFavoritesDescription": "To remove one or more saved records, press and hold a record or the entire folder in the list. A possibility to select several elements appears. Press the trash can icon at the top right to remove the selected items."
 }

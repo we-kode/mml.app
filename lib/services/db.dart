@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:mml_app/extensions/bool.dart';
+import 'package:mml_app/migrations/v3.dart';
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
 import 'package:mml_app/migrations/v2.dart';
@@ -8,6 +10,7 @@ import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -28,6 +31,9 @@ class DBService {
   /// Table name of the records playlist many-to-many table.
   final String _tRecordsPlaylists = 'records_playlists';
 
+  /// Table name of the records view settings.
+  final String _tRecordViewSettings = 'recordViewSettings';
+
   /// The databse instance.
   Database? _db;
 
@@ -40,6 +46,7 @@ class DBService {
   final Map<int, DBMigration Function()> _migrations = {
     1: () => V1Migration(),
     2: () => V2Migration(),
+    3: () => V3Migration(),
   };
 
   /// Private constructor of the service.
@@ -68,7 +75,6 @@ class DBService {
     var batch = db.batch();
     _migrations[version]!().onCreate(batch);
     await batch.commit();
-    await _onUpgrade(db, 1, _migrations.keys.last);
   }
 
   /// Is called on upgrading the database.
@@ -78,8 +84,8 @@ class DBService {
         actualVersion <= newVersion;
         actualVersion++) {
       _migrations[actualVersion]!().onUpdate(batch);
-      await batch.commit();
     }
+    await batch.commit();
   }
 
   /// Inits the databse and opens the databse.
@@ -93,7 +99,7 @@ class DBService {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
@@ -107,6 +113,7 @@ class DBService {
     int? offset,
     int? take,
     int? playlist,
+    RecordViewSettings recordViewSettings,
   ) async {
     final db = await _database;
 
@@ -126,20 +133,25 @@ class DBService {
     return ModelList(
       List.generate(
         maps.length,
-        (index) => LocalRecord(
-          recordId: maps[index]['recordId'],
-          album: maps[index]['album'],
-          artist: maps[index]['artist'],
-          genre: maps[index]['genre'],
-          title: maps[index]['title'],
-          language: maps[index]['language'],
-          checksum: maps[index]['checksum'],
-          duration: double.parse(maps[index]['duration'] ?? '0'),
-          playlist: Playlist(
-            id: maps[index]['playlistId'],
-            name: maps[index]['playlistName'],
-          ),
-        ),
+        (index) {
+          var rec = LocalRecord(
+            recordId: maps[index]['recordId'],
+            album: maps[index]['album'],
+            artist: maps[index]['artist'],
+            genre: maps[index]['genre'],
+            title: maps[index]['title'],
+            trackNumber: maps[index]['tracknumber'],
+            language: maps[index]['language'],
+            checksum: maps[index]['checksum'],
+            duration: double.parse(maps[index]['duration'] ?? '0'),
+            playlist: Playlist(
+              id: maps[index]['playlistId'],
+              name: maps[index]['playlistName'],
+            ),
+          );
+          rec.viewSettings = recordViewSettings;
+          return rec;
+        },
       ),
       offset ?? 0,
       maps.length,
@@ -225,6 +237,7 @@ class DBService {
         'artist': record.artist,
         'genre': record.genre,
         'title': record.title,
+        'tracknumber': record.trackNumber,
         'language': record.language,
         'checksum': record.checksum,
         'duration': record.duration
@@ -378,6 +391,7 @@ class DBService {
       genre: result['genre'],
       language: result['language'],
       title: result['title'],
+      trackNumber: result['tracknumber'],
       checksum: result['checksum'],
     );
   }
@@ -418,6 +432,38 @@ class DBService {
       _tPlaylists,
       where: 'id = ?',
       whereArgs: [playlistId],
+    );
+  }
+
+  Future<RecordViewSettings> loadRecordViewSettings() async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps =
+        await db.query(_tRecordViewSettings);
+
+    if (maps.isEmpty) {
+      final settings = RecordViewSettings();
+      await db.insert(_tRecordViewSettings, settings.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      return settings;
+    }
+
+    final settings = maps.first;
+    return RecordViewSettings(
+      genre: (settings['genre'] as int).toBool(),
+      album: (settings['album'] as int).toBool(),
+      language: (settings['language'] as int).toBool(),
+      tracknumber: (settings['tracknumber'] as int).toBool(),
+    );
+  }
+
+  Future saveRecordViewSettings(RecordViewSettings settings) async {
+    final db = await _database;
+    await db.update(
+      _tRecordViewSettings,
+      settings.toJson(),
+      where: '"id" = ?',
+      whereArgs: [1],
+      conflictAlgorithm: ConflictAlgorithm.rollback,
     );
   }
 }

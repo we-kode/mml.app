@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/player_sheet.dart';
@@ -26,6 +28,9 @@ class PlayerService {
 
   /// State of the player.
   PlayerState? playerState;
+
+  /// Event stream, when actual playing record changes.
+  StreamController<Record?> onRecordChanged = StreamController.broadcast();
 
   /// Private constructor of the [PlayerService].
   PlayerService._();
@@ -93,6 +98,7 @@ class PlayerService {
     );
 
     await _audioHandler.playRecord(record);
+    onRecordChanged.add(playerState?.currentReocrd);
   }
 
   /// Pauses the playback.
@@ -110,12 +116,14 @@ class PlayerService {
   /// Plays the next record in the filtered record list.
   Future playNext() async {
     await _audioHandler.skipToNext();
+    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 
   /// Plays the previous record in the filtered record list.
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
+    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 
@@ -172,14 +180,22 @@ class PlayerService {
 
   /// Resets the current player.
   Future _reset() async {
-    playerState = null;
-    _controller = null;
     _audioHandler.currentSeekPosition = 0;
     _audioHandler.currentRecord = null;
+    playerState?.update();
+    onRecordChanged.add(playerState?.currentReocrd);
+    playerState = null;
+    _controller = null;
   }
 
   /// Activtes the state, that the seek bar is actually be dragged by the user.
   startSeekDrag() {
     _isSeeking = true;
+  }
+
+  /// Resets the Stream controller for actual playing records.
+  Future resetOnRecordChange() async {
+    await onRecordChanged.close();
+    onRecordChanged = StreamController.broadcast();
   }
 }

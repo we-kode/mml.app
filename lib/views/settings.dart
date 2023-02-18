@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -28,15 +29,76 @@ class SettingsScreen extends StatelessWidget {
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -4),
                   title: Text(
+                    vm.locales.display,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  subtitle: Text(vm.locales.displayDescription),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.numbers),
+                  title: Text(vm.locales.showTrackNumber),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.tracknumber = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.tracknumber,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.discount),
+                  title: Text(vm.locales.showGenre),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.genre = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.genre,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.translate),
+                  title: Text(vm.locales.showLanguage),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.language = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.language,
+                      );
+                    },
+                  ),
+                ),
+                const Divider(),
+                verticalSpacer,
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
                     vm.locales.settings,
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),
                   onTap: vm.changeServerConnection,
                 ),
                 ListTile(
+                  leading: Icon(
+                    Icons.app_blocking,
+                    color: Theme.of(context).errorColor,
+                  ),
                   title: Text(
                     vm.locales.removeRegistration,
                     style: TextStyle(
@@ -46,6 +108,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: vm.removeRegistration,
                 ),
                 const Divider(),
+                verticalSpacer,
                 ListTile(
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -4),
@@ -54,21 +117,36 @@ class SettingsScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                 ),
+                ListTile(
+                  leading: const Icon(Icons.help),
+                  title: Text(vm.locales.faq),
+                  onTap: vm.showFAQ,
+                ),
+                if (vm.supportEMail.isNotEmpty)
+                  ListTile(
+                    leading: const Icon(Icons.feedback),
+                    title: Text(vm.locales.sendFeedback),
+                    onTap: vm.sendFeedback,
+                  ),
                 if (vm.privacyLink.isNotEmpty)
                   ListTile(
+                    leading: const Icon(Icons.verified_user),
                     title: Text(vm.locales.privacyPolicy),
                     onTap: vm.showPrivacyPolicy,
                   ),
                 if (vm.legalInfoLink.isNotEmpty)
                   ListTile(
+                    leading: const Icon(Icons.privacy_tip),
                     title: Text(vm.locales.legalInformation),
                     onTap: vm.showLegalInformation,
                   ),
                 ListTile(
+                  leading: const Icon(Icons.key),
                   title: Text(vm.locales.licenses),
                   onTap: vm.showLicensesOverview,
                 ),
                 ListTile(
+                  leading: const Icon(Icons.new_releases),
                   title: Text(vm.version),
                 ),
               ],
