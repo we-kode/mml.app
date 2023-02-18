@@ -5,6 +5,14 @@
    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
    <uses-permission android:name="android.permission.INTERNET"/>
 
+   <queries>
+      <intent>
+        <action android:name="android.intent.action.SENDTO"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <data android:scheme="mailto"/>
+      </intent>
+   </queries>
+   
    <application
         android:label="@string/app_title"
         android:name="${applicationName}"

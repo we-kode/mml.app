@@ -55,6 +55,9 @@ do
 	legalInfoUrl)
 		sed -i -E "s/  final String legalInfoLink = \".*\";/  final String legalInfoLink = \"$value\";/" "$DIR/lib/view_models/settings.dart"
 		;;
+	supportEMail)
+		sed -i -E "s/  final String supportEMail = \".*\";/  final String supportEMail = \"$value\";/" "$DIR/lib/view_models/settings.dart"
+		;;
 	*)
 		echo "Not known key: $key"
   esac

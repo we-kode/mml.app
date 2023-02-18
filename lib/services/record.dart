@@ -7,6 +7,7 @@ import 'package:mml_app/models/language.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/api.dart';
 
 /// Service that handles the records data of the server.
@@ -32,6 +33,7 @@ class RecordService {
     int? offset,
     int? take,
     ID3TagFilter? tagFilter,
+    RecordViewSettings recordViewSettings,
   ) async {
     var params = <String, String?>{};
 
@@ -58,7 +60,13 @@ class RecordService {
 
     return ModelList(
       List<Record>.from(
-        response.data['items'].map((item) => Record.fromJson(item)),
+        response.data['items'].map(
+          (item) {
+            var rec = Record.fromJson(item);
+            rec.viewSettings = recordViewSettings;
+            return rec;
+          },
+        ),
       ),
       offset ?? 0,
       response.data["totalCount"],

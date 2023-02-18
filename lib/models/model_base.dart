@@ -40,6 +40,11 @@ abstract class ModelBase {
     return null;
   }
 
+   /// Returns meta data information, e.g. genre or language.
+  String? getSubMetadata(BuildContext context) {
+    return null;
+  }
+
   /// Returns the group this item belongs to.
   String? getGroup(BuildContext context) {
     return null;

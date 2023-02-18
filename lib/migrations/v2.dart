@@ -7,6 +7,7 @@ class V2Migration implements DBMigration {
   @override
   void onCreate(Batch batch) {
     V1Migration().onCreate(batch);
+    batch.execute('''ALTER TABLE Records ADD language TEXT NULL''');
   }
 
   @override

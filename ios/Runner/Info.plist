@@ -26,6 +26,10 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	  <string>mailto</string>
+	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>For qr code scanning prupose</string>
 	<key>UIBackgroundModes</key>
