@@ -494,29 +494,46 @@ class _AsyncListViewState extends State<AsyncListView> {
       visualDensity: const VisualDensity(vertical: 0),
       title: Wrap(
         children: [
-          Text(
-            item.getDisplayDescription(),
-            overflow: TextOverflow.fade,
-            maxLines: 1,
-            softWrap: false,
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Text(
+              item.getDisplayDescription(),
+              overflow: TextOverflow.fade,
+              maxLines: 1,
+              softWrap: false,
+            ),
           ),
           _createTitleSuffix(item),
         ],
       ),
       subtitle: item.getSubtitle(context) != null
-          ? Text(
-              item.getSubtitle(context)!,
-              overflow: TextOverflow.fade,
-              maxLines: 1,
-              softWrap: false,
+          ? SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                item.getSubtitle(context)!,
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
+              ),
             )
           : null,
       trailing: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           verticalSpacer,
           item.getMetadata(context) != null
               ? Text(
                   item.getMetadata(context)!,
+                  style: Theme.of(context).textTheme.bodySmall,
+                )
+              : const SizedBox.shrink(),
+          const SizedBox(
+            height: 6,
+          ),
+          item.getSubMetadata(context) != null
+              ? Text(
+                  item.getSubMetadata(context)!,
                   style: Theme.of(context).textTheme.bodySmall,
                 )
               : const SizedBox.shrink(),
