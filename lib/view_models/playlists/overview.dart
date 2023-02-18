@@ -8,6 +8,7 @@ import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
@@ -28,11 +29,18 @@ class PlaylistViewModel extends ChangeNotifier {
   /// Actual selected playlist.
   late int? playlist;
 
+  /// DB service to update settings in db.
+  final DBService _dbService = DBService.getInstance();
+
+  /// settings for the records view.
+  late RecordViewSettings recordViewSettings;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context, int? playlistId) {
-    return Future.microtask(() {
+    return Future.microtask(() async{
       locales = AppLocalizations.of(context)!;
       playlist = playlistId;
+      recordViewSettings = await _dbService.loadRecordViewSettings();
       return true;
     });
   }
@@ -47,7 +55,7 @@ class PlaylistViewModel extends ChangeNotifier {
   }) async {
     return playlist == null
         ? _service.getPlaylists(filter, offset, take)
-        : _service.load(filter, offset, take, playlist);
+        : _service.load(filter, offset, take, playlist, recordViewSettings);
   }
 
   /// Removes the [offlineRecords] from local database and deletes cached file, if record is not available anymore.

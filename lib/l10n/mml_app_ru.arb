@@ -66,5 +66,10 @@
   "folder":"Папка",
   "language": "Язык",
   "notReachableRecord": "Запись не может быть загружена! Пожалуйста, повторите попытку позже.",
-  "sendFeedback": "Отправить отзыв"
+  "sendFeedback": "Отправить отзыв",
+  "display": "Отображение",
+  "displayDescription": "Какие элементы вы хотите отобразить в списке записи?",
+  "showGenre": "Жанр",
+  "showLanguage": "Язык",
+  "showTrackNumber": "Номер трека"
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
+import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
@@ -24,7 +26,10 @@ class SettingsViewModel extends ChangeNotifier {
   /// Router service used for navigation.
   final RouterService _routerService = RouterService.getInstance();
 
-  /// Link of the privacy policy.
+  /// DB service to update settings in db.
+  final DBService _dbService = DBService.getInstance();
+
+ /// Link of the privacy policy.
   final String privacyLink = "";
 
   /// Link of the legal informations.
@@ -36,6 +41,9 @@ class SettingsViewModel extends ChangeNotifier {
   /// version of the running app.
   late String version;
 
+  /// settings for the records view.
+  late RecordViewSettings recordViewSettings;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
@@ -43,6 +51,7 @@ class SettingsViewModel extends ChangeNotifier {
       locales = AppLocalizations.of(context)!;
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
+      recordViewSettings = await _dbService.loadRecordViewSettings();
       return true;
     });
   }
@@ -112,5 +121,10 @@ class SettingsViewModel extends ChangeNotifier {
         .map((MapEntry<String, String> e) =>
             '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
         .join('&');
+}
+
+Future updateRecordViewSettings() async {
+    await _dbService.saveRecordViewSettings(recordViewSettings);
+    notifyListeners();
   }
 }

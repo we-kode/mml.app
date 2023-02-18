@@ -66,5 +66,10 @@
   "folder":"Folder",
   "language": "Language",
   "notReachableRecord": "The record could not be loaded! Please retry later.",
-  "sendFeedback": "Send feedback"
+  "sendFeedback": "Send feedback",
+  "display": "Display",
+  "displayDescription": "Which elements should be displayed in the list of records?",
+  "showGenre": "Genre",
+  "showLanguage": "Language",
+  "showTrackNumber": "Track-Number"
 }

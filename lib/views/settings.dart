@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -28,6 +29,62 @@ class SettingsScreen extends StatelessWidget {
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -4),
                   title: Text(
+                    vm.locales.display,
+                    style: Theme.of(context).textTheme.subtitle2,
+                  ),
+                  subtitle: Text(vm.locales.displayDescription),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.numbers),
+                  title: Text(vm.locales.showTrackNumber),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.tracknumber = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.tracknumber,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.discount),
+                  title: Text(vm.locales.showGenre),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.genre = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.genre,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.translate),
+                  title: Text(vm.locales.showLanguage),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.language = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.language,
+                      );
+                    },
+                  ),
+                ),
+                const Divider(),
+                verticalSpacer,
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
                     vm.locales.settings,
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
@@ -51,6 +108,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: vm.removeRegistration,
                 ),
                 const Divider(),
+                verticalSpacer,
                 ListTile(
                   dense: true,
                   visualDensity: const VisualDensity(vertical: -4),

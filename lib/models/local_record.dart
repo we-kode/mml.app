@@ -11,6 +11,7 @@ class LocalRecord extends Record {
     required super.checksum,
     required this.playlist,
     super.title,
+    super.trackNumber,
     super.date,
     super.duration = 0,
     super.album,
