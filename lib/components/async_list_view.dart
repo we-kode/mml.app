@@ -514,6 +514,8 @@ class _AsyncListViewState extends State<AsyncListView> {
             value: _selectedItems.contains(item.getIdentifier()),
           );
 
+    final trailingSubStyle = Theme.of(context).textTheme.bodyMedium;
+
     return ListTile(
       selected: item.getIdentifier() == _activeItemId,
       selectedTileColor: Theme.of(context).focusColor,
@@ -549,20 +551,24 @@ class _AsyncListViewState extends State<AsyncListView> {
       trailing: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          verticalSpacer,
+          const SizedBox(
+            height: 6,
+          ),
           item.getMetadata(context) != null
               ? Text(
                   item.getMetadata(context)!,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.titleMedium,
                 )
               : const SizedBox.shrink(),
           const SizedBox(
-            height: 6,
+            height: 3,
           ),
           item.getSubMetadata(context) != null
               ? Text(
                   item.getSubMetadata(context)!,
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: trailingSubStyle!.copyWith(
+                    color: Theme.of(context).textTheme.bodySmall!.color,
+                  ),
                 )
               : const SizedBox.shrink(),
         ],
