@@ -476,6 +476,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       return Column(
         children: [
           Chip(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(5),
+              ),
+            ),
             label: Text(
               item.getGroup(context)!,
             ),

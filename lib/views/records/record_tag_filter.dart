@@ -107,6 +107,11 @@ class RecordTagFilter extends ListSubfilterView {
             : InputChip(
                 label: Text(label),
                 labelStyle: isActive ? TextStyle(color: activeColor) : null,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(5),
+                  ),
+                ),
                 backgroundColor:
                     isActive ? Theme.of(context).colorScheme.secondary : null,
                 avatar: Icon(
