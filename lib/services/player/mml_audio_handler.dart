@@ -212,6 +212,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
+    PlayerService.getInstance().onRecordChanged.add(currentRecord);
     mediaItem.add(
       MediaItem(
         id: currentRecord!.recordId!,

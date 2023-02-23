@@ -98,7 +98,6 @@ class PlayerService {
     );
 
     await _audioHandler.playRecord(record);
-    onRecordChanged.add(playerState?.currentReocrd);
   }
 
   /// Pauses the playback.
@@ -116,14 +115,12 @@ class PlayerService {
   /// Plays the next record in the filtered record list.
   Future playNext() async {
     await _audioHandler.skipToNext();
-    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 
   /// Plays the previous record in the filtered record list.
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
-    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 

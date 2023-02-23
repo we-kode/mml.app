@@ -10,12 +10,12 @@ extension Flag on String? {
 
     final lower = this!.toLowerCase().trim();
     if (lower.startsWith('mus') || lower.startsWith('муз')) {
-      return List.from(['🎵']);
+      return List.from(['🎻']);
     }
 
     for (final lang in lower.split(RegExp('[/\\,;]'))) {
       var langCode = _languageCodes[lang];
-      langCode ??= 'xy';
+      langCode ??= '🏁';
 
       langs.add(
         langCode.toUpperCase().replaceAllMapped(
