@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -14,6 +16,7 @@ import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 
 /// Audio handler that interacts with the player background service and the
@@ -23,7 +26,7 @@ import 'package:mml_app/services/secure_storage.dart';
 /// the [PlayerService].
 class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// [AudioPlayer] used to start  the native playback.
-  final _player = AudioPlayer();
+  AudioPlayer _player = AudioPlayer();
 
   /// [ApiService] used to send requests to the server.
   final ApiService _apiService = ApiService.getInstance();
@@ -140,6 +143,30 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         _addPlaybackState();
       },
       onError: (Object e, StackTrace st) {
+        if (kDebugMode) {
+          print("Error in playbackEventSteam $e");
+          print(st);
+        }
+        showDialog(
+          context: RouterService.getInstance().navigatorKey.currentContext!,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text("playbackEventStream"),
+                content: Column(children: [
+                  Text(e.toString()),
+                  Text(st.toString()),
+                ]),
+                actions: [
+                  TextButton(
+                    child: Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ]);
+            ;
+          },
+        );
         _handleError(e);
       },
     );
@@ -200,7 +227,28 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       await _clientService.refreshToken();
       await _setPlayerSource(isRetry: true);
     } catch (e) {
-      _errorOnLoadingRecord();
+      // _errorOnLoadingRecord();
+      if (kDebugMode) {
+        print("Error in _handleError $e");
+      }
+      showDialog(
+        context: RouterService.getInstance().navigatorKey.currentContext!,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Error in _handleError"),
+              content: Column(children: [
+                Text(e.toString()),
+              ]),
+              actions: [
+                TextButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ]);
+        },
+      );
     }
   }
 
@@ -334,8 +382,28 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _isLoading = false;
     } catch (e) {
+      showDialog(
+        context: RouterService.getInstance().navigatorKey.currentContext!,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text("Error in setUrl"),
+              content: Column(children: [
+                Text(e.toString()),
+                Text(isRetry.toString()),
+              ]),
+              actions: [
+                TextButton(
+                  child: Text("Cancel"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ]);
+        },
+      );
       if (isRetry) {
-        _errorOnLoadingRecord();
+        // _player = AudioPlayer();
+        // _errorOnLoadingRecord();
         return false;
       }
 
