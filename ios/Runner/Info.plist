@@ -28,7 +28,7 @@
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-	  <string>mailto</string>
+		<string>mailto</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
 	<string>For qr code scanning prupose</string>
@@ -46,6 +46,11 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

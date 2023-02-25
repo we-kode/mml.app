@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
-import 'package:flutter_logs/flutter_logs.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
-import 'package:mml_app/services/messenger.dart';
+import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
@@ -141,8 +140,7 @@ class SettingsViewModel extends ChangeNotifier {
   }
 
   Future clearLogs() async {
-    await FlutterLogs.clearLogs();
-    MessengerService.getInstance().showMessage('Logs deleted!');
+    await Logging.clear();
   }
 
   void showLogs() {

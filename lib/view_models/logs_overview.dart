@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/log.dart';
-import 'package:path_provider/path_provider.dart';
 
 /// Overview screen of all licenses of the used packaged.
 class LogsOverviewViewModel extends ChangeNotifier {
@@ -16,8 +16,7 @@ class LogsOverviewViewModel extends ChangeNotifier {
   /// Initialize the view model.
   Future<bool> init(BuildContext context) async {
     return Future<bool>.microtask(() async {
-      final directory = (await getApplicationSupportDirectory()).path;
-      logFiles = Directory("$directory/Logs/").listSync();
+      logFiles = await Logging.list();
       return true;
     });
   }

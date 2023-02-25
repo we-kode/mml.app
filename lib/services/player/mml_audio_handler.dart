@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_logs/flutter_logs.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:mml_app/constants/development.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
@@ -13,6 +10,7 @@ import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
+import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
@@ -103,25 +101,21 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> pause() async {
-    if (isDebugBuild) {
-      FlutterLogs.logInfo(
-        "MMLAudioHandler",
-        "pause",
-        "------ Paused pressed ------",
-      );
-    }
+    Logging.logInfo(
+      (MMLAudioHandler).toString(),
+      "pause",
+      "------ Paused pressed ------",
+    );
     _player.pause();
   }
 
   @override
   Future<void> stop() async {
-    if (isDebugBuild) {
-      FlutterLogs.logInfo(
-        "MMLAudioHandler",
-        "Stop",
-        "------ Stop pressed ------",
-      );
-    }
+    Logging.logInfo(
+      (MMLAudioHandler).toString(),
+      "Stop",
+      "------ Stop pressed ------",
+    );
     await _player.stop();
     playbackState.add(
       playbackState.value.copyWith(
@@ -135,14 +129,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> onNotificationDeleted() async {
-    if (isDebugBuild) {
-      FlutterLogs.logInfo(
-        "MMLAudioHandler",
-        "onNotificationDeleted",
-        "------ Notification Deleted ------",
-      );
-    }
-    await stop();
+    Logging.logInfo(
+      (MMLAudioHandler).toString(),
+      "onNotificationDeleted",
+      "------ Notification Deleted ------",
+    );
+    await _player.stop();
   }
 
   @override
@@ -150,25 +142,21 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToNext() async {
-    if (isDebugBuild) {
-      FlutterLogs.logInfo(
-        "MMLAudioHandler",
-        "skipToNext",
-        "------ Next pressed ------",
-      );
-    }
+    Logging.logInfo(
+      (MMLAudioHandler).toString(),
+      "skipToNext",
+      "------ Next pressed ------",
+    );
     await _skipTo("next");
   }
 
   @override
   Future<void> skipToPrevious() async {
-    if (isDebugBuild) {
-      FlutterLogs.logInfo(
-        "MMLAudioHandler",
-        "skipToPrevious",
-        "------ Previous pressed ------",
-      );
-    }
+    Logging.logInfo(
+      "MMLAudioHandler",
+      "skipToPrevious",
+      "------ Previous pressed ------",
+    );
     await _skipTo("previous");
   }
 
@@ -180,35 +168,27 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         _addPlaybackState();
       },
       onError: (Object e, StackTrace st) {
-        if (kDebugMode) {
-          print("Error in playbackEventSteam $e");
-          print(st);
-        }
-        if (isDebugBuild) {
-          FlutterLogs.logError(
-            "MMLAudioHandler",
-            "playbackEventStream",
-            "Error on listening to playbackEventStream: $e",
-          );
-          FlutterLogs.logError(
-            "MMLAudioHandler",
-            "playbackEventStream",
-            "Stacktrace: $st",
-          );
-        }
+        Logging.logError(
+          (MMLAudioHandler).toString(),
+          "playbackEventStream",
+          "Error on listening to playbackEventStream: $e",
+        );
+        Logging.logError(
+          (MMLAudioHandler).toString(),
+          "playbackEventStream",
+          "Stacktrace: $st",
+        );
         _handleError(e);
       },
     );
 
     _player.playerStateStream.listen(
       (event) {
-        if (isDebugBuild) {
-          FlutterLogs.logInfo(
-            "MMLAudioHandler",
-            "playerStateStream",
-            "${event.processingState}",
-          );
-        }
+        Logging.logInfo(
+          "MMLAudioHandler",
+          "playerStateStream",
+          "${event.processingState}",
+        );
         if (event.processingState == ProcessingState.completed) {
           skipToNext();
         }
@@ -263,16 +243,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       await _clientService.refreshToken();
       await _setPlayerSource(isRetry: true);
     } catch (e) {
-      if (kDebugMode) {
-        print("Error in _handleError $e");
-      }
-      if (isDebugBuild) {
-        FlutterLogs.logError(
-          "MMLAudioHandler",
-          "_handleError",
-          "Error $e",
-        );
-      }
+      Logging.logError(
+        (MMLAudioHandler).toString(),
+        "_handleError",
+        "Error $e",
+      );
       _errorOnLoadingRecord();
     }
   }
@@ -407,28 +382,21 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _isLoading = false;
     } catch (e) {
-      if (isDebugBuild) {
-        FlutterLogs.logInfo(
-          "MMLAudioHandler",
-          "_setPlayerSource",
-          "baseUrl: $baseUrl",
-        );
-        FlutterLogs.logInfo(
-          "MMLAudioHandler",
-          "_setPlayerSource",
-          "headers: $headers",
-        );
-        FlutterLogs.logInfo(
-          "MMLAudioHandler",
-          "_setPlayerSource",
-          "accessToken: ${SecureStorageService.getInstance().get(SecureStorageService.accessTokenStorageKey)}}",
-        );
-        FlutterLogs.logError(
-          "MMLAudioHandler",
-          "_setPlayerSource",
-          "Error $e",
-        );
-      }
+      Logging.logInfo(
+        (MMLAudioHandler).toString(),
+        "_setPlayerSource",
+        "baseUrl: $baseUrl",
+      );
+      Logging.logInfo(
+        (MMLAudioHandler).toString(),
+        "_setPlayerSource",
+        "headers: $headers",
+      );
+      Logging.logError(
+        (MMLAudioHandler).toString(),
+        "_setPlayerSource",
+        "Error $e",
+      );
       if (isRetry) {
         _errorOnLoadingRecord();
         return false;
@@ -442,7 +410,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> _errorOnLoadingRecord() async {
     _isLoading = false;
-    await stop();
+    await _player.stop();
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
     final ms = MessengerService.getInstance();
     ms.showMessage(ms.notReachableRecord);
