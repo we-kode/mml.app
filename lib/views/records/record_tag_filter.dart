@@ -109,7 +109,7 @@ class RecordTagFilter extends ListSubfilterView {
                 labelStyle: isActive ? TextStyle(color: activeColor) : null,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(
-                    Radius.circular(5),
+                    Radius.circular(10),
                   ),
                 ),
                 backgroundColor:

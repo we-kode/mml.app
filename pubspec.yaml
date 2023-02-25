@@ -58,7 +58,8 @@ dependencies:
   package_info_plus: ^3.0.2
   calendar_date_picker2: ^0.3.3
   url_launcher: ^6.1.9
-
+  flutter_logs: ^2.1.10
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
