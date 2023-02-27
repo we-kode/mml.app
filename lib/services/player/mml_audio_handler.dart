@@ -377,7 +377,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     try {
       await _player.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId}',
+        '${baseUrl}media/stream/${currentRecord!.recordId}.mp3',
         headers: headers,
       );
       _isLoading = false;
