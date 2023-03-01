@@ -376,6 +376,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     var headers = await _apiService.getHeaders();
 
     try {
+      Logging.logInfo(
+        (MMLAudioHandler).toString(),
+        "_setPlayerSource",
+        "---- Try to play url: ${baseUrl}media/stream/${currentRecord?.recordId}.mp3 ----",
+      );
       await _player.setUrl(
         '${baseUrl}media/stream/${currentRecord!.recordId}.mp3',
         headers: headers,
@@ -385,12 +390,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       Logging.logInfo(
         (MMLAudioHandler).toString(),
         "_setPlayerSource",
-        "baseUrl: $baseUrl",
+        "Player: ${_player.toString()}",
       );
       Logging.logInfo(
         (MMLAudioHandler).toString(),
         "_setPlayerSource",
-        "headers: $headers",
+        "Current record: $currentRecord",
       );
       Logging.logError(
         (MMLAudioHandler).toString(),
