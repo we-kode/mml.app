@@ -24,7 +24,7 @@ import 'package:mml_app/services/secure_storage.dart';
 /// the [PlayerService].
 class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// [AudioPlayer] used to start  the native playback.
-  final AudioPlayer _player = AudioPlayer();
+  AudioPlayer? _player;
 
   /// [ApiService] used to send requests to the server.
   final ApiService _apiService = ApiService.getInstance();
@@ -55,18 +55,16 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Creates an instance of the [MMLAudioHandler] and initializes the
   /// listeners.
-  MMLAudioHandler() {
-    _initializeListeners();
-  }
+  MMLAudioHandler();
 
   /// Stream with the current playback position.
-  Stream<Duration> get positionStream => _player.positionStream;
+  Stream<Duration> get positionStream => _player!.positionStream;
 
   /// Stream with the current playback events.
-  Stream<PlaybackEvent> get playbackEventStream => _player.playbackEventStream;
+  Stream<PlaybackEvent> get playbackEventStream => _player!.playbackEventStream;
 
   /// Bool, that indicates, whether the record is playing or not.
-  bool get isPlaying => _player.playing;
+  bool get isPlaying => _player?.playing ?? false;
 
   /// Indicates, that the source to be played is loading.
   bool get isLoading => _isLoading;
@@ -93,11 +91,20 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
     _isLoading = true;
     currentRecord = record;
+    if (_player == null) {
+      _initPlayer();
+    }
     await _playCurrentRecord();
   }
 
+  /// Cretaes new instance of the [AudioPlayer], if player not exists yet.
+  void _initPlayer() {
+    _player ??= AudioPlayer();
+    _initializeListeners();
+  }
+
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() => _player!.play();
 
   @override
   Future<void> pause() async {
@@ -106,7 +113,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       "pause",
       "------ Paused pressed ------",
     );
-    _player.pause();
+    _player!.pause();
   }
 
   @override
@@ -116,14 +123,16 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       "Stop",
       "------ Stop pressed ------",
     );
-    await _player.stop();
+    await _player!.stop();
+    await _player!.dispose();
     playbackState.add(
       playbackState.value.copyWith(
         processingState: {
           ProcessingState.idle: AudioProcessingState.idle,
-        }[_player.processingState]!,
+        }[_player!.processingState]!,
       ),
     );
+    _player = null;
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
   }
 
@@ -134,11 +143,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       "onNotificationDeleted",
       "------ Notification Deleted ------",
     );
-    await _player.stop();
+    await _player!.stop();
   }
 
   @override
-  Future<void> seek(Duration position) => _player.seek(position);
+  Future<void> seek(Duration position) => _player!.seek(position);
 
   @override
   Future<void> skipToNext() async {
@@ -163,7 +172,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Initializes the listeners to handle errors, show notifications and skip to
   /// the next record on playback end.
   void _initializeListeners() {
-    _player.playbackEventStream.listen(
+    _player!.playbackEventStream.listen(
       (PlaybackEvent event) {
         _addPlaybackState();
       },
@@ -182,7 +191,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       },
     );
 
-    _player.playerStateStream.listen(
+    _player!.playerStateStream.listen(
       (event) {
         Logging.logInfo(
           "MMLAudioHandler",
@@ -198,7 +207,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
-    final playing = _player.playing;
+    final playing = _player!.playing;
 
     List<MediaControl> controls = [];
     List<int> compatIndices = [0, 2];
@@ -227,12 +236,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           ProcessingState.buffering: AudioProcessingState.buffering,
           ProcessingState.ready: AudioProcessingState.ready,
           ProcessingState.completed: AudioProcessingState.completed,
-        }[_player.processingState]!,
+        }[_player!.processingState]!,
         playing: playing,
-        updatePosition: _player.position,
-        bufferedPosition: _player.bufferedPosition,
-        speed: _player.speed,
-        queueIndex: _player.currentIndex,
+        updatePosition: _player!.position,
+        bufferedPosition: _player!.bufferedPosition,
+        speed: _player!.speed,
+        queueIndex: _player!.currentIndex,
       ),
     );
   }
@@ -274,7 +283,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       ),
     );
 
-    _player.play();
+    _player!.play();
   }
 
   /// Skips the playback in the given [direction] to the next or
@@ -285,7 +294,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     if (repeat == PlayerRepeatMode.one) {
-      _player.seek(Duration.zero);
+      _player!.seek(Duration.zero);
       return;
     }
 
@@ -296,7 +305,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       currentRecord = record;
       await _playCurrentRecord();
     } else {
-      _player.stop();
+      _player!.stop();
     }
   }
 
@@ -364,7 +373,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       final cryptKey = await SecureStorageService.getInstance().get(
         SecureStorageService.cryptoKey,
       );
-      _player.setAudioSource(
+      _player!.setAudioSource(
         MMLAudioSource(file, int.parse(cryptKey!)),
         preload: false,
       );
@@ -381,7 +390,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         "_setPlayerSource",
         "---- Try to play url: ${baseUrl}media/stream/${currentRecord?.recordId}.mp3 ----",
       );
-      await _player.setUrl(
+      await _player!.setUrl(
         '${baseUrl}media/stream/${currentRecord!.recordId}.mp3',
         headers: headers,
       );
@@ -415,7 +424,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   Future<void> _errorOnLoadingRecord() async {
     _isLoading = false;
-    await _player.stop();
+    await _player!.stop();
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
     final ms = MessengerService.getInstance();
     ms.showMessage(ms.notReachableRecord);
