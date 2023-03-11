@@ -250,6 +250,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
+      await _player!.stop();
+      await _player!.dispose();
+      _player = null;
+      _initPlayer();
       await _setPlayerSource(isRetry: true);
     } catch (e) {
       Logging.logError(
