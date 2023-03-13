@@ -187,7 +187,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           "playbackEventStream",
           "Stacktrace: $st",
         );
-        _handleError(e);
+        // _handleError(e);
       },
     );
 
