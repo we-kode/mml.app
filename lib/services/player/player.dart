@@ -46,7 +46,6 @@ class PlayerService {
   /// Sets the given [audioHandler] and initializes the necessary listeners.
   set audioHandler(MMLAudioHandler audioHandler) {
     _audioHandler = audioHandler;
-    _initializeListeners();
   }
 
   /// Sets the repeat mode to the given [value].
@@ -98,7 +97,7 @@ class PlayerService {
     );
 
     await _audioHandler.playRecord(record);
-    onRecordChanged.add(playerState?.currentReocrd);
+    initializeListeners();
   }
 
   /// Pauses the playback.
@@ -116,14 +115,12 @@ class PlayerService {
   /// Plays the next record in the filtered record list.
   Future playNext() async {
     await _audioHandler.skipToNext();
-    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 
   /// Plays the previous record in the filtered record list.
   Future playPrevious() async {
     await _audioHandler.skipToPrevious();
-    onRecordChanged.add(playerState?.currentReocrd);
     playerState?.update();
   }
 
@@ -153,7 +150,7 @@ class PlayerService {
   }
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
-  _initializeListeners() {
+  initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
         if (_isSeeking) {

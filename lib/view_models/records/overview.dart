@@ -36,7 +36,6 @@ class RecordsViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
       locales = AppLocalizations.of(context)!;
-
       isFolderView = (await SecureStorageService.getInstance().get(
             SecureStorageService.folderViewStorageKey,
           ))
@@ -62,7 +61,13 @@ class RecordsViewModel extends ChangeNotifier {
       return _service.getRecordsFolder(filter, offset, take, subfilter);
     }
 
-    return _service.getRecords(filter, offset, take, subfilter, recordViewSettings);
+    return _service.getRecords(
+      filter,
+      offset,
+      take,
+      subfilter,
+      recordViewSettings,
+    );
   }
 
   /// Plays one record.
@@ -71,7 +76,7 @@ class RecordsViewModel extends ChangeNotifier {
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
-  ) async{
+  ) async {
     await PlayerService.getInstance().play(
       context,
       record as Record,

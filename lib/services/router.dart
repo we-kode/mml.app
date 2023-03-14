@@ -13,6 +13,8 @@ import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
+import 'package:mml_app/view_models/log.dart';
+import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
@@ -24,6 +26,8 @@ import 'package:mml_app/views/information.dart';
 import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
+import 'package:mml_app/views/log.dart';
+import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
 import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
@@ -156,7 +160,7 @@ class RouterService {
           arguments: args,
         ),
         pageBuilder: (context, animation1, animation2) => LicenseScreen(
-          package: ((args as SubrouteArguments).arg as Package),
+          package: (args as Package),
         ),
         transitionsBuilder: _buildTransition,
       ),
@@ -166,6 +170,25 @@ class RouterService {
           arguments: args,
         ),
         pageBuilder: (context, animation1, animation2) => const FAQScreen(),
+        transitionsBuilder: _buildTransition,
+      ),
+      LogsOverviewViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: LogsOverviewViewModel.route,
+          arguments: args,
+        ),
+        pageBuilder: (context, animation1, animation2) =>
+            const LogsOverviewScreen(),
+        transitionsBuilder: _buildTransition,
+      ),
+      LogViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: LogViewModel.route,
+          arguments: args,
+        ),
+        pageBuilder: (context, animation1, animation2) => LogScreen(
+          filename: (args as String),
+        ),
         transitionsBuilder: _buildTransition,
       ),
     };

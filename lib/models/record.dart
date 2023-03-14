@@ -72,7 +72,9 @@ class Record extends ModelBase {
 
   @override
   String getDisplayDescription() {
-    final tn = _viewSettings != null && _viewSettings!.tracknumber
+    final tn = _viewSettings != null &&
+            _viewSettings!.tracknumber &&
+            trackNumber != null
         ? '$trackNumber - '
         : '';
     return "$tn$title";
@@ -99,10 +101,10 @@ class Record extends ModelBase {
     if (_viewSettings == null) {
       return null;
     }
-    var g = _viewSettings!.genre ? genre : '';
+    var g = _viewSettings!.genre && genre != null ? genre : '';
 
     var lang = '';
-    if (_viewSettings!.language) {
+    if (_viewSettings!.language && language != null) {
       lang = "${language?.asFlag().join(' ')}";
     }
 
