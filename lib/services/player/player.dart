@@ -46,7 +46,6 @@ class PlayerService {
   /// Sets the given [audioHandler] and initializes the necessary listeners.
   set audioHandler(MMLAudioHandler audioHandler) {
     _audioHandler = audioHandler;
-    _initializeListeners();
   }
 
   /// Sets the repeat mode to the given [value].
@@ -98,6 +97,7 @@ class PlayerService {
     );
 
     await _audioHandler.playRecord(record);
+    initializeListeners();
   }
 
   /// Pauses the playback.
@@ -150,7 +150,7 @@ class PlayerService {
   }
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
-  _initializeListeners() {
+  initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
         if (_isSeeking) {

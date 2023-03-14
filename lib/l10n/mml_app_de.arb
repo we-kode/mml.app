@@ -83,5 +83,8 @@
   "showTrackNumber": "Tracknummer",
   "faqAddFavoritesDescription": "Es können mehrere Ordner angelegt werden, wo Aufnahmen abgespeichert werden. Dazu auf das Plussymbol in der 'Gespeicherte Titel' Ansicht unten rechts klicken und einen Namen für den Ordner angeben. Aufnahmen können gespeichert werden durch gedrückt halten auf einer Aufnahme in der Liste. Es erscheint die Möglichkeit mehrere Elemente gleichzeitig auszuwählen. Oben rechts auf den Stern drücken und dann den Ordner auswählen in dem man die Aufnamen speichern will. Die aktuell abgespielte Aufnahme kann im Player unten rechts gespeichert werden.",
   "faqRemoveFavorites": "Wie lösche ich gespeicherte Aufnahmen?",
-  "faqRemoveFavoritesDescription": "Um eine oder mehrere gespeicherte Aufnahmen zu entfernen, eine Aufnahme oder den ganzen Ordner in der Liste gedrückt halten. Es erscheint eine Möglichkeit mehrere Elemente auszuwählen. Oben rechts auf den Mülleimersymbol drücken, um die ausgewählten Elemente zu entfernen."
+  "faqRemoveFavoritesDescription": "Um eine oder mehrere gespeicherte Aufnahmen zu entfernen, eine Aufnahme oder den ganzen Ordner in der Liste gedrückt halten. Es erscheint eine Möglichkeit mehrere Elemente auszuwählen. Oben rechts auf den Mülleimersymbol drücken, um die ausgewählten Elemente zu entfernen.",
+  "development": "Entwicklung",
+  "clearLogs": "Logs löschen",
+  "showLogs": "Logs anzeigen"
 }

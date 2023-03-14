@@ -4,10 +4,12 @@ import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
+import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:mml_app/components/delete_dialog.dart';
@@ -135,5 +137,16 @@ class SettingsViewModel extends ChangeNotifier {
   Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
     notifyListeners();
+  }
+
+  Future clearLogs() async {
+    await Logging.clear();
+  }
+
+  void showLogs() {
+    _routerService.pushNestedRoute(
+      LogsOverviewViewModel.route,
+      arguments: SubrouteArguments(),
+    );
   }
 }

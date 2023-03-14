@@ -402,14 +402,20 @@ class _AsyncListViewState extends State<AsyncListView> {
               _take = _initialTake + _offsetDelta;
 
               Future.microtask(() {
-                _loadData(showLoadingOverlay: false);
+                _loadData(
+                  showLoadingOverlay: false,
+                  subfilter: widget.subfilter?.filter,
+                );
               });
             } else if (beginNotReached && loadPreviuousIndexReached) {
               _offset = _offset - _offsetDelta;
               _take = _initialTake + _offsetDelta;
 
               Future.microtask(() {
-                _loadData(showLoadingOverlay: false);
+                _loadData(
+                  showLoadingOverlay: false,
+                  subfilter: widget.subfilter?.filter,
+                );
               });
             }
 
@@ -471,14 +477,15 @@ class _AsyncListViewState extends State<AsyncListView> {
     // group is a new one and the predecessor has another group
     if (index == 0 ||
         (itemGroup != _actualGroup &&
-            _items![index - 1]?.getGroup(context) != itemGroup)) {
+            _items![index - 1]?.getGroup(context) != itemGroup) ||
+        _items![index - 1]?.getGroup(context) != itemGroup) {
       _actualGroup = itemGroup;
       return Column(
         children: [
           Chip(
             shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
-                Radius.circular(5),
+                Radius.circular(10),
               ),
             ),
             label: Text(
