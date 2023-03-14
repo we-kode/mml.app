@@ -97,7 +97,7 @@ class PlayerService {
     );
 
     await _audioHandler.playRecord(record);
-    _initializeListeners();
+    initializeListeners();
   }
 
   /// Pauses the playback.
@@ -150,7 +150,7 @@ class PlayerService {
   }
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
-  _initializeListeners() {
+  initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
         if (_isSeeking) {

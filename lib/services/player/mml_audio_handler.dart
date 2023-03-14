@@ -107,22 +107,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<void> play() => _player!.play();
 
   @override
-  Future<void> pause() async {
-    Logging.logInfo(
-      (MMLAudioHandler).toString(),
-      "pause",
-      "------ Paused pressed ------",
-    );
-    _player!.pause();
-  }
+  Future<void> pause() => _player!.pause();
 
   @override
   Future<void> stop() async {
-    Logging.logInfo(
-      (MMLAudioHandler).toString(),
-      "Stop",
-      "------ Stop pressed ------",
-    );
     await _player!.stop();
     await _player!.dispose();
     playbackState.add(
@@ -138,11 +126,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> onNotificationDeleted() async {
-    Logging.logInfo(
-      (MMLAudioHandler).toString(),
-      "onNotificationDeleted",
-      "------ Notification Deleted ------",
-    );
     await _player!.stop();
   }
 
@@ -151,21 +134,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> skipToNext() async {
-    Logging.logInfo(
-      (MMLAudioHandler).toString(),
-      "skipToNext",
-      "------ Next pressed ------",
-    );
     await _skipTo("next");
   }
 
   @override
   Future<void> skipToPrevious() async {
-    Logging.logInfo(
-      "MMLAudioHandler",
-      "skipToPrevious",
-      "------ Previous pressed ------",
-    );
     await _skipTo("previous");
   }
 
@@ -187,17 +160,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           "playbackEventStream",
           "Stacktrace: $st",
         );
-        // _handleError(e);
       },
     );
 
     _player!.playerStateStream.listen(
       (event) {
-        Logging.logInfo(
-          "MMLAudioHandler",
-          "playerStateStream",
-          "${event.processingState}",
-        );
         if (event.processingState == ProcessingState.completed) {
           skipToNext();
         }
@@ -247,14 +214,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Handles errors during playback and refreshes the token if necessary.
-  Future<void> _handleError(Object error) async {
+  Future<bool> _handleError(Object error) async {
     try {
       await _clientService.refreshToken();
-      await _player!.stop();
-      await _player!.dispose();
-      _player = null;
-      _initPlayer();
-      await _setPlayerSource(isRetry: true);
+      return await _setPlayerSource(isRetry: true);
     } catch (e) {
       Logging.logError(
         (MMLAudioHandler).toString(),
@@ -262,6 +225,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         "Error $e",
       );
       _errorOnLoadingRecord();
+      return false;
     }
   }
 
@@ -363,6 +327,15 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return false;
     }
 
+    if (isRetry) {
+      await _player!.stop();
+      await _player!.dispose();
+      _player = null;
+      _initPlayer();
+      _player!.seek(Duration.zero);
+      PlayerService.getInstance().initializeListeners();
+    }
+
     if (currentRecord is LocalRecord) {
       File file;
       try {
@@ -377,12 +350,22 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       final cryptKey = await SecureStorageService.getInstance().get(
         SecureStorageService.cryptoKey,
       );
-      _player!.setAudioSource(
-        MMLAudioSource(file, int.parse(cryptKey!)),
-        preload: false,
-      );
-      _isLoading = false;
-      return true;
+
+      try {
+        _player!.setAudioSource(
+          MMLAudioSource(file, int.parse(cryptKey!)),
+          preload: false,
+        );
+        _isLoading = false;
+        return true;
+      } catch (e) {
+        if (isRetry) {
+          _errorOnLoadingRecord();
+          return false;
+        }
+
+        return _setPlayerSource(isRetry: true);
+      }
     }
 
     var baseUrl = await _apiService.getBaseUrl();
@@ -400,16 +383,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _isLoading = false;
     } catch (e) {
-      Logging.logInfo(
-        (MMLAudioHandler).toString(),
-        "_setPlayerSource",
-        "Player: ${_player.toString()}",
-      );
-      Logging.logInfo(
-        (MMLAudioHandler).toString(),
-        "_setPlayerSource",
-        "Current record: $currentRecord",
-      );
       Logging.logError(
         (MMLAudioHandler).toString(),
         "_setPlayerSource",
@@ -420,7 +393,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         return false;
       }
 
-      _handleError(e);
+      return _handleError(e);
     }
 
     return true;
