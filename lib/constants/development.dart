@@ -1,1 +1,1 @@
-const bool isDebugBuild = true;
+const bool isDebugBuild = false;
