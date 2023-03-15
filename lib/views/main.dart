@@ -54,6 +54,7 @@ class MainScreen extends StatelessWidget {
                       backgroundColor: Theme.of(context).bottomAppBarColor,
                       showUnselectedLabels: false,
                       showSelectedLabels: false,
+                      type: BottomNavigationBarType.fixed,
                       currentIndex: vm.selectedIndex,
                       onTap: (index) {
                         if (index == vm.selectedIndex) {

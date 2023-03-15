@@ -16,6 +16,7 @@ import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/log.dart';
 import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
+import 'package:mml_app/view_models/news.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
@@ -29,6 +30,7 @@ import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/log.dart';
 import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
+import 'package:mml_app/views/news.dart';
 import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
@@ -86,7 +88,6 @@ class RouterService {
             appBar: MainViewModel.appBar,
           );
         },
-        transitionsBuilder: _buildTransition,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -110,7 +111,19 @@ class RouterService {
             playlistId: (args is PlaylistArguments) ? args.playlist?.id : null,
           );
         },
-        transitionsBuilder: _buildTransition,
+      ),
+      NewsViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: NewsViewModel.route,
+          arguments: NavigationArguments(
+            FilterAppBar(
+              title: 'information',
+            ),
+          ),
+        ),
+        pageBuilder: (context, animation1, animation2) {
+          return const NewsScreen();
+        },
       ),
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -124,7 +137,6 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) {
           return const SettingsScreen();
         },
-        transitionsBuilder: _buildTransition,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(
         settings: RouteSettings(

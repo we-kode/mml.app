@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/router.dart';
+import 'package:mml_app/view_models/news.dart';
+import 'package:mml_app/view_models/playlists/overview.dart';
+import 'package:mml_app/view_models/records/overview.dart';
+import 'package:mml_app/view_models/settings.dart';
 
 /// View model for the main screen.
 class MainViewModel extends ChangeNotifier {
@@ -39,10 +43,23 @@ class MainViewModel extends ChangeNotifier {
     ),
     BottomNavigationBarItem(
       icon: const Icon(
+        Icons.feed,
+      ),
+      label: locales.information,
+    ),
+    BottomNavigationBarItem(
+      icon: const Icon(
         Icons.settings,
       ),
       label: locales.settings,
     ),
+  ];
+
+  final _routes = [
+    RecordsViewModel.route,
+    PlaylistViewModel.route,
+    NewsViewModel.route,
+    SettingsViewModel.route,
   ];
 
   /// Initializes the view model.
@@ -73,7 +90,7 @@ class MainViewModel extends ChangeNotifier {
 
   /// Loads the selected page of the navigation.
   void loadPage(int index) async {
-    var route = _routerService.getNestedRoutes().keys.elementAt(index);
+    var route = _routes.elementAt(index);
     await _routerService.pushNestedRoute(route);
   }
 }
