@@ -58,14 +58,6 @@ class NewsScreen extends StatelessWidget {
                   pullToRefreshController.endRefreshing();
                 }
               },
-              shouldOverrideUrlLoading:
-                          (controller, navigationAction) async {
-                        var uri = navigationAction.request.url!;
-
-                        
-
-                        return NavigationActionPolicy.ALLOW;
-                      },
               onReceivedServerTrustAuthRequest: (controller, challenge) async {
                 return ServerTrustAuthResponse(
                   action: kDebugMode
