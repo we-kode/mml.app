@@ -88,6 +88,7 @@ class RouterService {
             appBar: MainViewModel.appBar,
           );
         },
+        transitionDuration: Duration.zero,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -111,6 +112,7 @@ class RouterService {
             playlistId: (args is PlaylistArguments) ? args.playlist?.id : null,
           );
         },
+        transitionDuration: Duration.zero,
       ),
       NewsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -124,6 +126,7 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) {
           return const NewsScreen();
         },
+        transitionDuration: Duration.zero,
       ),
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -137,6 +140,7 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) {
           return const SettingsScreen();
         },
+        transitionDuration: Duration.zero,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(
         settings: RouteSettings(

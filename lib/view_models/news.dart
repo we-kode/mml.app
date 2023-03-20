@@ -11,6 +11,8 @@ class NewsViewModel extends ChangeNotifier {
 
   final InAppWebViewSettings settings = InAppWebViewSettings(
     geolocationEnabled: false,
+    cacheEnabled: false,
+    clearCache: true,
   );
 
   /// Initialize the view model.
