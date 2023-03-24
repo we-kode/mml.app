@@ -120,16 +120,6 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
   /// Returns the selected index for the bottom navigation bar based on the
   /// passed [route] index in the nested route list.
   int getSelectedIndex(Route? route) {
-    return RouterService.getInstance()
-        .getNestedRoutes()
-        .keys
-        .toList()
-        .indexOf(
-          route?.settings.name ?? "",
-        )
-        .clamp(
-          0,
-          vm.navItems.length - 1,
-        );
+    return RouterService.getInstance().getRootRoute(route?.settings.name ?? "");
   }
 }

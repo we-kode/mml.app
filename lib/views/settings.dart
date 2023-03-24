@@ -173,33 +173,6 @@ class SettingsScreen extends StatelessWidget {
                   leading: const Icon(Icons.new_releases),
                   title: Text(vm.version),
                 ),
-                // ListTile(
-                //   leading: const Icon(Icons.key),
-                //   title: Text('show logs'),
-                //   onTap: () async {
-                //     final file = await _localFile;
-
-                //     // Read the file
-                //     final contents = await file.readAsString();
-                //     showDialog(
-                //       context: context,
-                //       builder: (BuildContext context) {
-                //         return AlertDialog(
-                //             title: Text("Logs"),
-                //             content: Text(contents),
-                //             actions: [
-                //               TextButton(
-                //                 child: Text("Clear and Cancel"),
-                //                 onPressed: () {
-                //                   FlutterLogs.clearLogs();
-                //                   Navigator.of(context).pop();
-                //                 },
-                //               )
-                //             ]);
-                //       },
-                //     );
-                //   },
-                // ),
               ],
             );
           },

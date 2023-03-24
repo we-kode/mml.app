@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
+import 'package:mml_app/arguments/notes.dart';
 import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
@@ -16,7 +18,8 @@ import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/log.dart';
 import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/news.dart';
+import 'package:mml_app/view_models/notes/note.dart';
+import 'package:mml_app/view_models/notes/notes.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
@@ -30,12 +33,14 @@ import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/log.dart';
 import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
-import 'package:mml_app/views/news.dart';
+import 'package:mml_app/views/notes/note.dart';
+import 'package:mml_app/views/notes/notes.dart';
 import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
 import 'package:mml_app/views/server_connection.dart';
 import 'package:mml_app/views/settings.dart';
+import 'package:path/path.dart';
 
 /// Service that holds all routing information of the navigators of the app.
 class RouterService {
@@ -52,6 +57,21 @@ class RouterService {
   static RouterService getInstance() {
     return _instance;
   }
+
+  /// Maps routes and subroutes to their root route.
+  final Map<String, int> _rootRoutes = {
+    RecordsViewModel.route: 0,
+    PlaylistViewModel.route: 1,
+    NotesViewModel.route: 2,
+    NoteViewModel.route: 2,
+    SettingsViewModel.route: 3,
+    ServerConnectionViewModel.route: 3,
+    LicensesOverviewViewModel.route: 3,
+    LicenseViewModel.route: 3,
+    FAQViewModel.route: 3,
+    LogsOverviewViewModel.route: 3,
+    LogViewModel.route: 3,
+  };
 
   /// Routes of the main navigator.
   Map<String, Widget Function(BuildContext)> get routes {
@@ -89,6 +109,7 @@ class RouterService {
           );
         },
         transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       PlaylistViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -113,20 +134,54 @@ class RouterService {
           );
         },
         transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
-      NewsViewModel.route: PageRouteBuilder(
+      NotesViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
-          name: NewsViewModel.route,
-          arguments: NavigationArguments(
-            FilterAppBar(
-              title: 'information',
+          name: NotesViewModel.route,
+          arguments: NotesArguments(
+            appBar: FilterAppBar(
+              title: (args is NotesArguments) && args.info != null
+                  ? (args.info?.isFolder ?? false)
+                      ? args.info!.path!
+                      : basenameWithoutExtension(args.info!.path!)
+                  : 'information',
+              enableBack: (args is NotesArguments) && args.info != null,
             ),
+            info: (args is NotesArguments) ? args.info : null,
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
-          return const NewsScreen();
+          return NotesScreen(
+            appBar: MainViewModel.appBar,
+            path: (args is NotesArguments) ? args.info!.path! : "",
+          );
         },
         transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+      NoteViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: NoteViewModel.route,
+          arguments: NotesArguments(
+            appBar: FilterAppBar(
+              title: (args is NotesArguments) && args.info != null
+                  ? (args.info?.isFolder ?? false)
+                      ? args.info!.path!
+                      : withoutExtension(args.info!.path!)
+                  : 'information',
+              enableBack: (args is NotesArguments) && args.info != null,
+            ),
+            info: (args is NotesArguments) ? args.info : null,
+          ),
+        ),
+        pageBuilder: (context, animation1, animation2) {
+          return NoteScreen(
+            path: (args is NotesArguments) ? args.info!.path! : "",
+          );
+        },
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -141,6 +196,7 @@ class RouterService {
           return const SettingsScreen();
         },
         transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       ServerConnectionViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -149,7 +205,8 @@ class RouterService {
         ),
         pageBuilder: (context, animation1, animation2) =>
             const ServerConnectionScreen(),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       InformationViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -159,7 +216,8 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) => InformationScreen(
           url: ((args as SubrouteArguments).arg as String),
         ),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       LicensesOverviewViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -168,7 +226,8 @@ class RouterService {
         ),
         pageBuilder: (context, animation1, animation2) =>
             const LicensesOverviewScreen(),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       LicenseViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -178,7 +237,8 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) => LicenseScreen(
           package: (args as Package),
         ),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       FAQViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -186,7 +246,8 @@ class RouterService {
           arguments: args,
         ),
         pageBuilder: (context, animation1, animation2) => const FAQScreen(),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       LogsOverviewViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -195,7 +256,8 @@ class RouterService {
         ),
         pageBuilder: (context, animation1, animation2) =>
             const LogsOverviewScreen(),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
       LogViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
@@ -205,7 +267,8 @@ class RouterService {
         pageBuilder: (context, animation1, animation2) => LogScreen(
           filename: (args as String),
         ),
-        transitionsBuilder: _buildTransition,
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
       ),
     };
   }
@@ -253,14 +316,8 @@ class RouterService {
     return state;
   }
 
-  /// Creates a slide transition for the animation on route changes.
-  SlideTransition _buildTransition(_, a, __, c) {
-    return SlideTransition(
-      position: Tween<Offset>(
-        begin: const Offset(1.0, 0.0),
-        end: Offset.zero,
-      ).animate(a),
-      child: c,
-    );
+  /// Returns the root route index.
+  int getRootRoute(String route) {
+    return _rootRoutes[route] ?? _rootRoutes.values.reduce(max);
   }
 }
