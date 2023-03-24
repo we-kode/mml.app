@@ -57,7 +57,7 @@ dependencies:
   percent_indicator: ^4.2.2
   package_info_plus: ^3.0.2
   calendar_date_picker2: ^0.3.3
-  url_launcher: ^6.1.9
+  url_launcher: ^6.1.10
   flutter_logs: ^2.1.10
   flutter_markdown: ^0.6.14
   
