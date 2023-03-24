@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 /// Shows informations from the passed url in a webview.
 class InformationScreen extends StatelessWidget {
@@ -12,11 +12,10 @@ class InformationScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    final controller = WebViewController();
-    controller.loadRequest(Uri.parse(url));
-
-    return WebViewWidget(
-      controller: controller,
+    return InAppWebView(
+      initialUrlRequest: URLRequest(
+        url: WebUri(url),
+      ),
     );
   }
 }

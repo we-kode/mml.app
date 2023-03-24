@@ -33,7 +33,7 @@ class SettingsViewModel extends ChangeNotifier {
   final DBService _dbService = DBService.getInstance();
 
   /// Link of the privacy policy.
-  final String privacyLink = "";
+  final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
 
   /// Link of the legal informations.
   final String legalInfoLink = "";

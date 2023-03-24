@@ -66,7 +66,7 @@
   "folder":"Folder",
   "language": "Language",
   "notReachableRecord": "The record could not be loaded! Please retry later.",
-  "sendFeedback": "Send feedback",
+  "sendFeedback": "Send feedback/Report problem",
   "display": "Display",
   "displayDescription": "Which elements should be displayed in the list of records?",
   "showGenre": "Genre",
@@ -79,5 +79,6 @@
   "faqRemoveFavoritesDescription": "To remove one or more saved records, press and hold a record or the entire folder in the list. A possibility to select several elements appears. Press the trash can icon at the top right to remove the selected items.",
   "development": "Development",
   "clearLogs": "Clear logs",
-  "showLogs": "Show logs"
+  "showLogs": "Show logs",
+  "information": "Information"
 }
