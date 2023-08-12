@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/router.dart';
-import 'package:mml_app/view_models/notes/notes.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/settings.dart';
@@ -43,12 +42,6 @@ class MainViewModel extends ChangeNotifier {
     ),
     BottomNavigationBarItem(
       icon: const Icon(
-        Icons.description,
-      ),
-      label: locales.information,
-    ),
-    BottomNavigationBarItem(
-      icon: const Icon(
         Icons.settings,
       ),
       label: locales.settings,
@@ -59,7 +52,6 @@ class MainViewModel extends ChangeNotifier {
   final _routes = [
     RecordsViewModel.route,
     PlaylistViewModel.route,
-    NotesViewModel.route,
     SettingsViewModel.route,
   ];
 
