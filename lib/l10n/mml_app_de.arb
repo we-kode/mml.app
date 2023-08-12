@@ -86,6 +86,5 @@
   "faqRemoveFavoritesDescription": "Um eine oder mehrere gespeicherte Aufnahmen zu entfernen, eine Aufnahme oder den ganzen Ordner in der Liste gedrückt halten. Es erscheint eine Möglichkeit mehrere Elemente auszuwählen. Oben rechts auf den Mülleimersymbol drücken, um die ausgewählten Elemente zu entfernen.",
   "development": "Entwicklung",
   "clearLogs": "Logs löschen",
-  "showLogs": "Logs anzeigen",
-  "information": "Information"
+  "showLogs": "Logs anzeigen"
 }

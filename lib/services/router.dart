@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
-import 'package:mml_app/arguments/notes.dart';
 import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
@@ -18,8 +17,6 @@ import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/log.dart';
 import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
-import 'package:mml_app/view_models/notes/note.dart';
-import 'package:mml_app/view_models/notes/notes.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
 import 'package:mml_app/view_models/register.dart';
@@ -33,14 +30,11 @@ import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/log.dart';
 import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
-import 'package:mml_app/views/notes/note.dart';
-import 'package:mml_app/views/notes/notes.dart';
 import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
 import 'package:mml_app/views/register.dart';
 import 'package:mml_app/views/server_connection.dart';
 import 'package:mml_app/views/settings.dart';
-import 'package:path/path.dart';
 
 /// Service that holds all routing information of the navigators of the app.
 class RouterService {
@@ -62,15 +56,13 @@ class RouterService {
   final Map<String, int> _rootRoutes = {
     RecordsViewModel.route: 0,
     PlaylistViewModel.route: 1,
-    NotesViewModel.route: 2,
-    NoteViewModel.route: 2,
-    SettingsViewModel.route: 3,
-    ServerConnectionViewModel.route: 3,
-    LicensesOverviewViewModel.route: 3,
-    LicenseViewModel.route: 3,
-    FAQViewModel.route: 3,
-    LogsOverviewViewModel.route: 3,
-    LogViewModel.route: 3,
+    SettingsViewModel.route: 2,
+    ServerConnectionViewModel.route: 2,
+    LicensesOverviewViewModel.route: 2,
+    LicenseViewModel.route: 2,
+    FAQViewModel.route: 2,
+    LogsOverviewViewModel.route: 2,
+    LogViewModel.route: 2,
   };
 
   /// Routes of the main navigator.
@@ -131,53 +123,6 @@ class RouterService {
           return PlaylistScreen(
             appBar: MainViewModel.appBar,
             playlistId: (args is PlaylistArguments) ? args.playlist?.id : null,
-          );
-        },
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-      NotesViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: NotesViewModel.route,
-          arguments: NotesArguments(
-            appBar: FilterAppBar(
-              title: (args is NotesArguments) && args.info != null
-                  ? (args.info?.isFolder ?? false)
-                      ? args.info!.path!
-                      : basenameWithoutExtension(args.info!.path!)
-                  : 'information',
-              enableBack: (args is NotesArguments) && args.info != null,
-            ),
-            info: (args is NotesArguments) ? args.info : null,
-          ),
-        ),
-        pageBuilder: (context, animation1, animation2) {
-          return NotesScreen(
-            appBar: MainViewModel.appBar,
-            path: (args is NotesArguments) ? args.info!.path! : "",
-          );
-        },
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-      NoteViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: NoteViewModel.route,
-          arguments: NotesArguments(
-            appBar: FilterAppBar(
-              title: (args is NotesArguments) && args.info != null
-                  ? (args.info?.isFolder ?? false)
-                      ? args.info!.path!
-                      : withoutExtension(args.info!.path!)
-                  : 'information',
-              enableBack: (args is NotesArguments) && args.info != null,
-            ),
-            info: (args is NotesArguments) ? args.info : null,
-          ),
-        ),
-        pageBuilder: (context, animation1, animation2) {
-          return NoteScreen(
-            path: (args is NotesArguments) ? args.info!.path! : "",
           );
         },
         transitionDuration: Duration.zero,

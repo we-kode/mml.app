@@ -138,8 +138,6 @@ class FilterAppBarState extends State<FilterAppBar> {
         return locales.records;
       case "playlist":
         return locales.playlist;
-      case "information":
-        return locales.information;
       case "settings":
         return locales.settings;
       default:
