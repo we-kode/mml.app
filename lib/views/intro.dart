@@ -33,8 +33,7 @@ class IntroScreen extends StatelessWidget {
                 skip: Text(vm.locales.skip),
                 onDone: vm.finish,
                 onSkip: vm.finish,
-                isTopSafeArea: true,
-                isBottomSafeArea: true,
+                safeAreaList: const [true, true, true, true],
               );
             },
           );
