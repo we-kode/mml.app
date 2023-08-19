@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
@@ -13,6 +14,7 @@ import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
+import 'package:mml_app/services/player/mml_stream_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -354,6 +356,24 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       try {
         _player!.setAudioSource(
           MMLAudioSource(file, int.parse(cryptKey!)),
+          preload: false,
+        );
+        _isLoading = false;
+        return true;
+      } catch (e) {
+        if (isRetry) {
+          _errorOnLoadingRecord();
+          return false;
+        }
+
+        return _setPlayerSource(isRetry: true);
+      }
+    }
+
+    if (currentRecord is Livestream) {
+      try {
+        _player!.setAudioSource(
+          MMLStreamSource(currentRecord!.recordId!),
           preload: false,
         );
         _isLoading = false;

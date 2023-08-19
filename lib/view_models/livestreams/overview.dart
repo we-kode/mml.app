@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:mml_app/services/livestreams.dart';
+import 'package:mml_app/services/player/player.dart';
 
 class LivestreamsViewModel extends ChangeNotifier {
   /// Route of the plalist screen.
@@ -31,11 +33,14 @@ class LivestreamsViewModel extends ChangeNotifier {
     int? take,
     dynamic subfilter,
   }) async {
-    return _service.get(
+    var x =  _service.get(
       filter,
       offset,
       take,
     );
+
+
+    return x;
   }
 
   /// Plays one stream.
@@ -45,13 +50,12 @@ class LivestreamsViewModel extends ChangeNotifier {
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
-    // TODO
-    // await PlayerService.getInstance().play(
-    //   context,
-    //   record as Record,
-    //   filter,
-    //   subfilter,
-    // );
+    await PlayerService.getInstance().play(
+      context,
+      record as Livestream,
+      filter,
+      subfilter,
+    );
   }
 
 }

@@ -36,7 +36,7 @@ Map<String, dynamic> _$RecordToJson(Record instance) {
   writeNotNull('title', instance.title);
   writeNotNull('trackNumber', instance.trackNumber);
   writeNotNull('date', instance.date?.toIso8601String());
-  val['duration'] = instance.duration;
+  writeNotNull('duration', instance.duration);
   writeNotNull('artist', instance.artist);
   writeNotNull('genre', instance.genre);
   writeNotNull('album', instance.album);

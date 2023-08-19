@@ -47,7 +47,7 @@ class PlayerSheetState extends State<PlayerSheet>
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarTheme.color!,
+            color: Theme.of(context).bottomAppBarColor,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
@@ -111,7 +111,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return Text(
-                          "${state.currentSeekPosition.asFormattedDuration()}/${state.currentReocrd?.duration.asFormattedDuration()}",
+                          "${state.currentSeekPosition.asFormattedDuration()}/${state.currentReocrd?.duration?.asFormattedDuration()}",
                           textAlign: TextAlign.right,
                           style: Theme.of(context).textTheme.bodySmall,
                         );
