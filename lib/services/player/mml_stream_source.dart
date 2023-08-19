@@ -30,6 +30,10 @@ class MMLStreamSource extends StreamAudioSource {
     // );
   }
 
+  // TODO: streamid in recordid umwandeln
+  // dislayname in title
+  // sonst automatisches generieren von json wird problematisch
+
   // TODO: Idee
   /// Im Constructor socketconnection aufbauen
   /// socketconnection füllt einen buffer immer wieder von neuem auf
