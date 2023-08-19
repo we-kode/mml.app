@@ -7,12 +7,11 @@ part of 'livestream.dart';
 // **************************************************************************
 
 Livestream _$LivestreamFromJson(Map<String, dynamic> json) => Livestream(
-      livestreamId: json['livestreamId'] as String?,
-      displayName: json['displayName'] as String?,
+      recordId: json['recordId'] as String?,
+      title: json['title'] as String?,
     )
       ..isDeletable = json['isDeletable'] as bool?
       ..isSelectable = json['isSelectable'] as bool?
-      ..title = json['displayName'] as String?
       ..trackNumber = json['trackNumber'] as int?
       ..date =
           json['date'] == null ? null : DateTime.parse(json['date'] as String)
@@ -34,6 +33,7 @@ Map<String, dynamic> _$LivestreamToJson(Livestream instance) {
 
   writeNotNull('isDeletable', instance.isDeletable);
   writeNotNull('isSelectable', instance.isSelectable);
+  writeNotNull('recordId', instance.recordId);
   writeNotNull('title', instance.title);
   writeNotNull('trackNumber', instance.trackNumber);
   writeNotNull('date', instance.date?.toIso8601String());
@@ -43,7 +43,5 @@ Map<String, dynamic> _$LivestreamToJson(Livestream instance) {
   writeNotNull('album', instance.album);
   writeNotNull('language', instance.language);
   writeNotNull('checksum', instance.checksum);
-  writeNotNull('livestreamId', instance.livestreamId);
-  writeNotNull('displayName', instance.displayName);
   return val;
 }

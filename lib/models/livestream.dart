@@ -7,31 +7,15 @@ part 'livestream.g.dart';
 /// Livestream model that holds all information of a livestream.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class Livestream extends Record {
-  /// Id of the livestream.
-  final String? livestreamId;
-
-  /// Name to be displayed.
-  String? displayName;
-
   /// Initializes the model.
   Livestream({
-    this.livestreamId,
-    this.displayName,
-  }) : super(recordId: livestreamId, checksum: '', title: displayName);
+    required super.recordId,
+    super.title,
+  }) : super(checksum: '');
 
   /// Converts a json object/map to the model.
   factory Livestream.fromJson(Map<String, dynamic> json) =>
       _$LivestreamFromJson(json);
-
-  @override
-  String getDisplayDescription() {
-    return displayName ?? "";
-  }
-
-  @override
-  getIdentifier() {
-    return livestreamId ?? "";
-  }
 
   @override
   String? getSubtitle(BuildContext context) {
