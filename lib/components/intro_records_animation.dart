@@ -31,7 +31,7 @@ class IntroRecordsAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  isDarkMode ? Theme.of(context).bottomAppBarColor : Theme.of(context).colorScheme.primary,
+                  isDarkMode ? Theme.of(context).bottomAppBarTheme.color! : Theme.of(context).colorScheme.primary,
                   BlendMode.srcIn,
                 );
               }

@@ -47,7 +47,7 @@ class PlayerSheetState extends State<PlayerSheet>
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
+            color: Theme.of(context).bottomAppBarTheme.color!,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
@@ -98,7 +98,7 @@ class PlayerSheetState extends State<PlayerSheet>
                           child: TextScroll(
                             state.currentReocrd?.title ??
                                 AppLocalizations.of(context)!.unknown,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.titleMedium,
                             velocity: const Velocity(
                               pixelsPerSecond: Offset(15, 0),
                             ),

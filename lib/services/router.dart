@@ -14,6 +14,7 @@ import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
+import 'package:mml_app/view_models/livestreams/overview.dart';
 import 'package:mml_app/view_models/log.dart';
 import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
@@ -27,6 +28,7 @@ import 'package:mml_app/views/information.dart';
 import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
+import 'package:mml_app/views/livestreams/overview.dart';
 import 'package:mml_app/views/log.dart';
 import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
@@ -56,13 +58,14 @@ class RouterService {
   final Map<String, int> _rootRoutes = {
     RecordsViewModel.route: 0,
     PlaylistViewModel.route: 1,
-    SettingsViewModel.route: 2,
-    ServerConnectionViewModel.route: 2,
-    LicensesOverviewViewModel.route: 2,
-    LicenseViewModel.route: 2,
-    FAQViewModel.route: 2,
-    LogsOverviewViewModel.route: 2,
-    LogViewModel.route: 2,
+    LivestreamsViewModel.route: 2,
+    SettingsViewModel.route: 3,
+    ServerConnectionViewModel.route: 3,
+    LicensesOverviewViewModel.route: 3,
+    LicenseViewModel.route: 3,
+    FAQViewModel.route: 3,
+    LogsOverviewViewModel.route: 3,
+    LogViewModel.route: 3,
   };
 
   /// Routes of the main navigator.
@@ -123,6 +126,23 @@ class RouterService {
           return PlaylistScreen(
             appBar: MainViewModel.appBar,
             playlistId: (args is PlaylistArguments) ? args.playlist?.id : null,
+          );
+        },
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+      LivestreamsViewModel.route: PageRouteBuilder(
+        settings: RouteSettings(
+          name: LivestreamsViewModel.route,
+          arguments: NavigationArguments(
+            FilterAppBar(
+              title: 'livestreams',
+            ),
+          ),
+        ),
+        pageBuilder: (context, animation1, animation2) {
+          return LivestreamScreen(
+            appBar: MainViewModel.appBar,
           );
         },
         transitionDuration: Duration.zero,

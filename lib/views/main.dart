@@ -51,7 +51,7 @@ class MainScreen extends StatelessWidget {
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
                     return BottomNavigationBar(
-                      backgroundColor: Theme.of(context).bottomAppBarColor,
+                      backgroundColor: Theme.of(context).bottomAppBarTheme.color,
                       showUnselectedLabels: false,
                       showSelectedLabels: false,
                       type: BottomNavigationBarType.fixed,

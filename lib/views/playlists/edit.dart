@@ -35,9 +35,9 @@ class PlaylistEditDialog extends StatelessWidget {
             future: vm.init(context, playlistId),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (!snapshot.hasData) {
-                return Column(
+                return const Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     CircularProgressIndicator(),
                   ],
                 );
