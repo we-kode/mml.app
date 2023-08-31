@@ -79,5 +79,6 @@
   "faqRemoveFavoritesDescription": "To remove one or more saved records, press and hold a record or the entire folder in the list. A possibility to select several elements appears. Press the trash can icon at the top right to remove the selected items.",
   "development": "Development",
   "clearLogs": "Clear logs",
-  "showLogs": "Show logs"
+  "showLogs": "Show logs",
+  "livestreams": "Livestreams"
 }

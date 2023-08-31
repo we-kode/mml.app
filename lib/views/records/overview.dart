@@ -41,7 +41,7 @@ class RecordsScreen extends StatelessWidget {
                 isFolderView: vm.isFolderView,
               ),
               navState: appBar?.navigationState,
-              activeItem: PlayerService.getInstance().playerState?.currentReocrd,
+              activeItem: PlayerService.getInstance().playerState?.currentRecord,
               onActiveItemChanged: PlayerService.getInstance().onRecordChanged.stream,
               moveUp: (subFilter) {
                 vm.moveFolderUp(subFilter as ID3TagFilter);
