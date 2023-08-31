@@ -43,7 +43,7 @@ class PlaylistScreen extends StatelessWidget {
               title: vm.locales.playlist,
               selectedItemsAction: appBar?.listAction,
               filter: appBar?.filter,
-              activeItem: PlayerService.getInstance().playerState?.currentReocrd,
+              activeItem: PlayerService.getInstance().playerState?.currentRecord,
               onActiveItemChanged: PlayerService.getInstance().onRecordChanged.stream,
               onMultiSelect: (selectedItems) async {
                 var shouldDelete = await showDeleteDialog(context);

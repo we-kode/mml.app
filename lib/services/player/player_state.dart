@@ -12,7 +12,7 @@ class PlayerState extends ChangeNotifier {
   PlayerState(this._audioHandler);
 
   /// The current played record.
-  Record? get currentReocrd => _audioHandler.currentRecord;
+  Record? get currentRecord => _audioHandler.currentRecord;
 
   /// The current sekk position of the played record.
   double get currentSeekPosition => _audioHandler.currentSeekPosition;

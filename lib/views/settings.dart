@@ -31,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
                   visualDensity: const VisualDensity(vertical: -4),
                   title: Text(
                     vm.locales.display,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   subtitle: Text(vm.locales.displayDescription),
                 ),
@@ -87,7 +87,7 @@ class SettingsScreen extends StatelessWidget {
                   visualDensity: const VisualDensity(vertical: -4),
                   title: Text(
                     vm.locales.settings,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 ListTile(
@@ -98,12 +98,12 @@ class SettingsScreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(
                     Icons.app_blocking,
-                    color: Theme.of(context).errorColor,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                   title: Text(
                     vm.locales.removeRegistration,
                     style: TextStyle(
-                      color: Theme.of(context).errorColor,
+                      color: Theme.of(context).colorScheme.error,
                     ),
                   ),
                   onTap: vm.removeRegistration,
@@ -116,7 +116,7 @@ class SettingsScreen extends StatelessWidget {
                     visualDensity: const VisualDensity(vertical: -4),
                     title: Text(
                       vm.locales.development,
-                      style: Theme.of(context).textTheme.subtitle2,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
                 if (isDebugBuild)
@@ -138,7 +138,7 @@ class SettingsScreen extends StatelessWidget {
                   visualDensity: const VisualDensity(vertical: -4),
                   title: Text(
                     vm.locales.info,
-                    style: Theme.of(context).textTheme.subtitle2,
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 ListTile(

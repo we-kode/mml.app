@@ -26,7 +26,7 @@ class Record extends ModelBase {
   DateTime? date;
 
   /// The duration of the record in milliseconds.
-  double duration;
+  double? duration;
 
   /// The artists or null if no one provided.
   String? artist;
@@ -93,7 +93,7 @@ class Record extends ModelBase {
 
   @override
   String? getMetadata(BuildContext context) {
-    return duration.asFormattedDuration();
+    return duration?.asFormattedDuration();
   }
 
   @override
@@ -113,6 +113,6 @@ class Record extends ModelBase {
 
   @override
   String? getGroup(BuildContext context) {
-    return '${DateFormat.yMd().format(date!)} - ${date!.weekdayName()}';
+    return '${DateFormat.yMd().format(date??DateTime.now())} - ${(date??DateTime.now()).weekdayName()}';
   }
 }

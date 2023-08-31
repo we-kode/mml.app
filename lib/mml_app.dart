@@ -23,8 +23,12 @@ class MMLApp extends StatelessWidget {
       scaffoldMessengerKey: MessengerService.getInstance().snackbarKey,
 
       // Configure theme data.
-      theme: ThemeData(colorScheme: lightColorScheme),
-      darkTheme: ThemeData(colorScheme: darkColorScheme),
+      theme: ThemeData(
+        colorScheme: lightColorScheme,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: darkColorScheme,
+      ),
       themeMode: ThemeMode.system,
 
       // Configure the main navigator of the app.

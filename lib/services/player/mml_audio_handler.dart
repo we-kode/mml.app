@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
+import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
@@ -179,16 +180,24 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     List<MediaControl> controls = [];
     List<int> compatIndices = [0, 2];
 
-    if (!_shuffle) {
+    if (!_shuffle && currentRecord is! Livestream) {
       controls.add(MediaControl.skipToPrevious);
       compatIndices = [0, 1, 3];
     }
 
-    controls.addAll([
-      if (playing) MediaControl.pause else MediaControl.play,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-    ]);
+    if (currentRecord is! Livestream) {
+      controls.addAll([
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+        MediaControl.skipToNext,
+      ]);
+    } else {
+      controls.addAll([
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+      ]);
+      compatIndices = [0, 1];
+    }
 
     playbackState.add(
       playbackState.value.copyWith(
@@ -377,8 +386,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         "_setPlayerSource",
         "---- Try to play url: ${baseUrl}media/stream/${currentRecord?.recordId}.mp3 ----",
       );
+      final url = currentRecord is Livestream
+          ? '${baseUrl}media/livestream/stream/${currentRecord!.recordId}'
+          : '${baseUrl}media/stream/${currentRecord!.recordId}.mp3';
       await _player!.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId}.mp3',
+        url,
         headers: headers,
       );
       _isLoading = false;
