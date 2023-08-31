@@ -14,7 +14,6 @@ import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
-import 'package:mml_app/services/player/mml_stream_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -181,16 +180,24 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     List<MediaControl> controls = [];
     List<int> compatIndices = [0, 2];
 
-    if (!_shuffle) {
+    if (!_shuffle && currentRecord is! Livestream) {
       controls.add(MediaControl.skipToPrevious);
       compatIndices = [0, 1, 3];
     }
 
-    controls.addAll([
-      if (playing) MediaControl.pause else MediaControl.play,
-      MediaControl.stop,
-      MediaControl.skipToNext,
-    ]);
+    if (currentRecord is! Livestream) {
+      controls.addAll([
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+        MediaControl.skipToNext,
+      ]);
+    } else {
+      controls.addAll([
+        if (playing) MediaControl.pause else MediaControl.play,
+        MediaControl.stop,
+      ]);
+      compatIndices = [0, 1];
+    }
 
     playbackState.add(
       playbackState.value.copyWith(
@@ -370,24 +377,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       }
     }
 
-    if (currentRecord is Livestream) {
-      try {
-        _player!.setAudioSource(
-          MMLStreamSource(currentRecord!.recordId!),
-          preload: false,
-        );
-        _isLoading = false;
-        return true;
-      } catch (e) {
-        if (isRetry) {
-          _errorOnLoadingRecord();
-          return false;
-        }
-
-        return _setPlayerSource(isRetry: true);
-      }
-    }
-
     var baseUrl = await _apiService.getBaseUrl();
     var headers = await _apiService.getHeaders();
 
@@ -397,8 +386,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         "_setPlayerSource",
         "---- Try to play url: ${baseUrl}media/stream/${currentRecord?.recordId}.mp3 ----",
       );
+      final url = currentRecord is Livestream
+          ? '${baseUrl}media/livestream/stream/${currentRecord!.recordId}'
+          : '${baseUrl}media/stream/${currentRecord!.recordId}.mp3';
       await _player!.setUrl(
-        '${baseUrl}media/stream/${currentRecord!.recordId}.mp3',
+        url,
         headers: headers,
       );
       _isLoading = false;

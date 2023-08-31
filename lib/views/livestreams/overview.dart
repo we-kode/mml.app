@@ -33,7 +33,7 @@ class LivestreamScreen extends StatelessWidget {
             return AsyncListView(
               title: vm.locales.livestreams,
               activeItem:
-                  PlayerService.getInstance().playerState?.currentReocrd,
+                  PlayerService.getInstance().playerState?.currentRecord,
               onActiveItemChanged:
                   PlayerService.getInstance().onRecordChanged.stream,
               loadData: vm.load,

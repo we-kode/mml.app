@@ -180,7 +180,7 @@ class PlayerService {
     _audioHandler.currentSeekPosition = 0;
     _audioHandler.currentRecord = null;
     playerState?.update();
-    onRecordChanged.add(playerState?.currentReocrd);
+    onRecordChanged.add(playerState?.currentRecord);
     playerState = null;
     _controller = null;
   }
