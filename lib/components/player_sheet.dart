@@ -137,12 +137,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
-                            ? Center(
-                                child: SizedBox.fromSize(
-                                  size: const Size(352, 64),
-                                  child: const SoundwaveAnimation(),
-                                ),
-                              )
+                            ? Container()
                             : Text(
                                 state.currentRecord?.artist ??
                                     AppLocalizations.of(context)!.unknown,
@@ -165,7 +160,12 @@ class PlayerSheetState extends State<PlayerSheet>
                       child: Consumer<PlayerState>(
                         builder: (context, state, child) {
                           return state.currentRecord is Livestream
-                              ? Container()
+                              ? Center(
+                                  child: SizedBox.fromSize(
+                                    size: const Size(256, 64),
+                                    child: const SoundwaveAnimation(),
+                                  ),
+                                )
                               : Slider(
                                   value: state.currentSeekPosition,
                                   min: 0,

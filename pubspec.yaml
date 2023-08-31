@@ -46,7 +46,7 @@ dependencies:
   fast_rsa: ^3.5.3
   rive: ^0.11.14
   device_info_plus: ^8.0.0
-  flutter_inappwebview: ^6.0.0-beta.22
+  flutter_inappwebview: 6.0.0-beta.22
   shimmer: ^2.0.0
   just_audio: ^0.9.30
   audio_service: ^0.18.9
