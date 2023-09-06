@@ -140,6 +140,8 @@ class FilterAppBarState extends State<FilterAppBar> {
         return locales.playlist;
       case "settings":
         return locales.settings;
+      case "livestreams":
+        return locales.livestreams;
       default:
         return widget.title;
     }

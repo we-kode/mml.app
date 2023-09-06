@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/components/soundwave_animation.dart';
 import 'package:mml_app/extensions/duration_double.dart';
+import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
@@ -96,9 +98,9 @@ class PlayerSheetState extends State<PlayerSheet>
                           fit: FlexFit.tight,
                           flex: 8,
                           child: TextScroll(
-                            state.currentReocrd?.title ??
+                            state.currentRecord?.title ??
                                 AppLocalizations.of(context)!.unknown,
-                            style: Theme.of(context).textTheme.subtitle1,
+                            style: Theme.of(context).textTheme.titleMedium,
                             velocity: const Velocity(
                               pixelsPerSecond: Offset(15, 0),
                             ),
@@ -110,11 +112,13 @@ class PlayerSheetState extends State<PlayerSheet>
                     const Spacer(),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return Text(
-                          "${state.currentSeekPosition.asFormattedDuration()}/${state.currentReocrd?.duration.asFormattedDuration()}",
-                          textAlign: TextAlign.right,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        );
+                        return state.currentRecord is Livestream
+                            ? const Icon(Icons.sensors)
+                            : Text(
+                                "${state.currentSeekPosition.asFormattedDuration()}/${state.currentRecord?.duration?.asFormattedDuration()}",
+                                textAlign: TextAlign.right,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              );
                       },
                     ),
                   ],
@@ -132,11 +136,13 @@ class PlayerSheetState extends State<PlayerSheet>
                   children: [
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return Text(
-                          state.currentReocrd?.artist ??
-                              AppLocalizations.of(context)!.unknown,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : Text(
+                                state.currentRecord?.artist ??
+                                    AppLocalizations.of(context)!.unknown,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              );
                       },
                     ),
                   ],
@@ -153,25 +159,32 @@ class PlayerSheetState extends State<PlayerSheet>
                     Expanded(
                       child: Consumer<PlayerState>(
                         builder: (context, state, child) {
-                          return Slider(
-                            value: state.currentSeekPosition,
-                            min: 0,
-                            max: state.currentReocrd?.duration ?? 0,
-                            onChanged: (value) {
-                              PlayerService.getInstance().seek(
-                                value,
-                              );
-                            },
-                            onChangeStart: (value) {
-                              PlayerService.getInstance().startSeekDrag();
-                            },
-                            onChangeEnd: (value) {
-                              PlayerService.getInstance().seek(
-                                value,
-                                updatePlayerSeek: true,
-                              );
-                            },
-                          );
+                          return state.currentRecord is Livestream
+                              ? Center(
+                                  child: SizedBox.fromSize(
+                                    size: const Size(256, 64),
+                                    child: const SoundwaveAnimation(),
+                                  ),
+                                )
+                              : Slider(
+                                  value: state.currentSeekPosition,
+                                  min: 0,
+                                  max: state.currentRecord?.duration ?? 0,
+                                  onChanged: (value) {
+                                    PlayerService.getInstance().seek(
+                                      value,
+                                    );
+                                  },
+                                  onChangeStart: (value) {
+                                    PlayerService.getInstance().startSeekDrag();
+                                  },
+                                  onChangeEnd: (value) {
+                                    PlayerService.getInstance().seek(
+                                      value,
+                                      updatePlayerSeek: true,
+                                    );
+                                  },
+                                );
                         },
                       ),
                     ),
@@ -188,22 +201,24 @@ class PlayerSheetState extends State<PlayerSheet>
                   children: [
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 24,
-                            height: 24,
-                          ),
-                          padding: EdgeInsets.zero,
-                          onPressed: () {
-                            PlayerService.getInstance().shuffle =
-                                !state.shuffle;
-                          },
-                          icon: Icon(
-                            state.shuffle
-                                ? Icons.shuffle_on_rounded
-                                : Icons.shuffle_rounded,
-                          ),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  PlayerService.getInstance().shuffle =
+                                      !state.shuffle;
+                                },
+                                icon: Icon(
+                                  state.shuffle
+                                      ? Icons.shuffle_on_rounded
+                                      : Icons.shuffle_rounded,
+                                ),
+                              );
                       },
                     ),
                     const Spacer(
@@ -211,19 +226,21 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 32,
-                            height: 32,
-                          ),
-                          padding: EdgeInsets.zero,
-                          onPressed: state.shuffle || state.isLoading
-                              ? null
-                              : () =>
-                                  PlayerService.getInstance().playPrevious(),
-                          iconSize: 32,
-                          icon: const Icon(Icons.skip_previous_rounded),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: state.shuffle || state.isLoading
+                                    ? null
+                                    : () => PlayerService.getInstance()
+                                        .playPrevious(),
+                                iconSize: 32,
+                                icon: const Icon(Icons.skip_previous_rounded),
+                              );
                       },
                     ),
                     const Spacer(
@@ -231,20 +248,22 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 32,
-                            height: 32,
-                          ),
-                          iconSize: 32,
-                          padding: EdgeInsets.zero,
-                          onPressed: state.isLoading
-                              ? null
-                              : () {
-                                  PlayerService.getInstance().rewind();
-                                },
-                          icon: const Icon(Icons.replay_10),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                iconSize: 32,
+                                padding: EdgeInsets.zero,
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () {
+                                        PlayerService.getInstance().rewind();
+                                      },
+                                icon: const Icon(Icons.replay_10),
+                              );
                       },
                     ),
                     const Spacer(
@@ -260,28 +279,30 @@ class PlayerSheetState extends State<PlayerSheet>
                           _controller.reverse();
                         }
 
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 36,
-                            height: 36,
-                          ),
-                          iconSize: 36,
-                          padding: EdgeInsets.zero,
-                          onPressed: state.isLoading
-                              ? null
-                              : () {
-                                  if (state.isPlaying) {
-                                    PlayerService.getInstance().pause();
-                                  } else {
-                                    PlayerService.getInstance().resume();
-                                  }
-                                },
-                          icon: AnimatedIcon(
-                            icon: AnimatedIcons.pause_play,
-                            progress: _controller,
-                            size: 36,
-                          ),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 36,
+                                  height: 36,
+                                ),
+                                iconSize: 36,
+                                padding: EdgeInsets.zero,
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () {
+                                        if (state.isPlaying) {
+                                          PlayerService.getInstance().pause();
+                                        } else {
+                                          PlayerService.getInstance().resume();
+                                        }
+                                      },
+                                icon: AnimatedIcon(
+                                  icon: AnimatedIcons.pause_play,
+                                  progress: _controller,
+                                  size: 36,
+                                ),
+                              );
                       },
                     ),
                     const Spacer(
@@ -289,20 +310,23 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 32,
-                            height: 32,
-                          ),
-                          iconSize: 32,
-                          padding: EdgeInsets.zero,
-                          onPressed: state.isLoading
-                              ? null
-                              : () {
-                                  PlayerService.getInstance().fastForward();
-                                },
-                          icon: const Icon(Icons.forward_10),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                iconSize: 32,
+                                padding: EdgeInsets.zero,
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () {
+                                        PlayerService.getInstance()
+                                            .fastForward();
+                                      },
+                                icon: const Icon(Icons.forward_10),
+                              );
                       },
                     ),
                     const Spacer(
@@ -310,27 +334,29 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 32,
-                            height: 32,
-                          ),
-                          iconSize: 32,
-                          padding: EdgeInsets.zero,
-                          onPressed: state.isLoading
-                              ? null
-                              : () {
-                                  PlayerService.getInstance().playNext();
-                                },
-                          icon: const Icon(Icons.skip_next_rounded),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 32,
+                                  height: 32,
+                                ),
+                                iconSize: 32,
+                                padding: EdgeInsets.zero,
+                                onPressed: state.isLoading
+                                    ? null
+                                    : () {
+                                        PlayerService.getInstance().playNext();
+                                      },
+                                icon: const Icon(Icons.skip_next_rounded),
+                              );
                       },
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return PlayerService.getInstance()
                                 .playerState
-                                ?.currentReocrd is LocalRecord
+                                ?.currentRecord is LocalRecord
                             ? const Spacer(
                                 flex: 18,
                               )
@@ -341,35 +367,40 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return IconButton(
-                          constraints: const BoxConstraints.tightFor(
-                            width: 24,
-                            height: 24,
-                          ),
-                          padding: EdgeInsets.zero,
-                          onPressed: state.shuffle
-                              ? null
-                              : () {
-                                  var nextModeIndex = (state.repeat.index + 1) %
-                                      PlayerRepeatMode.values.length;
-                                  PlayerService.getInstance().repeat =
-                                      PlayerRepeatMode.values[nextModeIndex];
-                                },
-                          icon: Icon(
-                            state.repeat == PlayerRepeatMode.all
-                                ? Icons.repeat_on_rounded
-                                : (state.repeat == PlayerRepeatMode.one
-                                    ? Icons.repeat_one_on_rounded
-                                    : Icons.repeat_rounded),
-                          ),
-                        );
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : IconButton(
+                                constraints: const BoxConstraints.tightFor(
+                                  width: 24,
+                                  height: 24,
+                                ),
+                                padding: EdgeInsets.zero,
+                                onPressed: state.shuffle
+                                    ? null
+                                    : () {
+                                        var nextModeIndex =
+                                            (state.repeat.index + 1) %
+                                                PlayerRepeatMode.values.length;
+                                        PlayerService.getInstance().repeat =
+                                            PlayerRepeatMode
+                                                .values[nextModeIndex];
+                                      },
+                                icon: Icon(
+                                  state.repeat == PlayerRepeatMode.all
+                                      ? Icons.repeat_on_rounded
+                                      : (state.repeat == PlayerRepeatMode.one
+                                          ? Icons.repeat_one_on_rounded
+                                          : Icons.repeat_rounded),
+                                ),
+                              );
                       },
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return PlayerService.getInstance()
-                                .playerState
-                                ?.currentReocrd is LocalRecord
+                                    .playerState
+                                    ?.currentRecord is LocalRecord ||
+                                state.currentRecord is Livestream
                             ? Container()
                             : const Spacer(
                                 flex: 4,
@@ -379,8 +410,9 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return PlayerService.getInstance()
-                                .playerState
-                                ?.currentReocrd is LocalRecord
+                                    .playerState
+                                    ?.currentRecord is LocalRecord ||
+                                state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
                                 constraints: const BoxConstraints.tightFor(
@@ -393,7 +425,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                       .downloadRecords([
                                     PlayerService.getInstance()
                                         .playerState
-                                        ?.currentReocrd,
+                                        ?.currentRecord,
                                   ], context);
                                 },
                                 icon: FutureBuilder<bool>(
@@ -401,7 +433,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                       PlaylistService.getInstance().isFavorite(
                                     PlayerService.getInstance()
                                         .playerState
-                                        ?.currentReocrd
+                                        ?.currentRecord
                                         ?.recordId,
                                   ),
                                   builder: (context, snapshot) {
