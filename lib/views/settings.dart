@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
-import 'package:mml_app/constants/development.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -108,29 +107,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   onTap: vm.removeRegistration,
                 ),
-                if (isDebugBuild) const Divider(),
-                if (isDebugBuild) verticalSpacer,
-                if (isDebugBuild)
-                  ListTile(
-                    dense: true,
-                    visualDensity: const VisualDensity(vertical: -4),
-                    title: Text(
-                      vm.locales.development,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                if (isDebugBuild)
-                  ListTile(
-                    leading: const Icon(Icons.manage_search),
-                    title: Text(vm.locales.showLogs),
-                    onTap: vm.showLogs,
-                  ),
-                if (isDebugBuild)
-                  ListTile(
-                    leading: const Icon(Icons.delete_sweep),
-                    title: Text(vm.locales.clearLogs),
-                    onTap: vm.clearLogs,
-                  ),
                 const Divider(),
                 verticalSpacer,
                 ListTile(
