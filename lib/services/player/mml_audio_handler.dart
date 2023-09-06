@@ -11,7 +11,6 @@ import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
-import 'package:mml_app/services/logging.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
@@ -150,18 +149,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       (PlaybackEvent event) {
         _addPlaybackState();
       },
-      onError: (Object e, StackTrace st) {
-        Logging.logError(
-          (MMLAudioHandler).toString(),
-          "playbackEventStream",
-          "Error on listening to playbackEventStream: $e",
-        );
-        Logging.logError(
-          (MMLAudioHandler).toString(),
-          "playbackEventStream",
-          "Stacktrace: $st",
-        );
-      },
+      onError: (Object e, StackTrace st) {},
     );
 
     _player!.playerStateStream.listen(
@@ -228,11 +216,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       await _clientService.refreshToken();
       return await _setPlayerSource(isRetry: true);
     } catch (e) {
-      Logging.logError(
-        (MMLAudioHandler).toString(),
-        "_handleError",
-        "Error $e",
-      );
       _errorOnLoadingRecord();
       return false;
     }
@@ -381,11 +364,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     var headers = await _apiService.getHeaders();
 
     try {
-      Logging.logInfo(
-        (MMLAudioHandler).toString(),
-        "_setPlayerSource",
-        "---- Try to play url: ${baseUrl}media/stream/${currentRecord?.recordId}.mp3 ----",
-      );
       final url = currentRecord is Livestream
           ? '${baseUrl}media/livestream/stream/${currentRecord!.recordId}'
           : '${baseUrl}media/stream/${currentRecord!.recordId}.mp3';
@@ -395,11 +373,6 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
       _isLoading = false;
     } catch (e) {
-      Logging.logError(
-        (MMLAudioHandler).toString(),
-        "_setPlayerSource",
-        "Error $e",
-      );
       if (isRetry) {
         _errorOnLoadingRecord();
         return false;

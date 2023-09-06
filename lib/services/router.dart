@@ -16,7 +16,6 @@ import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/livestreams/overview.dart';
 import 'package:mml_app/view_models/log.dart';
-import 'package:mml_app/view_models/logs_overview.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/records/overview.dart';
@@ -29,8 +28,6 @@ import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
 import 'package:mml_app/views/livestreams/overview.dart';
-import 'package:mml_app/views/log.dart';
-import 'package:mml_app/views/logs_overview.dart';
 import 'package:mml_app/views/main.dart';
 import 'package:mml_app/views/playlists/overview.dart';
 import 'package:mml_app/views/records/overview.dart';
@@ -64,7 +61,6 @@ class RouterService {
     LicensesOverviewViewModel.route: 3,
     LicenseViewModel.route: 3,
     FAQViewModel.route: 3,
-    LogsOverviewViewModel.route: 3,
     LogViewModel.route: 3,
   };
 
@@ -211,27 +207,6 @@ class RouterService {
           arguments: args,
         ),
         pageBuilder: (context, animation1, animation2) => const FAQScreen(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-      LogsOverviewViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: LogsOverviewViewModel.route,
-          arguments: args,
-        ),
-        pageBuilder: (context, animation1, animation2) =>
-            const LogsOverviewScreen(),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
-      LogViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: LogViewModel.route,
-          arguments: args,
-        ),
-        pageBuilder: (context, animation1, animation2) => LogScreen(
-          filename: (args as String),
-        ),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
