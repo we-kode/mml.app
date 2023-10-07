@@ -29,6 +29,16 @@ class RecordTagFilterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Clears all filters.
+  void clearAll() async {
+    tagFilter.clearAll();
+    await _storage.set(
+      SecureStorageService.folderViewStorageKey,
+      false.toString(),
+    );
+    notifyListeners();
+  }
+
   /// Updates the tag filter [identifier] with the [selectedValues].
   Future updateFilter(String identifier, dynamic selectedValues) async {
     tagFilter[identifier] = selectedValues;

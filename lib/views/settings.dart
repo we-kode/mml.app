@@ -90,6 +90,21 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.filter_alt),
+                  title: Text(vm.locales.saveFilters),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.saveFilters = value,
+                          vm.updateFilterSaveSettings()
+                        },
+                        value: vm.saveFilters,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
                   leading: const Icon(Icons.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),
                   onTap: vm.changeServerConnection,

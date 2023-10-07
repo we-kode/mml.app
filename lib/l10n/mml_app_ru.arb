@@ -80,5 +80,6 @@
   "development": "Разработка",
   "clearLogs": "Очистить лог",
   "showLogs": "Показывать лог",
-  "livestreams": "Tрансляции"
+  "livestreams": "Tрансляции",
+  "saveFilters": "Сохранить фильтры"
 }
