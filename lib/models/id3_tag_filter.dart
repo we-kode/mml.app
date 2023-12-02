@@ -15,7 +15,7 @@ class ID3TagFilter extends Subfilter {
 
   /// Ids of album tags.
   List<String> albums = [];
-  
+
   /// Ids of language tags.
   List<String> languages = [];
 
@@ -126,6 +126,16 @@ class ID3TagFilter extends Subfilter {
     notifyListeners();
   }
 
+  // Clears all filters.
+  void clearAll() {
+    clear(ID3TagFilters.artists);
+    clear(ID3TagFilters.albums);
+    clear(ID3TagFilters.genres);
+    clear(ID3TagFilters.languages);
+    clear(ID3TagFilters.date);
+    clear(ID3TagFilters.folderView);
+  }
+
   /// Checks if the value of the [identifier] is not empty.
   bool isNotEmpty(String identifier) {
     switch (identifier) {
@@ -145,6 +155,14 @@ class ID3TagFilter extends Subfilter {
         return true;
     }
   }
+
+  /// Determines whether at least one filter is set.
+  bool isAny() => artists.isNotEmpty ||
+        genres.isNotEmpty ||
+        albums.isNotEmpty ||
+        languages.isNotEmpty ||
+        startDate != null ||
+        endDate != null;
 }
 
 /// Holds the tags identifiers on which records can be fitlered.

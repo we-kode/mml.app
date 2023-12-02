@@ -13,18 +13,12 @@ typedef FilterChangedFunction = Future<bool> Function(ID3TagFilter filter);
 // Tag filters for the records view.
 class RecordTagFilter extends ListSubfilterView {
   /// Initializes the [RecordTagFilter].
-  RecordTagFilter({
+  const RecordTagFilter({
     Key? key,
-    DateTime? startDate,
-    DateTime? endDate,
-    bool isFolderView = false,
+    required ID3TagFilter tagFilter,
   }) : super(
           key: key,
-          filter: ID3TagFilter(
-            startDate: startDate,
-            endDate: endDate,
-            isFolderView: isFolderView,
-          ),
+          filter: tagFilter
         );
 
   @override
@@ -38,6 +32,30 @@ class RecordTagFilter extends ListSubfilterView {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
+              Consumer<RecordTagFilterViewModel>(
+                builder: (context, vm, child) {
+                  final brightness = Theme.of(context).brightness;
+                  final isDarkMode = brightness == Brightness.dark;
+                  var activeColor = isDarkMode ? Colors.black54 : Colors.white;
+                  return vm.tagFilter.isAny()
+                      ? ActionChip(
+                          label: Icon(
+                            Icons.filter_alt_off,
+                            color: activeColor,
+                          ),
+                          labelPadding: const EdgeInsets.all(0),
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          onPressed: () => vm.clearAll(),
+                        )
+                      : const SizedBox.shrink();
+                },
+              ),
               _createTagFilter(
                 ID3TagFilters.folderView,
                 locales.folder,

@@ -38,11 +38,13 @@ class RecordsScreen extends StatelessWidget {
             return AsyncListView(
               title: vm.locales.records,
               subfilter: RecordTagFilter(
-                isFolderView: vm.isFolderView,
+                tagFilter: vm.tagFilter,
               ),
               navState: appBar?.navigationState,
-              activeItem: PlayerService.getInstance().playerState?.currentRecord,
-              onActiveItemChanged: PlayerService.getInstance().onRecordChanged.stream,
+              activeItem:
+                  PlayerService.getInstance().playerState?.currentRecord,
+              onActiveItemChanged:
+                  PlayerService.getInstance().onRecordChanged.stream,
               moveUp: (subFilter) {
                 vm.moveFolderUp(subFilter as ID3TagFilter);
                 appBar?.navigationState.path = RecordFolder.fromDate(
@@ -58,9 +60,15 @@ class RecordsScreen extends StatelessWidget {
               }) {
                 WidgetsBinding.instance.addPostFrameCallback(
                   (_) {
-                    if (subfilter != null &&
-                        !(subfilter as ID3TagFilter).isGrouped) {
-                      appBar?.navigationState.path = null;
+                    if (subfilter != null) {
+                      if (!(subfilter as ID3TagFilter).isGrouped) {
+                        appBar?.navigationState.path = null;
+                      } else {
+                        appBar?.navigationState.path = RecordFolder.fromDate(
+                          subfilter.startDate,
+                          subfilter.endDate,
+                        )?.getIdentifier();
+                      }
                     }
                   },
                 );
@@ -112,6 +120,7 @@ class RecordsScreen extends StatelessWidget {
                           ),
                     ),
                   );
+                  vm.saveFolderPath(subfilter);
                 }
               },
             );

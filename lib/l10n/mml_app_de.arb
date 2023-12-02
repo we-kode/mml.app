@@ -87,5 +87,6 @@
   "development": "Entwicklung",
   "clearLogs": "Logs löschen",
   "showLogs": "Logs anzeigen",
-  "livestreams": "Livestreams"
+  "livestreams": "Livestreams",
+  "saveFilters": "Filter merken"
 }

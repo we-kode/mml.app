@@ -46,6 +46,9 @@ class SecureStorageService {
   /// Key under which the hierarchical folder view flag is stored.
   static const String folderViewStorageKey = 'isFolderView';
 
+  /// Key under which the store filters flag is stored
+  static const String saveFiltersStorageKey = 'saveFilters';
+
   /// Private constructor of the service.
   SecureStorageService._();
 
