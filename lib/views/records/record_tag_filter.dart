@@ -13,18 +13,12 @@ typedef FilterChangedFunction = Future<bool> Function(ID3TagFilter filter);
 // Tag filters for the records view.
 class RecordTagFilter extends ListSubfilterView {
   /// Initializes the [RecordTagFilter].
-  RecordTagFilter({
+  const RecordTagFilter({
     Key? key,
-    DateTime? startDate,
-    DateTime? endDate,
-    bool isFolderView = false,
+    required ID3TagFilter tagFilter,
   }) : super(
           key: key,
-          filter: ID3TagFilter(
-            startDate: startDate,
-            endDate: endDate,
-            isFolderView: isFolderView,
-          ),
+          filter: tagFilter
         );
 
   @override
@@ -49,7 +43,7 @@ class RecordTagFilter extends ListSubfilterView {
                             Icons.filter_alt_off,
                             color: activeColor,
                           ),
-                          labelPadding: EdgeInsets.all(0),
+                          labelPadding: const EdgeInsets.all(0),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(10),

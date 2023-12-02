@@ -151,6 +151,9 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Updates the Save Filter settings.
   Future updateFilterSaveSettings() async {
+    if (!saveFilters) {
+      await _dbService.clearID3Filter();
+    }
     await _secureStoreService.set(
       SecureStorageService.saveFiltersStorageKey,
       saveFilters.toString(),

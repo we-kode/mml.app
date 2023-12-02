@@ -1,11 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:mml_app/extensions/bool.dart';
+import 'package:mml_app/migrations/V4.dart';
 import 'package:mml_app/migrations/v3.dart';
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
 import 'package:mml_app/migrations/v2.dart';
+import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/playlist.dart';
@@ -34,6 +37,9 @@ class DBService {
   /// Table name of the records view settings.
   final String _tRecordViewSettings = 'recordViewSettings';
 
+  /// Table name of the id3 tag filters.
+  final String _tid3Filters = 'iD3Filters';
+
   /// The databse instance.
   Database? _db;
 
@@ -47,6 +53,7 @@ class DBService {
     1: () => V1Migration(),
     2: () => V2Migration(),
     3: () => V3Migration(),
+    4: () => V4Migration(),
   };
 
   /// Private constructor of the service.
@@ -99,7 +106,7 @@ class DBService {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
@@ -435,6 +442,7 @@ class DBService {
     );
   }
 
+  /// loads the saved record view settings.
   Future<RecordViewSettings> loadRecordViewSettings() async {
     final db = await _database;
     final List<Map<String, dynamic>> maps =
@@ -456,6 +464,7 @@ class DBService {
     );
   }
 
+  /// Saves the record view settings.
   Future saveRecordViewSettings(RecordViewSettings settings) async {
     final db = await _database;
     await db.update(
@@ -464,6 +473,63 @@ class DBService {
       where: '"id" = ?',
       whereArgs: [1],
       conflictAlgorithm: ConflictAlgorithm.rollback,
+    );
+  }
+
+  /// Saves the ID3 tag [filter] of the [key].
+  Future saveID3Filter(String key, String filter) async {
+    final db = await _database;
+    db.insert(
+      _tid3Filters,
+      {
+        'key': key,
+        'filter': filter,
+      },
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  /// Removes the id3 tag filter. If [key] is proivded only the filter of the [key] will be deleted.
+  Future clearID3Filter([String key = '']) async {
+    final db = await _database;
+    if (key.isEmpty) {
+      await db.delete(_tid3Filters);
+      return;
+    }
+    await db.delete(
+      _tid3Filters,
+      where: 'key = ?',
+      whereArgs: [key],
+    );
+  }
+
+  /// Loads [ID3TagFilter] with saved filters.
+  Future<ID3TagFilter> loadID3Filter() async {
+    final db = await _database;
+    var filters = await db.query(_tid3Filters);
+    var date = _getSavedFilter(filters, ID3TagFilters.date);
+    return ID3TagFilter(
+      albums: _getSavedFilter(filters, ID3TagFilters.albums),
+      artists: _getSavedFilter(filters, ID3TagFilters.artists),
+      genres: _getSavedFilter(filters, ID3TagFilters.genres),
+      languages: _getSavedFilter(filters, ID3TagFilters.languages),
+      startDate: date.isEmpty ? null : DateTime.parse(date.first),
+      endDate: date.isEmpty ? null : DateTime.parse(date.last),
+    );
+  }
+
+  List<String> _getSavedFilter(List<Map<String, Object?>> filters, String key) {
+    return List<String>.from(
+      jsonDecode(
+        (filters.firstWhere(
+              (element) => element['key'] == key,
+              orElse: () => {
+                'key': key,
+                'filter': '[]',
+              },
+            )['filter'] ??
+            '[]') as String,
+      ),
     );
   }
 }
