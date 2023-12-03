@@ -142,14 +142,23 @@ class RecordsViewModel extends ChangeNotifier {
   }
 
   /// Performs item open action.
-  saveFolderPath(subfilter) {
-    _dbService.saveID3Filter(
-      ID3TagFilters.date,
-      jsonEncode(
-        List<String>.from(
-          [subfilter.startDate.toString(), subfilter.endDate.toString()],
+  Future saveFolderPath(subfilter) async {
+    if ((await isFilterPersistActive())) {
+      _dbService.saveID3Filter(
+        ID3TagFilters.date,
+        jsonEncode(
+          List<String>.from(
+            [subfilter.startDate.toString(), subfilter.endDate.toString()],
+          ),
         ),
-      ),
-    );
+      );
+    }
+  }
+
+  Future<bool> isFilterPersistActive() async {
+    return (await SecureStorageService.getInstance()
+                .get(SecureStorageService.saveFiltersStorageKey))
+            ?.toLowerCase() ==
+        'true';
   }
 }
