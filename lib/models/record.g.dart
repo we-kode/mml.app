@@ -18,6 +18,7 @@ Record _$RecordFromJson(Map<String, dynamic> json) => Record(
       artist: json['artist'] as String?,
       genre: json['genre'] as String?,
       language: json['language'] as String?,
+      cover: json['cover'] as String?,
       isDeletable: json['isDeletable'] as bool? ?? false,
     )..isSelectable = json['isSelectable'] as bool?;
 
@@ -42,5 +43,6 @@ Map<String, dynamic> _$RecordToJson(Record instance) {
   writeNotNull('album', instance.album);
   writeNotNull('language', instance.language);
   writeNotNull('checksum', instance.checksum);
+  writeNotNull('cover', instance.cover);
   return val;
 }

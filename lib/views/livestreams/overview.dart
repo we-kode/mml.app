@@ -13,7 +13,7 @@ class LivestreamScreen extends StatelessWidget {
   final FilterAppBar? appBar;
 
   /// Initializes the instance.
-  const LivestreamScreen({Key? key, this.appBar}) : super(key: key);
+  const LivestreamScreen({super.key, this.appBar});
 
   /// Builds the screen.
   @override

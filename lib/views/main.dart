@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 /// Main screen.
 class MainScreen extends StatelessWidget {
   /// Initializes the instance.
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   /// Builds the screen.
   @override
@@ -51,7 +51,7 @@ class MainScreen extends StatelessWidget {
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
                     return BottomNavigationBar(
-                      backgroundColor: Theme.of(context).bottomAppBarColor,
+                      backgroundColor: Theme.of(context).colorScheme.background,
                       showUnselectedLabels: false,
                       showSelectedLabels: false,
                       type: BottomNavigationBarType.fixed,

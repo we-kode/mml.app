@@ -14,12 +14,9 @@ typedef FilterChangedFunction = Future<bool> Function(ID3TagFilter filter);
 class RecordTagFilter extends ListSubfilterView {
   /// Initializes the [RecordTagFilter].
   const RecordTagFilter({
-    Key? key,
+    super.key,
     required ID3TagFilter tagFilter,
-  }) : super(
-          key: key,
-          filter: tagFilter
-        );
+  }) : super(filter: tagFilter);
 
   @override
   Widget build(BuildContext context) {
@@ -39,19 +36,27 @@ class RecordTagFilter extends ListSubfilterView {
                   var activeColor = isDarkMode ? Colors.black54 : Colors.white;
                   return vm.tagFilter.isAny()
                       ? ActionChip(
+                          side: BorderSide.none,
                           label: Icon(
                             Icons.filter_alt_off,
                             color: activeColor,
                           ),
-                          labelPadding: const EdgeInsets.all(0),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+                          padding: const EdgeInsets.only(
+                            top: 6,
+                            bottom: 6,
                           ),
                           backgroundColor:
                               Theme.of(context).colorScheme.secondary,
                           onPressed: () => vm.clearAll(),
+                        )
+                      : const SizedBox.shrink();
+                },
+              ),
+              Consumer<RecordTagFilterViewModel>(
+                builder: (context, vm, child) {
+                  return vm.tagFilter.isAny()
+                      ? const SizedBox(
+                          width: 8,
                         )
                       : const SizedBox.shrink();
                 },
@@ -123,18 +128,17 @@ class RecordTagFilter extends ListSubfilterView {
         return isFolderView
             ? Container()
             : InputChip(
+                side: BorderSide.none,
                 label: Text(label),
                 labelStyle: isActive ? TextStyle(color: activeColor) : null,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(10),
-                  ),
-                ),
-                backgroundColor:
-                    isActive ? Theme.of(context).colorScheme.secondary : null,
+                backgroundColor: isActive
+                    ? Theme.of(context).colorScheme.secondary
+                    : Theme.of(context).colorScheme.outlineVariant,
                 avatar: Icon(
                   icon,
-                  color: isActive ? activeColor : null,
+                  color: isActive
+                      ? activeColor
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 deleteIconColor: isActive ? activeColor : null,
                 onPressed: () => identifier == ID3TagFilters.date

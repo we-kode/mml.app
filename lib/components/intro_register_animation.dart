@@ -5,8 +5,8 @@ import 'package:rive/rive.dart';
 class IntroRegisterAnimation extends StatelessWidget {
   /// Initializes the animation.
   const IntroRegisterAnimation({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

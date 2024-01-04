@@ -14,7 +14,7 @@ import 'package:text_scroll/text_scroll.dart';
 /// Player sheet shown in the bottom sheet bar.
 class PlayerSheet extends StatefulWidget {
   /// Initializes the player sheet.
-  const PlayerSheet({Key? key}) : super(key: key);
+  const PlayerSheet({super.key});
 
   @override
   PlayerSheetState createState() => PlayerSheetState();
@@ -49,7 +49,7 @@ class PlayerSheetState extends State<PlayerSheet>
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(15),
               topRight: Radius.circular(15),
@@ -167,6 +167,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                   ),
                                 )
                               : Slider(
+                                  inactiveColor: Theme.of(context).colorScheme.outline,
                                   value: state.currentSeekPosition,
                                   min: 0,
                                   max: state.currentRecord?.duration ?? 0,

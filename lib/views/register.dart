@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 /// Register screen.
 class RegisterScreen extends StatelessWidget {
   /// Initializes the instance.
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   /// Builds the screen.
   @override
@@ -131,8 +131,13 @@ class RegisterScreen extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5),
                                 ),
                                 child: MobileScanner(
-                                  allowDuplicates: false,
-                                  onDetect: vm.register,
+                                  controller: MobileScannerController(
+                                    detectionSpeed: DetectionSpeed.noDuplicates,
+                                  ),
+                                  onDetect: (capture) {
+                                    final Barcode barcode = capture.barcodes.first;
+                                    vm.register(barcode);
+                                  },
                                 ),
                               );
                             case RegistrationState.register:

@@ -8,7 +8,7 @@ abstract class ListSubfilterView extends StatelessWidget {
 
   /// Initializes the [ListSubfilterView] with the specific [filter].
   const ListSubfilterView({
-    Key? key,
+    super.key,
     required this.filter,
-  }) : super(key: key);
+  });
 }

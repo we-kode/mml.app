@@ -5,8 +5,8 @@ import 'package:rive/rive.dart';
 class SoundwaveAnimation extends StatelessWidget {
   /// Initializes the animation.
   const SoundwaveAnimation({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
