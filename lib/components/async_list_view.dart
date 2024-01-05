@@ -485,7 +485,7 @@ class _AsyncListViewState extends State<AsyncListView> {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 5),
+            padding: const EdgeInsets.only(top: 10),
             child: Chip(
               side: BorderSide.none,
               backgroundColor: Theme.of(context).colorScheme.outlineVariant,
@@ -561,6 +561,9 @@ class _AsyncListViewState extends State<AsyncListView> {
                 overflow: TextOverflow.fade,
                 maxLines: 1,
                 softWrap: false,
+                style: trailingSubStyle!.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               ),
             )
           : null,
@@ -572,14 +575,14 @@ class _AsyncListViewState extends State<AsyncListView> {
                 item.getMetadata(context) != null
                     ? Text(
                         item.getMetadata(context)!,
-                        style: Theme.of(context).textTheme.titleMedium,
+                        style: Theme.of(context).textTheme.bodyLarge,
                       )
                     : const SizedBox.shrink(),
                 item.getSubMetadata(context) != null
                     ? Text(
                         item.getSubMetadata(context)!,
                         style: trailingSubStyle!.copyWith(
-                          color: Theme.of(context).textTheme.bodySmall!.color,
+                          color: Theme.of(context).colorScheme.outline,
                         ),
                       )
                     : const SizedBox.shrink(),

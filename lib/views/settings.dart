@@ -79,6 +79,21 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                 ListTile(
+                  leading: const Icon(Icons.image_outlined),
+                  title: Text(vm.locales.cover),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.cover = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.cover,
+                      );
+                    },
+                  ),
+                ),
                 const Divider(),
                 verticalSpacer,
                 ListTile(

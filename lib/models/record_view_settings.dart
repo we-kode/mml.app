@@ -17,11 +17,15 @@ class RecordViewSettings {
   /// True if should show tracknumber;
   bool tracknumber;
 
+  /// True if should show cover.
+  bool cover;
+
   RecordViewSettings({
     this.genre = true,
     this.album = true,
     this.language = true,
     this.tracknumber = true,
+    this.cover = false,
   });
 
   /// Converts a json object/map to the model.

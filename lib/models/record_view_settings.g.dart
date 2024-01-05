@@ -12,6 +12,7 @@ RecordViewSettings _$RecordViewSettingsFromJson(Map<String, dynamic> json) =>
       album: json['album'] as bool? ?? true,
       language: json['language'] as bool? ?? true,
       tracknumber: json['tracknumber'] as bool? ?? true,
+      cover: json['cover'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$RecordViewSettingsToJson(RecordViewSettings instance) =>
@@ -20,4 +21,5 @@ Map<String, dynamic> _$RecordViewSettingsToJson(RecordViewSettings instance) =>
       'album': instance.album,
       'language': instance.language,
       'tracknumber': instance.tracknumber,
+      'cover': instance.cover,
     };

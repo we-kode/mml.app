@@ -120,6 +120,10 @@ class Record extends ModelBase {
 
   @override
   Widget? getAvatar(BuildContext context) {
+    if (_viewSettings == null || !_viewSettings!.cover) {
+      return null;
+    }
+    
     if (cover != null && cover!.isNotEmpty) {
       return Image.memory(
         Uint8List.fromList(

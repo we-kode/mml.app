@@ -8,6 +8,7 @@ import 'package:mml_app/migrations/v3.dart';
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
 import 'package:mml_app/migrations/v2.dart';
+import 'package:mml_app/migrations/v5.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/model_list.dart';
@@ -54,6 +55,7 @@ class DBService {
     2: () => V2Migration(),
     3: () => V3Migration(),
     4: () => V4Migration(),
+    5: () => V5Migration(),
   };
 
   /// Private constructor of the service.
@@ -106,7 +108,7 @@ class DBService {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
       onConfigure: _onConfigure,
@@ -151,6 +153,7 @@ class DBService {
             language: maps[index]['language'],
             checksum: maps[index]['checksum'],
             duration: double.parse(maps[index]['duration'] ?? '0'),
+            cover: maps[index]['cover'],
             playlist: Playlist(
               id: maps[index]['playlistId'],
               name: maps[index]['playlistName'],
@@ -247,7 +250,8 @@ class DBService {
         'tracknumber': record.trackNumber,
         'language': record.language,
         'checksum': record.checksum,
-        'duration': record.duration
+        'duration': record.duration,
+        'cover': record.cover,
       }),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -400,6 +404,7 @@ class DBService {
       title: result['title'],
       trackNumber: result['tracknumber'],
       checksum: result['checksum'],
+      cover: result['cover'],
     );
   }
 
@@ -461,6 +466,7 @@ class DBService {
       album: (settings['album'] as int).toBool(),
       language: (settings['language'] as int).toBool(),
       tracknumber: (settings['tracknumber'] as int).toBool(),
+      cover: (settings['cover'] as int).toBool(),
     );
   }
 
