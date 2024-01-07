@@ -74,7 +74,6 @@ class ServerConnectionViewModel extends ChangeNotifier {
   /// scanned.
   void updateConnectionSettings(
     Barcode barcode,
-    MobileScannerArguments? args,
   ) async {
     if (barcode.rawValue == null) {
       return;

@@ -18,7 +18,7 @@ class RecordsScreen extends StatelessWidget {
   final FilterAppBar? appBar;
 
   /// Initializes the instance.
-  const RecordsScreen({Key? key, required this.appBar}) : super(key: key);
+  const RecordsScreen({super.key, required this.appBar});
 
   /// Builds the screen.
   @override

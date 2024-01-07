@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 /// Settings screen.
 class SettingsScreen extends StatelessWidget {
   /// Initializes the instance.
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   /// Builds the screen.
   @override
@@ -79,6 +79,21 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                 ListTile(
+                  leading: const Icon(Icons.image_outlined),
+                  title: Text(vm.locales.cover),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: (value) => {
+                          vm.recordViewSettings.cover = value,
+                          vm.updateRecordViewSettings()
+                        },
+                        value: vm.recordViewSettings.cover,
+                      );
+                    },
+                  ),
+                ),
                 const Divider(),
                 verticalSpacer,
                 ListTile(
@@ -90,6 +105,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
+                  
                   leading: const Icon(Icons.filter_alt),
                   title: Text(vm.locales.saveFilters),
                   trailing: Consumer<SettingsViewModel>(

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 /// Update server connection screen.
 class ServerConnectionScreen extends StatelessWidget {
   /// Initializes the instance.
-  const ServerConnectionScreen({Key? key}) : super(key: key);
+  const ServerConnectionScreen({super.key});
 
   /// Builds the screen.
   @override
@@ -70,9 +70,14 @@ class ServerConnectionScreen extends StatelessWidget {
                                   ),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                child: MobileScanner(
-                                  allowDuplicates: false,
-                                  onDetect: vm.updateConnectionSettings,
+                                child:  MobileScanner(
+                                  controller: MobileScannerController(
+                                    detectionSpeed: DetectionSpeed.noDuplicates,
+                                  ),
+                                  onDetect: (capture) {
+                                    final Barcode barcode = capture.barcodes.first;
+                                    vm.updateConnectionSettings(barcode);
+                                  },
                                 ),
                               );
                             case UpdateState.update:

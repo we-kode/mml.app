@@ -80,7 +80,7 @@ class FileService {
       '/media/stream/${record.recordId}',
       options: Options(
         responseType: ResponseType.stream,
-        receiveTimeout: 0,
+        receiveTimeout: Duration.zero,
       ),
     );
 

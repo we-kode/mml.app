@@ -4,7 +4,7 @@ import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 /// FAQ detail screen.
 class FAQScreen extends StatelessWidget {
   /// Initializes the instance.
-  const FAQScreen({Key? key}) : super(key: key);
+  const FAQScreen({super.key});
 
   /// Builds the screen.
   @override

@@ -30,12 +30,12 @@ class FilterAppBar extends StatefulWidget {
 
   /// Initiales the app bar.
   FilterAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.listAction,
     this.enableFilter,
     this.enableBack = false,
-  }) : super(key: key);
+  });
 
   @override
   FilterAppBarState createState() => FilterAppBarState();
@@ -88,6 +88,8 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       leading: widget.listAction != null && widget.listAction!.enabled
           ? Row(
@@ -99,7 +101,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                   icon: const Icon(Icons.close),
                   tooltip: AppLocalizations.of(context)!.cancel,
                 ),
-                Text("${widget.listAction!.count}")
+                Text("${widget.listAction!.count}"),
               ],
             )
           : widget.enableBack || widget.navigationState.path != null
@@ -122,8 +124,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                 widget.navigationState.path ?? _getLocalizedString(context),
               )
             : Container(
-                margin: const EdgeInsets.only(bottom: 4.0),
-                child: _createInput(),
+                child: _createInput(context),
               ),
       ),
       actions: _createActions(),
@@ -148,25 +149,17 @@ class FilterAppBarState extends State<FilterAppBar> {
   }
 
   /// Creates the input filter field.
-  Widget _createInput() {
+  Widget _createInput(BuildContext context) {
     return TextFormField(
       initialValue: _filter,
-      style: const TextStyle(color: Colors.white),
-      cursorColor: Colors.white,
       decoration: InputDecoration(
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.white),
-        ),
-        labelStyle: const TextStyle(color: Colors.white),
         labelText: AppLocalizations.of(context)!.filter,
         icon: const Icon(
           Icons.filter_list_alt,
-          color: Colors.white,
         ),
         suffixIcon: IconButton(
           icon: const Icon(
             Icons.clear,
-            color: Colors.white,
           ),
           onPressed: () {
             setState(

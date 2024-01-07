@@ -8,7 +8,7 @@ import 'package:mml_app/services/router.dart';
 /// Application for My Media Lib.
 class MMLApp extends StatelessWidget {
   /// Initializes the instance.
-  const MMLApp({Key? key}) : super(key: key);
+  const MMLApp({super.key});
 
   /// Creates the app with the necessary configurations.
   @override
@@ -25,10 +25,13 @@ class MMLApp extends StatelessWidget {
       // Configure theme data.
       theme: ThemeData(
         colorScheme: lightColorScheme,
+        useMaterial3: true,
       ),
       darkTheme: ThemeData(
         colorScheme: darkColorScheme,
+        useMaterial3: true,
       ),
+
       themeMode: ThemeMode.system,
 
       // Configure the main navigator of the app.

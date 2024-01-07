@@ -7,7 +7,7 @@ class InformationScreen extends StatelessWidget {
   final String url;
 
   /// Initializes the instance.
-  const InformationScreen({Key? key, required this.url}) : super(key: key);
+  const InformationScreen({super.key, required this.url});
 
   /// Builds the screen.
   @override

@@ -8,7 +8,7 @@ class LogScreen extends StatelessWidget {
   final String filename;
 
   /// Initializes the instance.
-  const LogScreen({Key? key, required this.filename}) : super(key: key);
+  const LogScreen({super.key, required this.filename});
 
   /// Builds the screen.
   @override

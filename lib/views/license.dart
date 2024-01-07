@@ -7,7 +7,7 @@ class LicenseScreen extends StatelessWidget {
   final Package package;
 
   /// Initializes the instance.
-  const LicenseScreen({Key? key, required this.package}) : super(key: key);
+  const LicenseScreen({super.key, required this.package});
 
   /// Builds the screen.
   @override

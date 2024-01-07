@@ -11,9 +11,9 @@ class ErrorAnimation extends StatefulWidget {
 
   /// Initializes the animation.
   const ErrorAnimation({
-    Key? key,
+    super.key,
     this.onStop,
-  }) : super(key: key);
+  });
 
   @override
   ErrorAnimationState createState() => ErrorAnimationState();

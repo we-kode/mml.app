@@ -88,5 +88,6 @@
   "clearLogs": "Logs löschen",
   "showLogs": "Logs anzeigen",
   "livestreams": "Livestreams",
-  "saveFilters": "Filter merken"
+  "saveFilters": "Filter merken",
+  "cover": "Cover"
 }

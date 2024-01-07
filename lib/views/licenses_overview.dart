@@ -6,7 +6,7 @@ import 'package:mml_app/oss_licenses.dart';
 /// Overview screen of licenses of all used packages.
 class LicensesOverviewScreen extends StatelessWidget {
   /// Initializes the instance.
-  const LicensesOverviewScreen({Key? key}) : super(key: key);
+  const LicensesOverviewScreen({super.key});
 
   /// Builds the screen.
   @override

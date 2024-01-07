@@ -14,7 +14,7 @@ import 'package:text_scroll/text_scroll.dart';
 /// Player sheet shown in the bottom sheet bar.
 class PlayerSheet extends StatefulWidget {
   /// Initializes the player sheet.
-  const PlayerSheet({Key? key}) : super(key: key);
+  const PlayerSheet({super.key});
 
   @override
   PlayerSheetState createState() => PlayerSheetState();
@@ -49,15 +49,15 @@ class PlayerSheetState extends State<PlayerSheet>
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarColor,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(15),
-              topRight: Radius.circular(15),
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(10),
             ),
-            boxShadow: kElevationToShadow[8],
+            boxShadow: kElevationToShadow[10],
           ),
           constraints: const BoxConstraints(
-            maxHeight: 160,
+            maxHeight: 200,
             minHeight: 0.0,
           ),
           child: Column(
@@ -68,6 +68,41 @@ class PlayerSheetState extends State<PlayerSheet>
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  Consumer<PlayerState>(
+                    builder: (context, state, child) {
+                      return PlayerService.getInstance()
+                                  .playerState
+                                  ?.currentRecord is LocalRecord ||
+                              state.currentRecord is Livestream
+                          ? Container()
+                          : IconButton(
+                              iconSize: 24,
+                              padding: EdgeInsets.zero,
+                              onPressed: () async {
+                                PlaylistService.getInstance().downloadRecords([
+                                  PlayerService.getInstance()
+                                      .playerState
+                                      ?.currentRecord,
+                                ], context);
+                              },
+                              icon: FutureBuilder<bool>(
+                                future:
+                                    PlaylistService.getInstance().isFavorite(
+                                  PlayerService.getInstance()
+                                      .playerState
+                                      ?.currentRecord
+                                      ?.recordId,
+                                ),
+                                builder: (context, snapshot) {
+                                  return snapshot.hasData &&
+                                          (snapshot.data ?? false)
+                                      ? const Icon(Icons.star)
+                                      : const Icon(Icons.star_outline);
+                                },
+                              ),
+                            );
+                    },
+                  ),
                   IconButton(
                     constraints: const BoxConstraints.tightFor(
                       width: 24,
@@ -81,7 +116,6 @@ class PlayerSheetState extends State<PlayerSheet>
                   ),
                 ],
               ),
-              const Spacer(),
               Padding(
                 padding: const EdgeInsets.only(
                   left: 25,
@@ -150,7 +184,8 @@ class PlayerSheetState extends State<PlayerSheet>
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 12.5,
+                  left: 8,
+                  right: 8,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -167,6 +202,8 @@ class PlayerSheetState extends State<PlayerSheet>
                                   ),
                                 )
                               : Slider(
+                                  inactiveColor:
+                                      Theme.of(context).colorScheme.outline,
                                   value: state.currentSeekPosition,
                                   min: 0,
                                   max: state.currentRecord?.duration ?? 0,
@@ -193,26 +230,23 @@ class PlayerSheetState extends State<PlayerSheet>
               ),
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 25,
-                  right: 25,
+                  left: 0,
+                  right: 0,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 24,
-                                  height: 24,
-                                ),
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
                                   PlayerService.getInstance().shuffle =
                                       !state.shuffle;
                                 },
+                                iconSize: 24,
                                 icon: Icon(
                                   state.shuffle
                                       ? Icons.shuffle_on_rounded
@@ -221,18 +255,11 @@ class PlayerSheetState extends State<PlayerSheet>
                               );
                       },
                     ),
-                    const Spacer(
-                      flex: 16,
-                    ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 32,
-                                  height: 32,
-                                ),
                                 padding: EdgeInsets.zero,
                                 onPressed: state.shuffle || state.isLoading
                                     ? null
@@ -243,18 +270,11 @@ class PlayerSheetState extends State<PlayerSheet>
                               );
                       },
                     ),
-                    const Spacer(
-                      flex: 1,
-                    ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 32,
-                                  height: 32,
-                                ),
                                 iconSize: 32,
                                 padding: EdgeInsets.zero,
                                 onPressed: state.isLoading
@@ -265,9 +285,6 @@ class PlayerSheetState extends State<PlayerSheet>
                                 icon: const Icon(Icons.replay_10),
                               );
                       },
-                    ),
-                    const Spacer(
-                      flex: 1,
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
@@ -282,10 +299,6 @@ class PlayerSheetState extends State<PlayerSheet>
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 36,
-                                  height: 36,
-                                ),
                                 iconSize: 36,
                                 padding: EdgeInsets.zero,
                                 onPressed: state.isLoading
@@ -305,18 +318,11 @@ class PlayerSheetState extends State<PlayerSheet>
                               );
                       },
                     ),
-                    const Spacer(
-                      flex: 1,
-                    ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 32,
-                                  height: 32,
-                                ),
                                 iconSize: 32,
                                 padding: EdgeInsets.zero,
                                 onPressed: state.isLoading
@@ -329,18 +335,11 @@ class PlayerSheetState extends State<PlayerSheet>
                               );
                       },
                     ),
-                    const Spacer(
-                      flex: 1,
-                    ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 32,
-                                  height: 32,
-                                ),
                                 iconSize: 32,
                                 padding: EdgeInsets.zero,
                                 onPressed: state.isLoading
@@ -354,26 +353,10 @@ class PlayerSheetState extends State<PlayerSheet>
                     ),
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
-                        return PlayerService.getInstance()
-                                .playerState
-                                ?.currentRecord is LocalRecord
-                            ? const Spacer(
-                                flex: 18,
-                              )
-                            : const Spacer(
-                                flex: 6,
-                              );
-                      },
-                    ),
-                    Consumer<PlayerState>(
-                      builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? Container()
                             : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 24,
-                                  height: 24,
-                                ),
+                                iconSize: 24,
                                 padding: EdgeInsets.zero,
                                 onPressed: state.shuffle
                                     ? null
@@ -395,61 +378,9 @@ class PlayerSheetState extends State<PlayerSheet>
                               );
                       },
                     ),
-                    Consumer<PlayerState>(
-                      builder: (context, state, child) {
-                        return PlayerService.getInstance()
-                                    .playerState
-                                    ?.currentRecord is LocalRecord ||
-                                state.currentRecord is Livestream
-                            ? Container()
-                            : const Spacer(
-                                flex: 4,
-                              );
-                      },
-                    ),
-                    Consumer<PlayerState>(
-                      builder: (context, state, child) {
-                        return PlayerService.getInstance()
-                                    .playerState
-                                    ?.currentRecord is LocalRecord ||
-                                state.currentRecord is Livestream
-                            ? Container()
-                            : IconButton(
-                                constraints: const BoxConstraints.tightFor(
-                                  width: 32,
-                                  height: 32,
-                                ),
-                                padding: EdgeInsets.zero,
-                                onPressed: () async {
-                                  PlaylistService.getInstance()
-                                      .downloadRecords([
-                                    PlayerService.getInstance()
-                                        .playerState
-                                        ?.currentRecord,
-                                  ], context);
-                                },
-                                icon: FutureBuilder<bool>(
-                                  future:
-                                      PlaylistService.getInstance().isFavorite(
-                                    PlayerService.getInstance()
-                                        .playerState
-                                        ?.currentRecord
-                                        ?.recordId,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    return snapshot.hasData &&
-                                            (snapshot.data ?? false)
-                                        ? const Icon(Icons.star)
-                                        : const Icon(Icons.star_outline);
-                                  },
-                                ),
-                              );
-                      },
-                    ),
                   ],
                 ),
               ),
-              const Spacer(),
             ],
           ),
         );

@@ -5,16 +5,14 @@ import 'package:rive/rive.dart';
 class IntroRecordsAnimation extends StatelessWidget {
   /// Initializes the animation.
   const IntroRecordsAnimation({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return RiveAnimation.asset(
       'assets/animations/mml.riv',
       onInit: (Artboard artboard) {
-        var brightness = MediaQuery.of(context).platformBrightness;
-        bool isDarkMode = brightness == Brightness.dark;
         artboard.forEachComponent(
           (child) {
             if (child.name == 'phone') {
@@ -31,7 +29,7 @@ class IntroRecordsAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  isDarkMode ? Theme.of(context).bottomAppBarColor : Theme.of(context).colorScheme.primary,
+                  Theme.of(context).colorScheme.background,
                   BlendMode.srcIn,
                 );
               }

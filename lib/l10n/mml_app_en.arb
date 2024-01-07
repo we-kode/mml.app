@@ -81,5 +81,6 @@
   "clearLogs": "Clear logs",
   "showLogs": "Show logs",
   "livestreams": "Livestreams",
-  "saveFilters": "Save filter"
+  "saveFilters": "Save filter",
+  "cover":"Cover"
 }

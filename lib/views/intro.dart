@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 /// Intro screen to describe the app for one user.
 class IntroScreen extends StatelessWidget {
   /// Initializes the instance.
-  const IntroScreen({Key? key}) : super(key: key);
+  const IntroScreen({super.key});
 
   /// Builds the screen.
   @override

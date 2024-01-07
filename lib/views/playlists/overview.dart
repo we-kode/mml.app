@@ -21,8 +21,7 @@ class PlaylistScreen extends StatelessWidget {
   final int? playlistId;
 
   /// Initializes the instance.
-  const PlaylistScreen({Key? key, this.appBar, this.playlistId})
-      : super(key: key);
+  const PlaylistScreen({super.key, this.appBar, this.playlistId});
 
   /// Builds the screen.
   @override

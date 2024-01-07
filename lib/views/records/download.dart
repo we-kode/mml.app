@@ -16,10 +16,10 @@ class RecordDownloadDialog extends StatelessWidget {
 
   /// Initializes the view for the records download dialog.
   const RecordDownloadDialog({
-    Key? key,
+    super.key,
     required this.records,
     required this.playlists,
-  }) : super(key: key);
+  });
 
   /// Builds the records download dialog.
   @override

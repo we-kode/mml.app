@@ -11,9 +11,9 @@ class PlaylistEditDialog extends StatelessWidget {
 
   /// Initializes the view for the playlist create/edit dialog.
   const PlaylistEditDialog({
-    Key? key,
+    super.key,
     required this.playlistId,
-  }) : super(key: key);
+  });
 
   /// Builds the user create/edit dialog.
   @override
