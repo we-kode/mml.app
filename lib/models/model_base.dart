@@ -56,7 +56,7 @@ abstract class ModelBase {
   }
 
    /// Returns the avatar to be shown in list.
-  Widget? getAvatar(BuildContext context) {
+  Widget? getAvatar(BuildContext? context) {
     return null;
   }
 }

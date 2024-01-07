@@ -562,7 +562,9 @@ class _AsyncListViewState extends State<AsyncListView> {
                 maxLines: 1,
                 softWrap: false,
                 style: trailingSubStyle!.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
+                  color: item.getIdentifier() == _activeItemId
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.outline,
                 ),
               ),
             )
@@ -575,14 +577,23 @@ class _AsyncListViewState extends State<AsyncListView> {
                 item.getMetadata(context) != null
                     ? Text(
                         item.getMetadata(context)!,
-                        style: Theme.of(context).textTheme.bodyLarge,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: item.getIdentifier() == _activeItemId
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color,
+                            ),
                       )
                     : const SizedBox.shrink(),
                 item.getSubMetadata(context) != null
                     ? Text(
                         item.getSubMetadata(context)!,
                         style: trailingSubStyle!.copyWith(
-                          color: Theme.of(context).colorScheme.outline,
+                          color: item.getIdentifier() == _activeItemId
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.outline,
                         ),
                       )
                     : const SizedBox.shrink(),

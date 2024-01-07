@@ -119,7 +119,7 @@ class Record extends ModelBase {
   }
 
   @override
-  Widget? getAvatar(BuildContext context) {
+  Widget? getAvatar(BuildContext? context) {
     if (_viewSettings == null || !_viewSettings!.cover) {
       return null;
     }
@@ -129,6 +129,7 @@ class Record extends ModelBase {
         Uint8List.fromList(
           base64.decode(cover!),
         ),
+        gaplessPlayback: true,
       );
     }
     return const Icon(Icons.music_note_outlined);

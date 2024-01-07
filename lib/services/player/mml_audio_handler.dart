@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mml_app/extensions/string.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -16,6 +19,7 @@ import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/util/assets.dart';
 
 /// Audio handler that interacts with the player background service and the
 /// notification bar.
@@ -229,6 +233,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       return;
     }
 
+    final brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    final isDarkMode = brightness == Brightness.dark;
+    final bgImageUri =
+        currentRecord?.cover != null && currentRecord!.cover!.isNotEmpty
+            ? (await currentRecord!.cover!.toFile()).uri
+            : (await getImageFileFromAssets(
+                isDarkMode ? 'images/bg_dark.jpg' : 'images/bg_light.jpg',
+              ))
+                .uri;
+
     PlayerService.getInstance().onRecordChanged.add(currentRecord);
     mediaItem.add(
       MediaItem(
@@ -237,6 +252,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         title: currentRecord?.title ?? 'Unknown',
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
+        artUri: bgImageUri,
         duration: Duration(
           milliseconds: (currentRecord?.duration ?? 0).toInt(),
         ),

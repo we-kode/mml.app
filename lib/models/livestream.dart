@@ -38,7 +38,7 @@ class Livestream extends Record {
   }
 
   @override
-  Widget? getAvatar(BuildContext context) {
+  Widget? getAvatar(BuildContext? context) {
     return null;
   }
 }
