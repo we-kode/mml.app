@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
@@ -110,6 +111,12 @@ class AsyncListView extends StatefulWidget {
   /// Active item, when list is just in create mode.
   final ModelBase? activeItem;
 
+  /// Indicates, whether the add button should be shown or not.
+  final bool showAddButton;
+
+  /// Subaction buttons which can be used to add multiple sub actions to the main add button
+  final List<ActionButton>? subactions;
+
   /// Initializes the list view.
   const AsyncListView({
     super.key,
@@ -127,6 +134,8 @@ class AsyncListView extends StatefulWidget {
     this.moveUp,
     this.onActiveItemChanged,
     this.activeItem,
+    this.showAddButton = false,
+    this.subactions,
   });
 
   @override
@@ -351,22 +360,30 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// When a list of sub action buttons is provided, an expandable action button will be shown.
   Widget _createActionButton() {
     return Visibility(
-      visible: widget.addItem != null,
-      child: FloatingActionButton(
-        onPressed: () {
-          if (widget.addItem == null) {
-            return;
-          }
+      visible: (widget.showAddButton &&
+              widget.subactions != null &&
+              widget.subactions!.isNotEmpty) ||
+          widget.addItem != null,
+      child: widget.subactions != null && widget.subactions!.isNotEmpty
+          ? ExpandableFab(
+              distance: 64.0,
+              children: widget.subactions!,
+            )
+          : FloatingActionButton(
+              onPressed: () {
+                if (widget.addItem == null) {
+                  return;
+                }
 
-          widget.addItem!().then((value) {
-            if (value) {
-              _reloadData();
-            }
-          });
-        },
-        tooltip: AppLocalizations.of(context)!.add,
-        child: const Icon(Icons.add),
-      ),
+                widget.addItem!().then((value) {
+                  if (value) {
+                    _reloadData();
+                  }
+                });
+              },
+              tooltip: AppLocalizations.of(context)!.add,
+              child: const Icon(Icons.add),
+            ),
     );
   }
 

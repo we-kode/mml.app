@@ -72,4 +72,9 @@ class MessengerService {
   String get downloadError {
     return AppLocalizations.of(snackbarKey.currentContext!)!.downloadError;
   }
+
+   /// Translated string for error on downloading.
+  String get notCompatibleFile {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.notCompatibleFile;
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
+import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -11,7 +12,9 @@ import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:mml_app/views/playlists/edit.dart';
+import 'package:mml_app/views/playlists/not_downloaded.dart';
 import 'package:provider/provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 /// Overview screen of the playlists of the music lib.
 class PlaylistScreen extends StatelessWidget {
@@ -44,6 +47,60 @@ class PlaylistScreen extends StatelessWidget {
               selectedItemsAction: appBar?.listAction,
               exportAction: appBar?.exportAction,
               filter: appBar?.filter,
+              showAddButton: true,
+              subactions: playlistId != null
+                  ? null
+                  : [
+                      ActionButton(
+                        icon: const Icon(Icons.upload),
+                        onPressed: () async {
+                          FilePickerResult? selected =
+                              await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowedExtensions: ['mml'],
+                          );
+
+                          if (selected == null) {
+                            return;
+                          }
+
+                          var notDownloaded =
+                              await vm.import(selected.files.first);
+
+                          if (notDownloaded.isEmpty) {
+                            return;
+                          }
+
+                          final state = await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return NotDownloadedDialog(
+                                records: notDownloaded,
+                              );
+                            },
+                          );
+                          if (state == EditState.save) {
+                            vm.update();
+                          }
+                        },
+                      ),
+                      ActionButton(
+                        icon: const Icon(Icons.create_new_folder_outlined),
+                        onPressed: () async {
+                          final state = await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const PlaylistEditDialog(playlistId: null);
+                            },
+                          );
+                          if (state == EditState.save) {
+                            vm.update();
+                          }
+                        },
+                      ),
+                    ],
               activeItem:
                   PlayerService.getInstance().playerState?.currentRecord,
               onActiveItemChanged:
@@ -63,18 +120,6 @@ class PlaylistScreen extends StatelessWidget {
                 }
               },
               loadData: vm.load,
-              addItem: playlistId != null
-                  ? null
-                  : () async {
-                      final state = await showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const PlaylistEditDialog(playlistId: null);
-                        },
-                      );
-                      return state == EditState.save;
-                    },
               editGroupFunction: (item) async {
                 var playlistId = (item as Playlist).id;
                 final state = await showDialog(

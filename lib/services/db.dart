@@ -538,4 +538,31 @@ class DBService {
       ),
     );
   }
+
+  /// Creates a new playlist or return one if exists already.
+  Future<Playlist> createOrUpdatePlaylist(String entryKey) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tPlaylists,
+      where: '"name" = ?',
+      whereArgs: [entryKey],
+      limit: 1,
+    );
+
+    if (maps.isEmpty) {
+      var playlist = Playlist(name: entryKey);
+      var id = await db.insert(
+        _tPlaylists,
+        playlist.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.rollback,
+      );
+      return Playlist(name: entryKey, id: id);
+    }
+
+    var result = maps.first;
+    return Playlist(
+      id: result['id'],
+      name: result['name'],
+    );
+  }
 }
