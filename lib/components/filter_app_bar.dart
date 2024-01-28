@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
@@ -25,6 +26,8 @@ class FilterAppBar extends StatefulWidget {
   /// is available in the widget, the app bar belongs to.
   final SelectedItemsAction? listAction;
 
+  final ExportAction? exportAction;
+
   /// [NavigationState] to show the path of navigation in the appbar.
   final NavigationState navigationState = NavigationState();
 
@@ -33,6 +36,7 @@ class FilterAppBar extends StatefulWidget {
     super.key,
     required this.title,
     this.listAction,
+    this.exportAction,
     this.enableFilter,
     this.enableBack = false,
   });
@@ -71,12 +75,18 @@ class FilterAppBarState extends State<FilterAppBar> {
       widget.navigationState.removeListener(_updateState);
       widget.navigationState.addListener(_updateState);
     }
+
+    if (oldWidget.exportAction != widget.exportAction) {
+      widget.exportAction?.removeListener(_updateState);
+      widget.exportAction?.addListener(_updateState);
+    }
   }
 
   @override
   void dispose() async {
     super.dispose();
     widget.listAction?.removeListener(_updateState);
+    widget.exportAction?.removeListener(_updateState);
     widget.navigationState.removeListener(_updateState);
   }
 
@@ -188,7 +198,9 @@ class FilterAppBarState extends State<FilterAppBar> {
   /// Creates the actions of the app bar.
   List<Widget> _createActions() {
     var enableFilter = widget.enableFilter ?? false;
-    return !enableFilter && widget.listAction == null
+    return !enableFilter &&
+            widget.listAction == null &&
+            widget.exportAction == null
         ? []
         : [
             if (enableFilter &&
@@ -201,6 +213,15 @@ class FilterAppBarState extends State<FilterAppBar> {
                   },
                 ),
                 icon: const Icon(Icons.search),
+              ),
+            if (widget.exportAction != null && widget.listAction!.enabled)
+              IconButton(
+                onPressed: () => setState(
+                  () {
+                    widget.exportAction!.actionPerformed = true;
+                  },
+                ),
+                icon: widget.exportAction!.icon,
               ),
             if (widget.listAction != null && widget.listAction!.enabled)
               IconButton(

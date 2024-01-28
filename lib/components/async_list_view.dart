@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
+import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
@@ -43,6 +45,7 @@ typedef EditGroupFunction = Function(
 
 /// Function called when the corresponds function of the selected items is performed in the action bar.
 typedef MultiSelectActionFunction = Future<bool> Function(
+  String actionId,
   List<dynamic> selectedItems,
 );
 
@@ -93,6 +96,9 @@ class AsyncListView extends StatefulWidget {
   /// [SelectedItemsAction] of the action bar the list belongs to.
   final SelectedItemsAction? selectedItemsAction;
 
+  /// [ExportAction] of the action bar the list belongs to.
+  final ExportAction? exportAction;
+
   /// Navigation state if a hierarchical view is used.
   final NavigationState? navState;
 
@@ -105,6 +111,12 @@ class AsyncListView extends StatefulWidget {
   /// Active item, when list is just in create mode.
   final ModelBase? activeItem;
 
+  /// Indicates, whether the add button should be shown or not.
+  final bool showAddButton;
+
+  /// Subaction buttons which can be used to add multiple sub actions to the main add button
+  final List<ActionButton>? subactions;
+
   /// Initializes the list view.
   const AsyncListView({
     super.key,
@@ -116,11 +128,14 @@ class AsyncListView extends StatefulWidget {
     this.editGroupFunction,
     this.addItem,
     this.selectedItemsAction,
+    this.exportAction,
     this.onMultiSelect,
     this.navState,
     this.moveUp,
     this.onActiveItemChanged,
     this.activeItem,
+    this.showAddButton = false,
+    this.subactions,
   });
 
   @override
@@ -173,6 +188,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
+    widget.exportAction?.addListener(_performSelectedItemsAction);
     widget.navState?.addListener(_backPressed);
     _activeItemId = widget.activeItem?.getIdentifier();
     _onActiveItemChangedSub ??= widget.onActiveItemChanged?.listen((event) {
@@ -192,6 +208,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
+    widget.exportAction?.removeListener(_performSelectedItemsAction);
     widget.navState?.removeListener(_backPressed);
     _onActiveItemChangedSub?.cancel();
   }
@@ -237,16 +254,26 @@ class _AsyncListViewState extends State<AsyncListView> {
       return;
     }
 
+    String? actionId;
+
     if (widget.selectedItemsAction!.actionPerformed) {
+      actionId = SelectedItemsAction.actionId;
+    } else if (widget.exportAction!.actionPerformed) {
+      actionId = ExportAction.actionId;
+    }
+
+    if (actionId != null) {
       var selected = _items?.where(
         (element) => _selectedItems.any(
           (item) => item.getIdentifier() == element?.getIdentifier(),
         ),
       );
-      widget.onMultiSelect!(selected?.toList() ?? []).then((value) {
+      widget.onMultiSelect!(actionId, selected?.toList() ?? []).then((value) {
         widget.selectedItemsAction!.actionPerformedFinished();
+        widget.exportAction!.actionPerformedFinished();
         if (value) {
           widget.selectedItemsAction!.clear();
+          widget.exportAction!.clear();
           _disableMultiSelectMode();
           if (widget.selectedItemsAction!.reload) {
             _reloadData();
@@ -333,22 +360,30 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// When a list of sub action buttons is provided, an expandable action button will be shown.
   Widget _createActionButton() {
     return Visibility(
-      visible: widget.addItem != null,
-      child: FloatingActionButton(
-        onPressed: () {
-          if (widget.addItem == null) {
-            return;
-          }
+      visible: (widget.showAddButton &&
+              widget.subactions != null &&
+              widget.subactions!.isNotEmpty) ||
+          widget.addItem != null,
+      child: widget.subactions != null && widget.subactions!.isNotEmpty
+          ? ExpandableFab(
+              distance: 64.0,
+              children: widget.subactions!,
+            )
+          : FloatingActionButton(
+              onPressed: () {
+                if (widget.addItem == null) {
+                  return;
+                }
 
-          widget.addItem!().then((value) {
-            if (value) {
-              _reloadData();
-            }
-          });
-        },
-        tooltip: AppLocalizations.of(context)!.add,
-        child: const Icon(Icons.add),
-      ),
+                widget.addItem!().then((value) {
+                  if (value) {
+                    _reloadData();
+                  }
+                });
+              },
+              tooltip: AppLocalizations.of(context)!.add,
+              child: const Icon(Icons.add),
+            ),
     );
   }
 

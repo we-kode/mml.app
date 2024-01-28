@@ -82,7 +82,7 @@ class RecordsScreen extends StatelessWidget {
               },
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
-              onMultiSelect: (selectedItems) async {
+              onMultiSelect: (actionId, selectedItems) async {
                 return await PlaylistService.getInstance().downloadRecords(
                   selectedItems as List<ModelBase?>,
                   context,

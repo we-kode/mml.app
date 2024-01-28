@@ -82,5 +82,8 @@
   "showLogs": "Show logs",
   "livestreams": "Livestreams",
   "saveFilters": "Save filter",
-  "cover":"Cover"
+  "cover":"Cover",
+  "notCompatibleFile": "File could not be read. Wrong format.",
+  "notDownloaded":"Not downloaded",
+  "notDownloadedRecords":"The following records are no longer available or you have no right to download them."
 }
