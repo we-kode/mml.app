@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
@@ -56,8 +58,9 @@ class PlaylistScreen extends StatelessWidget {
                         onPressed: () async {
                           FilePickerResult? selected =
                               await FilePicker.platform.pickFiles(
-                            type: FileType.custom,
-                            allowedExtensions: ['mml'],
+                            type:
+                                Platform.isIOS ? FileType.any : FileType.custom,
+                            allowedExtensions: Platform.isIOS ? null : ['mml'],
                           );
 
                           if (selected == null) {
