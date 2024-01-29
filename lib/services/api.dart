@@ -57,9 +57,9 @@ class ApiService {
   ///
   /// Adds interceptors for error handling if [addErrorHandling] is set to true.
   void initDio(Dio dio, bool addErrorHandling) {
-    dio.options.connectTimeout = 5000;
-    dio.options.sendTimeout = 5000;
-    dio.options.receiveTimeout = 5000;
+    dio.options.connectTimeout = const Duration(seconds: 5);
+    dio.options.sendTimeout = const Duration(seconds: 5);
+    dio.options.receiveTimeout = const Duration(seconds: 5);
 
     _addRequestOptionsInterceptor(dio);
 
@@ -119,7 +119,7 @@ class ApiService {
   /// during requests send with the passed instance.
   void _addDefaultErrorHandlerInterceptor(Dio dio) {
     dio.interceptors.add(
-      InterceptorsWrapper(onError: (DioError e, handler) async {
+      InterceptorsWrapper(onError: (DioException e, handler) async {
         if (e.response != null) {
           var statusCode = e.response!.statusCode;
           if (statusCode == HttpStatus.unauthorized) {
@@ -169,7 +169,7 @@ class ApiService {
 
               return handler.resolve(retryResponse);
             } catch (e) {
-              return handler.reject(e as DioError);
+              return handler.reject(e as DioException);
             }
           } else if (statusCode == HttpStatus.forbidden) {
             _messenger.showMessage(_messenger.forbidden);
@@ -186,7 +186,7 @@ class ApiService {
         if (e.error is SocketException) {
           _messenger.showMessage(_messenger.notReachable);
         } else if (e.type is! HandshakeException) {
-          _messenger.showMessage(_messenger.unexpectedError(e.message));
+          _messenger.showMessage(_messenger.unexpectedError(e.message ?? ''));
         }
 
         return handler.reject(e);

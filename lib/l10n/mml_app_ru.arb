@@ -80,5 +80,10 @@
   "development": "Разработка",
   "clearLogs": "Очистить лог",
   "showLogs": "Показывать лог",
-  "livestreams": "Tрансляции"
+  "livestreams": "Tрансляции",
+  "saveFilters": "Сохранить фильтры",
+  "cover": "Обложка",
+  "notCompatibleFile": "Файл невозможно расшифровать. Неправильный формат.",
+  "notDownloaded": "Не загружено",
+  "notDownloadedRecords": "Следующие записи больше недоступны или вы не имеете права их загружать."
 }

@@ -87,5 +87,10 @@
   "development": "Entwicklung",
   "clearLogs": "Logs löschen",
   "showLogs": "Logs anzeigen",
-  "livestreams": "Livestreams"
+  "livestreams": "Livestreams",
+  "saveFilters": "Filter merken",
+  "cover": "Cover",
+  "notCompatibleFile": "Datei konnte nicht gelesen werden. Format fehlerhaft.",
+  "notDownloaded":"Nicht heruntergeladen",
+  "notDownloadedRecords":"Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen."
 }

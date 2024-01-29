@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -43,6 +46,9 @@ class Record extends ModelBase {
   /// Checksum of the record data.
   String? checksum;
 
+  /// The cover image of the record.
+  String? cover;
+
   RecordViewSettings? _viewSettings;
 
   /// Creates a new record instance with the given values.
@@ -57,8 +63,9 @@ class Record extends ModelBase {
     this.artist,
     this.genre,
     this.language,
-    bool? isDeletable = false,
-  }) : super(isDeletable: isDeletable);
+    this.cover,
+    super.isDeletable,
+  });
 
   /// Converts a json object/map to the record model.
   factory Record.fromJson(Map<String, dynamic> json) => _$RecordFromJson(json);
@@ -112,7 +119,24 @@ class Record extends ModelBase {
   }
 
   @override
+  Widget? getAvatar(BuildContext? context) {
+    if (_viewSettings == null || !_viewSettings!.cover) {
+      return null;
+    }
+    
+    if (cover != null && cover!.isNotEmpty) {
+      return Image.memory(
+        Uint8List.fromList(
+          base64.decode(cover!),
+        ),
+        gaplessPlayback: true,
+      );
+    }
+    return const Icon(Icons.music_note_outlined);
+  }
+
+  @override
   String? getGroup(BuildContext context) {
-    return '${DateFormat.yMd().format(date??DateTime.now())} - ${(date??DateTime.now()).weekdayName()}';
+    return '${DateFormat.yMd().format(date ?? DateTime.now())} - ${(date ?? DateTime.now()).weekdayName()}';
   }
 }

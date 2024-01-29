@@ -5,6 +5,7 @@ import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/router.dart';
+import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/faq.dart';
 import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
@@ -30,6 +31,10 @@ class SettingsViewModel extends ChangeNotifier {
   /// DB service to update settings in db.
   final DBService _dbService = DBService.getInstance();
 
+  /// Secure storage service.
+  final SecureStorageService _secureStoreService =
+      SecureStorageService.getInstance();
+
   /// Link of the privacy policy.
   final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
 
@@ -45,6 +50,9 @@ class SettingsViewModel extends ChangeNotifier {
   /// settings for the records view.
   late RecordViewSettings recordViewSettings;
 
+  // settings for saving filters.
+  late bool saveFilters;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
@@ -53,6 +61,10 @@ class SettingsViewModel extends ChangeNotifier {
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       recordViewSettings = await _dbService.loadRecordViewSettings();
+      saveFilters = (await _secureStoreService
+                  .get(SecureStorageService.saveFiltersStorageKey) ??
+              false) ==
+          'true';
       return true;
     });
   }
@@ -134,6 +146,18 @@ class SettingsViewModel extends ChangeNotifier {
 
   Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
+    notifyListeners();
+  }
+
+  /// Updates the Save Filter settings.
+  Future updateFilterSaveSettings() async {
+    if (!saveFilters) {
+      await _dbService.clearID3Filter();
+    }
+    await _secureStoreService.set(
+      SecureStorageService.saveFiltersStorageKey,
+      saveFilters.toString(),
+    );
     notifyListeners();
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
@@ -29,6 +30,8 @@ class RecordsViewModel extends ChangeNotifier {
   /// Indicates if the folder view is active or not.
   bool isFolderView = false;
 
+  late ID3TagFilter tagFilter;
+
   /// settings for the records view.
   late RecordViewSettings recordViewSettings;
 
@@ -41,6 +44,19 @@ class RecordsViewModel extends ChangeNotifier {
           ))
               ?.toLowerCase() ==
           'true';
+      tagFilter = await _dbService.loadID3Filter();
+      if (isFolderView) {
+        var startDate = tagFilter.startDate;
+        var endDate = tagFilter.endDate;
+        tagFilter[ID3TagFilters.folderView] = isFolderView;
+        if (startDate != null && endDate != null) {
+          tagFilter[ID3TagFilters.date] = DateTimeRange(
+            start: startDate,
+            end: endDate,
+          );
+        }
+      }
+
       recordViewSettings = await _dbService.loadRecordViewSettings();
       return true;
     });
@@ -104,6 +120,7 @@ class RecordsViewModel extends ChangeNotifier {
               subFilter.endDate!.year, subFilter.endDate!.month),
         ),
       );
+      saveFolderPath(subFilter);
     } else if (subFilter.startDate!.month == subFilter.endDate!.month) {
       subFilter[ID3TagFilters.date] = DateTimeRange(
         start: DateTime(
@@ -117,8 +134,31 @@ class RecordsViewModel extends ChangeNotifier {
           31,
         ),
       );
+      saveFolderPath(subFilter);
     } else {
       subFilter.clear(ID3TagFilters.date);
+      _dbService.clearID3Filter(ID3TagFilters.date);
     }
+  }
+
+  /// Performs item open action.
+  Future saveFolderPath(subfilter) async {
+    if ((await isFilterPersistActive())) {
+      _dbService.saveID3Filter(
+        ID3TagFilters.date,
+        jsonEncode(
+          List<String>.from(
+            [subfilter.startDate.toString(), subfilter.endDate.toString()],
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<bool> isFilterPersistActive() async {
+    return (await SecureStorageService.getInstance()
+                .get(SecureStorageService.saveFiltersStorageKey))
+            ?.toLowerCase() ==
+        'true';
   }
 }

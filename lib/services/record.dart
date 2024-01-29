@@ -73,6 +73,33 @@ class RecordService {
     );
   }
 
+  /// Returns a list of records which are part of the checksums.
+  Future<ModelList> getRecordsByChecksum(
+    List<String> checksums,
+  ) async {
+    var response = await _apiService.request(
+      '/media/record/check',
+      data: checksums,
+      options: Options(
+        method: 'POST',
+        contentType: Headers.jsonContentType,
+      ),
+    );
+
+    return ModelList(
+      List<Record>.from(
+        response.data.map(
+          (item) {
+            var rec = Record.fromJson(item);
+            return rec;
+          },
+        ),
+      ),
+      0,
+      response.data.length,
+    );
+  }
+
   /// Returns a list of artists with the amount of [take] starting from the [offset].
   Future<ModelList> getArtists(String? filter, int? offset, int? take) async {
     var response = await _apiService.request(

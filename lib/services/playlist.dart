@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/views/records/download.dart';
 
@@ -17,27 +18,30 @@ class PlaylistService {
     return _instance;
   }
 
-  /// Handles the downlad of [records] and adding them to playlists.
+  /// Handles the downlad of [records] and adding them to playlists or to one predefined [playlist].
   Future<bool> downloadRecords(
     List<ModelBase?> records,
-    BuildContext context,
-  ) async {
-    List<dynamic>? selectedPlaylists = await showDialog(
-      barrierDismissible: false,
-      context: context,
-      builder: (BuildContext context) {
-        return AsyncSelectListDialog(
-          loadData: ({filter, offset, take}) {
-            return DBService.getInstance().getPlaylists(
-              filter,
-              offset,
-              take,
-            );
-          },
-          initialSelected: const [],
-        );
-      },
-    );
+    BuildContext context, {
+    Playlist? playlist,
+  }) async {
+    List<dynamic>? selectedPlaylists = playlist != null
+        ? [playlist.id]
+        : await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return AsyncSelectListDialog(
+                loadData: ({filter, offset, take}) {
+                  return DBService.getInstance().getPlaylists(
+                    filter,
+                    offset,
+                    take,
+                  );
+                },
+                initialSelected: const [],
+              );
+            },
+          );
 
     if (selectedPlaylists == null || selectedPlaylists.isEmpty) {
       return false;
@@ -56,7 +60,9 @@ class PlaylistService {
   }
 
   /// Returns if [recordId] is in one playlist already.
-  Future<bool> isFavorite(String? recordId) async{
-    return recordId?.isNotEmpty == true ? await DBService.getInstance().isInPlaylist(recordId!) : false;
+  Future<bool> isFavorite(String? recordId) async {
+    return recordId?.isNotEmpty == true
+        ? await DBService.getInstance().isInPlaylist(recordId!)
+        : false;
   }
 }

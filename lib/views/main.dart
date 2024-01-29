@@ -5,12 +5,13 @@ import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mml_app/view_models/records/overview.dart';
+import 'package:mml_app/views/playlists/import_observer.dart';
 import 'package:provider/provider.dart';
 
 /// Main screen.
 class MainScreen extends StatelessWidget {
   /// Initializes the instance.
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   /// Builds the screen.
   @override
@@ -38,20 +39,27 @@ class MainScreen extends StatelessWidget {
                   ),
                 ),
                 body: SafeArea(
-                  child: Navigator(
-                    initialRoute: RecordsViewModel.route,
-                    observers: [_NestedRouteObserver(vm: vm)],
-                    onGenerateRoute: (settings) {
-                      return RouterService.getInstance().getNestedRoutes(
-                        args: settings.arguments,
-                      )[settings.name];
-                    },
+                  child: Column(
+                    children: [
+                      const ImportObserver(),
+                      Expanded(
+                        child: Navigator(
+                          initialRoute: RecordsViewModel.route,
+                          observers: [_NestedRouteObserver(vm: vm)],
+                          onGenerateRoute: (settings) {
+                            return RouterService.getInstance().getNestedRoutes(
+                              args: settings.arguments,
+                            )[settings.name];
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
                     return BottomNavigationBar(
-                      backgroundColor: Theme.of(context).bottomAppBarColor,
+                      backgroundColor: Theme.of(context).colorScheme.background,
                       showUnselectedLabels: false,
                       showSelectedLabels: false,
                       type: BottomNavigationBarType.fixed,

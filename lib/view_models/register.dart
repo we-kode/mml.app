@@ -63,7 +63,7 @@ class RegisterViewModel extends ChangeNotifier {
             return false;
           }
         } catch (e) {
-          if (e is! DioError ||
+          if (e is! DioException ||
               e.response?.statusCode != HttpStatus.unauthorized) {
             Future.microtask(() async {
               await afterRegistration();
@@ -79,8 +79,7 @@ class RegisterViewModel extends ChangeNotifier {
       }
 
       if (Platform.isIOS) {
-        deviceIdentifier =
-            (await DeviceInfoPlugin().iosInfo).utsname.machine ?? '';
+        deviceIdentifier = (await DeviceInfoPlugin().iosInfo).utsname.machine;
       }
 
       state = RegistrationState.rsa;
@@ -156,7 +155,7 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   /// Tries to register the client if a new [barcode] gets scanned.
-  void register(Barcode barcode, MobileScannerArguments? args) async {
+  void register(Barcode barcode) async {
     if (barcode.rawValue == null) {
       return;
     }

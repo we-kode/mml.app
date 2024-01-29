@@ -107,13 +107,13 @@ class ClientService {
       successfull = response.statusCode == HttpStatus.ok;
     } catch (e) {
       successfull =
-          e is DioError && e.response?.statusCode == HttpStatus.unauthorized;
+          e is DioException && e.response?.statusCode == HttpStatus.unauthorized;
 
-      if (e is DioError) {
+      if (e is DioException) {
         if (e.error is SocketException) {
           message = _messenger.notReachable;
         } else if (e.type is! HandshakeException) {
-          message = _messenger.unexpectedError(e.message);
+          message = _messenger.unexpectedError(e.message ?? '');
         }
       } else {
         message = _messenger.unexpectedError(
@@ -209,7 +209,7 @@ class ClientService {
       // correctly or on not authorized errors to prevent logout on server
       // errors.
       if (!(await _storage.has(SecureStorageService.accessTokenStorageKey)) ||
-          (e is DioError &&
+          (e is DioException &&
               (e.response?.statusCode != HttpStatus.unauthorized &&
                   e.response?.data['error'] != 'Error occurred 333'))) {
         rethrow;

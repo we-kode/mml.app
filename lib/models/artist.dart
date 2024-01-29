@@ -16,8 +16,8 @@ class Artist extends ModelBase {
   Artist({
     this.artistId,
     this.name,
-    bool? isDeletable = false,
-  }) : super(isDeletable: isDeletable);
+    super.isDeletable,
+  });
 
   /// Converts a json object/map to the model.
   factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);

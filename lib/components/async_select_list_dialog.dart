@@ -25,10 +25,10 @@ class AsyncSelectListDialog extends StatefulWidget {
 
   /// Initializes the list view.
   const AsyncSelectListDialog({
-    Key? key,
+    super.key,
     required this.loadData,
     required this.initialSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<AsyncSelectListDialog> createState() => _AsyncSelectListDialogState();

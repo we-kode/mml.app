@@ -1,7 +1,10 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 /// Action which is whoen in the app bar when items are selected in a selection list.
 class SelectedItemsAction extends ChangeNotifier {
+  /// Id of the action.
+  static const String actionId = 'AppBarAction_SelectedItems';
+
   /// The actual count of selected items.
   int _count = 0;
 

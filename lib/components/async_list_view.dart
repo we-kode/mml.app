@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
+import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
@@ -43,6 +45,7 @@ typedef EditGroupFunction = Function(
 
 /// Function called when the corresponds function of the selected items is performed in the action bar.
 typedef MultiSelectActionFunction = Future<bool> Function(
+  String actionId,
   List<dynamic> selectedItems,
 );
 
@@ -93,6 +96,9 @@ class AsyncListView extends StatefulWidget {
   /// [SelectedItemsAction] of the action bar the list belongs to.
   final SelectedItemsAction? selectedItemsAction;
 
+  /// [ExportAction] of the action bar the list belongs to.
+  final ExportAction? exportAction;
+
   /// Navigation state if a hierarchical view is used.
   final NavigationState? navState;
 
@@ -105,9 +111,15 @@ class AsyncListView extends StatefulWidget {
   /// Active item, when list is just in create mode.
   final ModelBase? activeItem;
 
+  /// Indicates, whether the add button should be shown or not.
+  final bool showAddButton;
+
+  /// Subaction buttons which can be used to add multiple sub actions to the main add button
+  final List<ActionButton>? subactions;
+
   /// Initializes the list view.
   const AsyncListView({
-    Key? key,
+    super.key,
     required this.title,
     required this.loadData,
     this.subfilter,
@@ -116,12 +128,15 @@ class AsyncListView extends StatefulWidget {
     this.editGroupFunction,
     this.addItem,
     this.selectedItemsAction,
+    this.exportAction,
     this.onMultiSelect,
     this.navState,
     this.moveUp,
     this.onActiveItemChanged,
     this.activeItem,
-  }) : super(key: key);
+    this.showAddButton = false,
+    this.subactions,
+  });
 
   @override
   State<AsyncListView> createState() => _AsyncListViewState();
@@ -173,6 +188,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
+    widget.exportAction?.addListener(_performSelectedItemsAction);
     widget.navState?.addListener(_backPressed);
     _activeItemId = widget.activeItem?.getIdentifier();
     _onActiveItemChangedSub ??= widget.onActiveItemChanged?.listen((event) {
@@ -192,6 +208,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
+    widget.exportAction?.removeListener(_performSelectedItemsAction);
     widget.navState?.removeListener(_backPressed);
     _onActiveItemChangedSub?.cancel();
   }
@@ -237,16 +254,26 @@ class _AsyncListViewState extends State<AsyncListView> {
       return;
     }
 
+    String? actionId;
+
     if (widget.selectedItemsAction!.actionPerformed) {
+      actionId = SelectedItemsAction.actionId;
+    } else if (widget.exportAction!.actionPerformed) {
+      actionId = ExportAction.actionId;
+    }
+
+    if (actionId != null) {
       var selected = _items?.where(
-        (element) => _selectedItems.contains(
-          element?.getIdentifier(),
+        (element) => _selectedItems.any(
+          (item) => item.getIdentifier() == element?.getIdentifier(),
         ),
       );
-      widget.onMultiSelect!(selected?.toList() ?? []).then((value) {
+      widget.onMultiSelect!(actionId, selected?.toList() ?? []).then((value) {
         widget.selectedItemsAction!.actionPerformedFinished();
+        widget.exportAction!.actionPerformedFinished();
         if (value) {
           widget.selectedItemsAction!.clear();
+          widget.exportAction!.clear();
           _disableMultiSelectMode();
           if (widget.selectedItemsAction!.reload) {
             _reloadData();
@@ -333,29 +360,37 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// When a list of sub action buttons is provided, an expandable action button will be shown.
   Widget _createActionButton() {
     return Visibility(
-      visible: widget.addItem != null,
-      child: FloatingActionButton(
-        onPressed: () {
-          if (widget.addItem == null) {
-            return;
-          }
+      visible: (widget.showAddButton &&
+              widget.subactions != null &&
+              widget.subactions!.isNotEmpty) ||
+          widget.addItem != null,
+      child: widget.subactions != null && widget.subactions!.isNotEmpty
+          ? ExpandableFab(
+              distance: 64.0,
+              children: widget.subactions!,
+            )
+          : FloatingActionButton(
+              onPressed: () {
+                if (widget.addItem == null) {
+                  return;
+                }
 
-          widget.addItem!().then((value) {
-            if (value) {
-              _reloadData();
-            }
-          });
-        },
-        tooltip: AppLocalizations.of(context)!.add,
-        child: const Icon(Icons.add),
-      ),
+                widget.addItem!().then((value) {
+                  if (value) {
+                    _reloadData();
+                  }
+                });
+              },
+              tooltip: AppLocalizations.of(context)!.add,
+              child: const Icon(Icons.add),
+            ),
     );
   }
 
   /// Creates the list header widget with filter and remove action buttons.
   Widget _createListHeaderWidget() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -387,7 +422,9 @@ class _AsyncListViewState extends State<AsyncListView> {
         child: ListView.separated(
           separatorBuilder: (context, index) {
             return const Divider(
-              height: 1,
+              height: 0,
+              indent: 10,
+              endIndent: 10,
             );
           },
           itemBuilder: (context, index) {
@@ -482,14 +519,14 @@ class _AsyncListViewState extends State<AsyncListView> {
       _actualGroup = itemGroup;
       return Column(
         children: [
-          Chip(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Chip(
+              side: BorderSide.none,
+              backgroundColor: Theme.of(context).colorScheme.outlineVariant,
+              label: Text(
+                item.getGroup(context)!,
               ),
-            ),
-            label: Text(
-              item.getGroup(context)!,
             ),
           ),
           if (item.getIdentifier() != null) _listTile(item, index),
@@ -502,28 +539,30 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
-    var leadingTile = !_isInMultiSelectMode
-        ? item.getPrefixIcon(context) != null
-            ? widget.editGroupFunction != null
-                ? IconButton(
-                    onPressed: () => {
-                      widget.editGroupFunction!(item).then(
-                        (value) {
-                          if (value) {
-                            _reloadData();
-                          }
-                        },
-                      )
-                    },
-                    icon: item.getPrefixIcon(context)!,
-                  )
-                : item.getPrefixIcon(context)!
-            : null
-        : Checkbox(
-            onChanged: (_) {
-              _onItemChecked(index);
-            },
-            value: _selectedItems.contains(item.getIdentifier()),
+    var leadingTile = item.getAvatar(context) == null
+        ? !_isInMultiSelectMode
+            ? item.getPrefixIcon(context)
+            : _selectCheckbox(index, item)
+        : Stack(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+                child: Container(
+                  height: 42,
+                  width: 42,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  child: item.getAvatar(context),
+                ),
+              ),
+              if (_isInMultiSelectMode)
+                Positioned(
+                  bottom: -15,
+                  right: -15,
+                  child: _selectCheckbox(index, item),
+                ),
+            ],
           );
 
     final trailingSubStyle = Theme.of(context).textTheme.bodyMedium;
@@ -532,7 +571,8 @@ class _AsyncListViewState extends State<AsyncListView> {
       selected: item.getIdentifier() == _activeItemId,
       selectedTileColor: Theme.of(context).focusColor,
       leading: leadingTile,
-      minVerticalPadding: 0,
+      minVerticalPadding: 10,
+      isThreeLine: item.getSubtitle(context) != null,
       visualDensity: const VisualDensity(vertical: 0),
       title: Wrap(
         children: [
@@ -545,46 +585,56 @@ class _AsyncListViewState extends State<AsyncListView> {
               softWrap: false,
             ),
           ),
-          _createTitleSuffix(item),
         ],
       ),
       subtitle: item.getSubtitle(context) != null
           ? SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(top: 5),
+              padding: const EdgeInsets.only(top: 2),
               child: Text(
                 item.getSubtitle(context)!,
                 overflow: TextOverflow.fade,
                 maxLines: 1,
                 softWrap: false,
+                style: trailingSubStyle!.copyWith(
+                  color: item.getIdentifier() == _activeItemId
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.outline,
+                ),
               ),
             )
           : null,
-      trailing: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const SizedBox(
-            height: 6,
-          ),
-          item.getMetadata(context) != null
-              ? Text(
-                  item.getMetadata(context)!,
-                  style: Theme.of(context).textTheme.titleMedium,
-                )
-              : const SizedBox.shrink(),
-          const SizedBox(
-            height: 3,
-          ),
-          item.getSubMetadata(context) != null
-              ? Text(
-                  item.getSubMetadata(context)!,
-                  style: trailingSubStyle!.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall!.color,
-                  ),
-                )
-              : const SizedBox.shrink(),
-        ],
-      ),
+      trailing: (item.getMetadata(context) != null ||
+              item.getSubMetadata(context) != null)
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                item.getMetadata(context) != null
+                    ? Text(
+                        item.getMetadata(context)!,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                              color: item.getIdentifier() == _activeItemId
+                                  ? Theme.of(context).colorScheme.primary
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color,
+                            ),
+                      )
+                    : const SizedBox.shrink(),
+                item.getSubMetadata(context) != null
+                    ? Text(
+                        item.getSubMetadata(context)!,
+                        style: trailingSubStyle!.copyWith(
+                          color: item.getIdentifier() == _activeItemId
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.outline,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ],
+            )
+          : null,
       onTap: () {
         if (_isInMultiSelectMode) {
           _onItemChecked(index);
@@ -617,27 +667,17 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Stores the identifer of the item at the [index] or removes it, when
   /// the identifier was in the list of selected items.
   void _onItemChecked(int index) {
-    if (_selectedItems.contains(_items![index]?.getIdentifier())) {
-      _selectedItems.remove(_items![index]?.getIdentifier());
+    if (_selectedItems.any(
+        (item) => item.getIdentifier() == _items![index]?.getIdentifier())) {
+      _selectedItems.remove(_items![index]);
     } else if (_items![index] != null) {
-      _selectedItems.add(_items![index]!.getIdentifier());
+      _selectedItems.add(_items![index]!);
     }
 
     setState(() {
       _selectedItems = _selectedItems;
     });
     widget.selectedItemsAction?.count = _selectedItems.length;
-  }
-
-  /// Cretaes a suffix widget of the title if suffix exists.
-  Widget _createTitleSuffix(ModelBase? item) {
-    if (item!.getDisplayDescriptionSuffix(context) != null) {
-      return Text(
-        " (${item.getDisplayDescriptionSuffix(context)})",
-        style: Theme.of(context).textTheme.bodySmall,
-      );
-    }
-    return const Text('');
   }
 
   /// Creates a list tile widget for a not loded list item.
@@ -659,6 +699,24 @@ class _AsyncListViewState extends State<AsyncListView> {
           ],
         ),
       ),
+    );
+  }
+
+  /// Checkbox to be shown when in multiselection mode.
+  Widget _selectCheckbox(int index, ModelBase item) {
+    return Checkbox(
+      splashRadius: 0,
+      side: BorderSide.none,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(5.0),
+        ),
+      ),
+      onChanged: (_) {
+        _onItemChecked(index);
+      },
+      value: _selectedItems
+          .any((elem) => elem.getIdentifier() == item.getIdentifier()),
     );
   }
 }

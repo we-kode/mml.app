@@ -54,4 +54,9 @@ abstract class ModelBase {
   Icon? getPrefixIcon(BuildContext context) {
     return null;
   }
+
+   /// Returns the avatar to be shown in list.
+  Widget? getAvatar(BuildContext? context) {
+    return null;
+  }
 }

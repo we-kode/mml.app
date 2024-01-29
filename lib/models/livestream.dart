@@ -36,4 +36,9 @@ class Livestream extends Record {
   String? getGroup(BuildContext context) {
     return null;
   }
+
+  @override
+  Widget? getAvatar(BuildContext? context) {
+    return null;
+  }
 }

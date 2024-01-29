@@ -11,9 +11,9 @@ class CheckAnimation extends StatefulWidget {
 
   /// Initializes the animation.
   const CheckAnimation({
-    Key? key,
+    super.key,
     this.onStop,
-  }) : super(key: key);
+  });
 
   @override
   CheckAnimationState createState() => CheckAnimationState();

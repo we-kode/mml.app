@@ -80,5 +80,10 @@
   "development": "Development",
   "clearLogs": "Clear logs",
   "showLogs": "Show logs",
-  "livestreams": "Livestreams"
+  "livestreams": "Livestreams",
+  "saveFilters": "Save filter",
+  "cover":"Cover",
+  "notCompatibleFile": "File could not be read. Wrong format.",
+  "notDownloaded":"Not downloaded",
+  "notDownloadedRecords":"The following records are no longer available or you have no right to download them."
 }

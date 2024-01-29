@@ -16,8 +16,8 @@ class Album extends ModelBase {
   Album({
     this.albumId,
     this.albumName,
-    bool? isDeletable = false,
-  }) : super(isDeletable: isDeletable);
+    super.isDeletable,
+  });
 
   /// Converts a json object/map to the model.
   factory Album.fromJson(Map<String, dynamic> json) => _$AlbumFromJson(json);

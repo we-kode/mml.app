@@ -20,7 +20,8 @@ Livestream _$LivestreamFromJson(Map<String, dynamic> json) => Livestream(
       ..genre = json['genre'] as String?
       ..album = json['album'] as String?
       ..language = json['language'] as String?
-      ..checksum = json['checksum'] as String?;
+      ..checksum = json['checksum'] as String?
+      ..cover = json['cover'] as String?;
 
 Map<String, dynamic> _$LivestreamToJson(Livestream instance) {
   final val = <String, dynamic>{};
@@ -43,5 +44,6 @@ Map<String, dynamic> _$LivestreamToJson(Livestream instance) {
   writeNotNull('album', instance.album);
   writeNotNull('language', instance.language);
   writeNotNull('checksum', instance.checksum);
+  writeNotNull('cover', instance.cover);
   return val;
 }

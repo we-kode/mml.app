@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
 
@@ -12,7 +15,11 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// [RecordService] used to load data for the tag filter.
   final RecordService _service = RecordService.getInstance();
 
+  /// [SecureStorageService] used to load and save data to secure store.
   final SecureStorageService _storage = SecureStorageService.getInstance();
+
+  /// [DBService] used to persist data.
+  final DBService _dbService = DBService.getInstance();
 
   /// Initializes the view model.
   RecordTagFilterViewModel(this.tagFilter);
@@ -20,12 +27,26 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// Clears the filter value of the [identifier].
   void clear(String identifier) async {
     tagFilter.clear(identifier);
+    await _dbService.clearID3Filter(identifier == ID3TagFilters.folderView
+        ? ID3TagFilters.date
+        : identifier);
     if (identifier == ID3TagFilters.folderView) {
       await _storage.set(
         SecureStorageService.folderViewStorageKey,
         false.toString(),
       );
     }
+    notifyListeners();
+  }
+
+  /// Clears all filters.
+  void clearAll() async {
+    tagFilter.clearAll();
+    await _dbService.clearID3Filter();
+    await _storage.set(
+      SecureStorageService.folderViewStorageKey,
+      false.toString(),
+    );
     notifyListeners();
   }
 
@@ -37,6 +58,23 @@ class RecordTagFilterViewModel extends ChangeNotifier {
         SecureStorageService.folderViewStorageKey,
         (selectedValues as bool).toString(),
       );
+    } else if ((await _storage.get(SecureStorageService.saveFiltersStorageKey))
+            ?.toLowerCase() ==
+        'true') {
+      if (identifier == ID3TagFilters.date) {
+        await _dbService.saveID3Filter(
+          identifier,
+          jsonEncode(
+            List<String>.from(
+                [tagFilter.startDate.toString(), tagFilter.endDate.toString()]),
+          ),
+        );
+      } else {
+        await _dbService.saveID3Filter(
+          identifier,
+          jsonEncode(tagFilter[identifier]),
+        );
+      }
     }
     notifyListeners();
   }
