@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:mml_app/extensions/bool.dart';
-import 'package:mml_app/migrations/v4.dart';
+import 'package:mml_app/migrations/version_4.dart';
 import 'package:mml_app/migrations/v3.dart';
 import 'package:mml_app/migrations/migration.dart';
 import 'package:mml_app/migrations/v1.dart';
