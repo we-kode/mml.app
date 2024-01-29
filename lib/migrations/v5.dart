@@ -1,5 +1,5 @@
 import 'package:mml_app/migrations/migration.dart';
-import 'package:mml_app/migrations/v4.dart';
+import 'package:mml_app/migrations/version_4.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Version 5 of the databse.
