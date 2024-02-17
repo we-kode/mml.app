@@ -123,7 +123,7 @@ class Record extends ModelBase {
     if (_viewSettings == null || !_viewSettings!.cover) {
       return null;
     }
-    
+
     if (cover != null && cover!.isNotEmpty) {
       return Image.memory(
         Uint8List.fromList(
@@ -137,6 +137,6 @@ class Record extends ModelBase {
 
   @override
   String? getGroup(BuildContext context) {
-    return '${DateFormat.yMd().format(date ?? DateTime.now())} - ${(date ?? DateTime.now()).weekdayName()}';
+    return '${DateFormat.yMd().format(date ?? DateTime.now())} - ${(date ?? DateTime.now()).weekdayName()}${album?.isNotEmpty ?? false ? ':' : ''} $album';
   }
 }

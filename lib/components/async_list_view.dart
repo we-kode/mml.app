@@ -520,7 +520,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+            ),
             child: Chip(
               side: BorderSide.none,
               backgroundColor: Theme.of(context).colorScheme.outlineVariant,
@@ -572,6 +576,10 @@ class _AsyncListViewState extends State<AsyncListView> {
       selectedTileColor: Theme.of(context).focusColor,
       leading: leadingTile,
       minVerticalPadding: 10,
+      contentPadding: const EdgeInsets.only(
+        right: 10,
+        left: 10,
+      ),
       isThreeLine: item.getSubtitle(context) != null,
       visualDensity: const VisualDensity(vertical: 0),
       title: Wrap(
