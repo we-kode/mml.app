@@ -77,16 +77,16 @@
 	</array>
 	<key>CFBundleDocumentTypes</key>
 	<array>
-    	<dict>
-        	<key>CFBundleTypeName</key>
-        	<string>MML</string>
-        	<key>LSHandlerRank</key>
-        	<string>Alternate</string>
-        	<key>LSItemContentTypes</key>
-       	 	<array>
-            	<string>de.wekode.mml</string>
-        	</array>
-    	</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>MML</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>de.wekode.mml</string>
+			</array>
+		</dict>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
@@ -102,5 +102,7 @@
 	<false/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<false/>
 </dict>
 </plist>
