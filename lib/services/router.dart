@@ -262,4 +262,23 @@ class RouterService {
   int getRootRoute(String route) {
     return _rootRoutes[route] ?? _rootRoutes.values.reduce(max);
   }
+
+  /// inits routes. Removes not visible navigation elements and updates mapping.
+  void initRootRoutes(bool showLivestreams) {
+    if (showLivestreams) {
+      return;
+    }
+
+    _rootRoutes.clear();
+    _rootRoutes.addAll({
+      RecordsViewModel.route: 0,
+      PlaylistViewModel.route: 1,
+      SettingsViewModel.route: 2,
+      ServerConnectionViewModel.route: 2,
+      LicensesOverviewViewModel.route: 2,
+      LicenseViewModel.route: 2,
+      FAQViewModel.route: 2,
+      LogViewModel.route: 2,
+    });
+  }
 }
