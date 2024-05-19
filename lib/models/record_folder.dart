@@ -47,7 +47,9 @@ class RecordFolder extends ModelBase {
   @override
   getIdentifier() {
     final m = month != null ? "-$month" : "";
-    final d = day != null ? "-$day - ${DateTime(year, month!, day!).weekdayName()}" : "";
+    final d = day != null
+        ? "-$day - ${DateTime(year, month!, day!).weekdayName()}"
+        : "";
     return "$year$m$d";
   }
 
@@ -63,7 +65,8 @@ class RecordFolder extends ModelBase {
     }
 
     if (startDate == endDate) {
-      return RecordFolder(year: startDate.year, month: startDate.month, day: startDate.day);
+      return RecordFolder(
+          year: startDate.year, month: startDate.month, day: startDate.day);
     }
 
     if (startDate.month == endDate.month) {

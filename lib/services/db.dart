@@ -131,7 +131,7 @@ class DBService {
         INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
         INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
         WHERE p.id = ?
-        ORDER BY p.name, r.title
+        ORDER BY p.name, r.tracknumber, r.title
         LIMIT ? OFFSET ?
     ''', [
       playlist,
@@ -354,7 +354,7 @@ class DBService {
         INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
         INNER JOIN $_tRecords r ON rp.recordId = r.recordId
         WHERE p.id = ? 
-        ORDER BY r.title
+        ORDER BY r.tracknumber, r.title
     ''', [playlistId]);
 
     if (maps.isEmpty) {
@@ -425,6 +425,7 @@ class DBService {
         INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
         INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
         WHERE p.id = ?
+        ORDER BY r.tracknumber, r.title
     ''',
       [
         playlistId,
