@@ -258,7 +258,7 @@ class _AsyncListViewState extends State<AsyncListView> {
 
     if (widget.selectedItemsAction!.actionPerformed) {
       actionId = SelectedItemsAction.actionId;
-    } else if (widget.exportAction!.actionPerformed) {
+    } else if (widget.exportAction?.actionPerformed ?? false) {
       actionId = ExportAction.actionId;
     }
 
