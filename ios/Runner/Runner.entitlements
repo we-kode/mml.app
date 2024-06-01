@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.o//EN" "http://www.apple.com/DTDs/Property">
-<plist version="1.0">
-    <dict>
-        <key>aps-environment</key>
-        <string>development</string>
-    </dict>
-</plist>
