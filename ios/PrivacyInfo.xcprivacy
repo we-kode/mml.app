@@ -9,7 +9,7 @@
 			<string>NSPrivacyAccessedAPICategorySystemBootTime</string>
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
-				<string>CA92.1</string>
+				<string>35F9.1</string>
 			</array>
 		</dict>
 		<dict>
@@ -17,7 +17,7 @@
 			<string>NSPrivacyAccessedAPICategoryDiskSpace</string>
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
-				<string>CA92.1</string>
+				<string>E174.1</string>
 			</array>
 		</dict>
 		<dict>
@@ -25,7 +25,8 @@
 			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
 			<key>NSPrivacyAccessedAPITypeReasons</key>
 			<array>
-				<string>CA92.1</string>
+				<string>C617.1</string>
+				<string>3852.1</string>
 			</array>
 		</dict>
 	</array>
