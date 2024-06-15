@@ -38,20 +38,28 @@ class LivestreamService {
       params['take'] = take.toString();
     }
 
-    var response = await _apiService.request(
-      '/media/livestream/list',
-      queryParameters: params,
-      options: Options(
-        method: 'POST',
-      ),
-    );
+    try {
+      var response = await _apiService.request(
+        '/media/livestream/list',
+        queryParameters: params,
+        options: Options(
+          method: 'POST',
+        ),
+      );
 
-    return ModelList(
-      List<Livestream>.from(
-        response.data['items'].map((item) => Livestream.fromJson(item)),
-      ),
-      offset ?? 0,
-      response.data["totalCount"],
-    );
+      return ModelList(
+        List<Livestream>.from(
+          response.data['items'].map((item) => Livestream.fromJson(item)),
+        ),
+        offset ?? 0,
+        response.data["totalCount"],
+      );
+    } catch (e) {
+      return ModelList(
+        List<Livestream>.empty(),
+        offset ?? 0,
+        0,
+      );
+    }
   }
 }
