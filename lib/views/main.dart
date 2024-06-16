@@ -59,7 +59,7 @@ class MainScreen extends StatelessWidget {
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
                     return BottomNavigationBar(
-                      backgroundColor: Theme.of(context).colorScheme.background,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       showUnselectedLabels: false,
                       showSelectedLabels: false,
                       type: BottomNavigationBarType.fixed,
@@ -88,7 +88,7 @@ class _NestedRouteObserver extends RouteObserver<PageRoute> {
   /// Main viewmodel used to update the selected index.
   MainViewModel vm;
 
-  /// Intializes the observer.
+  /// Initializes the observer.
   _NestedRouteObserver({required this.vm});
 
   @override

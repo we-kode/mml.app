@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/components/player_sheet.dart';
+import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
+import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 
 /// Service that handles all actions for playing records.
 class PlayerService {
@@ -41,11 +43,6 @@ class PlayerService {
     _instance ??= PlayerService._();
 
     return _instance!;
-  }
-
-  /// Sets the given [audioHandler] and initializes the necessary listeners.
-  set audioHandler(MMLAudioHandler audioHandler) {
-    _audioHandler = audioHandler;
   }
 
   /// Sets the repeat mode to the given [value].
@@ -185,7 +182,7 @@ class PlayerService {
     _controller = null;
   }
 
-  /// Activtes the state, that the seek bar is actually be dragged by the user.
+  /// Activates the state, that the seek bar is actually be dragged by the user.
   startSeekDrag() {
     _isSeeking = true;
   }
@@ -194,5 +191,26 @@ class PlayerService {
   Future resetOnRecordChange() async {
     await onRecordChanged.close();
     onRecordChanged = StreamController.broadcast();
+  }
+
+  Future initializeAudioHandler(BuildContext context) async {
+    var notificationColor = Theme.of(context).colorScheme.inverseSurface;
+
+    _audioHandler = await AudioService.init(
+      builder: () => MMLAudioHandler(),
+      config: AudioServiceConfig(
+        androidNotificationChannelId: 'de.wekode.mml.audio',
+        androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
+        androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true,
+        androidBrowsableRootExtras: {
+          MMLMediaConstants.mediaBrowseSupported: true
+        },
+        notificationColor: notificationColor,
+        androidNotificationIcon: 'mipmap/ic_notification',
+        fastForwardInterval: const Duration(seconds: 10),
+        rewindInterval: const Duration(seconds: 10),
+      ),
+    );
   }
 }

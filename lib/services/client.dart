@@ -91,7 +91,7 @@ class ClientService {
   /// process is finished by removing the data from the storage and redirecting
   /// to registration screen.
   Future removeRegistration({automatic = false}) async {
-    var successfull = false;
+    var successful = false;
     var message = "";
 
     try {
@@ -104,9 +104,9 @@ class ClientService {
         options: Options(method: 'POST'),
       );
 
-      successfull = response.statusCode == HttpStatus.ok;
+      successful = response.statusCode == HttpStatus.ok;
     } catch (e) {
-      successfull =
+      successful =
           e is DioException && e.response?.statusCode == HttpStatus.unauthorized;
 
       if (e is DioException) {
@@ -124,7 +124,7 @@ class ClientService {
       }
     }
 
-    if (successfull || automatic) {
+    if (successful || automatic) {
       await FileService.getInstance().clear();
       await DBService.getInstance().clean();
       await _storage.clearTokens();

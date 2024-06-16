@@ -15,6 +15,7 @@ import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/messenger.dart';
+import 'package:mml_app/services/player/mmL_media_item_service.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
@@ -101,7 +102,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await _playCurrentRecord();
   }
 
-  /// Cretaes new instance of the [AudioPlayer], if player not exists yet.
+  /// Creates new instance of the [AudioPlayer], if player not exists yet.
   void _initPlayer() {
     _player ??= AudioPlayer();
     _initializeListeners();
@@ -144,6 +145,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> skipToPrevious() async {
     await _skipTo("previous");
+  }
+
+  @override
+  Future<List<MediaItem>> getChildren(String parentMediaId, [Map<String, dynamic>? options]) {
+    return MMLMediaItemService.getInstance().getChildren(parentMediaId, options);
+  }
+
+  @override
+  Future<List<MediaItem>> search(String query, [Map<String, dynamic>? extras]) {
+    // TODO: implement search
+    return super.search(query, extras);
   }
 
   /// Initializes the listeners to handle errors, show notifications and skip to

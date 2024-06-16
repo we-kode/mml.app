@@ -13,7 +13,7 @@ class MainViewModel extends ChangeNotifier {
   /// Route of the main screen.
   static const String route = '/main';
 
-  // Appbar of the main view.
+  // App-Bar of the main view.
   static FilterAppBar? appBar;
 
   /// Current build context.
@@ -68,7 +68,7 @@ class MainViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     _context = context;
     locales = AppLocalizations.of(_context)!;
-    final showLivestreams = (await LivestreamService.getInstance().get(null, null, null)).isNotEmpty;
+    final showLivestreams = false;
     if (!showLivestreams) {
       _routerService.initRootRoutes(showLivestreams);
       _routes.removeWhere((element) => element == LivestreamsViewModel.route);

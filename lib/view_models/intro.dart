@@ -1,4 +1,3 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
@@ -7,7 +6,6 @@ import 'package:mml_app/components/intro_playlist_animation.dart';
 import 'package:mml_app/components/intro_records_animation.dart';
 import 'package:mml_app/components/intro_register_animation.dart';
 import 'package:mml_app/services/file.dart';
-import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
@@ -93,25 +91,10 @@ class IntroViewModel extends ChangeNotifier {
     ];
   }
 
-  /// Inits the app. All initalizing processes run here.
+  /// Inits the app. All initializing processes run here.
   Future _initApp(BuildContext context) async {
-    var notificationColor = Theme.of(context).colorScheme.inverseSurface;
-
     await findSystemLocale();
     await FileService.getInstance().createFolder();
-
-    PlayerService.getInstance().audioHandler = await AudioService.init(
-      builder: () => MMLAudioHandler(),
-      config: AudioServiceConfig(
-        androidNotificationChannelId: 'de.wekode.mml.audio',
-        androidNotificationChannelName: locales.appTitle,
-        androidNotificationOngoing: true,
-        androidStopForegroundOnPause: true,
-        notificationColor: notificationColor,
-        androidNotificationIcon: 'mipmap/ic_notification',
-        fastForwardInterval: const Duration(seconds: 10),
-        rewindInterval: const Duration(seconds: 10),
-      ),
-    );
+    await PlayerService.getInstance().initializeAudioHandler(context);
   }
 }
