@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
@@ -382,7 +383,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                 });
               },
               tooltip: AppLocalizations.of(context)!.add,
-              child: const Icon(Icons.add),
+              child: const Icon(Symbols.add),
             ),
     );
   }
@@ -488,7 +489,7 @@ class _AsyncListViewState extends State<AsyncListView> {
           horizontalSpacer,
           TextButton.icon(
             onPressed: () => _loadData(subfilter: widget.subfilter?.filter),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Symbols.refresh),
             label: Text(AppLocalizations.of(context)!.reload),
           ),
         ],

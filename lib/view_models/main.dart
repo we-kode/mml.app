@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/router.dart';
@@ -32,25 +33,25 @@ class MainViewModel extends ChangeNotifier {
   late final List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
       icon: const Icon(
-        Icons.music_note_outlined,
+        Symbols.music_note,
       ),
       label: locales.records,
     ),
     BottomNavigationBarItem(
       icon: const Icon(
-        Icons.playlist_play,
+        Symbols.playlist_play,
       ),
       label: locales.playlist,
     ),
      BottomNavigationBarItem(
       icon: const Icon(
-        Icons.sensors,
+        Symbols.sensors,
       ),
       label: locales.livestreams,
     ),
     BottomNavigationBarItem(
       icon: const Icon(
-        Icons.settings,
+        Symbols.settings,
       ),
       label: locales.settings,
     ),

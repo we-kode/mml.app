@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
 import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
@@ -90,7 +91,7 @@ class RouterService {
               title: 'records',
               enableFilter: true,
               listAction: SelectedItemsAction(
-                const Icon(Icons.star_outline),
+                const Icon(Symbols.star_outline),
               ),
             ),
           ),
@@ -113,7 +114,7 @@ class RouterService {
                   : 'playlist',
               enableBack: (args is PlaylistArguments) && args.playlist != null,
               listAction: SelectedItemsAction(
-                const Icon(Icons.delete),
+                const Icon(Symbols.delete),
                 reload: true,
               ),
               exportAction: ExportAction(),

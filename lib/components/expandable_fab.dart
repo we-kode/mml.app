@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'dart:math' as math;
 
 /// Expandable FAB action button.
@@ -112,7 +113,7 @@ class _ExpandableFabState extends State<ExpandableFab>
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
-                Icons.close,
+                Symbols.close,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
@@ -161,7 +162,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           duration: const Duration(milliseconds: 250),
           child: FloatingActionButton(
             onPressed: _toggle,
-            child: const Icon(Icons.add),
+            child: const Icon(Symbols.add),
           ),
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/soundwave_animation.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/models/livestream.dart';
@@ -79,6 +80,7 @@ class PlayerSheetState extends State<PlayerSheet>
                               iconSize: 24,
                               padding: EdgeInsets.zero,
                               onPressed: () async {
+                                // TODO: Remove records
                                 PlaylistService.getInstance().downloadRecords([
                                   PlayerService.getInstance()
                                       .playerState
@@ -96,8 +98,8 @@ class PlayerSheetState extends State<PlayerSheet>
                                 builder: (context, snapshot) {
                                   return snapshot.hasData &&
                                           (snapshot.data ?? false)
-                                      ? const Icon(Icons.star)
-                                      : const Icon(Icons.star_outline);
+                                      ? const Icon(Symbols.star, fill: 1)
+                                      : const Icon(Symbols.star);
                                 },
                               ),
                             );
@@ -112,7 +114,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     onPressed: () {
                       PlayerService.getInstance().closePlayer();
                     },
-                    icon: const Icon(Icons.close),
+                    icon: const Icon(Symbols.close),
                   ),
                 ],
               ),
@@ -147,7 +149,7 @@ class PlayerSheetState extends State<PlayerSheet>
                     Consumer<PlayerState>(
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
-                            ? const Icon(Icons.sensors)
+                            ? const Icon(Symbols.sensors)
                             : Text(
                                 "${state.currentSeekPosition.asFormattedDuration()}/${state.currentRecord?.duration?.asFormattedDuration()}",
                                 textAlign: TextAlign.right,
@@ -249,8 +251,8 @@ class PlayerSheetState extends State<PlayerSheet>
                                 iconSize: 24,
                                 icon: Icon(
                                   state.shuffle
-                                      ? Icons.shuffle_on_rounded
-                                      : Icons.shuffle_rounded,
+                                      ? Symbols.shuffle_on_rounded
+                                      : Symbols.shuffle_rounded,
                                 ),
                               );
                       },
@@ -266,7 +268,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                     : () => PlayerService.getInstance()
                                         .playPrevious(),
                                 iconSize: 32,
-                                icon: const Icon(Icons.skip_previous_rounded),
+                                icon: const Icon(Symbols.skip_previous_rounded),
                               );
                       },
                     ),
@@ -282,7 +284,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                     : () {
                                         PlayerService.getInstance().rewind();
                                       },
-                                icon: const Icon(Icons.replay_10),
+                                icon: const Icon(Symbols.replay_10),
                               );
                       },
                     ),
@@ -331,7 +333,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                         PlayerService.getInstance()
                                             .fastForward();
                                       },
-                                icon: const Icon(Icons.forward_10),
+                                icon: const Icon(Symbols.forward_10),
                               );
                       },
                     ),
@@ -347,7 +349,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                     : () {
                                         PlayerService.getInstance().playNext();
                                       },
-                                icon: const Icon(Icons.skip_next_rounded),
+                                icon: const Icon(Symbols.skip_next_rounded),
                               );
                       },
                     ),
@@ -370,10 +372,10 @@ class PlayerSheetState extends State<PlayerSheet>
                                       },
                                 icon: Icon(
                                   state.repeat == PlayerRepeatMode.all
-                                      ? Icons.repeat_on_rounded
+                                      ? Symbols.repeat_on_rounded
                                       : (state.repeat == PlayerRepeatMode.one
-                                          ? Icons.repeat_one_on_rounded
-                                          : Icons.repeat_rounded),
+                                          ? Symbols.repeat_one_on_rounded
+                                          : Symbols.repeat_rounded),
                                 ),
                               );
                       },

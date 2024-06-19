@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/navigation_state.dart';
@@ -22,8 +23,8 @@ class FilterAppBar extends StatefulWidget {
   /// [Filter], which holds the entered text in the app bar.
   final Filter filter = Filter();
 
-  /// [SelectedItemsAction] which controls the app bar if a list with muiltselection
-  /// is available in the widget, the app bar belongs to.
+  /// [SelectedItemsAction] which controls the app bar if a list with multi
+  /// selection is available in the widget, the app bar belongs to.
   final SelectedItemsAction? listAction;
 
   final ExportAction? exportAction;
@@ -31,7 +32,7 @@ class FilterAppBar extends StatefulWidget {
   /// [NavigationState] to show the path of navigation in the appbar.
   final NavigationState navigationState = NavigationState();
 
-  /// Initiales the app bar.
+  /// Initializes the app bar.
   FilterAppBar({
     super.key,
     required this.title,
@@ -108,7 +109,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                   onPressed: () {
                     widget.listAction?.clear();
                   },
-                  icon: const Icon(Icons.close),
+                  icon: const Icon(Symbols.close),
                   tooltip: AppLocalizations.of(context)!.cancel,
                 ),
                 Text("${widget.listAction!.count}"),
@@ -123,7 +124,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                       await RouterService.getInstance().popNestedRoute();
                     }
                   },
-                  icon: const Icon(Icons.arrow_back),
+                  icon: const Icon(Symbols.arrow_back),
                   tooltip: AppLocalizations.of(context)!.back,
                 )
               : null,
@@ -165,11 +166,11 @@ class FilterAppBarState extends State<FilterAppBar> {
       decoration: InputDecoration(
         labelText: AppLocalizations.of(context)!.filter,
         icon: const Icon(
-          Icons.filter_list_alt,
+          Symbols.filter_list_alt,
         ),
         suffixIcon: IconButton(
           icon: const Icon(
-            Icons.clear,
+            Symbols.clear,
           ),
           onPressed: () {
             setState(
@@ -212,7 +213,7 @@ class FilterAppBarState extends State<FilterAppBar> {
                     _filterOpened = !_filterOpened;
                   },
                 ),
-                icon: const Icon(Icons.search),
+                icon: const Icon(Symbols.search),
               ),
             if (widget.exportAction != null && widget.listAction!.enabled)
               IconButton(

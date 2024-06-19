@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/components/progress_indicator.dart';
@@ -185,7 +186,7 @@ class PlaylistViewModel extends ChangeNotifier {
         appBar: FilterAppBar(
           title: playlist.name!,
           listAction: SelectedItemsAction(
-            const Icon(Icons.delete),
+            const Icon(Symbols.delete),
             reload: true,
           ),
           exportAction: ExportAction(),

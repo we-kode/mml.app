@@ -132,7 +132,8 @@ class Record extends ModelBase {
         gaplessPlayback: true,
       );
     }
-    return const Icon(Icons.music_note_outlined);
+    return const Icon(Symbols.audio_file);
+  }
   }
 
   @override
