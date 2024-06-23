@@ -27,8 +27,9 @@ class MainScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            return WillPopScope(
-              onWillPop: () => vm.popNestedRoute(context),
+            return PopScope(
+              canPop: false,
+              onPopInvoked: (_) => vm.popNestedRoute(context),
               child: Scaffold(
                 appBar: PreferredSize(
                   preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -85,7 +86,7 @@ class MainScreen extends StatelessWidget {
 
 /// Route observer used to pop routes in the nested navigator.
 class _NestedRouteObserver extends RouteObserver<PageRoute> {
-  /// Main viewmodel used to update the selected index.
+  /// Main view model used to update the selected index.
   MainViewModel vm;
 
   /// Initializes the observer.

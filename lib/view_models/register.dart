@@ -8,7 +8,7 @@ import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -36,10 +36,10 @@ class RegisterViewModel extends ChangeNotifier {
   /// Locales of the application.
   late AppLocalizations locales;
 
-  /// Users firstname who wants to register a device.
+  /// Users first name who wants to register a device.
   String? firstName;
 
-  /// Users lastname who wants to register a device.
+  /// Users last name who wants to register a device.
   String? lastName;
 
   /// The identifier of the device.
@@ -116,7 +116,7 @@ class RegisterViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Redirects the route with main route after successfull registration.
+  /// Redirects the route with main route after successful registration.
   Future afterRegistration() async {
     await RouterService.getInstance().pushReplacementNamed(MainViewModel.route);
   }

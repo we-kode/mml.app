@@ -10,7 +10,7 @@ import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// Service that handles all actions for playing records.
 class PlayerService {
@@ -204,7 +204,9 @@ class PlayerService {
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
         androidBrowsableRootExtras: {
-          MMLMediaConstants.mediaBrowseSupported: true
+          MMLMediaConstants.mediaBrowseSupported: true,
+          // MMLMediaConstants.mediaBrowsableContentKey: MMLMediaConstants.mediaBrowsableContentValue,
+          // MMLMediaConstants.mediaPlayableContentKey: MMLMediaConstants.mediaPlayableContentValue,
         },
         notificationColor: notificationColor,
         androidNotificationIcon: 'mipmap/ic_notification',

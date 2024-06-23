@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
@@ -99,7 +99,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
       leading: widget.listAction != null && widget.listAction!.enabled

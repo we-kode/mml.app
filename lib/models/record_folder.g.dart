@@ -7,9 +7,9 @@ part of 'record_folder.dart';
 // **************************************************************************
 
 RecordFolder _$RecordFolderFromJson(Map<String, dynamic> json) => RecordFolder(
-      year: json['year'] as int,
-      month: json['month'] as int?,
-      day: json['day'] as int?,
+      year: (json['year'] as num).toInt(),
+      month: (json['month'] as num?)?.toInt(),
+      day: (json['day'] as num?)?.toInt(),
       isDeletable: json['isDeletable'] as bool? ?? false,
       isSelectable: json['isSelectable'] as bool? ?? false,
     );

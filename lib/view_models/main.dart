@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
-import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/livestreams/overview.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
@@ -69,7 +68,7 @@ class MainViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     _context = context;
     locales = AppLocalizations.of(_context)!;
-    final showLivestreams = false;
+    const showLivestreams = false;
     if (!showLivestreams) {
       _routerService.initRootRoutes(showLivestreams);
       _routes.removeWhere((element) => element == LivestreamsViewModel.route);

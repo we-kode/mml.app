@@ -75,6 +75,10 @@ class PlaylistScreen extends StatelessWidget {
                             return;
                           }
 
+                          if (!context.mounted) {
+                            return;
+                          }
+
                           final state = await showDialog(
                             barrierDismissible: false,
                             context: context,

@@ -9,7 +9,7 @@ import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
 import 'package:mml_app/services/playlist.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 /// Player sheet shown in the bottom sheet bar.
@@ -50,7 +50,7 @@ class PlayerSheetState extends State<PlayerSheet>
       builder: (BuildContext context, _) {
         return Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(10),
               topRight: Radius.circular(10),

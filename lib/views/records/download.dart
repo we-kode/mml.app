@@ -4,7 +4,7 @@ import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/view_models/records/download.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// View of the download dialog for records.
 class RecordDownloadDialog extends StatelessWidget {

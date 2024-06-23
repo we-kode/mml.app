@@ -4,7 +4,7 @@ import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:sqflite/sqflite.dart';
 

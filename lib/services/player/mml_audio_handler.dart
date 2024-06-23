@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/extensions/string.dart';
+import 'package:mml_app/gen/assets.gen.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -20,7 +21,6 @@ import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
-import 'package:mml_app/util/assets.dart';
 
 /// Audio handler that interacts with the player background service and the
 /// notification bar.
@@ -251,10 +251,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final bgImageUri =
         currentRecord?.cover != null && currentRecord!.cover!.isNotEmpty
             ? (await currentRecord!.cover!.toFile()).uri
-            : (await getImageFileFromAssets(
-                isDarkMode ? 'images/bg_dark.jpg' : 'images/bg_light.jpg',
-              ))
-                .uri;
+            : Uri.file(isDarkMode
+                    ? Assets.images.bgDark.path
+                    : Assets.images.bgLight.path);
 
     PlayerService.getInstance().onRecordChanged.add(currentRecord);
     mediaItem.add(

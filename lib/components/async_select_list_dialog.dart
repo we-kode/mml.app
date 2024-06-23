@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/models/model_list.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:shimmer/shimmer.dart';
 
 /// Function to load data with the passed [filter], starting from [offset] and
@@ -112,7 +112,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
     });
   }
 
-  /// Reloads the data starting from inital offset with inital count.
+  /// Reloads the data starting from initial offset with initial count.
   void _reloadData() {
     if (!mounted) {
       return;

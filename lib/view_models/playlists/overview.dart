@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/playlists.dart';

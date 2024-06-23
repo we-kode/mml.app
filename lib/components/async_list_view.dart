@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
@@ -78,7 +78,7 @@ class AsyncListView extends StatefulWidget {
   final MultiSelectActionFunction? onMultiSelect;
 
   /// A subfilter widget which can be used to add subfilters like chips for more
-  /// filter posibilities.
+  /// filter possibilities.
   final ListSubfilterView? subfilter;
 
   /// The title shown above the list.
@@ -293,7 +293,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     });
   }
 
-  /// Reloads the data starting from inital offset with inital count.
+  /// Reloads the data starting from initial offset with initial count.
   void _reloadData() {
     if (!mounted) {
       return;
@@ -316,7 +316,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   ///
   /// Shows a loading indicator instead of the list during load, if
   /// [showLoadingOverlay] is true.
-  /// Otherwhise the data will be loaded lazy in the background.
+  /// Otherwise the data will be loaded lazy in the background.
   void _loadData({
     bool showLoadingOverlay = true,
     Subfilter? subfilter,
@@ -557,7 +557,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                 child: Container(
                   height: 42,
                   width: 42,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: item.getAvatar(context),
                 ),
               ),
@@ -692,7 +692,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Creates a list tile widget for a not loded list item.
   Widget _createLoadingTile() {
     return Shimmer.fromColors(
-      baseColor: Theme.of(context).colorScheme.surfaceVariant,
+      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       highlightColor: Theme.of(context).colorScheme.surface,
       child: ListTile(
         title: Stack(

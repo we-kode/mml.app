@@ -72,6 +72,7 @@ class ImportService {
         if (!context.mounted) {
           return List.empty();
         }
+
         await PlaylistService.getInstance().downloadRecords(
           records,
           context,

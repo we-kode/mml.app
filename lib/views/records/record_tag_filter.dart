@@ -6,7 +6,7 @@ import 'package:mml_app/components/list_subfilter_view.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/view_models/records/record_tag_filter.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 typedef FilterChangedFunction = Future<bool> Function(ID3TagFilter filter);

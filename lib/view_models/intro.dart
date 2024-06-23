@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/components/intro_playlist_animation.dart';
@@ -95,6 +95,11 @@ class IntroViewModel extends ChangeNotifier {
   Future _initApp(BuildContext context) async {
     await findSystemLocale();
     await FileService.getInstance().createFolder();
+
+    if (!context.mounted) {
+      return;
+    }
+
     await PlayerService.getInstance().initializeAudioHandler(context);
   }
 }
