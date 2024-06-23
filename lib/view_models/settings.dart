@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';

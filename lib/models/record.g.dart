@@ -10,7 +10,7 @@ Record _$RecordFromJson(Map<String, dynamic> json) => Record(
       recordId: json['recordId'] as String?,
       checksum: json['checksum'] as String?,
       title: json['title'] as String?,
-      trackNumber: json['trackNumber'] as int?,
+      trackNumber: (json['trackNumber'] as num?)?.toInt(),
       date:
           json['date'] == null ? null : DateTime.parse(json['date'] as String),
       duration: (json['duration'] as num?)?.toDouble() ?? 0,

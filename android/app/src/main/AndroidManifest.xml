@@ -5,6 +5,7 @@
    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
    <uses-permission android:name="android.permission.INTERNET"/>
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
 
 
    <queries>
@@ -14,7 +15,7 @@
         <data android:scheme="mailto"/>
       </intent>
    </queries>
-   
+
    <application
         android:label="@string/app_title"
         android:name="${applicationName}"
@@ -41,7 +42,7 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-            <intent-filter android:icon="@mipmap/ic_launcher"                  
+            <intent-filter android:icon="@mipmap/ic_launcher"
                android:label="@string/app_title"
                android:priority="1">
                 <action android:name="android.intent.action.VIEW"/>
@@ -73,5 +74,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <meta-data
+            android:name="com.google.android.gms.car.application"
+            android:resource="@xml/automotive_app_desc" />
+
+        <meta-data
+            android:name="androidx.car.app.TintableAttributionIcon"
+            android:resource="@mipmap/ic_notification" />
     </application>
 </manifest>

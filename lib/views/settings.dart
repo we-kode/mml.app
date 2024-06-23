@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +36,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: Text(vm.locales.displayDescription),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.numbers),
+                  leading: const Icon(Symbols.numbers),
                   title: Text(vm.locales.showTrackNumber),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -50,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.discount),
+                  leading: const Icon(Symbols.genres),
                   title: Text(vm.locales.showGenre),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -65,7 +66,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.translate),
+                  leading: const Icon(Symbols.translate),
                   title: Text(vm.locales.showLanguage),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -80,7 +81,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                  ListTile(
-                  leading: const Icon(Icons.image_outlined),
+                  leading: const Icon(Symbols.image),
                   title: Text(vm.locales.cover),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -105,8 +106,8 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  
-                  leading: const Icon(Icons.filter_alt),
+
+                  leading: const Icon(Symbols.filter_alt),
                   title: Text(vm.locales.saveFilters),
                   trailing: Consumer<SettingsViewModel>(
                     builder: (context, vm, _) {
@@ -121,13 +122,13 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.qr_code_2),
+                  leading: const Icon(Symbols.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),
                   onTap: vm.changeServerConnection,
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.app_blocking,
+                    Symbols.app_blocking,
                     color: Theme.of(context).colorScheme.error,
                   ),
                   title: Text(
@@ -149,35 +150,35 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.help),
+                  leading: const Icon(Symbols.help),
                   title: Text(vm.locales.faq),
                   onTap: vm.showFAQ,
                 ),
                 if (vm.supportEMail.isNotEmpty)
                   ListTile(
-                    leading: const Icon(Icons.feedback),
+                    leading: const Icon(Symbols.feedback),
                     title: Text(vm.locales.sendFeedback),
                     onTap: vm.sendFeedback,
                   ),
                 if (vm.privacyLink.isNotEmpty)
                   ListTile(
-                    leading: const Icon(Icons.verified_user),
+                    leading: const Icon(Symbols.verified_user),
                     title: Text(vm.locales.privacyPolicy),
                     onTap: vm.showPrivacyPolicy,
                   ),
                 if (vm.legalInfoLink.isNotEmpty)
                   ListTile(
-                    leading: const Icon(Icons.privacy_tip),
+                    leading: const Icon(Symbols.privacy_tip),
                     title: Text(vm.locales.legalInformation),
                     onTap: vm.showLegalInformation,
                   ),
                 ListTile(
-                  leading: const Icon(Icons.key),
+                  leading: const Icon(Symbols.key),
                   title: Text(vm.locales.licenses),
                   onTap: vm.showLicensesOverview,
                 ),
                 ListTile(
-                  leading: const Icon(Icons.new_releases),
+                  leading: const Icon(Symbols.new_releases),
                   title: Text(vm.version),
                 ),
               ],

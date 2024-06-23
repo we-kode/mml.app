@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/models/model_base.dart';
 
 part 'playlist.g.dart';
 
-/// Playlist model that holds all informations of a playlist.
+/// Playlist model that holds all information of a playlist.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class Playlist extends ModelBase {
   /// Id of the playlist.
@@ -39,7 +40,7 @@ class Playlist extends ModelBase {
 
   @override
   Icon? getPrefixIcon(BuildContext context) {
-    return const Icon(Icons.folder_special);
+    return const Icon(Symbols.folder_special);
   }
 
   /// Converts a map of the model for inserting into db.

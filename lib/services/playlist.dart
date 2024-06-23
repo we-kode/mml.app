@@ -47,6 +47,10 @@ class PlaylistService {
       return false;
     }
 
+    if (!context.mounted) {
+      return false;
+    }
+
     return await showDialog(
       barrierDismissible: false,
       context: context,

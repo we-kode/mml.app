@@ -19,7 +19,7 @@ class IntroRecordsAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.onBackground,
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 );
               }
@@ -29,7 +29,7 @@ class IntroRecordsAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.background,
+                  Theme.of(context).colorScheme.surface,
                   BlendMode.srcIn,
                 );
               }
@@ -69,7 +69,7 @@ class IntroRecordsAnimation extends StatelessWidget {
               Shape key = child as Shape;
               for (var element in key.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.onBackground,
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 );
               }

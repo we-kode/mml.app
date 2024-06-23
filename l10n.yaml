@@ -1,3 +1,4 @@
 arb-dir: lib/l10n
 template-arb-file: mml_app_de.arb
 output-localization-file: mml_app_localizations.dart
+synthetic-package: false

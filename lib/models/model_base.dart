@@ -35,7 +35,7 @@ abstract class ModelBase {
     return null;
   }
 
-  /// Returns meta dara information, e.g. duration.
+  /// Returns meta data information, e.g. duration.
   String? getMetadata(BuildContext context) {
     return null;
   }
