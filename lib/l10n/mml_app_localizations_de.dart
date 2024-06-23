@@ -263,4 +263,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notDownloadedRecords => 'Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.';
+
+  @override
+  String get overview => 'Übersicht';
+
+  @override
+  String get favorites => 'Favoriten';
+
+  @override
+  String get livestreamShort => 'Live';
+
+  @override
+  String get discover => 'Stöbern';
+
+  @override
+  String get artists => 'Interpreten';
+
+  @override
+  String get genres => 'Genres';
+
+  @override
+  String get albums => 'Alben';
+
+  @override
+  String get languages => 'Sprachen';
+
+  @override
+  String get newest => 'Neueste';
+
+  @override
+  String get newestArtists => 'Neueste Interpreten';
+
+  @override
+  String get commonArtists => 'Häufige Interpreten';
+
+  @override
+  String get commonGenres => 'Häufige Genres';
 }

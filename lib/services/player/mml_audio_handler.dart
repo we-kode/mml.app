@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/extensions/string.dart';
 import 'package:mml_app/gen/assets.gen.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
@@ -16,11 +18,12 @@ import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
 import 'package:mml_app/services/messenger.dart';
-import 'package:mml_app/services/player/mmL_media_item_service.dart';
+import 'package:mml_app/services/player/mml_media_item_service.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/util/assets.dart';
 
 /// Audio handler that interacts with the player background service and the
 /// notification bar.
@@ -58,9 +61,14 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Repeat mode that is currently set.
   PlayerRepeatMode repeat = PlayerRepeatMode.none;
 
+  /// App localizations.
+  AppLocalizations? locales;
+
   /// Creates an instance of the [MMLAudioHandler] and initializes the
   /// listeners.
-  MMLAudioHandler();
+  MMLAudioHandler(BuildContext context){
+    locales = AppLocalizations.of(context);
+  }
 
   /// Stream with the current playback position.
   Stream<Duration> get positionStream => _player!.positionStream;
@@ -148,13 +156,21 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<List<MediaItem>> getChildren(String parentMediaId, [Map<String, dynamic>? options]) {
-    return MMLMediaItemService.getInstance().getChildren(parentMediaId, options);
+  Future<List<MediaItem>> getChildren(String parentMediaId,
+      [Map<String, dynamic>? options]) {
+    try {
+      return MMLMediaItemService.getInstance(locales!)
+          .getChildren(parentMediaId, options);
+    } catch (e) {
+      playbackState.addError(e);
+
+      return Future.value([]);
+    }
   }
 
   @override
   Future<List<MediaItem>> search(String query, [Map<String, dynamic>? extras]) {
-    // TODO: implement search
+    log(extras.toString());
     return super.search(query, extras);
   }
 
@@ -248,19 +264,20 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
-    final bgImageUri =
-        currentRecord?.cover != null && currentRecord!.cover!.isNotEmpty
-            ? (await currentRecord!.cover!.toFile()).uri
-            : Uri.file(isDarkMode
-                    ? Assets.images.bgDark.path
-                    : Assets.images.bgLight.path);
+    final bgImageUri = currentRecord?.cover != null &&
+            currentRecord!.cover!.isNotEmpty
+        ? (await currentRecord!.cover!.toFile()).uri
+        : (await getImageFileFromAssets(
+            isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
+          ))
+            .uri;
 
     PlayerService.getInstance().onRecordChanged.add(currentRecord);
     mediaItem.add(
       MediaItem(
         id: currentRecord!.recordId!,
         album: currentRecord?.album,
-        title: currentRecord?.title ?? 'Unknown',
+        title: currentRecord?.title ?? locales!.unknown,
         artist: currentRecord?.artist,
         genre: currentRecord?.genre,
         artUri: bgImageUri,

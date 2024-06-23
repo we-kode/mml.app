@@ -38,10 +38,10 @@ class SettingsViewModel extends ChangeNotifier {
   /// Link of the privacy policy.
   final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
 
-  /// Link of the legal informations.
+  /// Link of the legal information.
   final String legalInfoLink = "";
 
-  /// E-Mail adress for support requests.
+  /// E-Mail address for support requests.
   final String supportEMail = "";
 
   /// version of the running app.

@@ -8,7 +8,7 @@ import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/player/player.dart';
 
 class LivestreamsViewModel extends ChangeNotifier {
-  /// Route of the plalist screen.
+  /// Route of the play list screen.
   static String route = '/livestreams';
 
   /// App locales.

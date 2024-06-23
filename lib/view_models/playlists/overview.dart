@@ -28,7 +28,7 @@ import 'package:share_plus/share_plus.dart';
 
 /// View model of the playlist view.
 class PlaylistViewModel extends ChangeNotifier {
-  /// Route of the plalist screen.
+  /// Route of the play list screen.
   static String route = '/playlist';
 
   late BuildContext _context;

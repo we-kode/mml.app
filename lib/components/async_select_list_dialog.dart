@@ -21,7 +21,7 @@ class AsyncSelectListDialog extends StatefulWidget {
   /// loading an amount of [take] data.
   final LoadDataFunction loadData;
 
-  /// List of inital selected values.
+  /// List of initial selected values.
   final List<dynamic> initialSelected;
 
   /// Initializes the list view.
@@ -39,7 +39,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
   /// Initial offset to start loading data from.
   final int _initialOffset = 0;
 
-  /// Intial amount of data that should be loaded.
+  /// Initial amount of data that should be loaded.
   final int _initialTake = 100;
 
   /// Delta the [_offset] should be increased or decreased while scrolling and
@@ -171,7 +171,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
   }
 
   /// Creates a widget that will be shown, if no data were loaded or an error
-  /// occured during loading of data.
+  /// occurred during loading of data.
   Widget _createNoDataWidget() {
     return Center(
       child: Column(
@@ -237,7 +237,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
           var endNotReached = (_offset + _take) <= _items!.totalCount;
           var loadNextIndexReached =
               index == (_offset + _take - (_offsetDelta / 2).ceil());
-          var loadPreviuousIndexReached = index == _offset;
+          var loadPreviousIndexReached = index == _offset;
           var beginNotReached = index > 0;
 
           if (endNotReached && loadNextIndexReached) {
@@ -247,7 +247,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
             Future.microtask(() {
               _loadData(showLoadingOverlay: false);
             });
-          } else if (beginNotReached && loadPreviuousIndexReached) {
+          } else if (beginNotReached && loadPreviousIndexReached) {
             _offset = _offset - _offsetDelta;
             _take = _initialTake + _offsetDelta;
 

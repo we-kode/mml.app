@@ -263,4 +263,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notDownloadedRecords => 'The following records are no longer available or you have no right to download them.';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get livestreamShort => 'Live';
+
+  @override
+  String get discover => 'Discover';
+
+  @override
+  String get artists => 'Artists';
+
+  @override
+  String get genres => 'Genres';
+
+  @override
+  String get albums => 'Albums';
+
+  @override
+  String get languages => 'Languages';
+
+  @override
+  String get newest => 'Newest';
+
+  @override
+  String get newestArtists => 'Newest artists';
+
+  @override
+  String get commonArtists => 'Common artists';
+
+  @override
+  String get commonGenres => 'Common genres';
 }

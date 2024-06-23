@@ -21,7 +21,7 @@ class RecordsViewModel extends ChangeNotifier {
   /// App locales.
   late AppLocalizations locales;
 
-  /// [RecordService] used to load data for the records uplaod dialog.
+  /// [RecordService] used to load data for the records upload dialog.
   final RecordService _service = RecordService.getInstance();
 
   /// DB service to update settings in db.

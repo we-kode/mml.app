@@ -610,6 +610,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.'**
   String get notDownloadedRecords;
+
+  /// No description provided for @overview.
+  ///
+  /// In de, this message translates to:
+  /// **'Übersicht'**
+  String get overview;
+
+  /// No description provided for @favorites.
+  ///
+  /// In de, this message translates to:
+  /// **'Favoriten'**
+  String get favorites;
+
+  /// No description provided for @livestreamShort.
+  ///
+  /// In de, this message translates to:
+  /// **'Live'**
+  String get livestreamShort;
+
+  /// No description provided for @discover.
+  ///
+  /// In de, this message translates to:
+  /// **'Stöbern'**
+  String get discover;
+
+  /// No description provided for @artists.
+  ///
+  /// In de, this message translates to:
+  /// **'Interpreten'**
+  String get artists;
+
+  /// No description provided for @genres.
+  ///
+  /// In de, this message translates to:
+  /// **'Genres'**
+  String get genres;
+
+  /// No description provided for @albums.
+  ///
+  /// In de, this message translates to:
+  /// **'Alben'**
+  String get albums;
+
+  /// No description provided for @languages.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprachen'**
+  String get languages;
+
+  /// No description provided for @newest.
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste'**
+  String get newest;
+
+  /// No description provided for @newestArtists.
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste Interpreten'**
+  String get newestArtists;
+
+  /// No description provided for @commonArtists.
+  ///
+  /// In de, this message translates to:
+  /// **'Häufige Interpreten'**
+  String get commonArtists;
+
+  /// No description provided for @commonGenres.
+  ///
+  /// In de, this message translates to:
+  /// **'Häufige Genres'**
+  String get commonGenres;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

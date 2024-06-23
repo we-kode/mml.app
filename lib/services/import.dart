@@ -22,7 +22,7 @@ class ImportService {
   // Service to show messages.
   final MessengerService _messengerService = MessengerService.getInstance();
 
-  /// [RecordService] used to load data for the records uplaod dialog.
+  /// [RecordService] used to load data for the records upload dialog.
   final RecordService _recordService = RecordService.getInstance();
 
   /// DB service to update settings in db.

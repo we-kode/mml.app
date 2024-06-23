@@ -91,6 +91,18 @@
   "saveFilters": "Filter merken",
   "cover": "Cover",
   "notCompatibleFile": "Datei konnte nicht gelesen werden. Format fehlerhaft.",
-  "notDownloaded":"Nicht heruntergeladen",
-  "notDownloadedRecords":"Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen."
+  "notDownloaded": "Nicht heruntergeladen",
+  "notDownloadedRecords": "Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.",
+  "overview": "Übersicht",
+  "favorites": "Favoriten",
+  "livestreamShort": "Live",
+  "discover": "Stöbern",
+  "artists": "Interpreten",
+  "genres": "Genres",
+  "albums": "Alben",
+  "languages": "Sprachen",
+  "newest": "Neueste",
+  "newestArtists": "Neueste Interpreten",
+  "commonArtists": "Häufige Interpreten",
+  "commonGenres": "Häufige Genres"
 }

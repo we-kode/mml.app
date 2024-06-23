@@ -197,7 +197,7 @@ class PlayerService {
     var notificationColor = Theme.of(context).colorScheme.inverseSurface;
 
     _audioHandler = await AudioService.init(
-      builder: () => MMLAudioHandler(),
+      builder: () => MMLAudioHandler(context),
       config: AudioServiceConfig(
         androidNotificationChannelId: 'de.wekode.mml.audio',
         androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
@@ -205,8 +205,8 @@ class PlayerService {
         androidStopForegroundOnPause: true,
         androidBrowsableRootExtras: {
           MMLMediaConstants.mediaBrowseSupported: true,
-          // MMLMediaConstants.mediaBrowsableContentKey: MMLMediaConstants.mediaBrowsableContentValue,
-          // MMLMediaConstants.mediaPlayableContentKey: MMLMediaConstants.mediaPlayableContentValue,
+          MMLMediaConstants.mediaPlayableContentKey:
+              MMLMediaConstants.mediaPlayableContentGridItemValue,
         },
         notificationColor: notificationColor,
         androidNotificationIcon: 'mipmap/ic_notification',

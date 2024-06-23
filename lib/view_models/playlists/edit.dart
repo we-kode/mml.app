@@ -22,7 +22,7 @@ class PlaylistEditDialogViewModel extends ChangeNotifier {
   /// Current build context.
   late BuildContext _context;
 
-  /// Playlist model for creationd or modification.
+  /// Playlist model for creation or modification.
   late Playlist playlist;
 
   /// Locales of the application.

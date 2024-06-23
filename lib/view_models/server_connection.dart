@@ -38,7 +38,7 @@ class ServerConnectionViewModel extends ChangeNotifier {
     });
   }
 
-  /// Redirects the route with main route after successfull connection update.
+  /// Redirects the route with main route after successful connection update.
   Future afterConnectionUpdate() async {
     await RouterService.getInstance().popNestedRoute();
   }

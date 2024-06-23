@@ -55,8 +55,13 @@ abstract class ModelBase {
     return null;
   }
 
-   /// Returns the avatar to be shown in list.
+  /// Returns the avatar to be shown in list.
   Widget? getAvatar(BuildContext? context) {
+    return null;
+  }
+
+  /// Returns the avatar uri.
+  Uri? getAvatarUri() {
     return null;
   }
 }

@@ -263,4 +263,40 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get notDownloadedRecords => 'Следующие записи больше недоступны или вы не имеете права их загружать.';
+
+  @override
+  String get overview => 'Обзор';
+
+  @override
+  String get favorites => 'Избранное';
+
+  @override
+  String get livestreamShort => 'Трансляции';
+
+  @override
+  String get discover => 'Искать';
+
+  @override
+  String get artists => 'Исполнители';
+
+  @override
+  String get genres => 'Жанры';
+
+  @override
+  String get albums => 'Альбомы';
+
+  @override
+  String get languages => 'Языки';
+
+  @override
+  String get newest => 'Новые';
+
+  @override
+  String get newestArtists => 'Новые исполнители';
+
+  @override
+  String get commonArtists => 'Распространённые исполнители';
+
+  @override
+  String get commonGenres => 'Распространённые жанры';
 }
