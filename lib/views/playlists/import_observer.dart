@@ -16,7 +16,7 @@ class ImportObserver extends StatefulWidget {
 /// State of the [ImportObserver].
 class ImportObserverState extends State<ImportObserver>
     with WidgetsBindingObserver {
-  static const platform = MethodChannel("de.wekode.mml/import_favs");
+  static const platform = MethodChannel("de.wekode.mml");
 
   @override
   void initState() {

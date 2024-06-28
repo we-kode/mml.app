@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/model_base.dart';
+import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/livestreams.dart';
@@ -81,10 +82,9 @@ class MMLMediaItemService {
       ),
     ];
 
-    if ((await LivestreamService.getInstance().get(null, null, null))
-        .isEmpty) {
-          tabs.removeWhere((x) => x.id == MMLMediaConstants.livestreamsTabId);
-        }
+    if ((await LivestreamService.getInstance().get(null, null, null)).isEmpty) {
+      tabs.removeWhere((x) => x.id == MMLMediaConstants.livestreamsTabId);
+    }
 
     return tabs;
   }
@@ -123,7 +123,7 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getHomeMediaItems() async {
-    var items = _getMediaItems(
+    var items = await _getMediaItems(
       await RecordService.getInstance().getRecords(
         null,
         0,
@@ -141,67 +141,71 @@ class MMLMediaItemService {
       extras: {
         MMLMediaConstants.groupTitle: locales.newest,
       },
-    ).toList();
+      defaultArtUri: await getIconUri('music_note'),
+    );
 
     // TODO: Sorting or special service method
-    items.addAll(_getMediaItems(
+    items.addAll(await _getMediaItems(
       await RecordService.getInstance().getArtists(null, 0, 10),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.newestArtists,
       },
+      defaultArtUri: await getIconUri('artist'),
     ));
 
     // TODO: Sorting or special service method
-    items.addAll(_getMediaItems(
+    items.addAll(await _getMediaItems(
       await RecordService.getInstance().getArtists(null, 0, 10),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonArtists,
       },
+      defaultArtUri: await getIconUri('artist'),
     ));
 
     // TODO: Sorting or special service method
-    items.addAll(_getMediaItems(
+    items.addAll(await _getMediaItems(
       await RecordService.getInstance().getGenres(null, 0, 10),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonGenres,
       },
+      defaultArtUri: await getIconUri('genres'),
     ));
 
     return items;
   }
 
-  List<MediaItem> _getMediaItems(
+  Future<List<MediaItem>> _getMediaItems(
     ModelList models,
     bool playable, {
     Map<String, dynamic>? extras,
-  }) {
+    Uri? defaultArtUri,
+  }) async {
     if (models.isEmpty) {
       return [MediaItem(id: '', title: locales.noData)];
     }
 
-    // TODO: Art & additional infos
-    return models
-        .whereType<ModelBase>()
-        .map(
-          (model) => MediaItem(
-            id: model.getIdentifier(),
-            title: model.getDisplayDescription(),
-            artUri: model.getAvatarUri(),
-            playable: playable,
-            extras: extras,
+    return Future.wait(
+      models.whereType<ModelBase>().map(
+            (model) async => MediaItem(
+              id: model.getIdentifier(),
+              title: model.getDisplayDescription(),
+              artUri: await model.getAvatarUri() ?? defaultArtUri,
+              playable: playable,
+              extras: extras,
+              album: model is Record ? model.album : null,
+              genre: model is Record ? model.genre : null,
+              artist: model is Record ? model.artist : null,
+              duration: model is Record
+                  ? Duration(
+                      milliseconds: ((model as Record?)?.duration ?? 0).toInt(),
+                    )
+                  : null,
+            ),
           ),
-        )
-        .toList();
-    /*
-            album: ,
-            artist: ,
-            genre: ,
-            duration: Duration(
-              milliseconds: (currentRecord?.duration ?? 0).toInt(),
-            ),*/
+    );
   }
 
   Future<Uri> getIconUri(String name) async {

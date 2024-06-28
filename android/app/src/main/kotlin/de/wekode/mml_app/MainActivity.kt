@@ -7,10 +7,11 @@ import androidx.annotation.NonNull
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugins.GeneratedPluginRegistrant
-import com.ryanheise.audioservice.AudioServiceActivity;
+import com.ryanheise.audioservice.AudioServiceActivity
+import android.net.Uri
 
 class MainActivity: AudioServiceActivity() {
-    private val CHANNEL = "de.wekode.mml/import_favs"
+    private val CHANNEL = "de.wekode.mml"
 
     var content: String? = null
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -21,6 +22,10 @@ class MainActivity: AudioServiceActivity() {
                 "getOpenFileUrl" -> {
                     result.success(content)
                     content = null
+                }
+                "mapUri" -> {
+                    var path: String = call.arguments as String
+                    result.success(AlbumArtContentProvider.mapUri(Uri.parse(path)).toString())
                 }
                 else -> result.notImplemented()
             }

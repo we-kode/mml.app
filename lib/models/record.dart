@@ -120,6 +120,11 @@ class Record extends ModelBase {
   }
 
   @override
+  String? getAvatarString() {
+    return cover;
+  }
+
+  @override
   Widget? getAvatar(BuildContext? context) {
     if (_viewSettings == null || !_viewSettings!.cover) {
       return null;
@@ -133,20 +138,8 @@ class Record extends ModelBase {
         gaplessPlayback: true,
       );
     }
+
     return const Icon(Symbols.audio_file);
-  }
-
-  @override
-  Uri? getAvatarUri() {
-    if (cover != null && cover!.isNotEmpty) {
-      return Uri.dataFromBytes(
-        Uint8List.fromList(
-          base64.decode(cover!),
-        ),
-      );
-    }
-
-    return null; //const Icon(Icons.music_note_outlined).;
   }
 
   @override

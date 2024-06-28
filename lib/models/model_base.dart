@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:cached_memory_image/cached_image_base64_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
 abstract class ModelBase {
+  static const platform = MethodChannel("de.wekode.mml");
+
   /// Indicates whether the model object is deletable.
   late bool? isDeletable;
 
@@ -40,7 +46,7 @@ abstract class ModelBase {
     return null;
   }
 
-   /// Returns meta data information, e.g. genre or language.
+  /// Returns meta data information, e.g. genre or language.
   String? getSubMetadata(BuildContext context) {
     return null;
   }
@@ -55,13 +61,41 @@ abstract class ModelBase {
     return null;
   }
 
+  /// Returns the avatar as base64 string to be shown in list.
+  String? getAvatarString() {
+    return null;
+  }
+
   /// Returns the avatar to be shown in list.
   Widget? getAvatar(BuildContext? context) {
     return null;
   }
 
   /// Returns the avatar uri.
-  Uri? getAvatarUri() {
+  Future<Uri?> getAvatarUri() async {
+    if (Platform.isAndroid &&
+        getAvatarString() != null &&
+        getAvatarString()!.isNotEmpty &&
+        getIdentifier() != null &&
+        getIdentifier()!.isNotEmpty) {
+      var file = await CachedImageBase64Manager.instance().cacheFile(
+        getIdentifier()!,
+      );
+
+      if (file?.existsSync() ?? false) {
+        var uri = Uri.parse(await platform.invokeMethod("mapUri", file!.path));
+        return uri;
+      }
+
+      file = await CachedImageBase64Manager.instance().cacheBase64(
+        getIdentifier()!,
+        getAvatarString()!,
+      );
+
+      var uri = Uri.parse(await platform.invokeMethod("mapUri", file.path));
+      return uri;
+    }
+
     return null;
   }
 }

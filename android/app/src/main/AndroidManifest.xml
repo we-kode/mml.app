@@ -82,5 +82,10 @@
         <meta-data
             android:name="androidx.car.app.TintableAttributionIcon"
             android:resource="@mipmap/ic_notification" />
+
+        <provider
+            android:name=".AlbumArtContentProvider"
+            android:authorities="de.wekode.mml_app"
+            android:exported="true" />
     </application>
 </manifest>
