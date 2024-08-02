@@ -41,4 +41,12 @@ class MMLMediaConstants {
   static const int mediaPlayableContentGridItemValue = 2;
 
   static const String groupTitle = 'android.media.browse.CONTENT_STYLE_GROUP_TITLE_HINT';
+
+  static const String extraPage = "android.media.browse.extra.PAGE";
+
+  static const String extraPageSize = "android.media.browse.extra.PAGE_SIZE";
+
+  static const int defaultPage = 0;
+
+  static const int defaultPageSize = 100;
 }

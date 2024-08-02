@@ -1,13 +1,19 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/services.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/services/album.dart';
+import 'package:mml_app/services/artist.dart';
 import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/genre.dart';
+import 'package:mml_app/services/language.dart';
 import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/services/secure_storage.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class MMLMediaItemService {
@@ -30,19 +36,50 @@ class MMLMediaItemService {
 
   Future<List<MediaItem>> getChildren(String parentMediaId,
       [Map<String, dynamic>? options]) async {
-    switch (parentMediaId) {
-      case AudioService.browsableRootId:
-        return _getRootTabs();
-      case MMLMediaConstants.homeTabId:
-        return _getHomeMediaItems();
-      case MMLMediaConstants.favoritesTabId:
-        return _getFavoritesMediaItems();
-      case MMLMediaConstants.livestreamsTabId:
-        return _getLivestreamsMediaItems();
-      case MMLMediaConstants.browseTabId:
-        return _getBrowsableCategoryMediaItems();
-      default:
-        return [];
+    if (!(await SecureStorageService.getInstance().has(
+      SecureStorageService.accessTokenStorageKey,
+    ))) {
+      // TODO: Wait for the result of https://github.com/ryanheise/audio_service/issues/1081
+      // playbackState.add(PlaybackState(
+      //     processingState: AudioProcessingState.error,
+      //     errorCode: 3,
+      //     errorMessage: "Login",
+      //     ));
+
+      throw PlatformException(code: "3", message: "Login");
+      // return [];
+    }
+
+    try {
+      switch (parentMediaId) {
+        case AudioService.browsableRootId:
+          return _getRootTabs();
+        case MMLMediaConstants.homeTabId:
+          return _getHomeMediaItems();
+        case MMLMediaConstants.browseTabId:
+          return _getBrowsableCategoryMediaItems();
+        case MMLMediaConstants.favoritesTabId:
+          return _getFavoritesMediaItems(options);
+        case MMLMediaConstants.livestreamsTabId:
+          return _getLivestreamsMediaItems(options);
+        case MMLMediaConstants.albumsDiscoverId:
+          return _getAlbumMediaItems(options);
+        case MMLMediaConstants.artistsDiscoverId:
+          return _getArtistsMediaItems(options);
+        case MMLMediaConstants.genresDiscoverId:
+          return _getGenresMediaItems(options);
+        case MMLMediaConstants.languagesDiscoverId:
+          return _getLanguagesMediaItems(options);
+        default:
+          return [];
+      }
+    } catch (e) {
+      // For connection errors a list with id (same as the parent) of the parent
+      // should be added, otherwise a fullscreen error should be shown!
+      // TODO: Handle errors and show them correctly
+      // playbackState.addError(e);
+
+      return [];
     }
   }
 
@@ -144,9 +181,8 @@ class MMLMediaItemService {
       defaultArtUri: await getIconUri('music_note'),
     );
 
-    // TODO: Sorting or special service method
     items.addAll(await _getMediaItems(
-      await RecordService.getInstance().getArtists(null, 0, 10),
+      await ArtistService.getInstance().getNewestArtists(),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.newestArtists,
@@ -154,9 +190,8 @@ class MMLMediaItemService {
       defaultArtUri: await getIconUri('artist'),
     ));
 
-    // TODO: Sorting or special service method
     items.addAll(await _getMediaItems(
-      await RecordService.getInstance().getArtists(null, 0, 10),
+      await ArtistService.getInstance().getCommonArtists(),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonArtists,
@@ -164,9 +199,8 @@ class MMLMediaItemService {
       defaultArtUri: await getIconUri('artist'),
     ));
 
-    // TODO: Sorting or special service method
     items.addAll(await _getMediaItems(
-      await RecordService.getInstance().getGenres(null, 0, 10),
+      await GenreService.getInstance().getCommonGenres(),
       true,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonGenres,
@@ -216,16 +250,101 @@ class MMLMediaItemService {
     );
   }
 
-  Future<List<MediaItem>> _getFavoritesMediaItems() async {
+  Future<List<MediaItem>> _getFavoritesMediaItems(
+      Map<String, dynamic>? options) async {
     return _getMediaItems(
-      await DBService.getInstance().getPlaylists(null, 0, 50),
+      await DBService.getInstance().getPlaylists(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
       true,
     );
   }
 
-  Future<List<MediaItem>> _getLivestreamsMediaItems() async {
+  Future<List<MediaItem>> _getLivestreamsMediaItems(
+      Map<String, dynamic>? options) async {
     return _getMediaItems(
-      await LivestreamService.getInstance().get(null, 0, 50),
+      await LivestreamService.getInstance().get(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
+      true,
+    );
+  }
+
+  Future<List<MediaItem>> _getAlbumMediaItems(
+      Map<String, dynamic>? options) async {
+    return _getMediaItems(
+      await AlbumService.getInstance().getAlbums(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
+      true,
+      defaultArtUri: await getIconUri('library_music'),
+    );
+  }
+
+  Future<List<MediaItem>> _getArtistsMediaItems(
+      Map<String, dynamic>? options) async {
+    return _getMediaItems(
+      await ArtistService.getInstance().getArtists(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
+      true,
+      defaultArtUri: await getIconUri('artist'),
+    );
+  }
+
+  Future<List<MediaItem>> _getGenresMediaItems(
+      Map<String, dynamic>? options) async {
+    return _getMediaItems(
+      await GenreService.getInstance().getGenres(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
+      true,
+      defaultArtUri: await getIconUri('genres'),
+    );
+  }
+
+  Future<List<MediaItem>> _getLanguagesMediaItems(
+      Map<String, dynamic>? options) async {
+    return _getMediaItems(
+      await LanguageService.getInstance().getLanguages(
+        null,
+        options != null && options.containsKey(MMLMediaConstants.extraPage)
+            ? options[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        options != null && options.containsKey(MMLMediaConstants.extraPageSize)
+            ? options[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+      ),
       true,
     );
   }

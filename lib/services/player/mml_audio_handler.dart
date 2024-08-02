@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -66,7 +65,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Creates an instance of the [MMLAudioHandler] and initializes the
   /// listeners.
-  MMLAudioHandler(BuildContext context){
+  MMLAudioHandler(BuildContext context) {
     locales = AppLocalizations.of(context);
   }
 
@@ -156,21 +155,27 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<List<MediaItem>> getChildren(String parentMediaId,
-      [Map<String, dynamic>? options]) {
-    try {
-      return MMLMediaItemService.getInstance(locales!)
+  Future<List<MediaItem>?> getChildren(String parentMediaId,
+      [Map<String, dynamic>? options]) async {
+    return await MMLMediaItemService.getInstance(locales!)
           .getChildren(parentMediaId, options);
-    } catch (e) {
-      playbackState.addError(e);
+  }
 
-      return Future.value([]);
-    }
+  @override
+  Future<void> playFromMediaId(String mediaId, [Map<String, dynamic>? extras]) {
+    // TODO: implement playFromMediaId
+    return super.playFromMediaId(mediaId, extras);
+  }
+
+  @override
+  Future<void> playFromSearch(String query, [Map<String, dynamic>? extras]) {
+    // TODO: implement playFromSearch
+    return super.playFromSearch(query, extras);
   }
 
   @override
   Future<List<MediaItem>> search(String query, [Map<String, dynamic>? extras]) {
-    log(extras.toString());
+    // TODO: implement search
     return super.search(query, extras);
   }
 
