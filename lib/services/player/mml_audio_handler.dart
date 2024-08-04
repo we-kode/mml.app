@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:mml_app/extensions/string.dart';
 import 'package:mml_app/gen/assets.gen.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
@@ -158,25 +157,43 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Future<List<MediaItem>?> getChildren(String parentMediaId,
       [Map<String, dynamic>? options]) async {
     return await MMLMediaItemService.getInstance(locales!)
-          .getChildren(parentMediaId, options);
+        .getChildren(parentMediaId, options);
   }
 
   @override
-  Future<void> playFromMediaId(String mediaId, [Map<String, dynamic>? extras]) {
-    // TODO: implement playFromMediaId
+  Future<void> playFromMediaId(String mediaId,
+      [Map<String, dynamic>? extras]) async {
     return super.playFromMediaId(mediaId, extras);
   }
 
   @override
-  Future<void> playFromSearch(String query, [Map<String, dynamic>? extras]) {
-    // TODO: implement playFromSearch
-    return super.playFromSearch(query, extras);
+  Future<void> playFromSearch(String query,
+      [Map<String, dynamic>? extras]) async {
+    var searchResult = await MMLMediaItemService.getInstance(
+      locales!,
+    ).searchRecords(
+      query,
+      extras,
+    );
+
+    tagFilter = searchResult.$2;
+    filter = searchResult.$3;
+
+    var record = searchResult.$1.firstOrNull as Record?;
+
+    if (record != null) {
+      await playRecord(record);
+    }
   }
 
   @override
-  Future<List<MediaItem>> search(String query, [Map<String, dynamic>? extras]) {
-    // TODO: implement search
-    return super.search(query, extras);
+  Future<List<MediaItem>> search(String query,
+      [Map<String, dynamic>? extras]) async {
+    return (await MMLMediaItemService.getInstance(locales!).search(
+      query,
+      extras,
+    ))
+        .$1;
   }
 
   /// Initializes the listeners to handle errors, show notifications and skip to
@@ -269,10 +286,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
-    final bgImageUri = currentRecord?.cover != null &&
-            currentRecord!.cover!.isNotEmpty
-        ? (await currentRecord!.cover!.toFile()).uri
-        : (await getImageFileFromAssets(
+    final bgImageUri = await currentRecord?.getAvatarUri() ?? (await getImageFileFromAssets(
             isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
           ))
             .uri;
@@ -342,7 +356,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     try {
       var response = await _apiService.request(
-        'media/stream/$direction/${currentRecord!.recordId!}',
+        '/media/stream/$direction/${currentRecord!.recordId!}',
         queryParameters: params,
         data: _tagFilter != null ? _tagFilter!.toJson() : {},
         options: Options(
@@ -414,8 +428,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     try {
       final url = currentRecord is Livestream
-          ? '${baseUrl}media/livestream/stream/${currentRecord!.recordId}'
-          : '${baseUrl}media/stream/${currentRecord!.recordId}.mp3';
+          ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
+          : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
       await _player!.setUrl(
         url,
         headers: headers,

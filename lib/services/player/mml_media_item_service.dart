@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_view_settings.dart';
@@ -19,6 +20,8 @@ import 'package:package_info_plus/package_info_plus.dart';
 class MMLMediaItemService {
   /// Instance of the [MMLMediaItemService].
   static final MMLMediaItemService _instance = MMLMediaItemService._();
+
+  String currentItemId = AudioService.browsableRootId;
 
   PackageInfo? packageInfo;
 
@@ -51,28 +54,22 @@ class MMLMediaItemService {
     }
 
     try {
-      switch (parentMediaId) {
-        case AudioService.browsableRootId:
-          return _getRootTabs();
-        case MMLMediaConstants.homeTabId:
-          return _getHomeMediaItems();
-        case MMLMediaConstants.browseTabId:
-          return _getBrowsableCategoryMediaItems();
-        case MMLMediaConstants.favoritesTabId:
-          return _getFavoritesMediaItems(options);
-        case MMLMediaConstants.livestreamsTabId:
-          return _getLivestreamsMediaItems(options);
-        case MMLMediaConstants.albumsDiscoverId:
-          return _getAlbumMediaItems(options);
-        case MMLMediaConstants.artistsDiscoverId:
-          return _getArtistsMediaItems(options);
-        case MMLMediaConstants.genresDiscoverId:
-          return _getGenresMediaItems(options);
-        case MMLMediaConstants.languagesDiscoverId:
-          return _getLanguagesMediaItems(options);
-        default:
-          return [];
-      }
+      var result = switch (parentMediaId) {
+        AudioService.browsableRootId => _getRootTabs(),
+        MMLMediaConstants.homeTabId => _getHomeMediaItems(),
+        MMLMediaConstants.browseTabId => _getBrowsableCategoryMediaItems(),
+        MMLMediaConstants.favoritesTabId => _getFavoritesMediaItems(options),
+        MMLMediaConstants.livestreamsTabId =>
+          _getLivestreamsMediaItems(options),
+        MMLMediaConstants.albumsDiscoverId => _getAlbumMediaItems(options),
+        MMLMediaConstants.artistsDiscoverId => _getArtistsMediaItems(options),
+        MMLMediaConstants.genresDiscoverId => _getGenresMediaItems(options),
+        MMLMediaConstants.languagesDiscoverId =>
+          _getLanguagesMediaItems(options),
+        _ => Future.value([] as List<MediaItem>)
+      };
+
+      return result;
     } catch (e) {
       // For connection errors a list with id (same as the parent) of the parent
       // should be added, otherwise a fullscreen error should be shown!
@@ -80,6 +77,82 @@ class MMLMediaItemService {
       // playbackState.addError(e);
 
       return [];
+    }
+  }
+
+  Future<(List<MediaItem>, ID3TagFilter, String)> search(String query,
+      [Map<String, dynamic>? extras]) async {
+    var searchResult = await searchRecords(query, extras);
+
+    return (
+      await _getMediaItems(
+        searchResult.$1,
+        true,
+        defaultArtUri: await getIconUri('music_note'),
+      ),
+      searchResult.$2,
+      searchResult.$3,
+    );
+  }
+
+  Future<(ModelList, ID3TagFilter, String)> searchRecords(String query,
+      [Map<String, dynamic>? extras]) async {
+    if (!(await SecureStorageService.getInstance().has(
+      SecureStorageService.accessTokenStorageKey,
+    ))) {
+      // TODO: Wait for the result of https://github.com/ryanheise/audio_service/issues/1081
+      // playbackState.add(PlaybackState(
+      //     processingState: AudioProcessingState.error,
+      //     errorCode: 3,
+      //     errorMessage: "Login",
+      //     ));
+
+      throw PlatformException(code: "3", message: "Login");
+      // return [];
+    }
+
+    var filter = ID3TagFilter();
+    var searchString = "";
+
+    if (extras?.containsKey('android.intent.extra.album') ?? false) {
+      filter.albumNames = [extras!['android.intent.extra.album']];
+    } else if (extras?.containsKey('android.intent.extra.artist') ?? false) {
+      filter.artistNames = [extras!['android.intent.extra.artist']];
+    } else if (extras?.containsKey('android.intent.extra.genre') ?? false) {
+      filter.genreNames = [extras!['android.intent.extra.genre']];
+    } else {
+      searchString = query;
+    }
+
+    try {
+      return (
+        await RecordService.getInstance().getRecords(
+          searchString,
+          extras != null && extras.containsKey(MMLMediaConstants.extraPage)
+              ? extras[MMLMediaConstants.extraPage]
+              : MMLMediaConstants.defaultPage,
+          extras != null && extras.containsKey(MMLMediaConstants.extraPageSize)
+              ? extras[MMLMediaConstants.extraPageSize]
+              : MMLMediaConstants.defaultPageSize,
+          filter,
+          RecordViewSettings(
+            genre: true,
+            album: true,
+            cover: true,
+            language: true,
+            tracknumber: true,
+          ),
+        ),
+        filter,
+        searchString,
+      );
+    } catch (e) {
+      // For connection errors a list with id (same as the parent) of the parent
+      // should be added, otherwise a fullscreen error should be shown!
+      // TODO: Handle errors and show them correctly
+      // playbackState.addError(e);
+
+      return (ModelList([], 0, 0), filter, searchString);
     }
   }
 
@@ -167,11 +240,11 @@ class MMLMediaItemService {
         10,
         null,
         RecordViewSettings(
-          genre: false,
-          album: false,
+          genre: true,
+          album: true,
           cover: true,
-          language: false,
-          tracknumber: false,
+          language: true,
+          tracknumber: true,
         ),
       ),
       true,
@@ -218,7 +291,7 @@ class MMLMediaItemService {
     Uri? defaultArtUri,
   }) async {
     if (models.isEmpty) {
-      return [MediaItem(id: '', title: locales.noData)];
+      return [];
     }
 
     return Future.wait(
