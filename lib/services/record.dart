@@ -69,6 +69,20 @@ class RecordService {
     );
   }
 
+  /// Loads the record with the given [id] from the server.
+  ///
+  /// Returns the [Record] instance or null if the record was not found.
+  Future<Record> getRecord(String id) async {
+    var response = await _apiService.request(
+      '/media/record/$id',
+      options: Options(
+        method: 'GET',
+      ),
+    );
+
+    return Record.fromJson(response.data);
+  }
+
   /// Returns a list of records which are part of the checksums.
   Future<ModelList> getRecordsByChecksum(
     List<String> checksums,

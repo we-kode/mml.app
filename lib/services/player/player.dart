@@ -11,6 +11,7 @@ import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
+import 'package:mml_app/services/router.dart';
 
 /// Service that handles all actions for playing records.
 class PlayerService {
@@ -75,11 +76,16 @@ class PlayerService {
   /// Plays the given [record] and opens the bottom [PlayerSheet] if not
   /// already done.
   Future play(
-    BuildContext context,
     Record record,
     String? filter,
     ID3TagFilter? tagFilter,
   ) async {
+    var context = RouterService.getInstance().getCurrentContext();
+
+    if (context == null || !context.mounted) {
+      return;
+    }
+
     _audioHandler.filter = filter;
     _audioHandler.tagFilter = tagFilter;
 

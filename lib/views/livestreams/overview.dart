@@ -43,7 +43,6 @@ class LivestreamScreen extends StatelessWidget {
                 Subfilter? subfilter,
               ) {
                 vm.playRecord(
-                  context,
                   item,
                   filter,
                   null,

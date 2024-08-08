@@ -114,12 +114,12 @@ class MMLMediaItemService {
     var filter = ID3TagFilter();
     var searchString = "";
 
-    if (extras?.containsKey('android.intent.extra.album') ?? false) {
-      filter.albumNames = [extras!['android.intent.extra.album']];
-    } else if (extras?.containsKey('android.intent.extra.artist') ?? false) {
-      filter.artistNames = [extras!['android.intent.extra.artist']];
-    } else if (extras?.containsKey('android.intent.extra.genre') ?? false) {
-      filter.genreNames = [extras!['android.intent.extra.genre']];
+    if (extras?.containsKey(MMLMediaConstants.extraAlbum) ?? false) {
+      filter.albumNames = [extras![MMLMediaConstants.extraAlbum]];
+    } else if (extras?.containsKey(MMLMediaConstants.extraArtist) ?? false) {
+      filter.artistNames = [extras![MMLMediaConstants.extraArtist]];
+    } else if (extras?.containsKey(MMLMediaConstants.extraGenre) ?? false) {
+      filter.genreNames = [extras![MMLMediaConstants.extraGenre]];
     } else {
       searchString = query;
     }
@@ -257,6 +257,7 @@ class MMLMediaItemService {
     items.addAll(await _getMediaItems(
       await ArtistService.getInstance().getNewestArtists(),
       true,
+      idPrefix: MMLMediaConstants.artistId,
       extras: {
         MMLMediaConstants.groupTitle: locales.newestArtists,
       },
@@ -266,6 +267,7 @@ class MMLMediaItemService {
     items.addAll(await _getMediaItems(
       await ArtistService.getInstance().getCommonArtists(),
       true,
+      idPrefix: MMLMediaConstants.artistId,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonArtists,
       },
@@ -275,6 +277,7 @@ class MMLMediaItemService {
     items.addAll(await _getMediaItems(
       await GenreService.getInstance().getCommonGenres(),
       true,
+      idPrefix: MMLMediaConstants.genreId,
       extras: {
         MMLMediaConstants.groupTitle: locales.commonGenres,
       },
@@ -287,6 +290,7 @@ class MMLMediaItemService {
   Future<List<MediaItem>> _getMediaItems(
     ModelList models,
     bool playable, {
+    String? idPrefix,
     Map<String, dynamic>? extras,
     Uri? defaultArtUri,
   }) async {
@@ -297,7 +301,9 @@ class MMLMediaItemService {
     return Future.wait(
       models.whereType<ModelBase>().map(
             (model) async => MediaItem(
-              id: model.getIdentifier(),
+              id: idPrefix != null && idPrefix.isNotEmpty
+                  ? '$idPrefix:${model.getIdentifier()}'
+                  : model.getIdentifier(),
               title: model.getDisplayDescription(),
               artUri: await model.getAvatarUri() ?? defaultArtUri,
               playable: playable,
@@ -336,6 +342,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.localRecordId,
     );
   }
 
@@ -352,6 +359,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.livestreamId,
     );
   }
 
@@ -368,6 +376,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.albumId,
       defaultArtUri: await getIconUri('library_music'),
     );
   }
@@ -385,6 +394,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.artistId,
       defaultArtUri: await getIconUri('artist'),
     );
   }
@@ -402,6 +412,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.genreId,
       defaultArtUri: await getIconUri('genres'),
     );
   }
@@ -419,6 +430,7 @@ class MMLMediaItemService {
             : MMLMediaConstants.defaultPageSize,
       ),
       true,
+      idPrefix: MMLMediaConstants.languageId,
     );
   }
 }

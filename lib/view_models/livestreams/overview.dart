@@ -45,13 +45,11 @@ class LivestreamsViewModel extends ChangeNotifier {
 
   /// Plays one stream.
   Future<void> playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
     await PlayerService.getInstance().play(
-      context,
       record as Livestream,
       filter,
       subfilter,

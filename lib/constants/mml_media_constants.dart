@@ -9,6 +9,18 @@ class MMLMediaConstants {
 
   static const String browseTabId = '${tabId}Browse';
 
+  static const String localRecordId = 'local';
+
+  static const String genreId = 'genres';
+
+  static const String artistId = 'artists';
+
+  static const String albumId = 'album';
+
+  static const String languageId = 'languages';
+
+  static const String livestreamId = 'livestreams';
+
   static const String newestRecordsGroupId = 'groupNewestRecords';
 
   static const String commonGenresGroupId = 'groupCommonGenres';
@@ -42,9 +54,15 @@ class MMLMediaConstants {
 
   static const String groupTitle = 'android.media.browse.CONTENT_STYLE_GROUP_TITLE_HINT';
 
-  static const String extraPage = "android.media.browse.extra.PAGE";
+  static const String extraPage = 'android.media.browse.extra.PAGE';
 
-  static const String extraPageSize = "android.media.browse.extra.PAGE_SIZE";
+  static const String extraPageSize = 'android.media.browse.extra.PAGE_SIZE';
+
+  static const String extraAlbum = 'android.intent.extra.album';
+
+  static const String extraArtist = 'android.intent.extra.artist';
+
+  static const String extraGenre = 'android.intent.extra.genre';
 
   static const int defaultPage = 0;
 

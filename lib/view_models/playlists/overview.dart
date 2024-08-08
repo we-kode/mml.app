@@ -164,13 +164,11 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// Plays one record.
   void playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) {
     PlayerService.getInstance().play(
-      context,
       record as LocalRecord,
       filter,
       subfilter,

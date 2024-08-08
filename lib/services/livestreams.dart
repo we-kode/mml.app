@@ -62,4 +62,16 @@ class LivestreamService {
       );
     }
   }
+
+  /// Loads stream settings of item by [id].
+  Future<Livestream> getLivestream(String id) async {
+    var response = await _apiService.request(
+      '/media/livestream/$id',
+      options: Options(
+        method: 'GET',
+      ),
+    );
+
+    return Livestream.fromJson(response.data);
+  }
 }

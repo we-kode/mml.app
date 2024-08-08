@@ -5,21 +5,25 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/gen/assets.gen.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/local_record.dart';
 import 'package:mml_app/models/record.dart';
+import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/file.dart';
+import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/player/mml_media_item_service.dart';
 import 'package:mml_app/services/player/mml_audio_source.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
+import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/util/assets.dart';
 
@@ -163,7 +167,84 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> playFromMediaId(String mediaId,
       [Map<String, dynamic>? extras]) async {
-    return super.playFromMediaId(mediaId, extras);
+    Record? record;
+    var tagFilter = ID3TagFilter();
+    var filter = "";
+
+    if (mediaId.startsWith(MMLMediaConstants.localRecordId)) {
+      record = (await DBService.getInstance().getRecords(
+        int.tryParse(mediaId.replaceAll(
+          '${MMLMediaConstants.localRecordId}:',
+          '',
+        )) ?? 0,
+      )).firstOrNull;
+    } else if (mediaId.startsWith(MMLMediaConstants.livestreamId)) {
+      record = await LivestreamService.getInstance().getLivestream(
+        mediaId.replaceAll(
+          '${MMLMediaConstants.livestreamId}:',
+          '',
+        ),
+      );
+    } else {
+      if (mediaId.startsWith(MMLMediaConstants.genreId)) {
+        tagFilter.genres = [
+          mediaId.replaceAll(
+            '${MMLMediaConstants.genreId}:',
+            '',
+          )
+        ];
+      } else if (mediaId.startsWith(MMLMediaConstants.albumId)) {
+        tagFilter.albums = [
+          mediaId.replaceAll(
+            '${MMLMediaConstants.albumId}:',
+            '',
+          )
+        ];
+      } else if (mediaId.startsWith(MMLMediaConstants.artistId)) {
+        tagFilter.artists = [
+          mediaId.replaceAll(
+            '${MMLMediaConstants.artistId}:',
+            '',
+          )
+        ];
+      } else if (mediaId.startsWith(MMLMediaConstants.languageId)) {
+        tagFilter.languages = [
+          mediaId.replaceAll(
+            '${MMLMediaConstants.languageId}:',
+            '',
+          )
+        ];
+      } else {
+        record = await RecordService.getInstance().getRecord(mediaId);
+      }
+
+      record ??= (await RecordService.getInstance().getRecords(
+        filter,
+        extras != null && extras.containsKey(MMLMediaConstants.extraPage)
+            ? extras[MMLMediaConstants.extraPage]
+            : MMLMediaConstants.defaultPage,
+        extras != null && extras.containsKey(MMLMediaConstants.extraPageSize)
+            ? extras[MMLMediaConstants.extraPageSize]
+            : MMLMediaConstants.defaultPageSize,
+        tagFilter,
+        RecordViewSettings(
+          genre: true,
+          album: true,
+          cover: true,
+          language: true,
+          tracknumber: true,
+        ),
+      ))
+          .firstOrNull as Record?;
+    }
+
+    if (record != null) {
+      await PlayerService.getInstance().play(
+        record,
+        filter,
+        tagFilter,
+      );
+    }
   }
 
   @override
@@ -176,13 +257,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       extras,
     );
 
-    tagFilter = searchResult.$2;
-    filter = searchResult.$3;
+    var tagFilter = searchResult.$2;
+    var filter = searchResult.$3;
 
     var record = searchResult.$1.firstOrNull as Record?;
 
     if (record != null) {
-      await playRecord(record);
+      await PlayerService.getInstance().play(
+        record,
+        filter,
+        tagFilter,
+      );
     }
   }
 
@@ -286,9 +371,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
-    final bgImageUri = await currentRecord?.getAvatarUri() ?? (await getImageFileFromAssets(
-            isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
-          ))
+    final bgImageUri = await currentRecord?.getAvatarUri() ??
+        (await getImageFileFromAssets(
+          isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
+        ))
             .uri;
 
     PlayerService.getInstance().onRecordChanged.add(currentRecord);

@@ -88,13 +88,11 @@ class RecordsViewModel extends ChangeNotifier {
 
   /// Plays one record.
   Future<void> playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
     await PlayerService.getInstance().play(
-      context,
       record as Record,
       filter,
       subfilter,

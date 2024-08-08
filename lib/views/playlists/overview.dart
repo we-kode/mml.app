@@ -153,7 +153,6 @@ class PlaylistScreen extends StatelessWidget {
               ) {
                 if (item is LocalRecord) {
                   vm.playRecord(
-                    context,
                     item,
                     filter,
                     null,

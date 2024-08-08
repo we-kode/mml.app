@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
@@ -233,6 +234,10 @@ class RouterService {
   Future pushNestedRoute(String name, {Object? arguments}) async {
     await PlayerService.getInstance().resetOnRecordChange();
     await _getNestedNavigatorState()!.pushNamed(name, arguments: arguments);
+  }
+
+  BuildContext? getCurrentContext() {
+    return _getNestedNavigatorState()?.context;
   }
 
   /// Returns the state of the nested navigator, by searching from the outer
