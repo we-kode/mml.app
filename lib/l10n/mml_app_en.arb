@@ -97,5 +97,7 @@
   "newest": "Newest",
   "newestArtists": "Newest artists",
   "commonArtists": "Common artists",
-  "commonGenres": "Common genres"
+  "commonGenres": "Common genres",
+  "shuffle": "Shuffle",
+  "repeat": "Repeat"
 }

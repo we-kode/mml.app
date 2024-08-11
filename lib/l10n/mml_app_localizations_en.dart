@@ -299,4 +299,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonGenres => 'Common genres';
+
+  @override
+  String get shuffle => 'Shuffle';
+
+  @override
+  String get repeat => 'Repeat';
 }

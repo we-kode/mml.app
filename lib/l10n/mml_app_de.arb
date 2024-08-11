@@ -104,5 +104,7 @@
   "newest": "Neueste",
   "newestArtists": "Neueste Interpreten",
   "commonArtists": "Häufige Interpreten",
-  "commonGenres": "Häufige Genres"
+  "commonGenres": "Häufige Genres",
+  "shuffle": "Zufallswiedergabe",
+  "repeat": "Wiederholung"
 }

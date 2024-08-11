@@ -682,6 +682,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Häufige Genres'**
   String get commonGenres;
+
+  /// No description provided for @shuffle.
+  ///
+  /// In de, this message translates to:
+  /// **'Zufallswiedergabe'**
+  String get shuffle;
+
+  /// No description provided for @repeat.
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederholung'**
+  String get repeat;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -67,4 +67,8 @@ class MMLMediaConstants {
   static const int defaultPage = 0;
 
   static const int defaultPageSize = 100;
+
+  static const String customActionShuffle = 'shuffle';
+
+  static const String customActionRepeat = 'repeat';
 }

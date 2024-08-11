@@ -61,7 +61,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   bool _isLoading = false;
 
   /// Repeat mode that is currently set.
-  PlayerRepeatMode repeat = PlayerRepeatMode.none;
+  PlayerRepeatMode _repeat = PlayerRepeatMode.none;
 
   /// App localizations.
   AppLocalizations? locales;
@@ -87,6 +87,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _shuffle;
 
+  /// Repeat mode that is currently set.
+  PlayerRepeatMode get repeat => _repeat;
+
   /// Sets the given [filter].
   set filter(String? filter) => _filter = filter;
 
@@ -96,6 +99,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Sets the given [shuffle] mode.
   set shuffle(bool shuffle) {
     _shuffle = shuffle;
+    _addPlaybackState();
+  }
+
+  /// Sets the given [repeat] mode.
+  set repeat(PlayerRepeatMode repeat) {
+    _repeat = repeat;
     _addPlaybackState();
   }
 
@@ -174,10 +183,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (mediaId.startsWith(MMLMediaConstants.localRecordId)) {
       record = (await DBService.getInstance().getRecords(
         int.tryParse(mediaId.replaceAll(
-          '${MMLMediaConstants.localRecordId}:',
-          '',
-        )) ?? 0,
-      )).firstOrNull;
+              '${MMLMediaConstants.localRecordId}:',
+              '',
+            )) ??
+            0,
+      ))
+          .firstOrNull;
     } else if (mediaId.startsWith(MMLMediaConstants.livestreamId)) {
       record = await LivestreamService.getInstance().getLivestream(
         mediaId.replaceAll(
@@ -300,11 +311,43 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     );
   }
 
+  @override
+  Future customAction(String name, [Map<String, dynamic>? extras]) {
+    switch (name) {
+      case MMLMediaConstants.customActionShuffle:
+        shuffle = !shuffle;
+        break;
+      case MMLMediaConstants.customActionRepeat:
+        var nextModeIndex =
+            (_repeat.index + 1) % PlayerRepeatMode.values.length;
+        PlayerService.getInstance().repeat =
+            PlayerRepeatMode.values[nextModeIndex];
+        break;
+    }
+
+    return super.customAction(name, extras);
+  }
+
   /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
     final playing = _player!.playing;
 
-    List<MediaControl> controls = [];
+    List<MediaControl> controls = [
+      MediaControl.custom(
+        androidIcon: repeat == PlayerRepeatMode.all
+            ? 'drawable/repeat_on'
+            : repeat == PlayerRepeatMode.one
+                ? 'drawable/repeat_one_on'
+                : 'drawable/repeat',
+        label: locales!.repeat,
+        name: MMLMediaConstants.customActionRepeat,
+      ),
+      MediaControl.custom(
+        androidIcon: !_shuffle ? 'drawable/shuffle' : 'drawable/shuffle_on',
+        label: locales!.shuffle,
+        name: MMLMediaConstants.customActionShuffle,
+      ),
+    ];
     List<int> compatIndices = [0, 2];
 
     if (!_shuffle && currentRecord is! Livestream) {
@@ -319,10 +362,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         MediaControl.skipToNext,
       ]);
     } else {
-      controls.addAll([
+      controls = [
         if (playing) MediaControl.pause else MediaControl.play,
         MediaControl.stop,
-      ]);
+      ];
       compatIndices = [0, 1];
     }
 

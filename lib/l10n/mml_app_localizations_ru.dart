@@ -299,4 +299,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get commonGenres => 'Распространённые жанры';
+
+  @override
+  String get shuffle => 'Случайное воспроизведение';
+
+  @override
+  String get repeat => 'Повторение';
 }
