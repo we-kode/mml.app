@@ -2,6 +2,16 @@
   "@@locale": "de",
   "appTitle": "Meine Mediathek",
   "badCertificate": "Es ist ein Zertifikatsfehler aufgetreten!",
+  "unknownError": "Es ist ein unbekannter Fehler aufgetreten!",
+  "offlineErrorTitle": "{appTitle} ist nicht erreichbar",
+  "@offlineErrorTitle": {
+    "placeholders": {
+      "appTitle": {
+        "type": "String"
+      }
+    }
+  },
+  "offlineError": "Stellen Sie die Internetverbindung her und versuchen Sie es erneut",
   "unexpectedError": "Es ist ein unerwarteter Fehler aufgetreten: {message}",
   "@unexpectedError": {
     "placeholders": {
@@ -106,5 +116,13 @@
   "commonArtists": "Häufige Interpreten",
   "commonGenres": "Häufige Genres",
   "shuffle": "Zufallswiedergabe",
-  "repeat": "Wiederholung"
+  "repeat": "Wiederholung",
+  "errorAuthenticationExpired": "Registrieren Sie sich in {appTitle}",
+  "@errorAuthenticationExpired": {
+    "placeholders": {
+      "appTitle": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -107,6 +107,24 @@ abstract class AppLocalizations {
   /// **'Es ist ein Zertifikatsfehler aufgetreten!'**
   String get badCertificate;
 
+  /// No description provided for @unknownError.
+  ///
+  /// In de, this message translates to:
+  /// **'Es ist ein unbekannter Fehler aufgetreten!'**
+  String get unknownError;
+
+  /// No description provided for @offlineErrorTitle.
+  ///
+  /// In de, this message translates to:
+  /// **'{appTitle} ist nicht erreichbar'**
+  String offlineErrorTitle(String appTitle);
+
+  /// No description provided for @offlineError.
+  ///
+  /// In de, this message translates to:
+  /// **'Stellen Sie die Internetverbindung her und versuchen Sie es erneut'**
+  String get offlineError;
+
   /// No description provided for @unexpectedError.
   ///
   /// In de, this message translates to:
@@ -694,6 +712,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wiederholung'**
   String get repeat;
+
+  /// No description provided for @errorAuthenticationExpired.
+  ///
+  /// In de, this message translates to:
+  /// **'Registrieren Sie sich in {appTitle}'**
+  String errorAuthenticationExpired(String appTitle);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

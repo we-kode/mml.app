@@ -2,6 +2,9 @@
   "@@locale": "ru",
   "appTitle": "Моя Медиатека",
   "badCertificate": "Произошла ошибка с сертификатом!",
+  "unknownError": "Произошла неизвестная ошибка!",
+  "offlineErrorTitle": "{appTitle} недоступна",
+  "offlineError": "Подключитесь к интернету и повторите попытку",
   "unexpectedError": "Произошла непредвиденная ошибка: {message}",
   "forbidden": "У вас нет необходимых прав, чтобы выполнить это действие!",
   "done": "Далее",
@@ -99,5 +102,6 @@
   "commonArtists": "Распространённые исполнители",
   "commonGenres": "Распространённые жанры",
   "shuffle": "Случайное воспроизведение",
-  "repeat": "Повторение"
+  "repeat": "Повторение",
+  "errorAuthenticationExpired": "Зарегистрируйтесь в {appTitle}"
 }

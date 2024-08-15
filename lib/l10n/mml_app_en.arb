@@ -2,6 +2,9 @@
   "@@locale": "en",
   "appTitle": "My Media Lib",
   "badCertificate": "An certificate error occurred!",
+  "unknownError": "An unknown error is occurred!",
+  "offlineErrorTitle": "{appTitle} not reachable",
+  "offlineError": "Create a internet connection and retry",
   "unexpectedError": "An unexpected error occurred: {message}",
   "forbidden": "You have not the necessary rights, to execute this action!",
   "done": "Done",
@@ -99,5 +102,6 @@
   "commonArtists": "Common artists",
   "commonGenres": "Common genres",
   "shuffle": "Shuffle",
-  "repeat": "Repeat"
+  "repeat": "Repeat",
+  "errorAuthenticationExpired": "Register in {appTitle}"
 }

@@ -11,6 +11,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get badCertificate => 'Es ist ein Zertifikatsfehler aufgetreten!';
 
   @override
+  String get unknownError => 'Es ist ein unbekannter Fehler aufgetreten!';
+
+  @override
+  String offlineErrorTitle(String appTitle) {
+    return '$appTitle ist nicht erreichbar';
+  }
+
+  @override
+  String get offlineError => 'Stellen Sie die Internetverbindung her und versuchen Sie es erneut';
+
+  @override
   String unexpectedError(String message) {
     return 'Es ist ein unerwarteter Fehler aufgetreten: $message';
   }
@@ -305,4 +316,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get repeat => 'Wiederholung';
+
+  @override
+  String errorAuthenticationExpired(String appTitle) {
+    return 'Registrieren Sie sich in $appTitle';
+  }
 }

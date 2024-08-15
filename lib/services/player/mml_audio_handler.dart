@@ -4,6 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/gen/assets.gen.dart';
@@ -167,7 +168,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<List<MediaItem>?> getChildren(String parentMediaId,
+  Future<List<MediaItem>> getChildren(String parentMediaId,
       [Map<String, dynamic>? options]) async {
     return await MMLMediaItemService.getInstance(locales!)
         .getChildren(parentMediaId, options);
@@ -176,6 +177,13 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> playFromMediaId(String mediaId,
       [Map<String, dynamic>? extras]) async {
+    if (mediaId == MMLMediaConstants.offlineId) {
+      throw PlatformException(
+        code: MMLMediaConstants.errorCodeUnknownError,
+        message: locales!.offlineErrorTitle(locales!.appTitle),
+      );
+    }
+
     Record? record;
     var tagFilter = ID3TagFilter();
     var filter = "";

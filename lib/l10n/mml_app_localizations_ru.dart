@@ -11,6 +11,17 @@ class AppLocalizationsRu extends AppLocalizations {
   String get badCertificate => 'Произошла ошибка с сертификатом!';
 
   @override
+  String get unknownError => 'Произошла неизвестная ошибка!';
+
+  @override
+  String offlineErrorTitle(String appTitle) {
+    return '$appTitle недоступна';
+  }
+
+  @override
+  String get offlineError => 'Подключитесь к интернету и повторите попытку';
+
+  @override
   String unexpectedError(String message) {
     return 'Произошла непредвиденная ошибка: $message';
   }
@@ -305,4 +316,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get repeat => 'Повторение';
+
+  @override
+  String errorAuthenticationExpired(String appTitle) {
+    return 'Зарегистрируйтесь в $appTitle';
+  }
 }

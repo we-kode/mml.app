@@ -1,4 +1,6 @@
 class MMLMediaConstants {
+  static const String offlineId = 'offline';
+
   static const String tabId = 'tab';
 
   static const String homeTabId = '${tabId}Home';
@@ -48,6 +50,9 @@ class MMLMediaConstants {
   static const String mediaPlayableContentKey =
       'android.media.browse.CONTENT_STYLE_PLAYABLE_HINT';
 
+  static const String mediaSingleItemContentKey =
+      'android.media.browse.CONTENT_STYLE_SINGLE_ITEM_HINT';
+
   static const int mediaPlayableContentValue = 1;
 
   static const int mediaPlayableContentGridItemValue = 2;
@@ -71,4 +76,8 @@ class MMLMediaConstants {
   static const String customActionShuffle = 'shuffle';
 
   static const String customActionRepeat = 'repeat';
+
+  static const String errorCodeAuthenticationExpired = '3';
+
+  static const String errorCodeUnknownError = '0';
 }

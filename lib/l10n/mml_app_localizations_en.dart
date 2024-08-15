@@ -11,6 +11,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get badCertificate => 'An certificate error occurred!';
 
   @override
+  String get unknownError => 'An unknown error is occurred!';
+
+  @override
+  String offlineErrorTitle(String appTitle) {
+    return '$appTitle not reachable';
+  }
+
+  @override
+  String get offlineError => 'Create a internet connection and retry';
+
+  @override
   String unexpectedError(String message) {
     return 'An unexpected error occurred: $message';
   }
@@ -305,4 +316,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repeat => 'Repeat';
+
+  @override
+  String errorAuthenticationExpired(String appTitle) {
+    return 'Register in $appTitle';
+  }
 }

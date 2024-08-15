@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
@@ -39,45 +42,44 @@ class MMLMediaItemService {
 
   Future<List<MediaItem>> getChildren(String parentMediaId,
       [Map<String, dynamic>? options]) async {
-    if (!(await SecureStorageService.getInstance().has(
-      SecureStorageService.accessTokenStorageKey,
-    ))) {
-      // TODO: Wait for the result of https://github.com/ryanheise/audio_service/issues/1081
-      // playbackState.add(PlaybackState(
-      //     processingState: AudioProcessingState.error,
-      //     errorCode: 3,
-      //     errorMessage: "Login",
-      //     ));
+    await _checkRegistration();
 
-      throw PlatformException(code: "3", message: "Login");
-      // return [];
-    }
+    var result = switch (parentMediaId) {
+      AudioService.browsableRootId => _getRootTabs(),
+      MMLMediaConstants.homeTabId => _getHomeMediaItems(),
+      MMLMediaConstants.browseTabId => _getBrowsableCategoryMediaItems(),
+      MMLMediaConstants.favoritesTabId => _getFavoritesMediaItems(options),
+      MMLMediaConstants.livestreamsTabId =>
+        _getLivestreamsMediaItems(options),
+      MMLMediaConstants.albumsDiscoverId => _getAlbumMediaItems(options),
+      MMLMediaConstants.artistsDiscoverId => _getArtistsMediaItems(options),
+      MMLMediaConstants.genresDiscoverId => _getGenresMediaItems(options),
+      MMLMediaConstants.languagesDiscoverId =>
+        _getLanguagesMediaItems(options),
+      _ => Future.value([] as List<MediaItem>)
+    };
 
-    try {
-      var result = switch (parentMediaId) {
-        AudioService.browsableRootId => _getRootTabs(),
-        MMLMediaConstants.homeTabId => _getHomeMediaItems(),
-        MMLMediaConstants.browseTabId => _getBrowsableCategoryMediaItems(),
-        MMLMediaConstants.favoritesTabId => _getFavoritesMediaItems(options),
-        MMLMediaConstants.livestreamsTabId =>
-          _getLivestreamsMediaItems(options),
-        MMLMediaConstants.albumsDiscoverId => _getAlbumMediaItems(options),
-        MMLMediaConstants.artistsDiscoverId => _getArtistsMediaItems(options),
-        MMLMediaConstants.genresDiscoverId => _getGenresMediaItems(options),
-        MMLMediaConstants.languagesDiscoverId =>
-          _getLanguagesMediaItems(options),
-        _ => Future.value([] as List<MediaItem>)
-      };
+    return result.catchError((e) {
+      if (e is DioException && e.error is SocketException) {
+        return [
+          MediaItem(
+            id: MMLMediaConstants.offlineId,
+            title: locales.offlineErrorTitle(locales.appTitle),
+            album: locales.offlineError,
+            playable: true,
+            extras: {
+              MMLMediaConstants.mediaSingleItemContentKey:
+                  MMLMediaConstants.mediaPlayableContentValue,
+            },
+          )
+        ];
+      }
 
-      return result;
-    } catch (e) {
-      // For connection errors a list with id (same as the parent) of the parent
-      // should be added, otherwise a fullscreen error should be shown!
-      // TODO: Handle errors and show them correctly
-      // playbackState.addError(e);
-
-      return [];
-    }
+      throw PlatformException(
+        code: MMLMediaConstants.errorCodeUnknownError,
+        message: locales.unknownError,
+      );
+    });
   }
 
   Future<(List<MediaItem>, ID3TagFilter, String)> search(String query,
@@ -97,19 +99,7 @@ class MMLMediaItemService {
 
   Future<(ModelList, ID3TagFilter, String)> searchRecords(String query,
       [Map<String, dynamic>? extras]) async {
-    if (!(await SecureStorageService.getInstance().has(
-      SecureStorageService.accessTokenStorageKey,
-    ))) {
-      // TODO: Wait for the result of https://github.com/ryanheise/audio_service/issues/1081
-      // playbackState.add(PlaybackState(
-      //     processingState: AudioProcessingState.error,
-      //     errorCode: 3,
-      //     errorMessage: "Login",
-      //     ));
-
-      throw PlatformException(code: "3", message: "Login");
-      // return [];
-    }
+    await _checkRegistration();
 
     var filter = ID3TagFilter();
     var searchString = "";
@@ -147,12 +137,36 @@ class MMLMediaItemService {
         searchString,
       );
     } catch (e) {
-      // For connection errors a list with id (same as the parent) of the parent
-      // should be added, otherwise a fullscreen error should be shown!
-      // TODO: Handle errors and show them correctly
-      // playbackState.addError(e);
+      if (e is DioException && e.error is SocketException) {
+        return (
+          ModelList([
+            Record(
+              recordId: MMLMediaConstants.offlineId,
+              title: locales.offlineErrorTitle(locales.appTitle),
+              album: locales.offlineError,
+              checksum: '',
+            )
+          ], 0, 1),
+          filter,
+          searchString
+        );
+      }
 
-      return (ModelList([], 0, 0), filter, searchString);
+      throw PlatformException(
+        code: MMLMediaConstants.errorCodeUnknownError,
+        message: locales.unknownError,
+      );
+    }
+  }
+
+  Future<void> _checkRegistration() async {
+    if (!(await SecureStorageService.getInstance().has(
+      SecureStorageService.accessTokenStorageKey,
+    ))) {
+      throw PlatformException(
+        code: MMLMediaConstants.errorCodeAuthenticationExpired,
+        message: locales.errorAuthenticationExpired(locales.appTitle),
+      );
     }
   }
 

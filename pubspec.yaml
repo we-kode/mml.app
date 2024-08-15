@@ -49,7 +49,12 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   shimmer: ^3.0.0
   just_audio: ^0.9.38
-  audio_service: ^0.18.13
+  # Replace with concrete version if the fix will be merged into the branch.
+  audio_service:
+    git:
+      url: https://github.com/we-kode/audio_service.git
+      path: audio_service
+      ref: 6a521b2
   text_scroll: ^0.2.0
   sqflite: ^2.3.0
   path: ^1.8.3
