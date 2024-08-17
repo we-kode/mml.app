@@ -19,11 +19,13 @@ class MessengerService {
 
   /// Shows the given [text] in the app snackbar.
   showMessage(String text) {
-    final SnackBar snackBar = SnackBar(
-      content: Text(text),
-      duration: const Duration(seconds: 5),
-    );
-    snackbarKey.currentState?.showSnackBar(snackBar);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final SnackBar snackBar = SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 5),
+      );
+      snackbarKey.currentState?.showSnackBar(snackBar);
+    });
   }
 
   /// Translated string for bad certificate errors.
