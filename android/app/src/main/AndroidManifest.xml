@@ -49,7 +49,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="content" />
-                <data android:mimeType="*/*" />
+                <data android:mimeType="text/plain" />
                 <data android:pathPattern=".*\\.mml" />
             </intent-filter>
             <intent-filter>
