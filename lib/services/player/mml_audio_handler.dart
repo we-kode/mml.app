@@ -7,6 +7,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
+import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/gen/assets.gen.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
@@ -298,6 +299,25 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       extras,
     ))
         .$1;
+  }
+
+  /// Refreshes the access token and updates the headers of the audio source.
+  /// Necessary if the token expires during playback.
+  Future<void> refreshToken() async {
+    var  duration = currentSeekPosition.asDuration();
+    await _clientService.refreshToken();
+
+    var baseUrl = await _apiService.getBaseUrl();
+    var headers = await _apiService.getHeaders();
+
+    final url = currentRecord is Livestream
+          ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
+          : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
+    await _player!.setUrl(
+      url,
+      headers: headers,
+      initialPosition: duration,
+    );
   }
 
   /// Initializes the listeners to handle errors, show notifications and skip to

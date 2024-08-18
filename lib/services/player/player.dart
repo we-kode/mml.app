@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mml_app/components/player_sheet.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/extensions/duration_double.dart';
@@ -175,6 +176,11 @@ class PlayerService {
       (event) {
         playerState?.update();
       },
+      onError: (Object e, StackTrace stackTrace) async {
+        if (e is PlatformException && e.message == 'Source error') {
+          await _audioHandler.refreshToken();
+        }
+      }
     );
   }
 
