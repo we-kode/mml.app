@@ -18,12 +18,12 @@ import 'package:mml_app/models/record_view_settings.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-/// Service that handles the databse of the client.
+/// Service that handles the database of the client.
 class DBService {
   /// Instance of the service.
   static final DBService _instance = DBService._();
 
-  /// the databse name on device.
+  /// the database name on device.
   final String _dbName = 'wekode_mml.db';
 
   /// Table name of the playlist table.
@@ -41,7 +41,7 @@ class DBService {
   /// Table name of the id3 tag filters.
   final String _tid3Filters = 'iD3Filters';
 
-  /// The databse instance.
+  /// The database instance.
   Database? _db;
 
   /// Returns the singleton instance of the [DBService].
@@ -49,7 +49,7 @@ class DBService {
     return _instance;
   }
 
-  /// Holds all information for the migrations of the versions of the databse.
+  /// Holds all information for the migrations of the versions of the database.
   final Map<int, DBMigration Function()> _migrations = {
     1: () => V1Migration(),
     2: () => V2Migration(),
@@ -63,7 +63,7 @@ class DBService {
 
   /// Returns the database.
   ///
-  /// If the database is not initialized and opened it will be done before returning the insatnce of the databse.
+  /// If the database is not initialized and opened it will be done before returning the instance of the database.
   Future<Database> get _database async {
     if (_db != null) return _db!;
 
@@ -71,7 +71,7 @@ class DBService {
     return _db!;
   }
 
-  /// Configures the databse.
+  /// Configures the database.
   Future _onConfigure(Database db) async {
     await db.execute('PRAGMA foreign_keys = ON');
   }
@@ -97,7 +97,7 @@ class DBService {
     await batch.commit();
   }
 
-  /// Inits the databse and opens the databse.
+  /// Inits the database and opens the database.
   Future<Database> _initDB() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _dbName);
@@ -319,7 +319,7 @@ class DBService {
     return maps.isNotEmpty ? maps.first['checksum'] : null;
   }
 
-  /// Retunrs the [Record] of the [recordId] from db or null if no record found.
+  /// Returns the [Record] of the [recordId] from db or null if no record found.
   Future<Record?> getRecord(String recordId) async {
     final db = await _database;
     final List<Map<String, dynamic>> maps = await db.query(
@@ -335,7 +335,7 @@ class DBService {
     return _mapRecord(maps.first);
   }
 
-  /// Retunrs the next or previous [Record] of the [recordId] or null if no record exists.
+  /// Returns the next or previous [Record] of the [recordId] or null if no record exists.
   ///
   /// Default returns the next record in playlist. if [reverse] is set to true, the previous record will be returned.
   /// [shuffle] configures if the records should be mixed. If [repeat] is set, the playlist will be running in endless
@@ -353,7 +353,7 @@ class DBService {
         FROM $_tPlaylists p
         INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
         INNER JOIN $_tRecords r ON rp.recordId = r.recordId
-        WHERE p.id = ? 
+        WHERE p.id = ?
         ORDER BY r.tracknumber, r.title
     ''', [playlistId]);
 
@@ -388,7 +388,7 @@ class DBService {
         : records.elementAt(actualIndex - 1);
   }
 
-  /// Mpas a database [result] to a [Record] object.
+  /// Maps a database [result] to a [Record] object.
   LocalRecord _mapRecord(Map<String, dynamic> result) {
     return LocalRecord(
       recordId: result['recordId'],
@@ -438,7 +438,7 @@ class DBService {
     );
   }
 
-  /// Delets one playlist by [playlistId].
+  /// Deletes one playlist by [playlistId].
   Future removePlaylist(int playlistId) async {
     final db = await _database;
     await db.delete(
@@ -496,7 +496,7 @@ class DBService {
     );
   }
 
-  /// Removes the id3 tag filter. If [key] is proivded only the filter of the [key] will be deleted.
+  /// Removes the id3 tag filter. If [key] is provided only the filter of the [key] will be deleted.
   Future clearID3Filter([String key = '']) async {
     final db = await _database;
     if (key.isEmpty) {

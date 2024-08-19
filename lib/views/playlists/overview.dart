@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
 import 'package:mml_app/components/expandable_fab.dart';
@@ -54,7 +55,7 @@ class PlaylistScreen extends StatelessWidget {
                   ? null
                   : [
                       ActionButton(
-                        icon: const Icon(Icons.upload),
+                        icon: const Icon(Symbols.upload),
                         onPressed: () async {
                           FilePickerResult? selected =
                               await FilePicker.platform.pickFiles(
@@ -74,6 +75,10 @@ class PlaylistScreen extends StatelessWidget {
                             return;
                           }
 
+                          if (!context.mounted) {
+                            return;
+                          }
+
                           final state = await showDialog(
                             barrierDismissible: false,
                             context: context,
@@ -89,7 +94,7 @@ class PlaylistScreen extends StatelessWidget {
                         },
                       ),
                       ActionButton(
-                        icon: const Icon(Icons.create_new_folder_outlined),
+                        icon: const Icon(Symbols.create_new_folder),
                         onPressed: () async {
                           final state = await showDialog(
                             barrierDismissible: false,
@@ -148,7 +153,6 @@ class PlaylistScreen extends StatelessWidget {
               ) {
                 if (item is LocalRecord) {
                   vm.playRecord(
-                    context,
                     item,
                     filter,
                     null,

@@ -5,7 +5,7 @@ import 'package:mml_app/models/record.dart';
 part 'livestream.g.dart';
 
 /// Livestream model that holds all information of a livestream.
-@JsonSerializable(includeIfNull: false, explicitToJson: true)
+@JsonSerializable(includeIfNull: false, createToJson: false)
 class Livestream extends Record {
   /// Initializes the model.
   Livestream({

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
@@ -38,10 +38,10 @@ class SettingsViewModel extends ChangeNotifier {
   /// Link of the privacy policy.
   final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
 
-  /// Link of the legal informations.
+  /// Link of the legal information.
   final String legalInfoLink = "";
 
-  /// E-Mail adress for support requests.
+  /// E-Mail address for support requests.
   final String supportEMail = "";
 
   /// version of the running app.

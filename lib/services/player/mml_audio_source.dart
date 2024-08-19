@@ -6,10 +6,10 @@ import 'package:mml_app/util/xor_encryptor.dart';
 
 /// AudioSource for the local records streams.
 class MMLAudioSource extends StreamAudioSource {
-  /// file whcih will be played.
+  /// file which will be played.
   final File file;
 
-  /// key with whcih the file is ecrypted.
+  /// key with which the file is encrypted.
   final int cryptKey;
 
   /// Initializes the [MMLAudioSource] with [file] to play and [cryptKey] to decrypt file.

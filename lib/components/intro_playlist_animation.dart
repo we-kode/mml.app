@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/gen/assets.gen.dart';
 import 'package:rive/rive.dart';
 
 /// Animation for the playlist intro screen.
@@ -11,7 +12,7 @@ class IntroPlaylistAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RiveAnimation.asset(
-      'assets/animations/mml.riv',
+      Assets.animations.mml,
       onInit: (Artboard artboard) {
         artboard.forEachComponent(
           (child) {
@@ -19,7 +20,7 @@ class IntroPlaylistAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.onBackground,
+                  Theme.of(context).colorScheme.onSurface,
                   BlendMode.srcIn,
                 );
               }
@@ -29,7 +30,7 @@ class IntroPlaylistAnimation extends StatelessWidget {
               Shape shield = child as Shape;
               for (var element in shield.fills) {
                 element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.background,
+                  Theme.of(context).colorScheme.surface,
                   BlendMode.srcIn,
                 );
               }

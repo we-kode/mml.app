@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mml_app/gen/assets.gen.dart';
 import 'package:rive/rive.dart';
 
 /// Animation for the livestream.
@@ -11,7 +12,7 @@ class SoundwaveAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RiveAnimation.asset(
-      'assets/animations/soundwave.riv',
+      Assets.animations.soundwave,
       onInit: (Artboard artboard) {
         artboard.forEachComponent(
           (child) {

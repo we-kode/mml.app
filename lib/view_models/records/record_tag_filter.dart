@@ -3,17 +3,17 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
+import 'package:mml_app/services/album.dart';
+import 'package:mml_app/services/artist.dart';
 import 'package:mml_app/services/db.dart';
-import 'package:mml_app/services/record.dart';
+import 'package:mml_app/services/genre.dart';
+import 'package:mml_app/services/language.dart';
 import 'package:mml_app/services/secure_storage.dart';
 
 /// View model for the records tag filter.
 class RecordTagFilterViewModel extends ChangeNotifier {
   /// The active [ID3TagFilter].
   final ID3TagFilter tagFilter;
-
-  /// [RecordService] used to load data for the tag filter.
-  final RecordService _service = RecordService.getInstance();
 
   /// [SecureStorageService] used to load and save data to secure store.
   final SecureStorageService _storage = SecureStorageService.getInstance();
@@ -88,13 +88,13 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   }) async {
     switch (identifier) {
       case ID3TagFilters.artists:
-        return _service.getArtists(filter, offset, take);
+        return ArtistService.getInstance().getArtists(filter, offset, take);
       case ID3TagFilters.genres:
-        return _service.getGenres(filter, offset, take);
+        return GenreService.getInstance().getGenres(filter, offset, take);
       case ID3TagFilters.albums:
-        return _service.getAlbums(filter, offset, take);
+        return AlbumService.getInstance().getAlbums(filter, offset, take);
       case ID3TagFilters.languages:
-        return _service.getLanguages(filter, offset, take);
+        return LanguageService.getInstance().getLanguages(filter, offset, take);
     }
 
     throw UnimplementedError();

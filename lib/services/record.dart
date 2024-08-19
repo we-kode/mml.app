@@ -1,9 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:mml_app/models/album.dart';
-import 'package:mml_app/models/artist.dart';
-import 'package:mml_app/models/genre.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
-import 'package:mml_app/models/language.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
@@ -73,6 +69,20 @@ class RecordService {
     );
   }
 
+  /// Loads the record with the given [id] from the server.
+  ///
+  /// Returns the [Record] instance or null if the record was not found.
+  Future<Record> getRecord(String id) async {
+    var response = await _apiService.request(
+      '/media/record/$id',
+      options: Options(
+        method: 'GET',
+      ),
+    );
+
+    return Record.fromJson(response.data);
+  }
+
   /// Returns a list of records which are part of the checksums.
   Future<ModelList> getRecordsByChecksum(
     List<String> checksums,
@@ -97,82 +107,6 @@ class RecordService {
       ),
       0,
       response.data.length,
-    );
-  }
-
-  /// Returns a list of artists with the amount of [take] starting from the [offset].
-  Future<ModelList> getArtists(String? filter, int? offset, int? take) async {
-    var response = await _apiService.request(
-      '/media/record/artists',
-      queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
-    );
-
-    return ModelList(
-      List<Artist>.from(
-        response.data['items'].map((item) => Artist.fromJson(item)),
-      ),
-      offset ?? 0,
-      response.data["totalCount"],
-    );
-  }
-
-  /// Returns a list of albums with the amount of [take] starting from the [offset].
-  Future<ModelList> getAlbums(String? filter, int? offset, int? take) async {
-    var response = await _apiService.request(
-      '/media/record/albums',
-      queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
-    );
-
-    return ModelList(
-      List<Album>.from(
-        response.data['items'].map((item) => Album.fromJson(item)),
-      ),
-      offset ?? 0,
-      response.data["totalCount"],
-    );
-  }
-
-  /// Returns a list of genres with the amount of [take] starting from the [offset].
-  Future<ModelList> getGenres(String? filter, int? offset, int? take) async {
-    var response = await _apiService.request(
-      '/media/record/genres',
-      queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
-    );
-
-    return ModelList(
-      List<Genre>.from(
-        response.data['items'].map((item) => Genre.fromJson(item)),
-      ),
-      offset ?? 0,
-      response.data["totalCount"],
-    );
-  }
-
-  /// Returns a list of languages with the amount of [take] starting from the [offset] with the passed [filter],
-  Future<ModelList> getLanguages(String? filter, int? offset, int? take) async {
-    var response = await _apiService.request(
-      '/media/record/languages',
-      queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
-    );
-
-    return ModelList(
-      List<Language>.from(
-        response.data['items'].map((item) => Language.fromJson(item)),
-      ),
-      offset ?? 0,
-      response.data["totalCount"],
     );
   }
 

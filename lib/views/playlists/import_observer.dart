@@ -16,7 +16,7 @@ class ImportObserver extends StatefulWidget {
 /// State of the [ImportObserver].
 class ImportObserverState extends State<ImportObserver>
     with WidgetsBindingObserver {
-  static const platform = MethodChannel("de.wekode.mml/import_favs");
+  static const platform = MethodChannel("de.wekode.mml");
 
   @override
   void initState() {
@@ -46,6 +46,7 @@ class ImportObserverState extends State<ImportObserver>
       if (!context.mounted) {
         return;
       }
+
       var notDownloaded =
           await ImportService.getInstance().import(null, context, cnt: content);
 
@@ -56,6 +57,7 @@ class ImportObserverState extends State<ImportObserver>
       if (!context.mounted) {
         return;
       }
+
       await showDialog(
         barrierDismissible: false,
         context: context,
@@ -65,6 +67,7 @@ class ImportObserverState extends State<ImportObserver>
           );
         },
       );
+
       setState(() {});
     }
   }

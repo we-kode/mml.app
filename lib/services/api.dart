@@ -41,9 +41,10 @@ class ApiService {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
+    String apiVersion = '2.0'
   }) {
     return _dio.request<T>(
-      path,
+      '/v$apiVersion$path',
       data: data,
       queryParameters: queryParameters,
       cancelToken: cancelToken,
@@ -99,7 +100,7 @@ class ApiService {
       SecureStorageService.serverNameStorageKey,
     );
 
-    return 'https://$serverName/api/v1.0/';
+    return 'https://$serverName/api/';
   }
 
   /// Adds an interceptor to the [dio] instance, that adds all necessary headers
@@ -115,7 +116,7 @@ class ApiService {
     );
   }
 
-  /// Adds an interceptor to the [dio] instance, that handles errors occured
+  /// Adds an interceptor to the [dio] instance, that handles errors occurred
   /// during requests send with the passed instance.
   void _addDefaultErrorHandlerInterceptor(Dio dio) {
     dio.interceptors.add(

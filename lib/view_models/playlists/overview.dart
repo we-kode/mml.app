@@ -3,8 +3,9 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/playlists.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/components/progress_indicator.dart';
@@ -27,7 +28,7 @@ import 'package:share_plus/share_plus.dart';
 
 /// View model of the playlist view.
 class PlaylistViewModel extends ChangeNotifier {
-  /// Route of the plalist screen.
+  /// Route of the play list screen.
   static String route = '/playlist';
 
   late BuildContext _context;
@@ -163,13 +164,11 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// Plays one record.
   void playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) {
     PlayerService.getInstance().play(
-      context,
       record as LocalRecord,
       filter,
       subfilter,
@@ -185,7 +184,7 @@ class PlaylistViewModel extends ChangeNotifier {
         appBar: FilterAppBar(
           title: playlist.name!,
           listAction: SelectedItemsAction(
-            const Icon(Icons.delete),
+            const Icon(Symbols.delete),
             reload: true,
           ),
           exportAction: ExportAction(),

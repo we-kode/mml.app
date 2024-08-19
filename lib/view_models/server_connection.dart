@@ -3,7 +3,7 @@ import 'package:mml_app/models/connection_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 /// View model of the server connection update screen.
@@ -38,7 +38,7 @@ class ServerConnectionViewModel extends ChangeNotifier {
     });
   }
 
-  /// Redirects the route with main route after successfull connection update.
+  /// Redirects the route with main route after successful connection update.
   Future afterConnectionUpdate() async {
     await RouterService.getInstance().popNestedRoute();
   }

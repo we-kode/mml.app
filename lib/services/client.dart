@@ -68,6 +68,7 @@ class ClientService {
         'deviceIdentifier': deviceIdentifier,
       },
       options: Options(method: 'POST'),
+      apiVersion: '2.0',
     );
 
     if (response.statusCode == HttpStatus.ok) {
@@ -91,7 +92,7 @@ class ClientService {
   /// process is finished by removing the data from the storage and redirecting
   /// to registration screen.
   Future removeRegistration({automatic = false}) async {
-    var successfull = false;
+    var successful = false;
     var message = "";
 
     try {
@@ -99,15 +100,15 @@ class ClientService {
       _apiService.initDio(dio, false);
 
       var response = await dio.request(
-        '/identity/client/removeRegistration',
+        '/v1.0/identity/client/removeRegistration',
         data: {},
         options: Options(method: 'POST'),
       );
 
-      successfull = response.statusCode == HttpStatus.ok;
+      successful = response.statusCode == HttpStatus.ok;
     } catch (e) {
-      successfull =
-          e is DioException && e.response?.statusCode == HttpStatus.unauthorized;
+      successful = e is DioException &&
+          e.response?.statusCode == HttpStatus.unauthorized;
 
       if (e is DioException) {
         if (e.error is SocketException) {
@@ -124,7 +125,7 @@ class ClientService {
       }
     }
 
-    if (successfull || automatic) {
+    if (successful || automatic) {
       await FileService.getInstance().clear();
       await DBService.getInstance().clean();
       await _storage.clearTokens();
@@ -144,7 +145,11 @@ class ClientService {
     var options = Options(method: 'GET');
 
     if (handleErrors) {
-      response = await _apiService.request(url, options: options);
+      response = await _apiService.request(
+        url,
+        options: options,
+        apiVersion: '2.0',
+      );
     } else {
       var dio = Dio();
       _apiService.initDio(dio, false);
@@ -186,7 +191,7 @@ class ClientService {
       );
 
       Response<Map> response = await dio.request(
-        '/identity/connect/token',
+        '/v1.0/identity/connect/token',
         data: data,
         options: Options(
           method: 'POST',
@@ -194,7 +199,7 @@ class ClientService {
         ),
       );
 
-      // Store the token on successfull request.
+      // Store the token on successful request.
       if (response.statusCode == HttpStatus.ok) {
         await _storage.set(
           SecureStorageService.accessTokenStorageKey,
