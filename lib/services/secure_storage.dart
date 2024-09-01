@@ -11,6 +11,7 @@ class SecureStorageService {
   /// secure storage.
   final _storage = const FlutterSecureStorage();
 
+  /// Option to for encrypted shared preferences, required by android 14.
   final androidOptions = const AndroidOptions(
     encryptedSharedPreferences: true,
   );
@@ -102,7 +103,7 @@ class SecureStorageService {
       key: key,
       value: value,
       iOptions: iOSOptions,
-        aOptions: androidOptions,
+      aOptions: androidOptions,
     );
   }
 
@@ -115,7 +116,7 @@ class SecureStorageService {
     await _storage.delete(
       key: key,
       iOptions: iOSOptions,
-        aOptions: androidOptions,
+      aOptions: androidOptions,
     );
   }
 
