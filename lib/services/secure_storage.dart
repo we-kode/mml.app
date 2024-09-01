@@ -11,6 +11,10 @@ class SecureStorageService {
   /// secure storage.
   final _storage = const FlutterSecureStorage();
 
+  final androidOptions = const AndroidOptions(
+    encryptedSharedPreferences: true,
+  );
+
   /// Option to allow secure storage access the keychain of ios when phone is locked and app runs in background.
   final iOSOptions = const IOSOptions(
     accessibility: KeychainAccessibility.first_unlock_this_device,
@@ -68,6 +72,7 @@ class SecureStorageService {
       return await _storage.read(
         key: key,
         iOptions: iOSOptions,
+        aOptions: androidOptions,
       );
     }
 
@@ -76,6 +81,7 @@ class SecureStorageService {
       _cache[key] = await _storage.read(
         key: key,
         iOptions: iOSOptions,
+        aOptions: androidOptions,
       );
     }
     return _cache[key];
@@ -96,6 +102,7 @@ class SecureStorageService {
       key: key,
       value: value,
       iOptions: iOSOptions,
+        aOptions: androidOptions,
     );
   }
 
@@ -108,6 +115,7 @@ class SecureStorageService {
     await _storage.delete(
       key: key,
       iOptions: iOSOptions,
+        aOptions: androidOptions,
     );
   }
 
