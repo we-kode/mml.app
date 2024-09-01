@@ -48,7 +48,7 @@ dependencies:
   device_info_plus: ^10.1.0
   flutter_inappwebview: ^6.0.0
   shimmer: ^3.0.0
-  just_audio: ^0.9.38
+  just_audio: ^0.9.40
   # Replace with concrete version if the fix will be merged into the branch.
   audio_service:
     git:
