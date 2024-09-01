@@ -82,7 +82,7 @@ dev_dependencies:
   build_runner: ^2.4.11
   json_serializable: ^6.8.0
   flutter_oss_licenses: ^3.0.2
-  flutter_gen: ^5.5.0+1
+  flutter_gen: ^5.7.0
   flutter_gen_runner: ^5.5.0+1
 
 # For information on the generic Dart part of this file, see the
