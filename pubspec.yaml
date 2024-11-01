@@ -58,7 +58,7 @@ dependencies:
   text_scroll: ^0.2.0
   sqflite: ^2.3.0
   path: ^1.8.3
-  path_provider: ^2.1.1
+  path_provider: ^2.1.5
   percent_indicator: ^4.2.3
   package_info_plus: ^8.0.0
   calendar_date_picker2: ^1.0.6
