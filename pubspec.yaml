@@ -42,7 +42,7 @@ dependencies:
   dio: ^5.4.3+1
   json_annotation: ^4.9.0
   introduction_screen: ^3.1.12
-  mobile_scanner: ^5.1.1
+  mobile_scanner: ^6.0.2
   fast_rsa: ^3.6.1
   rive: ^0.13.7
   device_info_plus: ^10.1.0
