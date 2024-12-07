@@ -17,12 +17,12 @@ class LicensesOverviewScreen extends StatelessWidget {
         var vm = Provider.of<LicensesOverviewViewModel>(context, listen: false);
 
         return ListView.builder(
-          itemCount: ossLicenses.length,
+          itemCount: allDependencies.length,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
-              title: Text(ossLicenses[index].name),
+              title: Text(allDependencies[index].name),
               onTap: () {
-                vm.showLicense(ossLicenses[index]);
+                vm.showLicense(allDependencies[index]);
               },
             );
           },

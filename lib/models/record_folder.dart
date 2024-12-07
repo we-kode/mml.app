@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/models/model_base.dart';
 
@@ -55,7 +56,7 @@ class RecordFolder extends ModelBase {
 
   @override
   Icon? getPrefixIcon(BuildContext context) {
-    return const Icon(Icons.folder);
+    return const Icon(Symbols.folder);
   }
 
   /// returns the [RecordFolder] converted from range of [startDate] and [endDate] or null if one date is not provided.

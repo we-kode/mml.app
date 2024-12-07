@@ -3,12 +3,12 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/player/player.dart';
 
 class LivestreamsViewModel extends ChangeNotifier {
-  /// Route of the plalist screen.
+  /// Route of the play list screen.
   static String route = '/livestreams';
 
   /// App locales.
@@ -45,13 +45,11 @@ class LivestreamsViewModel extends ChangeNotifier {
 
   /// Plays one stream.
   Future<void> playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
     await PlayerService.getInstance().play(
-      context,
       record as Livestream,
       filter,
       subfilter,

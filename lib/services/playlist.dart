@@ -18,7 +18,7 @@ class PlaylistService {
     return _instance;
   }
 
-  /// Handles the downlad of [records] and adding them to playlists or to one predefined [playlist].
+  /// Handles the download of [records] and adding them to playlists or to one predefined [playlist].
   Future<bool> downloadRecords(
     List<ModelBase?> records,
     BuildContext context, {
@@ -44,6 +44,10 @@ class PlaylistService {
           );
 
     if (selectedPlaylists == null || selectedPlaylists.isEmpty) {
+      return false;
+    }
+
+    if (!context.mounted) {
       return false;
     }
 

@@ -7,14 +7,23 @@ part 'id3_tag_filter.g.dart';
 /// ID§ tag filters for records.
 @JsonSerializable(includeIfNull: false, explicitToJson: true)
 class ID3TagFilter extends Subfilter {
-  /// Ids opf artist tags.
+  /// Ids of artist tags.
   List<String> artists = [];
+
+  /// Names of artist tags.
+  List<String> artistNames = [];
 
   /// Ids of genre tags.
   List<String> genres = [];
 
+  /// Names of genre tags.
+  List<String> genreNames = [];
+
   /// Ids of album tags.
   List<String> albums = [];
+
+  /// Names of album tags.
+  List<String> albumNames = [];
 
   /// Ids of language tags.
   List<String> languages = [];
@@ -28,16 +37,22 @@ class ID3TagFilter extends Subfilter {
   /// Initializes the model.
   ID3TagFilter({
     List<String>? artists,
+    List<String>? artistNames,
     List<String>? genres,
+    List<String>? genreNames,
     List<String>? albums,
+    List<String>? albumNames,
     List<String>? languages,
     this.startDate,
     this.endDate,
     isFolderView = false,
   }) {
     this.artists = artists ?? [];
+    this.artistNames = artistNames ?? [];
     this.genres = genres ?? [];
+    this.genreNames = genreNames ?? [];
     this.albums = albums ?? [];
+    this.albumNames = albumNames ?? [];
     this.languages = languages ?? [];
     isGrouped = isFolderView;
   }
@@ -55,11 +70,20 @@ class ID3TagFilter extends Subfilter {
       case ID3TagFilters.artists:
         artists = value as List<String>;
         break;
+      case ID3TagFilters.artistNames:
+        artistNames = value as List<String>;
+        break;
       case ID3TagFilters.genres:
         genres = value as List<String>;
         break;
+      case ID3TagFilters.genreNames:
+        genreNames = value as List<String>;
+        break;
       case ID3TagFilters.albums:
         albums = value as List<String>;
+        break;
+      case ID3TagFilters.albumNames:
+        albumNames = value as List<String>;
         break;
       case ID3TagFilters.languages:
         languages = value as List<String>;
@@ -83,10 +107,16 @@ class ID3TagFilter extends Subfilter {
     switch (identifier) {
       case ID3TagFilters.artists:
         return artists;
+      case ID3TagFilters.artistNames:
+        return artistNames;
       case ID3TagFilters.genres:
         return genres;
+      case ID3TagFilters.genreNames:
+        return genreNames;
       case ID3TagFilters.albums:
         return albums;
+      case ID3TagFilters.albumNames:
+        return albumNames;
       case ID3TagFilters.languages:
         return languages;
       case ID3TagFilters.date:
@@ -104,11 +134,20 @@ class ID3TagFilter extends Subfilter {
       case ID3TagFilters.artists:
         artists.clear();
         break;
+      case ID3TagFilters.artistNames:
+        artistNames.clear();
+        break;
       case ID3TagFilters.genres:
         genres.clear();
         break;
+      case ID3TagFilters.genreNames:
+        genreNames.clear();
+        break;
       case ID3TagFilters.albums:
         albums.clear();
+        break;
+      case ID3TagFilters.albumNames:
+        albumNames.clear();
         break;
       case ID3TagFilters.languages:
         languages.clear();
@@ -129,8 +168,11 @@ class ID3TagFilter extends Subfilter {
   // Clears all filters.
   void clearAll() {
     clear(ID3TagFilters.artists);
+    clear(ID3TagFilters.artistNames);
     clear(ID3TagFilters.albums);
+    clear(ID3TagFilters.albumNames);
     clear(ID3TagFilters.genres);
+    clear(ID3TagFilters.genreNames);
     clear(ID3TagFilters.languages);
     clear(ID3TagFilters.date);
     clear(ID3TagFilters.folderView);
@@ -165,19 +207,28 @@ class ID3TagFilter extends Subfilter {
         endDate != null;
 }
 
-/// Holds the tags identifiers on which records can be fitlered.
+/// Holds the tags identifiers on which records can be filtered.
 abstract class ID3TagFilters {
   /// Artists tag identifier.
   static const String artists = "artists";
 
+  /// Artist names tag identifier.
+  static const String artistNames = "artistNames";
+
   /// Albums tag identifier.
   static const String albums = "albums";
+
+  /// Album names tag identifier.
+  static const String albumNames = "albumNames";
 
   /// Date tag identifier.
   static const String date = "date";
 
   /// Genres tag identifier.
   static const String genres = "genres";
+
+  /// Genre names tag identifier.
+  static const String genreNames = "genreNames";
 
   /// Folder view identifier.
   static const String folderView = "folderView";

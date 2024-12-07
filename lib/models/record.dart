@@ -4,11 +4,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/extensions/flag.dart';
 import 'package:mml_app/models/model_base.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 
 part 'record.g.dart';
@@ -119,6 +120,11 @@ class Record extends ModelBase {
   }
 
   @override
+  String? getAvatarString() {
+    return cover;
+  }
+
+  @override
   Widget? getAvatar(BuildContext? context) {
     if (_viewSettings == null || !_viewSettings!.cover) {
       return null;
@@ -132,7 +138,8 @@ class Record extends ModelBase {
         gaplessPlayback: true,
       );
     }
-    return const Icon(Icons.music_note_outlined);
+
+    return const Icon(Symbols.audio_file);
   }
 
   @override

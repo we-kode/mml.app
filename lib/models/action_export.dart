@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
-/// Action which is whoen in the app bar when items are selected in a selection list.
+/// Action which is when in the app bar when items are selected in a selection list.
 class ExportAction extends ChangeNotifier {
   /// Id of the action.
   static const String actionId = "AppBarAction_Export";
@@ -9,7 +10,7 @@ class ExportAction extends ChangeNotifier {
   bool _actionPerformed = false;
 
   /// Icon of the action, shown in the action bar.
-  final Icon icon = const Icon(Icons.download);
+  final Icon icon = const Icon(Symbols.download);
 
   /// Creates instants of the action.
   ExportAction();

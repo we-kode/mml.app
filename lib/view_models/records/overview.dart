@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
@@ -21,7 +21,7 @@ class RecordsViewModel extends ChangeNotifier {
   /// App locales.
   late AppLocalizations locales;
 
-  /// [RecordService] used to load data for the records uplaod dialog.
+  /// [RecordService] used to load data for the records upload dialog.
   final RecordService _service = RecordService.getInstance();
 
   /// DB service to update settings in db.
@@ -88,13 +88,11 @@ class RecordsViewModel extends ChangeNotifier {
 
   /// Plays one record.
   Future<void> playRecord(
-    BuildContext context,
     ModelBase record,
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
     await PlayerService.getInstance().play(
-      context,
       record as Record,
       filter,
       subfilter,

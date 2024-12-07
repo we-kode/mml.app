@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// Service that shows messages in the snackbar of the app.
 class MessengerService {
@@ -19,11 +19,13 @@ class MessengerService {
 
   /// Shows the given [text] in the app snackbar.
   showMessage(String text) {
-    final SnackBar snackBar = SnackBar(
-      content: Text(text),
-      duration: const Duration(seconds: 5),
-    );
-    snackbarKey.currentState?.showSnackBar(snackBar);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final SnackBar snackBar = SnackBar(
+        content: Text(text),
+        duration: const Duration(seconds: 5),
+      );
+      snackbarKey.currentState?.showSnackBar(snackBar);
+    });
   }
 
   /// Translated string for bad certificate errors.

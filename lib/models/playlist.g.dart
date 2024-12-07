@@ -7,7 +7,7 @@ part of 'playlist.dart';
 // **************************************************************************
 
 Playlist _$PlaylistFromJson(Map<String, dynamic> json) => Playlist(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       isDeletable: json['isDeletable'] as bool? ?? true,
     )..isSelectable = json['isSelectable'] as bool?;

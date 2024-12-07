@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/view_models/playlists/edit.dart';
 import 'package:mml_app/view_models/playlists/states.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// View of the create/edit dialog for playlists.
 class PlaylistEditDialog extends StatelessWidget {

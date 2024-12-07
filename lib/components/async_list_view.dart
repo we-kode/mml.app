@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/mml_app_localizations.dart';
+import 'package:mml_app/l10n/mml_app_localizations.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/expandable_fab.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
@@ -77,7 +78,7 @@ class AsyncListView extends StatefulWidget {
   final MultiSelectActionFunction? onMultiSelect;
 
   /// A subfilter widget which can be used to add subfilters like chips for more
-  /// filter posibilities.
+  /// filter possibilities.
   final ListSubfilterView? subfilter;
 
   /// The title shown above the list.
@@ -147,11 +148,11 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Initial offset to start loading data from.
   final int _initialOffset = 0;
 
-  /// Intial amount of data that should be loaded.
+  /// Initial amount of data that should be loaded.
   final int _initialTake = 100;
 
   /// Delta the [_offset] should be increased or decreased while scrolling and
-  /// lazy loading next/previuous data.
+  /// lazy loading next/previous data.
   final int _offsetDelta = 50;
 
   /// List of lazy loaded items.
@@ -292,7 +293,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     });
   }
 
-  /// Reloads the data starting from inital offset with inital count.
+  /// Reloads the data starting from initial offset with initial count.
   void _reloadData() {
     if (!mounted) {
       return;
@@ -315,7 +316,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   ///
   /// Shows a loading indicator instead of the list during load, if
   /// [showLoadingOverlay] is true.
-  /// Otherwhise the data will be loaded lazy in the background.
+  /// Otherwise the data will be loaded lazy in the background.
   void _loadData({
     bool showLoadingOverlay = true,
     Subfilter? subfilter,
@@ -382,7 +383,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                 });
               },
               tooltip: AppLocalizations.of(context)!.add,
-              child: const Icon(Icons.add),
+              child: const Icon(Symbols.add),
             ),
     );
   }
@@ -431,7 +432,7 @@ class _AsyncListViewState extends State<AsyncListView> {
             var endNotReached = (_offset + _take) <= _items!.totalCount;
             var loadNextIndexReached =
                 index == (_offset + _take - (_offsetDelta / 2).ceil());
-            var loadPreviuousIndexReached = index == _offset;
+            var loadPreviousIndexReached = index == _offset;
             var beginNotReached = index > 0;
 
             if (endNotReached && loadNextIndexReached) {
@@ -444,7 +445,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                   subfilter: widget.subfilter?.filter,
                 );
               });
-            } else if (beginNotReached && loadPreviuousIndexReached) {
+            } else if (beginNotReached && loadPreviousIndexReached) {
               _offset = _offset - _offsetDelta;
               _take = _initialTake + _offsetDelta;
 
@@ -475,7 +476,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   }
 
   /// Creates a widget that will be shown, if no data were loaded or an error
-  /// occured during loading of data.
+  /// occurred during loading of data.
   Widget _createNoDataWidget() {
     return Center(
       child: Column(
@@ -488,7 +489,7 @@ class _AsyncListViewState extends State<AsyncListView> {
           horizontalSpacer,
           TextButton.icon(
             onPressed: () => _loadData(subfilter: widget.subfilter?.filter),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Symbols.refresh),
             label: Text(AppLocalizations.of(context)!.reload),
           ),
         ],
@@ -556,7 +557,7 @@ class _AsyncListViewState extends State<AsyncListView> {
                 child: Container(
                   height: 42,
                   width: 42,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: item.getAvatar(context),
                 ),
               ),
@@ -672,7 +673,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     );
   }
 
-  /// Stores the identifer of the item at the [index] or removes it, when
+  /// Stores the identifier of the item at the [index] or removes it, when
   /// the identifier was in the list of selected items.
   void _onItemChecked(int index) {
     if (_selectedItems.any(
@@ -688,10 +689,10 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.selectedItemsAction?.count = _selectedItems.length;
   }
 
-  /// Creates a list tile widget for a not loded list item.
+  /// Creates a list tile widget for a not loaded list item.
   Widget _createLoadingTile() {
     return Shimmer.fromColors(
-      baseColor: Theme.of(context).colorScheme.surfaceVariant,
+      baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       highlightColor: Theme.of(context).colorScheme.surface,
       child: ListTile(
         title: Stack(
@@ -710,7 +711,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     );
   }
 
-  /// Checkbox to be shown when in multiselection mode.
+  /// Checkbox to be shown when in multi selection mode.
   Widget _selectCheckbox(int index, ModelBase item) {
     return Checkbox(
       splashRadius: 0,
