@@ -304,15 +304,15 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Refreshes the access token and updates the headers of the audio source.
   /// Necessary if the token expires during playback.
   Future<void> refreshToken() async {
-    var  duration = currentSeekPosition.asDuration();
+    var duration = currentSeekPosition.asDuration();
     await _clientService.refreshToken();
 
     var baseUrl = await _apiService.getBaseUrl();
     var headers = await _apiService.getHeaders();
 
     final url = currentRecord is Livestream
-          ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
-          : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
+        ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
+        : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
     await _player!.setUrl(
       url,
       headers: headers,
@@ -444,7 +444,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final isDarkMode = brightness == Brightness.dark;
     final bgImageUri = await currentRecord?.getAvatarUri() ??
         (await getImageFileFromAssets(
-          isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
+          !isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
         ))
             .uri;
 

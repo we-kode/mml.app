@@ -96,7 +96,7 @@ class SecureStorageService {
 
   /// Stores the [value] under the given [key].
   Future<void> set(String key, String? value) async {
-    if (Platform.isIOS && key == accessTokenStorageKey) {
+    if (Platform.isIOS) {
       _cache[key] = value;
     }
     return await _storage.write(

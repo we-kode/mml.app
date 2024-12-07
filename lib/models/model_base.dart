@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_memory_image/cached_image_base64_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mml_app/extensions/string.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
 abstract class ModelBase {
@@ -94,6 +95,10 @@ abstract class ModelBase {
 
       var uri = Uri.parse(await platform.invokeMethod("mapUri", file.path));
       return uri;
+    } else if (Platform.isIOS &&
+        getAvatarString() != null &&
+        getAvatarString()!.isNotEmpty) {
+      return (await getAvatarString()!.toFile()).uri;
     }
 
     return null;
