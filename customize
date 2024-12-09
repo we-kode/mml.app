@@ -30,15 +30,15 @@ while IFS='=' read -r key value
 do
   case $key in
 	appTitle_en)
-		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\",/" "$DIR/lib/l10n/mml_app_en.arb"
+		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\"/" "$DIR/lib/l10n/mml_app_en.arb"
 		sed -i -E "s/    <string name=\"app_title\">.*<\/string>/    <string name=\"app_title\">$value<\/string>/" "$DIR/android/app/src/main/res/values/strings.xml"
 		;;
 	appTitle_ru)
-		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\",/" "$DIR/lib/l10n/mml_app_ru.arb"
+		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\"/" "$DIR/lib/l10n/mml_app_ru.arb"
 		sed -i -E "s/    <string name=\"app_title\">.*<\/string>/    <string name=\"app_title\">$value<\/string>/" "$DIR/android/app/src/main/res/values-ru/strings.xml"
 		;;
 	appTitle_de)
-		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\",/" "$DIR/lib/l10n/mml_app_de.arb"
+		sed -i -E "s/\"appTitle\": \".*\"/\"appTitle\": \"$value\"/" "$DIR/lib/l10n/mml_app_de.arb"
 		sed -i -E "s/    <string name=\"app_title\">.*<\/string>/    <string name=\"app_title\">$value<\/string>/" "$DIR/android/app/src/main/res/values-de/strings.xml"
 		;;
 	appTitle)
