@@ -211,7 +211,7 @@ class PlayerService {
     _audioHandler = await AudioService.init(
       builder: () => MMLAudioHandler(context),
       config: AudioServiceConfig(
-        androidNotificationChannelId: 'de.wekode.mml.audio',
+        androidNotificationChannelId: "de.wekode.mml.audio",
         androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
         androidNotificationOngoing: true,
         androidStopForegroundOnPause: true,
