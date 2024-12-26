@@ -130,6 +130,25 @@ class ID3TagFilter extends Subfilter {
 
   /// Clears the filter value of the [identifier].
   void clear(String identifier) {
+    _remove(identifier);
+    notifyListeners();
+  }
+
+  // Clears all filters.
+  void clearAll() {
+    _remove(ID3TagFilters.artists);
+    _remove(ID3TagFilters.artistNames);
+    _remove(ID3TagFilters.albums);
+    _remove(ID3TagFilters.albumNames);
+    _remove(ID3TagFilters.genres);
+    _remove(ID3TagFilters.genreNames);
+    _remove(ID3TagFilters.languages);
+    _remove(ID3TagFilters.date);
+    _remove(ID3TagFilters.folderView);
+    notifyListeners();
+  }
+
+  void _remove(String identifier) {
     switch (identifier) {
       case ID3TagFilters.artists:
         artists.clear();
@@ -162,20 +181,6 @@ class ID3TagFilter extends Subfilter {
         isGrouped = false;
         break;
     }
-    notifyListeners();
-  }
-
-  // Clears all filters.
-  void clearAll() {
-    clear(ID3TagFilters.artists);
-    clear(ID3TagFilters.artistNames);
-    clear(ID3TagFilters.albums);
-    clear(ID3TagFilters.albumNames);
-    clear(ID3TagFilters.genres);
-    clear(ID3TagFilters.genreNames);
-    clear(ID3TagFilters.languages);
-    clear(ID3TagFilters.date);
-    clear(ID3TagFilters.folderView);
   }
 
   /// Checks if the value of the [identifier] is not empty.
@@ -199,12 +204,13 @@ class ID3TagFilter extends Subfilter {
   }
 
   /// Determines whether at least one filter is set.
-  bool isAny() => artists.isNotEmpty ||
-        genres.isNotEmpty ||
-        albums.isNotEmpty ||
-        languages.isNotEmpty ||
-        startDate != null ||
-        endDate != null;
+  bool isAny() =>
+      artists.isNotEmpty ||
+      genres.isNotEmpty ||
+      albums.isNotEmpty ||
+      languages.isNotEmpty ||
+      startDate != null ||
+      endDate != null;
 }
 
 /// Holds the tags identifiers on which records can be filtered.
