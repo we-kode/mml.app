@@ -47,7 +47,7 @@ do
 		;;
 	appId)
 		sed -i -E "s/        applicationId \".*\"/        applicationId \"$value\"/" "$DIR/android/app/build.gradle"
-		sed -i -E "s/            android:authorities=\"de.wekode.mml_app\"/            android:authorities=\"$value\"/" "$DIR/android/app/src/AndroidManifest.xml"
+		sed -i -E "s/            android:authorities=\"de.wekode.mml_app\"/            android:authorities=\"$value\"/" "$DIR/android/app/src/main/AndroidManifest.xml"
 		sed -i -E "s/        androidNotificationChannelId: \"de.wekode.mml.audio\",/        androidNotificationChannelId: \"$value.audio\",/" "$DIR/lib/services/player/player.dart"
         sed -i -E "s/				PRODUCT_BUNDLE_IDENTIFIER = de.wekode.mmlApp;/				PRODUCT_BUNDLE_IDENTIFIER = $value;/" "$DIR/ios/Runner.xcodeproj/project.pbxproj"
 		;;
