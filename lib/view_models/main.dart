@@ -43,7 +43,7 @@ class MainViewModel extends ChangeNotifier {
       ),
       label: locales.playlist,
     ),
-     BottomNavigationBarItem(
+    BottomNavigationBarItem(
       icon: const Icon(
         Symbols.sensors,
       ),
@@ -69,7 +69,11 @@ class MainViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     _context = context;
     locales = AppLocalizations.of(_context)!;
-    final showLivestreams = (await LivestreamService.getInstance().get(null, null, null)).isNotEmpty;
+    print("DEBUG:::MainViewModel:72");
+    final showLivestreams =
+        (await LivestreamService.getInstance().get(null, null, null))
+            .isNotEmpty;
+    print("DEBUG:::MainViewModel:76:$showLivestreams");
     if (!showLivestreams) {
       _routerService.initRootRoutes(showLivestreams);
       _routes.removeWhere((element) => element == LivestreamsViewModel.route);
