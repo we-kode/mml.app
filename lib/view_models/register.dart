@@ -53,10 +53,12 @@ class RegisterViewModel extends ChangeNotifier {
     return Future<bool>.microtask(() async {
       if (await _storage.has(SecureStorageService.accessTokenStorageKey)) {
         try {
+          print("DEBUG:::RegisterViewModel:56");
           var isRegistered = await _clientService.isClientRegistered();
-
+          print("DEBUG:::RegisterViewModel:58:$isRegistered");
           if (isRegistered) {
             Future.microtask(() async {
+              print("DEBUG:::RegisterViewModel:61");
               await afterRegistration();
             });
 
@@ -65,7 +67,9 @@ class RegisterViewModel extends ChangeNotifier {
         } catch (e) {
           if (e is! DioException ||
               e.response?.statusCode != HttpStatus.unauthorized) {
+            print("DEBUG:::RegisterViewModel:70");
             Future.microtask(() async {
+              print("DEBUG:::RegisterViewModel:72");
               await afterRegistration();
             });
 
@@ -74,6 +78,7 @@ class RegisterViewModel extends ChangeNotifier {
         }
       }
 
+      print("DEBUG:::RegisterViewModel:81");
       if (Platform.isAndroid) {
         deviceIdentifier = (await DeviceInfoPlugin().androidInfo).model;
       }
@@ -118,13 +123,14 @@ class RegisterViewModel extends ChangeNotifier {
 
   /// Redirects the route with main route after successful registration.
   Future afterRegistration() async {
+    print("DEBUG:::RegisterViewModel:126");
     await RouterService.getInstance().pushReplacementNamed(MainViewModel.route);
   }
 
   /// Sets the registration state of the process to the passed [state].
   set state(RegistrationState state) {
     _state = state;
-
+    print("DEBUG:::RegisterViewModel:132:changingState:$state");
     switch (_state) {
       case RegistrationState.rsa:
         infoMessage = locales.registrationRSA;

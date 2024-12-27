@@ -68,7 +68,7 @@ class ClientService {
         'deviceIdentifier': deviceIdentifier,
       },
       options: Options(method: 'POST'),
-      apiVersion: '1.0',
+      apiVersion: '2.0',
     );
 
     if (response.statusCode == HttpStatus.ok) {
