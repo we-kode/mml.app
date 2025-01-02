@@ -139,7 +139,7 @@ class Record extends ModelBase {
       );
     }
 
-    return const Icon(Symbols.audio_file);
+    return const Icon(Symbols.music_note);
   }
 
   @override

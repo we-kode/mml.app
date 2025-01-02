@@ -67,7 +67,7 @@ class FileService {
     var savePath = '${await _folder}/${record.checksum}';
     final cryptFile = File(savePath);
 
-    if (await cryptFile.exists()) {
+    if ((await cryptFile.exists()) && (await cryptFile.length()) > 0) {
       return;
     }
 
@@ -116,12 +116,14 @@ class FileService {
     }
   }
 
-  /// Loads file with [fileName] as decrypted byte chunked stream.
-  Future<File> getFile(String fileName) async {
-    final file = File('${await _folder}/$fileName');
+  /// Loads file with [record] as decrypted byte chunked stream.
+  Future<File> getFile(Record record) async {
+    final file = File('${await _folder}/${record.checksum}');
     if (!(await file.exists())) {
-      _messengerService.showMessage(_messengerService.fileNotFound);
-      throw Exception("File not found!");
+      await download(record, onError: () {
+        _messengerService.showMessage(_messengerService.fileNotFound);
+        throw Exception("File not found!");
+      });
     }
 
     return file;

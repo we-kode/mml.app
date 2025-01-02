@@ -552,7 +552,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       File file;
       try {
         file = await FileService.getInstance().getFile(
-          currentRecord!.checksum!,
+          currentRecord!,
         );
       } catch (e) {
         await PlayerService.getInstance().closePlayer();
