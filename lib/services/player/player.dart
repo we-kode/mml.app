@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,12 @@ class PlayerService {
       _audioHandler.repeat = PlayerRepeatMode.none;
     }
 
+    playerState?.update();
+  }
+
+  /// Updates the playback speed in 0.25 steps
+  void speedUp() {
+    _audioHandler.speed = max((_audioHandler.speed + .25) % 2.25, 1);
     playerState?.update();
   }
 
@@ -172,16 +179,13 @@ class PlayerService {
       },
     );
 
-    _audioHandler.playbackEventStream.listen(
-      (event) {
-        playerState?.update();
-      },
-      onError: (Object e, StackTrace stackTrace) async {
-        if (e is PlatformException && e.message == 'Source error') {
-          await _audioHandler.refreshToken();
-        }
+    _audioHandler.playbackEventStream.listen((event) {
+      playerState?.update();
+    }, onError: (Object e, StackTrace stackTrace) async {
+      if (e is PlatformException && e.message == 'Source error') {
+        await _audioHandler.refreshToken();
       }
-    );
+    });
   }
 
   /// Resets the current player.
