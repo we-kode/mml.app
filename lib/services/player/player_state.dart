@@ -29,6 +29,9 @@ class PlayerState extends ChangeNotifier {
   /// Indicates, that the source to be played is loading.
   bool get isLoading => _audioHandler.isLoading;
 
+  /// The current speed of the playback.
+  double get speed => _audioHandler.speed;
+
   /// Notifies for changes the listeners.
   ///
   /// Should be used if the state changes.

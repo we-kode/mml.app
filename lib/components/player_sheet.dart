@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/soundwave_animation.dart';
@@ -80,7 +81,6 @@ class PlayerSheetState extends State<PlayerSheet>
                               iconSize: 24,
                               padding: EdgeInsets.zero,
                               onPressed: () async {
-                                // TODO: Remove records
                                 PlaylistService.getInstance().downloadRecords([
                                   PlayerService.getInstance()
                                       .playerState
@@ -178,6 +178,22 @@ class PlayerSheetState extends State<PlayerSheet>
                                 state.currentRecord?.artist ??
                                     AppLocalizations.of(context)!.unknown,
                                 style: Theme.of(context).textTheme.bodySmall,
+                              );
+                      },
+                    ),
+                    const Spacer(),
+                    Consumer<PlayerState>(
+                      builder: (context, state, child) {
+                        return state.currentRecord is Livestream
+                            ? Container()
+                            : RichText(
+                                textAlign: TextAlign.right,
+                                text: TextSpan(
+                                  text: "${state.speed}x",
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => PlayerService.getInstance().speedUp(),
+                                ),
                               );
                       },
                     ),

@@ -89,6 +89,14 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool get shuffle => _shuffle;
 
+  /// The actual playback speed
+  double get speed => _player?.speed ?? 1.0;
+
+  /// Sets the [speed] of the playback.
+  set speed(double speed) {
+    _player?.setSpeed(speed);
+  }
+
   /// Repeat mode that is currently set.
   PlayerRepeatMode get repeat => _repeat;
 
@@ -552,7 +560,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       File file;
       try {
         file = await FileService.getInstance().getFile(
-          currentRecord!.checksum!,
+          currentRecord!,
         );
       } catch (e) {
         await PlayerService.getInstance().closePlayer();
