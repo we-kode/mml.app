@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'mml_app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -21,7 +23,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get offlineError => 'Stellen Sie die Internetverbindung her und versuchen Sie es erneut';
+  String get offlineError =>
+      'Stellen Sie die Internetverbindung her und versuchen Sie es erneut';
 
   @override
   String unexpectedError(String message) {
@@ -29,7 +32,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get forbidden => 'Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!';
+  String get forbidden =>
+      'Sie haben nicht die notwendigen Rechte, die Aktion auszuführen!';
 
   @override
   String get done => 'Fertig';
@@ -41,10 +45,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registrationTitle => 'Registrierung';
 
   @override
-  String get registrationScan => 'Scannen Sie den QR-Code in der Administration, um Ihr Gerät zu registrieren.';
+  String get registrationScan =>
+      'Scannen Sie den QR-Code in der Administration, um Ihr Gerät zu registrieren.';
 
   @override
-  String get registrationError => 'Ein Fehler ist beim Registrieren aufgetreten. Versuchen Sie es erneut!';
+  String get registrationError =>
+      'Ein Fehler ist beim Registrieren aufgetreten. Versuchen Sie es erneut!';
 
   @override
   String get registrationSuccess => 'Gerät wurde erfolgreich registriert!';
@@ -53,13 +59,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registrationProgress => 'Gerät wird registriert...';
 
   @override
-  String get registrationEnterName => 'Geben Sie Ihren Namen ein, um sich zu registrieren.';
+  String get registrationEnterName =>
+      'Geben Sie Ihren Namen ein, um sich zu registrieren.';
 
   @override
-  String get registrationRSA => 'Sicherheitsschlüssel wird generiert. Das kann einen Augenblick dauern.';
+  String get registrationRSA =>
+      'Sicherheitsschlüssel wird generiert. Das kann einen Augenblick dauern.';
 
   @override
-  String get reRegister => 'Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!';
+  String get reRegister =>
+      'Ihre Registrierung ist nicht mehr gültig. Registrieren Sie Ihr Gerät erneut!';
 
   @override
   String get records => 'Aufnahmen';
@@ -86,7 +95,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get invalidLastName => 'Bitte geben Sie einen Nachnamen an!';
 
   @override
-  String get notReachable => 'Der Server ist nicht erreichbar! Bitte prüfen Sie Ihre Netzwerkverbindung!';
+  String get notReachable =>
+      'Der Server ist nicht erreichbar! Bitte prüfen Sie Ihre Netzwerkverbindung!';
 
   @override
   String get changeServerConnection => 'Server-Verbindung ändern';
@@ -110,34 +120,41 @@ class AppLocalizationsDe extends AppLocalizations {
   String get updateConnectionSettingsTitle => 'Server-Verbindung ändern';
 
   @override
-  String get updateConnectionSettingsScan => 'Scannen Sie den QR-Code in der Administration, um die Einstellungen zu ändern.';
+  String get updateConnectionSettingsScan =>
+      'Scannen Sie den QR-Code in der Administration, um die Einstellungen zu ändern.';
 
   @override
-  String get updateConnectionSettingsError => 'Ein Fehler ist bei der Änderung aufgetreten. Versuchen Sie es erneut!';
+  String get updateConnectionSettingsError =>
+      'Ein Fehler ist bei der Änderung aufgetreten. Versuchen Sie es erneut!';
 
   @override
-  String get updateConnectionSettingsSuccess => 'Einstellungen wurden erfolgreich geändert!';
+  String get updateConnectionSettingsSuccess =>
+      'Einstellungen wurden erfolgreich geändert!';
 
   @override
-  String get updateConnectionSettingsProgress => 'Einstellungen werden geändert...';
+  String get updateConnectionSettingsProgress =>
+      'Einstellungen werden geändert...';
 
   @override
   String get introTitleRegister => 'Registrieren';
 
   @override
-  String get introTextRegister => 'Scannen Sie den QR-Code in der Administration, um Ihr Gerät zu registrieren.';
+  String get introTextRegister =>
+      'Scannen Sie den QR-Code in der Administration, um Ihr Gerät zu registrieren.';
 
   @override
   String get introTitleRecords => 'Hören';
 
   @override
-  String get introTextRecords => 'Greifen Sie auf verfügbare Audio-Aufnahmen zu, filtern Sie diese nach Belieben und hören Sie diese an.';
+  String get introTextRecords =>
+      'Greifen Sie auf verfügbare Audio-Aufnahmen zu, filtern Sie diese nach Belieben und hören Sie diese an.';
 
   @override
   String get introTitlePlaylist => 'Mitnehmen';
 
   @override
-  String get introTextPlaylist => 'Fügen Sie Ihre Lieblingsaufnahmen zu offline Playlists hinzu und hören Sie diese auch wenn gerade kein Internet da ist.';
+  String get introTextPlaylist =>
+      'Fügen Sie Ihre Lieblingsaufnahmen zu offline Playlists hinzu und hören Sie diese auch wenn gerade kein Internet da ist.';
 
   @override
   String get unknown => 'Unbekannt';
@@ -185,7 +202,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get invalidDisplayName => 'Bitte geben Sie einen Namen an!';
 
   @override
-  String get playlistUniqueConstraintFailed => 'Wiedergabeliste ist bereits vorhanden.';
+  String get playlistUniqueConstraintFailed =>
+      'Wiedergabeliste ist bereits vorhanden.';
 
   @override
   String get remove => 'Löschen';
@@ -194,16 +212,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get yes => 'Ja';
 
   @override
-  String get deleteConfirmation => 'Möchten Sie tatsächlich die gewählten Datensätze löschen?';
+  String get deleteConfirmation =>
+      'Möchten Sie tatsächlich die gewählten Datensätze löschen?';
 
   @override
   String get download => 'Download';
 
   @override
-  String get fileNotFound => 'Datei konnte nicht gefunden werden. Fügen Sie die Aufnahme erneut zu einer Playlist hinzu.';
+  String get fileNotFound =>
+      'Datei konnte nicht gefunden werden. Fügen Sie die Aufnahme erneut zu einer Playlist hinzu.';
 
   @override
-  String get downloadError => 'Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut.';
+  String get downloadError =>
+      'Download fehlgeschlagen. Überprüfen Sie ihre Verbindung und Speicherplatz und versuchen Sie es erneut.';
 
   @override
   String get back => 'zurück';
@@ -215,7 +236,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get language => 'Sprache';
 
   @override
-  String get notReachableRecord => 'Die Aufnahme konnte nicht geladen werden! Versuchen Sie es später noch einmal.';
+  String get notReachableRecord =>
+      'Die Aufnahme konnte nicht geladen werden! Versuchen Sie es später noch einmal.';
 
   @override
   String get faq => 'Hilfe';
@@ -230,7 +252,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get display => 'Darstellung';
 
   @override
-  String get displayDescription => 'Welche Elemente sollen in der Liste der Aufnahmen angezeigt werden?';
+  String get displayDescription =>
+      'Welche Elemente sollen in der Liste der Aufnahmen angezeigt werden?';
 
   @override
   String get showGenre => 'Genre';
@@ -242,13 +265,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get showTrackNumber => 'Tracknummer';
 
   @override
-  String get faqAddFavoritesDescription => 'Es können mehrere Ordner angelegt werden, wo Aufnahmen abgespeichert werden. Dazu auf das Plus-Symbol in der \'Gespeicherte Titel\' Ansicht unten rechts klicken und einen Namen für den Ordner angeben. Aufnahmen können gespeichert werden durch gedrückt halten auf einer Aufnahme in der Liste. Es erscheint die Möglichkeit mehrere Elemente gleichzeitig auszuwählen. Oben rechts auf den Stern drücken und dann den Ordner auswählen in dem man die Aufnahmen speichern will. Die aktuell abgespielte Aufnahme kann im Player unten rechts gespeichert werden.';
+  String get faqAddFavoritesDescription =>
+      'Es können mehrere Ordner angelegt werden, wo Aufnahmen abgespeichert werden. Dazu auf das Plus-Symbol in der \'Gespeicherte Titel\' Ansicht unten rechts klicken und einen Namen für den Ordner angeben. Aufnahmen können gespeichert werden durch gedrückt halten auf einer Aufnahme in der Liste. Es erscheint die Möglichkeit mehrere Elemente gleichzeitig auszuwählen. Oben rechts auf den Stern drücken und dann den Ordner auswählen in dem man die Aufnahmen speichern will. Die aktuell abgespielte Aufnahme kann im Player unten rechts gespeichert werden.';
 
   @override
   String get faqRemoveFavorites => 'Wie lösche ich gespeicherte Aufnahmen?';
 
   @override
-  String get faqRemoveFavoritesDescription => 'Um eine oder mehrere gespeicherte Aufnahmen zu entfernen, eine Aufnahme oder den ganzen Ordner in der Liste gedrückt halten. Es erscheint eine Möglichkeit mehrere Elemente auszuwählen. Oben rechts auf den Mülleimersymbol drücken, um die ausgewählten Elemente zu entfernen.';
+  String get faqRemoveFavoritesDescription =>
+      'Um eine oder mehrere gespeicherte Aufnahmen zu entfernen, eine Aufnahme oder den ganzen Ordner in der Liste gedrückt halten. Es erscheint eine Möglichkeit mehrere Elemente auszuwählen. Oben rechts auf den Mülleimersymbol drücken, um die ausgewählten Elemente zu entfernen.';
 
   @override
   String get development => 'Entwicklung';
@@ -269,13 +294,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cover => 'Cover';
 
   @override
-  String get notCompatibleFile => 'Datei konnte nicht gelesen werden. Format fehlerhaft.';
+  String get notCompatibleFile =>
+      'Datei konnte nicht gelesen werden. Format fehlerhaft.';
 
   @override
   String get notDownloaded => 'Nicht heruntergeladen';
 
   @override
-  String get notDownloadedRecords => 'Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.';
+  String get notDownloadedRecords =>
+      'Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.';
 
   @override
   String get overview => 'Übersicht';

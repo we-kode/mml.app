@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'mml_app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -29,7 +31,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get forbidden => 'У вас нет необходимых прав, чтобы выполнить это действие!';
+  String get forbidden =>
+      'У вас нет необходимых прав, чтобы выполнить это действие!';
 
   @override
   String get done => 'Далее';
@@ -41,10 +44,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get registrationTitle => 'Регистрация';
 
   @override
-  String get registrationScan => 'Отсканируйте QR-код в администрации, чтобы зарегистрировать своё устройство.';
+  String get registrationScan =>
+      'Отсканируйте QR-код в администрации, чтобы зарегистрировать своё устройство.';
 
   @override
-  String get registrationError => 'Произошла ошибка при регистрации. Попробуйте ещё раз!';
+  String get registrationError =>
+      'Произошла ошибка при регистрации. Попробуйте ещё раз!';
 
   @override
   String get registrationSuccess => 'Устройство успешно зарегистрировано!';
@@ -53,13 +58,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get registrationProgress => 'Регистрация устройства...';
 
   @override
-  String get registrationEnterName => 'Введите своё имя, чтобы зарегистрироваться.';
+  String get registrationEnterName =>
+      'Введите своё имя, чтобы зарегистрироваться.';
 
   @override
-  String get registrationRSA => 'Генерируется ключ безопасности. Это может занять некоторое время.';
+  String get registrationRSA =>
+      'Генерируется ключ безопасности. Это может занять некоторое время.';
 
   @override
-  String get reRegister => 'Ваша регистрация истекла. Зарегистрируйте своё устройство заново!';
+  String get reRegister =>
+      'Ваша регистрация истекла. Зарегистрируйте своё устройство заново!';
 
   @override
   String get records => 'Записи';
@@ -86,7 +94,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get invalidLastName => 'Пожалуйста, введите фамилию!';
 
   @override
-  String get notReachable => 'Не удалось подключиться к серверу! Пожалуйста, проверьте вашу соединение к сети!';
+  String get notReachable =>
+      'Не удалось подключиться к серверу! Пожалуйста, проверьте вашу соединение к сети!';
 
   @override
   String get changeServerConnection => 'Изменить подключение к серверу';
@@ -110,13 +119,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get updateConnectionSettingsTitle => 'Изменить подключение к серверу';
 
   @override
-  String get updateConnectionSettingsScan => 'Чтобы изменить настройки, отсканируйте QR-код в администрации.';
+  String get updateConnectionSettingsScan =>
+      'Чтобы изменить настройки, отсканируйте QR-код в администрации.';
 
   @override
-  String get updateConnectionSettingsError => 'Во время смены произошла ошибка. Пожалуйста, повторите попытку ещё раз!';
+  String get updateConnectionSettingsError =>
+      'Во время смены произошла ошибка. Пожалуйста, повторите попытку ещё раз!';
 
   @override
-  String get updateConnectionSettingsSuccess => 'Настройки были успешно изменены!';
+  String get updateConnectionSettingsSuccess =>
+      'Настройки были успешно изменены!';
 
   @override
   String get updateConnectionSettingsProgress => 'Смена настроек...';
@@ -125,19 +137,22 @@ class AppLocalizationsRu extends AppLocalizations {
   String get introTitleRegister => 'Регистрироваться';
 
   @override
-  String get introTextRegister => 'Отсканируйте QR-код в администрации, чтобы зарегистрировать свое устройство.';
+  String get introTextRegister =>
+      'Отсканируйте QR-код в администрации, чтобы зарегистрировать свое устройство.';
 
   @override
   String get introTitleRecords => 'Слушать';
 
   @override
-  String get introTextRecords => 'Получите доступ к доступным аудиозаписям, отфильтруйте их по своему усмотрению и прослушайте их.';
+  String get introTextRecords =>
+      'Получите доступ к доступным аудиозаписям, отфильтруйте их по своему усмотрению и прослушайте их.';
 
   @override
   String get introTitlePlaylist => 'Брать с собой';
 
   @override
-  String get introTextPlaylist => 'Добавляйте любимые записи в офлайн-плейлисты и слушайте их, даже если в данный момент нет интернета.';
+  String get introTextPlaylist =>
+      'Добавляйте любимые записи в офлайн-плейлисты и слушайте их, даже если в данный момент нет интернета.';
 
   @override
   String get unknown => 'Неизвестный';
@@ -194,16 +209,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get yes => 'Да';
 
   @override
-  String get deleteConfirmation => 'Вы действительно хотите удалить выбранные записи?';
+  String get deleteConfirmation =>
+      'Вы действительно хотите удалить выбранные записи?';
 
   @override
   String get download => 'Загрузка';
 
   @override
-  String get fileNotFound => 'Файл не удалось найти. Снова добавьте запись в список воспроизведения.';
+  String get fileNotFound =>
+      'Файл не удалось найти. Снова добавьте запись в список воспроизведения.';
 
   @override
-  String get downloadError => 'Загрузка не удалась. Проверьте свое соединение и место на диске и повторите попытку.';
+  String get downloadError =>
+      'Загрузка не удалась. Проверьте свое соединение и место на диске и повторите попытку.';
 
   @override
   String get back => 'назад';
@@ -215,7 +233,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get language => 'Язык';
 
   @override
-  String get notReachableRecord => 'Запись не может быть загружена! Пожалуйста, повторите попытку позже.';
+  String get notReachableRecord =>
+      'Запись не может быть загружена! Пожалуйста, повторите попытку позже.';
 
   @override
   String get faq => 'Помощь';
@@ -230,7 +249,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get display => 'Отображение';
 
   @override
-  String get displayDescription => 'Какие элементы вы хотите отобразить в списке записи?';
+  String get displayDescription =>
+      'Какие элементы вы хотите отобразить в списке записи?';
 
   @override
   String get showGenre => 'Жанр';
@@ -242,13 +262,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get showTrackNumber => 'Номер трека';
 
   @override
-  String get faqAddFavoritesDescription => 'Можно создать несколько папок, в которых хранятся записи. Чтобы сделать это, нажмите на символ плюса в окне \'Сохраненные записи\' в правом нижнем углу и укажите имя папки. Записи можно сохранить длительным нажатием на запись в списке. Появится возможность выбрать несколько элементов одновременно. Нажмите на звездочку в правом верхнем углу, а затем выберите папку, в которую вы хотите сохранить записи. Воспроизводимую в данный момент запись можно сохранить в проигрывателе в правом нижнем углу.';
+  String get faqAddFavoritesDescription =>
+      'Можно создать несколько папок, в которых хранятся записи. Чтобы сделать это, нажмите на символ плюса в окне \'Сохраненные записи\' в правом нижнем углу и укажите имя папки. Записи можно сохранить длительным нажатием на запись в списке. Появится возможность выбрать несколько элементов одновременно. Нажмите на звездочку в правом верхнем углу, а затем выберите папку, в которую вы хотите сохранить записи. Воспроизводимую в данный момент запись можно сохранить в проигрывателе в правом нижнем углу.';
 
   @override
   String get faqRemoveFavorites => 'Как мне удалить сохраненные записи?';
 
   @override
-  String get faqRemoveFavoritesDescription => 'Чтобы удалить одну или несколько сохраненных записей, нажмите и удерживайте запись или всю папку в списке. Появится возможность выбрать несколько элементов. Нажмите на значок корзины в правом верхнем углу, чтобы удалить выбранные элементы.';
+  String get faqRemoveFavoritesDescription =>
+      'Чтобы удалить одну или несколько сохраненных записей, нажмите и удерживайте запись или всю папку в списке. Появится возможность выбрать несколько элементов. Нажмите на значок корзины в правом верхнем углу, чтобы удалить выбранные элементы.';
 
   @override
   String get development => 'Разработка';
@@ -269,13 +291,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cover => 'Обложка';
 
   @override
-  String get notCompatibleFile => 'Файл невозможно расшифровать. Неправильный формат.';
+  String get notCompatibleFile =>
+      'Файл невозможно расшифровать. Неправильный формат.';
 
   @override
   String get notDownloaded => 'Не загружено';
 
   @override
-  String get notDownloadedRecords => 'Следующие записи больше недоступны или вы не имеете права их загружать.';
+  String get notDownloadedRecords =>
+      'Следующие записи больше недоступны или вы не имеете права их загружать.';
 
   @override
   String get overview => 'Обзор';

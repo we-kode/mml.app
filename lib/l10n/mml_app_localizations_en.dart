@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'mml_app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -29,7 +31,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get forbidden => 'You have not the necessary rights, to execute this action!';
+  String get forbidden =>
+      'You have not the necessary rights, to execute this action!';
 
   @override
   String get done => 'Done';
@@ -41,10 +44,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registrationTitle => 'Registration';
 
   @override
-  String get registrationScan => 'To register your device, scan the QR-Code in the administration.';
+  String get registrationScan =>
+      'To register your device, scan the QR-Code in the administration.';
 
   @override
-  String get registrationError => 'An error occurred during registration. Please retry again!';
+  String get registrationError =>
+      'An error occurred during registration. Please retry again!';
 
   @override
   String get registrationSuccess => 'Device has been successfully registered!';
@@ -56,10 +61,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registrationEnterName => 'To register, enter your name.';
 
   @override
-  String get registrationRSA => 'Security key is generated. This may take a moment.';
+  String get registrationRSA =>
+      'Security key is generated. This may take a moment.';
 
   @override
-  String get reRegister => 'Your registration is not valid any more. Re-Register your device!';
+  String get reRegister =>
+      'Your registration is not valid any more. Re-Register your device!';
 
   @override
   String get records => 'Records';
@@ -86,7 +93,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidLastName => 'Please enter a last name!';
 
   @override
-  String get notReachable => 'The server is not reachable! Please check your network connection!';
+  String get notReachable =>
+      'The server is not reachable! Please check your network connection!';
 
   @override
   String get changeServerConnection => 'Change server connection';
@@ -110,13 +118,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get updateConnectionSettingsTitle => 'Change server connection';
 
   @override
-  String get updateConnectionSettingsScan => 'To change the settings, scan the QR-Code in the administration.';
+  String get updateConnectionSettingsScan =>
+      'To change the settings, scan the QR-Code in the administration.';
 
   @override
-  String get updateConnectionSettingsError => 'An error occurred during change. Please retry again!';
+  String get updateConnectionSettingsError =>
+      'An error occurred during change. Please retry again!';
 
   @override
-  String get updateConnectionSettingsSuccess => 'Settings were successfully changed!';
+  String get updateConnectionSettingsSuccess =>
+      'Settings were successfully changed!';
 
   @override
   String get updateConnectionSettingsProgress => 'Changing settings...';
@@ -125,19 +136,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get introTitleRegister => 'Register';
 
   @override
-  String get introTextRegister => 'Scan the QR code in the administration to register your device.';
+  String get introTextRegister =>
+      'Scan the QR code in the administration to register your device.';
 
   @override
   String get introTitleRecords => 'Listen';
 
   @override
-  String get introTextRecords => 'Access available audio recordings, filter them as you like and listen to them.';
+  String get introTextRecords =>
+      'Access available audio recordings, filter them as you like and listen to them.';
 
   @override
   String get introTitlePlaylist => 'Take with you';
 
   @override
-  String get introTextPlaylist => 'Add your favorite recordings to offline playlists and listen to them even if there is no Internet at the moment.';
+  String get introTextPlaylist =>
+      'Add your favorite recordings to offline playlists and listen to them even if there is no Internet at the moment.';
 
   @override
   String get unknown => 'Unknown';
@@ -194,16 +208,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yes => 'Yes';
 
   @override
-  String get deleteConfirmation => 'Are you really want to delete the selected records?';
+  String get deleteConfirmation =>
+      'Are you really want to delete the selected records?';
 
   @override
   String get download => 'Download';
 
   @override
-  String get fileNotFound => 'File could not be found. Add the recording to a playlist again.';
+  String get fileNotFound =>
+      'File could not be found. Add the recording to a playlist again.';
 
   @override
-  String get downloadError => 'Download failed. Check your connection and storage space and try again.';
+  String get downloadError =>
+      'Download failed. Check your connection and storage space and try again.';
 
   @override
   String get back => 'back';
@@ -215,7 +232,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get language => 'Language';
 
   @override
-  String get notReachableRecord => 'The record could not be loaded! Please retry later.';
+  String get notReachableRecord =>
+      'The record could not be loaded! Please retry later.';
 
   @override
   String get faq => 'Help';
@@ -230,7 +248,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get display => 'Display';
 
   @override
-  String get displayDescription => 'Which elements should be displayed in the list of records?';
+  String get displayDescription =>
+      'Which elements should be displayed in the list of records?';
 
   @override
   String get showGenre => 'Genre';
@@ -242,13 +261,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showTrackNumber => 'Track-Number';
 
   @override
-  String get faqAddFavoritesDescription => 'Several folders can be created where records are stored. To do this, click on the plus symbol in the \'Saved Titles\' view at the bottom right and specify a name for the folder. Records can be saved by long pressing on a record in the list. The option to select several elements at the same time appears. Press the star in the upper right corner and then select the folder in which you want to save the records. The currently playing record can be saved in the player at the bottom right.';
+  String get faqAddFavoritesDescription =>
+      'Several folders can be created where records are stored. To do this, click on the plus symbol in the \'Saved Titles\' view at the bottom right and specify a name for the folder. Records can be saved by long pressing on a record in the list. The option to select several elements at the same time appears. Press the star in the upper right corner and then select the folder in which you want to save the records. The currently playing record can be saved in the player at the bottom right.';
 
   @override
   String get faqRemoveFavorites => 'How do I delete saved records?';
 
   @override
-  String get faqRemoveFavoritesDescription => 'To remove one or more saved records, press and hold a record or the entire folder in the list. A possibility to select several elements appears. Press the trash can icon at the top right to remove the selected items.';
+  String get faqRemoveFavoritesDescription =>
+      'To remove one or more saved records, press and hold a record or the entire folder in the list. A possibility to select several elements appears. Press the trash can icon at the top right to remove the selected items.';
 
   @override
   String get development => 'Development';
@@ -275,7 +296,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notDownloaded => 'Not downloaded';
 
   @override
-  String get notDownloadedRecords => 'The following records are no longer available or you have no right to download them.';
+  String get notDownloadedRecords =>
+      'The following records are no longer available or you have no right to download them.';
 
   @override
   String get overview => 'Overview';
