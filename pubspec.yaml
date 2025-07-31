@@ -50,11 +50,7 @@ dependencies:
   shimmer: ^3.0.0
   just_audio: ^0.9.38
   # Replace with concrete version if the fix will be merged into the branch.
-  audio_service:
-    git:
-      url: https://github.com/we-kode/audio_service.git
-      path: audio_service
-      ref: 6a521b2
+  audio_service: ^0.18.18
   text_scroll: ^0.2.0
   sqflite: ^2.3.0
   path: ^1.8.3
@@ -64,7 +60,7 @@ dependencies:
   calendar_date_picker2: ^1.0.6
   url_launcher: ^6.3.0
   flutter_markdown: ^0.7.2
-  share_plus: ^9.0.0
+  share_plus: ^11.0.0
   file_picker: ^8.0.5
   material_symbols_icons: ^4.2762.0
   cached_memory_image: ^1.5.0
