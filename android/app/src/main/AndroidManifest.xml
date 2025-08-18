@@ -81,9 +81,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <meta-data
+        <!-- TODO: Enable this, if bug in audio_service is fixed, while loading list of records in android auto-->
+        <!-- <meta-data
             android:name="com.google.android.gms.car.application"
-            android:resource="@xml/automotive_app_desc" />
+            android:resource="@xml/automotive_app_desc" /> -->
 
         <meta-data
             android:name="androidx.car.app.TintableAttributionIcon"
