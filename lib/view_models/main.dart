@@ -69,11 +69,9 @@ class MainViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     _context = context;
     locales = AppLocalizations.of(_context)!;
-    print("DEBUG:::MainViewModel:72");
     final showLivestreams =
         (await LivestreamService.getInstance().get(null, null, null))
             .isNotEmpty;
-    print("DEBUG:::MainViewModel:76:$showLivestreams");
     if (!showLivestreams) {
       _routerService.initRootRoutes(showLivestreams);
       _routes.removeWhere((element) => element == LivestreamsViewModel.route);
@@ -83,7 +81,7 @@ class MainViewModel extends ChangeNotifier {
   }
 
   /// Pops the nested route.
-  Future<bool> popNestedRoute(context) async {
+  Future<bool> popNestedRoute(BuildContext context) async {
     return !await _routerService.popNestedRoute();
   }
 

@@ -15,14 +15,12 @@ class RegisterScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    print("DEBUG:::RegisterScreen:build:18");
     return Scaffold(
       body: SafeArea(
         child: ChangeNotifierProvider<RegisterViewModel>(
           create: (context) => RegisterViewModel(),
           builder: (context, _) {
             var vm = Provider.of<RegisterViewModel>(context, listen: false);
-            print("DEBUG:::RegisterScreen:build:25:builder");
             return FutureBuilder(
               future: vm.init(context),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -30,7 +28,6 @@ class RegisterScreen extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                print("DEBUG:::RegisterScreen:build:33:beforeColumn");
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -60,7 +57,6 @@ class RegisterScreen extends StatelessWidget {
                     Center(
                       child: Consumer<RegisterViewModel>(
                         builder: (context, vm, _) {
-                          print("DEBUG:::RegisterScreen:build:63:stateConsumer");
                           switch (vm.state) {
                             case RegistrationState.rsa:
                               return const SizedBox(
@@ -138,7 +134,8 @@ class RegisterScreen extends StatelessWidget {
                                     detectionSpeed: DetectionSpeed.noDuplicates,
                                   ),
                                   onDetect: (capture) {
-                                    final Barcode barcode = capture.barcodes.first;
+                                    final Barcode barcode =
+                                        capture.barcodes.first;
                                     vm.register(barcode);
                                   },
                                 ),

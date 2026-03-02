@@ -38,6 +38,9 @@ class RecordsViewModel extends ChangeNotifier {
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
       locales = AppLocalizations.of(context)!;
       isFolderView = (await SecureStorageService.getInstance().get(
             SecureStorageService.folderViewStorageKey,
@@ -100,7 +103,7 @@ class RecordsViewModel extends ChangeNotifier {
   }
 
   /// Loads the next folder which is before actual date range filtered by [subFilter].
-  moveFolderUp(ID3TagFilter subFilter) {
+  void moveFolderUp(ID3TagFilter subFilter) {
     if (subFilter.startDate == null) {
       return;
     }
@@ -140,7 +143,7 @@ class RecordsViewModel extends ChangeNotifier {
   }
 
   /// Performs item open action.
-  Future saveFolderPath(subfilter) async {
+  Future saveFolderPath(ID3TagFilter subfilter) async {
     if ((await isFilterPersistActive())) {
       _dbService.saveID3Filter(
         ID3TagFilters.date,

@@ -18,7 +18,7 @@ class MessengerService {
   }
 
   /// Shows the given [text] in the app snackbar.
-  showMessage(String text) {
+  void showMessage(String text) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final SnackBar snackBar = SnackBar(
         content: Text(text),

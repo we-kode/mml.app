@@ -161,7 +161,7 @@ class PlayerService {
   }
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
-  initializeListeners() {
+  void initializeListeners() {
     _audioHandler.positionStream.listen(
       (event) {
         if (_isSeeking) {
@@ -199,7 +199,7 @@ class PlayerService {
   }
 
   /// Activates the state, that the seek bar is actually be dragged by the user.
-  startSeekDrag() {
+  void startSeekDrag() {
     _isSeeking = true;
   }
 

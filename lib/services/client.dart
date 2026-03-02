@@ -91,7 +91,7 @@ class ClientService {
   /// to an unauthorized error the error will be shown. Otherwise the removal
   /// process is finished by removing the data from the storage and redirecting
   /// to registration screen.
-  Future removeRegistration({automatic = false}) async {
+  Future removeRegistration({bool automatic = false}) async {
     var successful = false;
     var message = "";
 

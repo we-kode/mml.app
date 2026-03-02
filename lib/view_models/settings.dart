@@ -56,8 +56,11 @@ class SettingsViewModel extends ChangeNotifier {
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
       _context = context;
-      locales = AppLocalizations.of(context)!;
+      locales = AppLocalizations.of(_context)!;
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       recordViewSettings = await _dbService.loadRecordViewSettings();

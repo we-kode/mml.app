@@ -12,9 +12,7 @@ class SecureStorageService {
   final _storage = const FlutterSecureStorage();
 
   /// Option to for encrypted shared preferences, required by android 14.
-  final androidOptions = const AndroidOptions(
-    encryptedSharedPreferences: true,
-  );
+  final androidOptions = const AndroidOptions();
 
   /// Option to allow secure storage access the keychain of ios when phone is locked and app runs in background.
   final iOSOptions = const IOSOptions(

@@ -25,6 +25,10 @@ class IntroViewModel extends ChangeNotifier {
   /// Initialize the view model.
   Future<bool> init(BuildContext context) async {
     return Future<bool>.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
+
       locales = AppLocalizations.of(context)!;
 
       _initApp(context);
