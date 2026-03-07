@@ -103,5 +103,14 @@
   "commonGenres": "Common genres",
   "shuffle": "Shuffle",
   "repeat": "Repeat",
-  "errorAuthenticationExpired": "Register in {appTitle}"
+  "errorAuthenticationExpired": "Register in {appTitle}",
+  "cacheSettings": "Memory management",
+  "cacheRemove": "Clear cache",
+  "cacheRemoveTime": "Clear after",
+  "cacheRangeWeek": "1 Week",
+  "cacheRangeMonth": "1 Month",
+  "cacheRangeYear": "1 Year",
+  "cacheRangeNever": "Never",
+  "cacheCleared": "Cache was cleared successfully.",
+  "cacheClearedFailed": "Cache could not be cleared."
 }

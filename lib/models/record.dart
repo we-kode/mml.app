@@ -1,13 +1,13 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:mml_app/components/shimmer_cover.dart';
 import 'package:mml_app/extensions/datetime.dart';
 import 'package:mml_app/extensions/duration_double.dart';
 import 'package:mml_app/extensions/flag.dart';
+import 'package:mml_app/manager/image_cache_manager.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/record_view_settings.dart';
@@ -130,15 +130,16 @@ class Record extends ModelBase {
       return null;
     }
 
-    if (cover != null && cover!.isNotEmpty) {
-      return Image.memory(
-        Uint8List.fromList(
-          base64.decode(cover!),
-        ),
-        gaplessPlayback: true,
+   if (cover != null && cover!.isNotEmpty) {
+      return CachedNetworkImage(
+        cacheKey: cover,
+        imageUrl: cover!,
+        placeholder: (context, url) => const ShimmerCover(),
+        errorWidget: (context, url, error) => const Icon(Symbols.music_note_2),
+        cacheManager: ImageCacheManager(),
       );
     }
-
+    
     return const Icon(Symbols.music_note);
   }
 

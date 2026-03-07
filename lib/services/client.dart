@@ -107,16 +107,9 @@ class ClientService {
 
       successful = response.statusCode == HttpStatus.ok;
     } catch (e) {
-      successful = e is DioException &&
-          e.response?.statusCode == HttpStatus.unauthorized;
+      successful = e is DioException;
 
-      if (e is DioException) {
-        if (e.error is SocketException) {
-          message = _messenger.notReachable;
-        } else if (e.type is! HandshakeException) {
-          message = _messenger.unexpectedError(e.message ?? '');
-        }
-      } else {
+      if (e is! DioException) {
         message = _messenger.unexpectedError(
           FlutterErrorDetails(
             exception: e,

@@ -52,6 +52,9 @@ class SecureStorageService {
   /// Key under which the store filters flag is stored
   static const String saveFiltersStorageKey = 'saveFilters';
 
+  /// Key under which the cache remove time is stored.
+  static const String cacheDurationStorageKey = 'cacheDuration';
+
   /// Private constructor of the service.
   SecureStorageService._();
 
