@@ -79,4 +79,14 @@ class MessengerService {
   String get notCompatibleFile {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notCompatibleFile;
   }
+
+  /// Translated string for a message if the cache is cleared successfully.
+  String get cacheCleared {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.cacheCleared;
+  }
+
+  /// Translated string for a message if the cache could not be cleared.
+  String get cacheClearedFailed {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.cacheClearedFailed;
+  }
 }

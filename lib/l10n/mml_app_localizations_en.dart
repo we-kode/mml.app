@@ -345,4 +345,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorAuthenticationExpired(String appTitle) {
     return 'Register in $appTitle';
   }
+
+  @override
+  String get cacheSettings => 'Memory management';
+
+  @override
+  String get cacheRemove => 'Clear cache';
+
+  @override
+  String get cacheRemoveTime => 'Clear after';
+
+  @override
+  String get cacheRangeWeek => '1 Week';
+
+  @override
+  String get cacheRangeMonth => '1 Month';
+
+  @override
+  String get cacheRangeYear => '1 Year';
+
+  @override
+  String get cacheRangeNever => 'Never';
+
+  @override
+  String get cacheCleared => 'Cache was cleared successfully.';
+
+  @override
+  String get cacheClearedFailed => 'Cache could not be cleared.';
 }
