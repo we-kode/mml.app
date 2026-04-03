@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:cached_memory_image/cached_image_base64_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:mml_app/extensions/string.dart';
+import 'package:mml_app/manager/image_cache_manager.dart';
+import 'package:mml_app/services/cover_file_service.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
 abstract class ModelBase {
@@ -74,33 +74,36 @@ abstract class ModelBase {
 
   /// Returns the avatar uri.
   Future<Uri?> getAvatarUri() async {
-    if (Platform.isAndroid &&
-        getAvatarString() != null &&
-        getAvatarString()!.isNotEmpty &&
-        getIdentifier() != null &&
-        getIdentifier()!.isNotEmpty) {
-      var file = await CachedImageBase64Manager.instance().cacheFile(
-        getIdentifier()!,
-      );
-
-      if (file?.existsSync() ?? false) {
-        var uri = Uri.parse(await platform.invokeMethod("mapUri", file!.path));
-        return uri;
+    if (getAvatarString() != null && getAvatarString()!.isNotEmpty) {
+      var fileInfo =
+          await ImageCacheManager().getFileFromCache(getAvatarString()!);
+      if (fileInfo != null) {
+        return await _platformUri(fileInfo.file);
       }
 
-      file = await CachedImageBase64Manager.instance().cacheBase64(
-        getIdentifier()!,
-        getAvatarString()!,
-      );
+      try {
+        var response = await CoverFileService.getInstance().get(getAvatarString()!);
+        var file = await ImageCacheManager().putFileStream(
+          getAvatarString()!,
+          response.content,
+          key: getAvatarString(),
+          fileExtension: "jpg",
+        );
 
-      var uri = Uri.parse(await platform.invokeMethod("mapUri", file.path));
-      return uri;
-    } else if (Platform.isIOS &&
-        getAvatarString() != null &&
-        getAvatarString()!.isNotEmpty) {
-      return (await getAvatarString()!.toFile()).uri;
+        return _platformUri(file);
+      } catch (_) {}
     }
 
+    return null;
+  }
+
+  Future<Uri?> _platformUri(File file) async {
+    if (Platform.isAndroid) {
+      var uri = Uri.parse(await platform.invokeMethod("mapUri", file.path));
+      return uri;
+    } else if (Platform.isIOS) {
+      return file.uri;
+    }
     return null;
   }
 }

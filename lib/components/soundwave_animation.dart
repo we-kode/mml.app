@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mml_app/gen/assets.gen.dart';
-import 'package:rive/rive.dart';
 
 /// Animation for the livestream.
 class SoundwaveAnimation extends StatelessWidget {
@@ -11,21 +11,11 @@ class SoundwaveAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RiveAnimation.asset(
+    return Lottie.asset(
       Assets.animations.soundwave,
-      onInit: (Artboard artboard) {
-        artboard.forEachComponent(
-          (child) {
-            if (child is Shape) {
-              Shape wave = child;
-              for (var element in wave.strokes) {
-                element.paint.color = Theme.of(context).colorScheme.primary;
-              }
-            }
-          },
-        );
-      },
-      animations: const ['Animation 1'],
+      repeat: true,
+      animate: true,
+      fit: BoxFit.contain,
     );
   }
 }

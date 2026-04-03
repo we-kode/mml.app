@@ -91,7 +91,7 @@ class ClientService {
   /// to an unauthorized error the error will be shown. Otherwise the removal
   /// process is finished by removing the data from the storage and redirecting
   /// to registration screen.
-  Future removeRegistration({automatic = false}) async {
+  Future removeRegistration({bool automatic = false}) async {
     var successful = false;
     var message = "";
 
@@ -107,16 +107,9 @@ class ClientService {
 
       successful = response.statusCode == HttpStatus.ok;
     } catch (e) {
-      successful = e is DioException &&
-          e.response?.statusCode == HttpStatus.unauthorized;
+      successful = e is DioException;
 
-      if (e is DioException) {
-        if (e.error is SocketException) {
-          message = _messenger.notReachable;
-        } else if (e.type is! HandshakeException) {
-          message = _messenger.unexpectedError(e.message ?? '');
-        }
-      } else {
+      if (e is! DioException) {
         message = _messenger.unexpectedError(
           FlutterErrorDetails(
             exception: e,

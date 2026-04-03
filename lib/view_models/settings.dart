@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
+import 'package:mml_app/manager/image_cache_manager.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/faq.dart';
@@ -35,6 +37,12 @@ class SettingsViewModel extends ChangeNotifier {
   final SecureStorageService _secureStoreService =
       SecureStorageService.getInstance();
 
+  /// [MessengerService] used to show messages in the app snackbar.
+  final MessengerService _messengerService = MessengerService.getInstance();
+
+  /// Cache manager for the app images.
+  final ImageCacheManager cacheManager = ImageCacheManager();
+
   /// Link of the privacy policy.
   final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
 
@@ -56,8 +64,11 @@ class SettingsViewModel extends ChangeNotifier {
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
       _context = context;
-      locales = AppLocalizations.of(context)!;
+      locales = AppLocalizations.of(_context)!;
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       recordViewSettings = await _dbService.loadRecordViewSettings();
@@ -159,5 +170,29 @@ class SettingsViewModel extends ChangeNotifier {
       saveFilters.toString(),
     );
     notifyListeners();
+  }
+
+  /// Sets the cache limit to [value] and notifies listeners.
+  Future<void> updateCacheLimits({int? duration = 0}) async {
+    cacheManager.updateLimits(
+      maxCacheTime: duration,
+    );
+    notifyListeners();
+  }
+
+  /// Clears the cache of the app.
+  Future<void> clearCache() async {
+    var shouldDelete = await showDeleteDialog(_context);
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    try {
+      await cacheManager.clearCache();
+      _messengerService.showMessage(_messengerService.cacheCleared);
+    } catch (e) {
+      _messengerService.showMessage(_messengerService.cacheClearedFailed);
+    }
   }
 }

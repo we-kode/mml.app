@@ -43,7 +43,7 @@ class ImportObserverState extends State<ImportObserver>
     dynamic content = await platform.invokeMethod("getOpenFileUrl");
 
     if (content != null) {
-      if (!context.mounted) {
+      if (!mounted) {
         return;
       }
 
@@ -54,7 +54,7 @@ class ImportObserverState extends State<ImportObserver>
         return;
       }
 
-      if (!context.mounted) {
+      if (!mounted) {
         return;
       }
 

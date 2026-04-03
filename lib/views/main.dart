@@ -16,12 +16,10 @@ class MainScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    print("DEBUG:::MainScreen:19:build");
     return ChangeNotifierProvider<MainViewModel>(
       create: (context) => MainViewModel(),
       builder: (context, _) {
         var vm = Provider.of<MainViewModel>(context, listen: false);
-        print("DEBUG:::MainScreen:24:build:builder");
         return FutureBuilder(
           future: vm.init(context),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -29,10 +27,11 @@ class MainScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
 
-            print("DEBUG:::MainScreen:32:build:beforePopScope");
             return PopScope(
               canPop: false,
-              onPopInvoked: (_) => vm.popNestedRoute(context),
+              onPopInvokedWithResult: (pop, result) async {
+                vm.popNestedRoute(context);
+              },
               child: Scaffold(
                 appBar: PreferredSize(
                   preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -51,7 +50,6 @@ class MainScreen extends StatelessWidget {
                           initialRoute: RecordsViewModel.route,
                           observers: [_NestedRouteObserver(vm: vm)],
                           onGenerateRoute: (settings) {
-                            print("DEBUG:::MainScreen:54:build:Navigator.onGenerateRoute");
                             return RouterService.getInstance().getNestedRoutes(
                               args: settings.arguments,
                             )[settings.name];
@@ -63,7 +61,6 @@ class MainScreen extends StatelessWidget {
                 ),
                 bottomNavigationBar: Consumer<MainViewModel>(
                   builder: (context, vm, _) {
-                    print("DEBUG:::MainScreen:66:build:bottomNavigationBar.builder");
                     return BottomNavigationBar(
                       backgroundColor: Theme.of(context).colorScheme.surface,
                       showUnselectedLabels: false,

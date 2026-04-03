@@ -9,10 +9,19 @@ part of 'id3_tag_filter.dart';
 ID3TagFilter _$ID3TagFilterFromJson(Map<String, dynamic> json) => ID3TagFilter(
       artists:
           (json['artists'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      artistNames: (json['artistNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       genres:
           (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      genreNames: (json['genreNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       albums:
           (json['albums'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      albumNames: (json['albumNames'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       languages: (json['languages'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
@@ -28,8 +37,11 @@ Map<String, dynamic> _$ID3TagFilterToJson(ID3TagFilter instance) {
   final val = <String, dynamic>{
     'isGrouped': instance.isGrouped,
     'artists': instance.artists,
+    'artistNames': instance.artistNames,
     'genres': instance.genres,
+    'genreNames': instance.genreNames,
     'albums': instance.albums,
+    'albumNames': instance.albumNames,
     'languages': instance.languages,
   };
 

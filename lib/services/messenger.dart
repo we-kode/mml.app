@@ -18,7 +18,7 @@ class MessengerService {
   }
 
   /// Shows the given [text] in the app snackbar.
-  showMessage(String text) {
+  void showMessage(String text) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final SnackBar snackBar = SnackBar(
         content: Text(text),
@@ -78,5 +78,15 @@ class MessengerService {
    /// Translated string for error on downloading.
   String get notCompatibleFile {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notCompatibleFile;
+  }
+
+  /// Translated string for a message if the cache is cleared successfully.
+  String get cacheCleared {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.cacheCleared;
+  }
+
+  /// Translated string for a message if the cache could not be cleared.
+  String get cacheClearedFailed {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.cacheClearedFailed;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mml_app/gen/assets.gen.dart';
-import 'package:rive/rive.dart';
 
 /// Animation for the registration intro screen.
 class IntroRegisterAnimation extends StatelessWidget {
@@ -11,45 +11,11 @@ class IntroRegisterAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RiveAnimation.asset(
-      Assets.animations.mml,
-      onInit: (Artboard artboard) {
-        artboard.forEachComponent(
-          (child) {
-            if (child.name == 'phone') {
-              Shape shield = child as Shape;
-              for (var element in shield.fills) {
-                element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface,
-                  BlendMode.srcIn,
-                );
-              }
-            }
-
-            if (child.name == 'cam') {
-              Shape shield = child as Shape;
-              for (var element in shield.fills) {
-                element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.surface,
-                  BlendMode.srcIn,
-                );
-              }
-            }
-
-            if (child.name == 'qr') {
-              Shape key = child as Shape;
-              for (var element in key.fills) {
-                element.paint.colorFilter = ColorFilter.mode(
-                  Theme.of(context).colorScheme.primary,
-                  BlendMode.srcIn,
-                );
-              }
-            }
-          },
-        );
-      },
-      artboard: 'Intro_Scan',
-      animations: const ['animation_scan'],
+    return Lottie.asset(
+      Assets.animations.introScan,
+      repeat: true,
+      animate: true,
+      fit: BoxFit.contain,
     );
   }
 }

@@ -80,7 +80,7 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                 ListTile(
+                ListTile(
                   leading: const Icon(Symbols.image),
                   title: Text(vm.locales.cover),
                   trailing: Consumer<SettingsViewModel>(
@@ -106,7 +106,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 ListTile(
-
                   leading: const Icon(Symbols.filter_alt),
                   title: Text(vm.locales.saveFilters),
                   trailing: Consumer<SettingsViewModel>(
@@ -138,6 +137,60 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   onTap: vm.removeRegistration,
+                ),
+                const Divider(),
+                verticalSpacer,
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.cacheSettings,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Symbols.avg_pace),
+                  trailing: DropdownMenu(
+                    inputDecorationTheme: InputDecorationTheme(isDense: true),
+                    selectOnly: true,
+                    dropdownMenuEntries: [
+                      DropdownMenuEntry(
+                        value: 7,
+                        label: vm.locales.cacheRangeWeek,
+                      ),
+                      DropdownMenuEntry(
+                        value: 30,
+                        label: vm.locales.cacheRangeMonth,
+                      ),
+                      DropdownMenuEntry(
+                        value: 365,
+                        label: vm.locales.cacheRangeYear,
+                      ),
+                      DropdownMenuEntry(
+                        value: 3650,
+                        label: vm.locales.cacheRangeNever,
+                      ),
+                    ],
+                    initialSelection: vm.cacheManager.durationLimit,
+                    onSelected: (value) {
+                      vm.updateCacheLimits(duration: value);
+                    },
+                  ),
+                  title: Text(vm.locales.cacheRemoveTime),
+                ),
+                verticalSpacer,
+                TextButton(
+                  onPressed: () {
+                    vm.clearCache();
+                  },
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: vm.cacheManager.cacheSizeMB,
+                    builder: (context, size, _) {
+                      return Text(
+                        '${vm.locales.cacheRemove} (${size.toStringAsFixed(2)} MB)',
+                      );
+                    },
+                  ),
                 ),
                 const Divider(),
                 verticalSpacer,

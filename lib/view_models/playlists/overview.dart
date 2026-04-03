@@ -48,8 +48,12 @@ class PlaylistViewModel extends ChangeNotifier {
   /// Initializes the view model.
   Future<bool> init(BuildContext context, int? playlistId) {
     return Future.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
+
       _context = context;
-      locales = AppLocalizations.of(context)!;
+      locales = AppLocalizations.of(_context)!;
       playlist = playlistId;
       recordViewSettings = await _dbService.loadRecordViewSettings();
       return true;
@@ -133,10 +137,13 @@ class PlaylistViewModel extends ChangeNotifier {
       name: fileName,
       path: fullPath,
     );
-    Share.shareXFiles(
-      [xFile],
+
+    final params = ShareParams(
+      files: [xFile],
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
     );
+
+    await SharePlus.instance.share(params);
   }
 
   void _writeToMap(

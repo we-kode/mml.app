@@ -20,6 +20,10 @@ class LivestreamsViewModel extends ChangeNotifier {
  /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
+      if (!context.mounted) {
+        return false;
+      }
+      
       locales = AppLocalizations.of(context)!;
       return true;
     });

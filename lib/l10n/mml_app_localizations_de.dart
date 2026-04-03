@@ -350,4 +350,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String errorAuthenticationExpired(String appTitle) {
     return 'Registrieren Sie sich in $appTitle';
   }
+
+  @override
+  String get cacheSettings => 'Speicherverwaltung';
+
+  @override
+  String get cacheRemove => 'Cache löschen';
+
+  @override
+  String get cacheRemoveTime => 'Löschen, nach';
+
+  @override
+  String get cacheRangeWeek => '1 Woche';
+
+  @override
+  String get cacheRangeMonth => '1 Monat';
+
+  @override
+  String get cacheRangeYear => '1 Jahr';
+
+  @override
+  String get cacheRangeNever => 'Nie';
+
+  @override
+  String get cacheCleared => 'Cache wurde erfolgreich gelöscht.';
+
+  @override
+  String get cacheClearedFailed => 'Cache konnte nicht gelöscht werden.';
 }

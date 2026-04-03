@@ -103,5 +103,14 @@
   "commonGenres": "Распространённые жанры",
   "shuffle": "Случайное воспроизведение",
   "repeat": "Повторение",
-  "errorAuthenticationExpired": "Зарегистрируйтесь в {appTitle}"
+  "errorAuthenticationExpired": "Зарегистрируйтесь в {appTitle}",
+  "cacheSettings": "Управление памятью",
+  "cacheRemove": "Очистить кэш",
+  "cacheRemoveTime": "Очистить через",
+  "cacheRangeWeek": "1 неделя",
+  "cacheRangeMonth": "1 месяц",
+  "cacheRangeYear": "1 год",
+  "cacheRangeNever": "Никогда",
+  "cacheCleared": "Кэш был успешно очищен.",
+  "cacheClearedFailed": "Кэш не может быть очищен."
 }

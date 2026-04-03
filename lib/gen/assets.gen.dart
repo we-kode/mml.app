@@ -12,20 +12,30 @@ import 'package:flutter/widgets.dart';
 class $AssetsAnimationsGen {
   const $AssetsAnimationsGen();
 
-  /// File path: assets/animations/check.riv
-  String get check => 'assets/animations/check.riv';
+  /// File path: assets/animations/check.json
+  String get check => 'assets/animations/check.json';
 
-  /// File path: assets/animations/error.riv
-  String get error => 'assets/animations/error.riv';
+  /// File path: assets/animations/error.json
+  String get error => 'assets/animations/error.json';
 
-  /// File path: assets/animations/mml.riv
-  String get mml => 'assets/animations/mml.riv';
+  /// File path: assets/animations/intro_fav.json
+  String get introFav => 'assets/animations/intro_fav.json';
 
-  /// File path: assets/animations/soundwave.riv
-  String get soundwave => 'assets/animations/soundwave.riv';
+  /// File path: assets/animations/intro_play.json
+  String get introPlay => 'assets/animations/intro_play.json';
+
+  /// File path: assets/animations/intro_scan.json
+  String get introScan => 'assets/animations/intro_scan.json';
+
+  /// File path: assets/animations/lock.json
+  String get lock => 'assets/animations/lock.json';
+
+  /// File path: assets/animations/soundwave.json
+  String get soundwave => 'assets/animations/soundwave.json';
 
   /// List of all assets
-  List<String> get values => [check, error, mml, soundwave];
+  List<String> get values =>
+      [check, error, introFav, introPlay, introScan, lock, soundwave];
 }
 
 class $AssetsImagesGen {
@@ -50,11 +60,16 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size = null});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+  });
 
   final String _assetName;
 
   final Size? size;
+  final Set<String> flavors;
 
   Image image({
     Key? key,
@@ -74,7 +89,7 @@ class AssetGenImage {
     ImageRepeat repeat = ImageRepeat.noRepeat,
     Rect? centerSlice,
     bool matchTextDirection = false,
-    bool gaplessPlayback = false,
+    bool gaplessPlayback = true,
     bool isAntiAlias = false,
     String? package,
     FilterQuality filterQuality = FilterQuality.low,
