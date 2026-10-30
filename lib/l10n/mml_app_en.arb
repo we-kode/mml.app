@@ -103,6 +103,7 @@
   "commonGenres": "Common genres",
   "shuffle": "Shuffle",
   "repeat": "Repeat",
+  "stop": "Stop",
   "errorAuthenticationExpired": "Register in {appTitle}",
   "cacheSettings": "Memory management",
   "cacheRemove": "Clear cache",

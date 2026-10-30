@@ -103,6 +103,7 @@
   "commonGenres": "Распространённые жанры",
   "shuffle": "Случайное воспроизведение",
   "repeat": "Повторение",
+  "stop": "Стоп",
   "errorAuthenticationExpired": "Зарегистрируйтесь в {appTitle}",
   "cacheSettings": "Управление памятью",
   "cacheRemove": "Очистить кэш",

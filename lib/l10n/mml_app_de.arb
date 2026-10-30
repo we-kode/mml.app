@@ -117,6 +117,7 @@
   "commonGenres": "Häufige Genres",
   "shuffle": "Zufallswiedergabe",
   "repeat": "Wiederholung",
+  "stop": "Stopp",
   "errorAuthenticationExpired": "Registrieren Sie sich in {appTitle}",
   "@errorAuthenticationExpired": {
     "placeholders": {

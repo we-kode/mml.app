@@ -11,7 +11,6 @@ import 'package:mml_app/services/player/player_state.dart';
 import 'package:mml_app/services/playlist.dart';
 import 'package:provider/provider.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
-import 'package:text_scroll/text_scroll.dart';
 
 /// Player sheet shown in the bottom sheet bar.
 class PlayerSheet extends StatefulWidget {
@@ -28,6 +27,22 @@ class PlayerSheetState extends State<PlayerSheet>
   /// Controller used to animate the play/pause button.
   late AnimationController _controller;
 
+  final TapGestureRecognizer _speedRecognizer = TapGestureRecognizer()
+    ..onTap = () => PlayerService.getInstance().speedUp();
+
+  String? _favoriteRecordId;
+
+  Future<bool>? _favoriteFuture;
+
+  Future<bool> _isFavorite(String? recordId) {
+    if (_favoriteFuture == null || _favoriteRecordId != recordId) {
+      _favoriteRecordId = recordId;
+      _favoriteFuture = PlaylistService.getInstance().isFavorite(recordId);
+    }
+
+    return _favoriteFuture!;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +56,7 @@ class PlayerSheetState extends State<PlayerSheet>
   @override
   void dispose() {
     _controller.dispose();
+    _speedRecognizer.dispose();
     super.dispose();
   }
 
@@ -81,15 +97,18 @@ class PlayerSheetState extends State<PlayerSheet>
                               iconSize: 24,
                               padding: EdgeInsets.zero,
                               onPressed: () async {
-                                PlaylistService.getInstance().downloadRecords([
+                                await PlaylistService.getInstance()
+                                    .downloadRecords([
                                   PlayerService.getInstance()
                                       .playerState
                                       ?.currentRecord,
                                 ], context);
+                                if (mounted) {
+                                  setState(() => _favoriteFuture = null);
+                                }
                               },
                               icon: FutureBuilder<bool>(
-                                future:
-                                    PlaylistService.getInstance().isFavorite(
+                                future: _isFavorite(
                                   PlayerService.getInstance()
                                       .playerState
                                       ?.currentRecord
@@ -133,14 +152,17 @@ class PlayerSheetState extends State<PlayerSheet>
                         return Flexible(
                           fit: FlexFit.tight,
                           flex: 8,
-                          child: TextScroll(
-                            state.currentRecord?.title ??
+                          child: Tooltip(
+                            message: state.currentRecord?.title ??
                                 AppLocalizations.of(context)!.unknown,
-                            style: Theme.of(context).textTheme.titleMedium,
-                            velocity: const Velocity(
-                              pixelsPerSecond: Offset(15, 0),
+                            triggerMode: TooltipTriggerMode.tap,
+                            child: Text(
+                              state.currentRecord?.title ??
+                                  AppLocalizations.of(context)!.unknown,
+                              style: Theme.of(context).textTheme.titleMedium,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            mode: TextScrollMode.bouncing,
                           ),
                         );
                       },
@@ -191,8 +213,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                 text: TextSpan(
                                   text: "${state.speed}x",
                                   style: Theme.of(context).textTheme.bodySmall,
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () => PlayerService.getInstance().speedUp(),
+                                  recognizer: _speedRecognizer,
                                 ),
                               );
                       },

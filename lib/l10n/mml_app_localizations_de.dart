@@ -347,6 +347,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get repeat => 'Wiederholung';
 
   @override
+  String get stop => 'Stopp';
+
+  @override
   String errorAuthenticationExpired(String appTitle) {
     return 'Registrieren Sie sich in $appTitle';
   }

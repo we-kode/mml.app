@@ -718,6 +718,12 @@ abstract class AppLocalizations {
   /// **'Wiederholung'**
   String get repeat;
 
+  /// No description provided for @stop.
+  ///
+  /// In de, this message translates to:
+  /// **'Stopp'**
+  String get stop;
+
   /// No description provided for @errorAuthenticationExpired.
   ///
   /// In de, this message translates to:

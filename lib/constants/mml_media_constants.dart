@@ -116,6 +116,9 @@ class MMLMediaConstants {
   /// Key for custom action repeat in android auto.
   static const String customActionRepeat = 'repeat';
 
+  /// Key for custom action stop in the Android 13+ media controls.
+  static const String customActionStop = 'stop';
+
   /// Android media service error code for expired authentication.
   static const String errorCodeAuthenticationExpired = '3';
 

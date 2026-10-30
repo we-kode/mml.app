@@ -34,6 +34,11 @@ class XorEncryptor {
       throw RangeError.range(255, 0, 255);
     }
 
-    return Uint8List.fromList(value.map((e) => e ^ key).toList());
+    final result = Uint8List(value.length);
+    for (var i = 0; i < value.length; i++) {
+      result[i] = value[i] ^ key;
+    }
+
+    return result;
   }
 }

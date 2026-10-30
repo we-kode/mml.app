@@ -342,6 +342,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get repeat => 'Repeat';
 
   @override
+  String get stop => 'Stop';
+
+  @override
   String errorAuthenticationExpired(String appTitle) {
     return 'Register in $appTitle';
   }
