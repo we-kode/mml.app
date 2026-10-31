@@ -167,11 +167,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     await _cancelSubscriptions();
     await player?.stop();
     await player?.dispose();
+
+    // Android detaches the notification from the foreground service
+    // asynchronously and ignores its removal until then.
+    playbackState.add(playbackState.value.copyWith(playing: false));
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (_player != null) {
+      return;
+    }
+
     playbackState.add(
-      playbackState.value.copyWith(
-        processingState: AudioProcessingState.idle,
-        playing: false,
-      ),
+      playbackState.value.copyWith(processingState: AudioProcessingState.idle),
     );
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
   }
@@ -443,12 +449,17 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       compatIndices = [0, 1];
     }
 
-    // Android 13+ media controls ignore MediaControl.stop.
+    // Android 13+ media controls ignore MediaControl.stop and show only the
+    // first two custom actions, so close comes right after repeat.
     if (_hasMediaControlsWithoutStop) {
-      controls[1] = MediaControl.custom(
-        androidIcon: 'drawable/close',
-        label: locales!.stop,
-        name: MMLMediaConstants.customActionStop,
+      controls.remove(MediaControl.stop);
+      controls.insert(
+        1,
+        MediaControl.custom(
+          androidIcon: 'drawable/close',
+          label: locales!.stop,
+          name: MMLMediaConstants.customActionStop,
+        ),
       );
     }
 

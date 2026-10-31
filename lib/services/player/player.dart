@@ -227,8 +227,9 @@ class PlayerService {
       config: AudioServiceConfig(
         androidNotificationChannelId: "de.wekode.mml.audio",
         androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
-        androidNotificationOngoing: true,
+        androidNotificationOngoing: false,
         androidStopForegroundOnPause: true,
+        androidResumeOnClick: false,
         androidBrowsableRootExtras: {
           MMLMediaConstants.mediaBrowseSupported: true,
           MMLMediaConstants.mediaPlayableContentKey:
