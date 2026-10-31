@@ -295,6 +295,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Файл невозможно расшифровать. Неправильный формат.';
 
   @override
+  String fileTooLarge(int size) {
+    return 'Файл слишком большой для импорта (макс. $size МБ).';
+  }
+
+  @override
   String get notDownloaded => 'Не загружено';
 
   @override

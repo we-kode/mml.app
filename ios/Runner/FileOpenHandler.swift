@@ -3,7 +3,9 @@ import Flutter
 
 /// Passes the content of files opened with the app to Flutter.
 class FileOpenHandler: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
+  private static let maxFileSize = 100 * 1024 * 1024
   private var content: String?
+  private var error: String?
 
   /// Registers the handler for the file channel and the scene events.
   static func register(with registrar: FlutterPluginRegistrar) {
@@ -13,10 +15,14 @@ class FileOpenHandler: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
     registrar.addSceneDelegate(instance)
   }
 
-  /// Returns the content of the last opened file once.
+  /// Returns the content of the last opened file or the error on reading it
+  /// once.
   func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     if call.method == "getOpenFileUrl" {
-      if content != nil {
+      if let code = error {
+        result(FlutterError(code: code, message: nil, details: FileOpenHandler.maxFileSize / (1024 * 1024)))
+        error = nil
+      } else if content != nil {
         result(content)
         content = nil
       }
@@ -44,7 +50,23 @@ class FileOpenHandler: NSObject, FlutterPlugin, FlutterSceneLifeCycleDelegate {
       return false
     }
 
+    let isScoped = url.startAccessingSecurityScopedResource()
+    defer {
+      if isScoped {
+        url.stopAccessingSecurityScopedResource()
+      }
+    }
+    content = nil
+    error = nil
+    if let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize, size > FileOpenHandler.maxFileSize {
+      error = "fileTooLarge"
+      return true
+    }
+
     content = try? String(contentsOf: url, encoding: .utf8)
+    if content == nil {
+      error = "fileNotReadable"
+    }
     return true
   }
 }

@@ -87,6 +87,7 @@
   "saveFilters": "Save filter",
   "cover":"Cover",
   "notCompatibleFile": "File could not be read. Wrong format.",
+  "fileTooLarge": "File is too large to be imported (max. {size} MB).",
   "notDownloaded": "Not downloaded",
   "notDownloadedRecords": "The following records are no longer available or you have no right to download them.",
   "overview": "Overview",

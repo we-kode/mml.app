@@ -298,6 +298,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Datei konnte nicht gelesen werden. Format fehlerhaft.';
 
   @override
+  String fileTooLarge(int size) {
+    return 'Datei ist zu groß und kann nicht importiert werden (max. $size MB).';
+  }
+
+  @override
   String get notDownloaded => 'Nicht heruntergeladen';
 
   @override

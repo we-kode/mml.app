@@ -622,6 +622,12 @@ abstract class AppLocalizations {
   /// **'Datei konnte nicht gelesen werden. Format fehlerhaft.'**
   String get notCompatibleFile;
 
+  /// No description provided for @fileTooLarge.
+  ///
+  /// In de, this message translates to:
+  /// **'Datei ist zu groß und kann nicht importiert werden (max. {size} MB).'**
+  String fileTooLarge(int size);
+
   /// No description provided for @notDownloaded.
   ///
   /// In de, this message translates to:

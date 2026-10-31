@@ -50,7 +50,8 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="content" />
                 <data android:mimeType="text/plain" />
-                <data android:pathPattern=".*\\.mml" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/octet-stream" />
             </intent-filter>
             <intent-filter>
               <action android:name=

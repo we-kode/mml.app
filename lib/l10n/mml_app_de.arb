@@ -101,6 +101,14 @@
   "saveFilters": "Filter merken",
   "cover": "Cover",
   "notCompatibleFile": "Datei konnte nicht gelesen werden. Format fehlerhaft.",
+  "fileTooLarge": "Datei ist zu groß und kann nicht importiert werden (max. {size} MB).",
+  "@fileTooLarge": {
+    "placeholders": {
+      "size": {
+        "type": "int"
+      }
+    }
+  },
   "notDownloaded": "Nicht heruntergeladen",
   "notDownloadedRecords": "Folgende Aufnahmen sind nicht mehr verfügbar oder Sie haben kein Recht es herunterzuladen.",
   "overview": "Übersicht",

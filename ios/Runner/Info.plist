@@ -14,7 +14,7 @@
 			<key>CFBundleTypeName</key>
 			<string>MML</string>
 			<key>LSHandlerRank</key>
-			<string>Alternate</string>
+			<string>Owner</string>
 			<key>LSItemContentTypes</key>
 			<array>
 				<string>de.wekode.mml</string>
@@ -46,7 +46,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
-	<false/>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -104,10 +104,7 @@
 		<dict>
 			<key>UTTypeConformsTo</key>
 			<array>
-				<string>public.json</string>
-				<string>public.database</string>
 				<string>public.data</string>
-				<string>public.text</string>
 				<string>public.content</string>
 			</array>
 			<key>UTTypeDescription</key>
@@ -119,10 +116,6 @@
 				<key>public.filename-extension</key>
 				<array>
 					<string>mml</string>
-				</array>
-				<key>public.mime-type</key>
-				<array>
-					<string>application/json</string>
 				</array>
 			</dict>
 		</dict>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/services/import.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/views/playlists/not_downloaded.dart';
 
 /// Observer to handle imports from mml files when clicked extern.
@@ -40,7 +41,18 @@ class ImportObserverState extends State<ImportObserver>
 
   /// reads the file content.
   void getOpenFileUrl() async {
-    dynamic content = await platform.invokeMethod("getOpenFileUrl");
+    dynamic content;
+    try {
+      content = await platform.invokeMethod("getOpenFileUrl");
+    } on PlatformException catch (e) {
+      var messenger = MessengerService.getInstance();
+      messenger.showMessage(
+        e.code == 'fileTooLarge'
+            ? messenger.fileTooLarge(e.details as int? ?? 0)
+            : messenger.notCompatibleFile,
+      );
+      return;
+    }
 
     if (content != null) {
       if (!mounted) {
