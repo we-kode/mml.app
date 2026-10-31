@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   "ios/Runner/AppDelegate.swift": {
-    "mtime": 1733570182.893934,
-    "seen": 1789824741.1617787,
-    "ast_hash": "db9c4499aa205ee2ecc6ff866eff1301",
+    "mtime": 1793449049.9822283,
+    "seen": 1793449090.1758163,
+    "ast_hash": "fe976cf4a8a700a166f7f89a18db5e70",
     "semantic_hash": ""
   },
   "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json": {
@@ -240,20 +240,20 @@
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_de.dart": {
-    "mtime": 1793302019.14989,
-    "seen": 1793302116.5380957,
+    "mtime": 1793371997.7283158,
+    "seen": 1793372379.362914,
     "ast_hash": "41e7ae4a618dabf163518b8797bfc876",
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_en.dart": {
-    "mtime": 1793302019.1549,
-    "seen": 1793302116.5380957,
+    "mtime": 1793371997.7298207,
+    "seen": 1793372379.362914,
     "ast_hash": "93299029e5ea5af22e9d46896c7828a8",
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_ru.dart": {
-    "mtime": 1793302019.1598983,
-    "seen": 1793302116.5380957,
+    "mtime": 1793371997.7328286,
+    "seen": 1793372379.362914,
     "ast_hash": "c633a31a6aae1e9f687ff0a962bcd4e8",
     "semantic_hash": ""
   },
@@ -522,9 +522,9 @@
     "semantic_hash": ""
   },
   "lib/services/player/mml_audio_handler.dart": {
-    "mtime": 1793302090.653476,
-    "seen": 1793302116.5380957,
-    "ast_hash": "bbbb80dbe87c1a0fcaed7644e394345d",
+    "mtime": 1793367076.6634789,
+    "seen": 1793372379.363913,
+    "ast_hash": "0b76775018bf4bcc8f807e19b44b0c20",
     "semantic_hash": ""
   },
   "lib/services/player/mml_audio_source.dart": {
@@ -804,9 +804,9 @@
     "semantic_hash": ""
   },
   "analysis_options.yaml": {
-    "mtime": 1664448095.587994,
-    "seen": 1789824741.1617787,
-    "ast_hash": "5df212687f3997ccd1310b5b19ebfb78",
+    "mtime": 1793445361.0867922,
+    "seen": 1793449090.1758163,
+    "ast_hash": "4baace9e40e12170a0dfbb6d87b6180b",
     "semantic_hash": ""
   },
   "devtools_options.yaml": {
@@ -831,6 +831,12 @@
     "mtime": 1793301141.021397,
     "seen": 1793301365.052618,
     "ast_hash": "0465716ecf4892fa25a7ba7462f80840",
+    "semantic_hash": ""
+  },
+  "ios/Runner/FileOpenHandler.swift": {
+    "mtime": 1793449051.153521,
+    "seen": 1793449090.1758163,
+    "ast_hash": "49172cfe3f7ce4385a375a6755945825",
     "semantic_hash": ""
   }
 }
