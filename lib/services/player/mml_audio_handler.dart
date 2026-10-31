@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -68,17 +71,28 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// App localizations.
   AppLocalizations? locales;
 
+  final List<StreamSubscription> _subscriptions = [];
+
+  bool _hasMediaControlsWithoutStop = false;
+
   /// Creates an instance of the [MMLAudioHandler] and initializes the
   /// listeners.
   MMLAudioHandler(BuildContext context) {
     locales = AppLocalizations.of(context);
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin().androidInfo.then(
+            (info) => _hasMediaControlsWithoutStop = info.version.sdkInt >= 33,
+          );
+    }
   }
 
   /// Stream with the current playback position.
-  Stream<Duration> get positionStream => _player!.positionStream;
+  Stream<Duration> get positionStream =>
+      _player?.positionStream ?? const Stream.empty();
 
   /// Stream with the current playback events.
-  Stream<PlaybackEvent> get playbackEventStream => _player!.playbackEventStream;
+  Stream<PlaybackEvent> get playbackEventStream =>
+      _player?.playbackEventStream ?? const Stream.empty();
 
   /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player?.playing ?? false;
@@ -133,38 +147,53 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Creates new instance of the [AudioPlayer], if player not exists yet.
   void _initPlayer() {
-    _player ??= AudioPlayer();
+    // Outside release builds the proxy streams through MMLHttpOverrides, which
+    // accepts self-signed certificates of development servers.
+    _player ??= AudioPlayer(useProxyForRequestHeaders: !kReleaseMode);
     _initializeListeners();
   }
 
   @override
-  Future<void> play() => _player!.play();
+  Future<void> play() async => _player?.play();
 
   @override
-  Future<void> pause() => _player!.pause();
+  Future<void> pause() async => _player?.pause();
 
   @override
   Future<void> stop() async {
-    await _player!.stop();
-    await _player!.dispose();
-    playbackState.add(
-      playbackState.value.copyWith(
-        processingState: {
-          ProcessingState.idle: AudioProcessingState.idle,
-        }[_player!.processingState]!,
-      ),
-    );
+    final player = _player;
     _player = null;
+    _isLoading = false;
+    await _cancelSubscriptions();
+    await player?.stop();
+    await player?.dispose();
+
+    // Android detaches the notification from the foreground service
+    // asynchronously and ignores its removal until then.
+    playbackState.add(playbackState.value.copyWith(playing: false));
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (_player != null) {
+      return;
+    }
+
+    playbackState.add(
+      playbackState.value.copyWith(processingState: AudioProcessingState.idle),
+    );
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
   }
 
   @override
-  Future<void> onNotificationDeleted() async {
-    await _player!.stop();
+  Future<void> onNotificationDeleted() => stop();
+
+  @override
+  Future<void> onTaskRemoved() async {
+    if (!isPlaying) {
+      await stop();
+    }
   }
 
   @override
-  Future<void> seek(Duration position) => _player!.seek(position);
+  Future<void> seek(Duration position) async => _player?.seek(position);
 
   @override
   Future<void> skipToNext() async {
@@ -331,25 +360,36 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// Initializes the listeners to handle errors, show notifications and skip to
   /// the next record on playback end.
   void _initializeListeners() {
-    _player!.playbackEventStream.listen(
-      (PlaybackEvent event) {
-        _addPlaybackState();
-      },
-      onError: (Object e, StackTrace st) {},
-    );
+    _cancelSubscriptions();
+    _subscriptions.addAll([
+      _player!.playbackEventStream.listen(
+        (PlaybackEvent event) {
+          _addPlaybackState();
+        },
+        onError: (Object e, StackTrace st) {},
+      ),
+      _player!.playerStateStream.listen(
+        (event) {
+          if (event.processingState == ProcessingState.completed) {
+            skipToNext();
+          }
+        },
+      ),
+    ]);
+  }
 
-    _player!.playerStateStream.listen(
-      (event) {
-        if (event.processingState == ProcessingState.completed) {
-          skipToNext();
-        }
-      },
-    );
+  Future<void> _cancelSubscriptions() async {
+    final subscriptions = List.of(_subscriptions);
+    _subscriptions.clear();
+    await Future.wait(subscriptions.map((s) => s.cancel()));
   }
 
   @override
-  Future customAction(String name, [Map<String, dynamic>? extras]) {
+  Future customAction(String name, [Map<String, dynamic>? extras]) async {
     switch (name) {
+      case MMLMediaConstants.customActionStop:
+        await stop();
+        break;
       case MMLMediaConstants.customActionShuffle:
         shuffle = !shuffle;
         break;
@@ -366,6 +406,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
+    if (_player == null) {
+      return;
+    }
+
     final playing = _player!.playing;
 
     List<MediaControl> controls = [
@@ -403,6 +447,20 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         MediaControl.stop,
       ];
       compatIndices = [0, 1];
+    }
+
+    // Android 13+ media controls ignore MediaControl.stop and show only the
+    // first two custom actions, so close comes right after repeat.
+    if (_hasMediaControlsWithoutStop) {
+      controls.remove(MediaControl.stop);
+      controls.insert(
+        1,
+        MediaControl.custom(
+          androidIcon: 'drawable/close',
+          label: locales!.stop,
+          name: MMLMediaConstants.customActionStop,
+        ),
+      );
     }
 
     playbackState.add(
@@ -493,7 +551,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       currentRecord = record;
       await _playCurrentRecord();
     } else {
-      _player!.stop();
+      await stop();
     }
   }
 
@@ -613,9 +671,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   Future<void> _errorOnLoadingRecord() async {
-    _isLoading = false;
-    await _player!.stop();
-    await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
+    await stop();
     final ms = MessengerService.getInstance();
     ms.showMessage(ms.notReachableRecord);
   }

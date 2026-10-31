@@ -153,7 +153,6 @@ const allDependencies = <Package>[
   _synchronized,
   _term_glyph,
   _test_api,
-  _text_scroll,
   _time,
   _typed_data,
   _url_launcher,
@@ -199,7 +198,6 @@ const dependencies = <Package>[
   _shimmer,
   _just_audio,
   _audio_service,
-  _text_scroll,
   _sqflite,
   _path,
   _path_provider,
@@ -8664,28 +8662,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.''',
     devDependencies: [PackageRef('analyzer'), PackageRef('fake_async'), PackageRef('glob'), PackageRef('graphs'), PackageRef('path')],
   );
 
-/// text_scroll 0.2.1
-const _text_scroll = Package(
-    name: 'text_scroll',
-    description: 'TextScroll Flutter widget adds text auto-scrolling functionality (marquee text).',
-    repository: 'https://github.com/yurii-khi/text_scroll',
-    authors: [],
-    version: '0.2.1',
-    license: '''Copyright 2022 yurii-khi.com
-
-MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.''',
-    isMarkdown: false,
-    isSdk: false,
-    dependencies: [PackageRef('flutter')],
-    devDependencies: [],
-  );
-
 /// time 2.1.5
 const _time = Package(
     name: 'time',
@@ -10485,7 +10461,7 @@ Public License instead of this License.  But first, please read
 <https://www.gnu.org/licenses/why-not-lgpl.html>.''',
     isMarkdown: false,
     isSdk: false,
-    dependencies: [PackageRef('flutter'), PackageRef('intl'), PackageRef('cupertino_icons'), PackageRef('provider'), PackageRef('flutter_secure_storage'), PackageRef('http'), PackageRef('dio'), PackageRef('json_annotation'), PackageRef('introduction_screen'), PackageRef('mobile_scanner'), PackageRef('fast_rsa'), PackageRef('lottie'), PackageRef('device_info_plus'), PackageRef('flutter_inappwebview'), PackageRef('shimmer'), PackageRef('just_audio'), PackageRef('audio_service'), PackageRef('text_scroll'), PackageRef('sqflite'), PackageRef('path'), PackageRef('path_provider'), PackageRef('percent_indicator'), PackageRef('package_info_plus'), PackageRef('calendar_date_picker2'), PackageRef('url_launcher'), PackageRef('share_plus'), PackageRef('file_picker'), PackageRef('material_symbols_icons'), PackageRef('cached_memory_image')],
+    dependencies: [PackageRef('flutter'), PackageRef('intl'), PackageRef('cupertino_icons'), PackageRef('provider'), PackageRef('flutter_secure_storage'), PackageRef('http'), PackageRef('dio'), PackageRef('json_annotation'), PackageRef('introduction_screen'), PackageRef('mobile_scanner'), PackageRef('fast_rsa'), PackageRef('lottie'), PackageRef('device_info_plus'), PackageRef('flutter_inappwebview'), PackageRef('shimmer'), PackageRef('just_audio'), PackageRef('audio_service'), PackageRef('sqflite'), PackageRef('path'), PackageRef('path_provider'), PackageRef('percent_indicator'), PackageRef('package_info_plus'), PackageRef('calendar_date_picker2'), PackageRef('url_launcher'), PackageRef('share_plus'), PackageRef('file_picker'), PackageRef('material_symbols_icons'), PackageRef('cached_memory_image')],
     devDependencies: [PackageRef('flutter_lints'), PackageRef('build_runner'), PackageRef('json_serializable'), PackageRef('dart_pubspec_licenses'), PackageRef('flutter_gen'), PackageRef('flutter_gen_runner')],
   );
 

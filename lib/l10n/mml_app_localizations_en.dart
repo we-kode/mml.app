@@ -293,6 +293,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notCompatibleFile => 'File could not be read. Wrong format.';
 
   @override
+  String fileTooLarge(int size) {
+    return 'File is too large to be imported (max. $size MB).';
+  }
+
+  @override
   String get notDownloaded => 'Not downloaded';
 
   @override
@@ -340,6 +345,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get repeat => 'Repeat';
+
+  @override
+  String get stop => 'Stop';
 
   @override
   String errorAuthenticationExpired(String appTitle) {

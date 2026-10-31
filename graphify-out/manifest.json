@@ -24,9 +24,9 @@
     "semantic_hash": ""
   },
   "android/app/src/main/kotlin/de/wekode/mml_app/MainActivity.kt": {
-    "mtime": 1733158501.7522132,
-    "seen": 1789824741.1617787,
-    "ast_hash": "2a19a70ae0c8e617704a206dd806501b",
+    "mtime": 1793456059.371524,
+    "seen": 1793456121.9996004,
+    "ast_hash": "a59dfed772800b7ab867171d9b345924",
     "semantic_hash": ""
   },
   "android/build.gradle": {
@@ -36,9 +36,9 @@
     "semantic_hash": ""
   },
   "android/settings.gradle": {
-    "mtime": 1772470734.9949825,
-    "seen": 1789824741.1617787,
-    "ast_hash": "c9757755525e9b58dc879121601a8e7d",
+    "mtime": 1793456658.8358364,
+    "seen": 1793457678.6291425,
+    "ast_hash": "3b6455c65fc4dcce0b6ce9f8ae802c3b",
     "semantic_hash": ""
   },
   "customize": {
@@ -48,9 +48,9 @@
     "semantic_hash": ""
   },
   "ios/Runner/AppDelegate.swift": {
-    "mtime": 1733570182.893934,
-    "seen": 1789824741.1617787,
-    "ast_hash": "db9c4499aa205ee2ecc6ff866eff1301",
+    "mtime": 1793449049.9822283,
+    "seen": 1793449090.1758163,
+    "ast_hash": "fe976cf4a8a700a166f7f89a18db5e70",
     "semantic_hash": ""
   },
   "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json": {
@@ -168,9 +168,9 @@
     "semantic_hash": ""
   },
   "lib/components/player_sheet.dart": {
-    "mtime": 1736005266.3668616,
-    "seen": 1789824741.1617787,
-    "ast_hash": "41d6027831da58c80499c9757cfdfd59",
+    "mtime": 1793459346.279152,
+    "seen": 1793459375.3826694,
+    "ast_hash": "e8ecab4149afb092ca921865fbb24add",
     "semantic_hash": ""
   },
   "lib/components/progress_indicator.dart": {
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "lib/constants/mml_media_constants.dart": {
-    "mtime": 1733158501.7872064,
-    "seen": 1789824741.1617787,
-    "ast_hash": "925152c21e926ff1e32d48f62ffcd21a",
+    "mtime": 1793300960.7343202,
+    "seen": 1793301365.052618,
+    "ast_hash": "3a48ce33b99f87bb0fd5b43ab6064d30",
     "semantic_hash": ""
   },
   "lib/extensions/bool.dart": {
@@ -240,21 +240,21 @@
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_de.dart": {
-    "mtime": 1772900130.8287227,
-    "seen": 1789824741.1617787,
-    "ast_hash": "5b5c38faab50ab075716ddc90bddc898",
+    "mtime": 1793459362.6150608,
+    "seen": 1793459375.3826694,
+    "ast_hash": "3af0173fa73354b27a9bdb811e284c9b",
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_en.dart": {
-    "mtime": 1772900130.831729,
-    "seen": 1789824741.1617787,
-    "ast_hash": "5b609decf2a7a8c9490ac64180dae4f9",
+    "mtime": 1793459362.6181586,
+    "seen": 1793459375.3826694,
+    "ast_hash": "5308a6f7a65189798b7e7add4754ee6c",
     "semantic_hash": ""
   },
   "lib/l10n/mml_app_localizations_ru.dart": {
-    "mtime": 1772900130.8352475,
-    "seen": 1789824741.1617787,
-    "ast_hash": "226ea21bf07b2912eb5161a30a5c79fc",
+    "mtime": 1793459362.6206675,
+    "seen": 1793459375.3826694,
+    "ast_hash": "85153013cab3833049099dc9de200698",
     "semantic_hash": ""
   },
   "lib/main.dart": {
@@ -438,9 +438,9 @@
     "semantic_hash": ""
   },
   "lib/oss_licenses.dart": {
-    "mtime": 1772470735.0786004,
-    "seen": 1789824741.1617787,
-    "ast_hash": "687a6999d9fed9b2d3c898639665608d",
+    "mtime": 1793302006.58508,
+    "seen": 1793302116.5380957,
+    "ast_hash": "87c851e8d090c3d1f349efae1787c869",
     "semantic_hash": ""
   },
   "lib/services/album.dart": {
@@ -510,9 +510,9 @@
     "semantic_hash": ""
   },
   "lib/services/messenger.dart": {
-    "mtime": 1772885875.012695,
-    "seen": 1789824741.1617787,
-    "ast_hash": "1c9d709fe45ad4dea5c16b42d4949f76",
+    "mtime": 1793456080.3647838,
+    "seen": 1793456121.9996004,
+    "ast_hash": "61d7c6dd4b1ff7e64c096e7eb048d8da",
     "semantic_hash": ""
   },
   "lib/services/mml_http_overrides.dart": {
@@ -522,15 +522,15 @@
     "semantic_hash": ""
   },
   "lib/services/player/mml_audio_handler.dart": {
-    "mtime": 1753977034.4945474,
-    "seen": 1789824741.1617787,
-    "ast_hash": "d953524c9ff4132c14c7ec6c6b85a15b",
+    "mtime": 1793460523.8770852,
+    "seen": 1793460555.0480719,
+    "ast_hash": "80e5c02f81cc0cbb686acc2792ddcefe",
     "semantic_hash": ""
   },
   "lib/services/player/mml_audio_source.dart": {
-    "mtime": 1772470735.0811207,
-    "seen": 1789824741.1617787,
-    "ast_hash": "1a58dcb735a436a907afa61b73bfba36",
+    "mtime": 1793301041.1375332,
+    "seen": 1793301365.052618,
+    "ast_hash": "601ffdba6e735e647b60ba2d865e4948",
     "semantic_hash": ""
   },
   "lib/services/player/mml_media_item_service.dart": {
@@ -540,9 +540,9 @@
     "semantic_hash": ""
   },
   "lib/services/player/player.dart": {
-    "mtime": 1772470735.0821323,
-    "seen": 1789824741.1617787,
-    "ast_hash": "248cf5b07f88a67a3b60e20d98940518",
+    "mtime": 1793459158.9918323,
+    "seen": 1793459216.475047,
+    "ast_hash": "827fff42774e8b1db86075825636e019",
     "semantic_hash": ""
   },
   "lib/services/player/player_repeat_mode.dart": {
@@ -588,9 +588,9 @@
     "semantic_hash": ""
   },
   "lib/util/xor_encryptor.dart": {
-    "mtime": 1664448095.744635,
-    "seen": 1789824741.1617787,
-    "ast_hash": "cb59a8011872fa94fdd985e6597bcdeb",
+    "mtime": 1793301040.1255262,
+    "seen": 1793301365.052618,
+    "ast_hash": "e05736905f83c23040d5e7b963eccb8b",
     "semantic_hash": ""
   },
   "lib/view_models/faq.dart": {
@@ -750,9 +750,9 @@
     "semantic_hash": ""
   },
   "lib/views/playlists/import_observer.dart": {
-    "mtime": 1772470735.091636,
-    "seen": 1789824741.1617787,
-    "ast_hash": "a2386cedc9434108af3ce87241fe6dad",
+    "mtime": 1793456069.913548,
+    "seen": 1793456121.9996004,
+    "ast_hash": "82ebdb63233911d4282e2f630a5b226e",
     "semantic_hash": ""
   },
   "lib/views/playlists/not_downloaded.dart": {
@@ -804,9 +804,9 @@
     "semantic_hash": ""
   },
   "analysis_options.yaml": {
-    "mtime": 1664448095.587994,
-    "seen": 1789824741.1617787,
-    "ast_hash": "5df212687f3997ccd1310b5b19ebfb78",
+    "mtime": 1793445361.0867922,
+    "seen": 1793449090.1758163,
+    "ast_hash": "4baace9e40e12170a0dfbb6d87b6180b",
     "semantic_hash": ""
   },
   "devtools_options.yaml": {
@@ -822,9 +822,21 @@
     "semantic_hash": ""
   },
   "pubspec.yaml": {
-    "mtime": 1772889881.1180606,
-    "seen": 1789824741.1617787,
-    "ast_hash": "fe0fe5cdd105abd4185e5b14884e658a",
+    "mtime": 1793302006.587095,
+    "seen": 1793302116.5380957,
+    "ast_hash": "1e68194494a44711be99ba1c3d40960c",
+    "semantic_hash": ""
+  },
+  "test/util/xor_encryptor_test.dart": {
+    "mtime": 1793301141.021397,
+    "seen": 1793301365.052618,
+    "ast_hash": "0465716ecf4892fa25a7ba7462f80840",
+    "semantic_hash": ""
+  },
+  "ios/Runner/FileOpenHandler.swift": {
+    "mtime": 1793456060.1311562,
+    "seen": 1793456121.9996004,
+    "ast_hash": "c1081258ea417eb7f6a5cdc966e3d1d7",
     "semantic_hash": ""
   }
 }

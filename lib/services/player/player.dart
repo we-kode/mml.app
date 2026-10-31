@@ -37,6 +37,8 @@ class PlayerService {
   /// Event stream, when actual playing record changes.
   StreamController<Record?> onRecordChanged = StreamController.broadcast();
 
+  final List<StreamSubscription> _subscriptions = [];
+
   /// Private constructor of the [PlayerService].
   PlayerService._();
 
@@ -162,7 +164,12 @@ class PlayerService {
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
   void initializeListeners() {
-    _audioHandler.positionStream.listen(
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
+
+    _subscriptions.add(_audioHandler.positionStream.listen(
       (event) {
         if (_isSeeking) {
           return;
@@ -173,19 +180,22 @@ class PlayerService {
           '${event.inMilliseconds.clamp(0, recordDuration)}',
         );
 
+        final previousSecond = _audioHandler.currentSeekPosition ~/ 1000;
         _audioHandler.currentSeekPosition = duration ?? 0;
 
-        playerState?.update();
+        if (previousSecond != _audioHandler.currentSeekPosition ~/ 1000) {
+          playerState?.update();
+        }
       },
-    );
+    ));
 
-    _audioHandler.playbackEventStream.listen((event) {
+    _subscriptions.add(_audioHandler.playbackEventStream.listen((event) {
       playerState?.update();
     }, onError: (Object e, StackTrace stackTrace) async {
       if (e is PlatformException && e.message == 'Source error') {
         await _audioHandler.refreshToken();
       }
-    });
+    }));
   }
 
   /// Resets the current player.
@@ -217,8 +227,9 @@ class PlayerService {
       config: AudioServiceConfig(
         androidNotificationChannelId: "de.wekode.mml.audio",
         androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
-        androidNotificationOngoing: true,
+        androidNotificationOngoing: false,
         androidStopForegroundOnPause: true,
+        androidResumeOnClick: false,
         androidBrowsableRootExtras: {
           MMLMediaConstants.mediaBrowseSupported: true,
           MMLMediaConstants.mediaPlayableContentKey:

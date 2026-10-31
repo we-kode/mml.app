@@ -75,9 +75,14 @@ class MessengerService {
     return AppLocalizations.of(snackbarKey.currentContext!)!.downloadError;
   }
 
-   /// Translated string for error on downloading.
+  /// Translated string for error on downloading.
   String get notCompatibleFile {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notCompatibleFile;
+  }
+
+  /// Returns the translated string for files larger than [size] megabytes.
+  String fileTooLarge(int size) {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.fileTooLarge(size);
   }
 
   /// Translated string for a message if the cache is cleared successfully.
