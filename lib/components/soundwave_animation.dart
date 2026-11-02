@@ -5,9 +5,7 @@ import 'package:mml_app/gen/assets.gen.dart';
 /// Animation for the livestream.
 class SoundwaveAnimation extends StatelessWidget {
   /// Initializes the animation.
-  const SoundwaveAnimation({
-    super.key,
-  });
+  const SoundwaveAnimation({super.key});
 
   @override
   Widget build(BuildContext context) {

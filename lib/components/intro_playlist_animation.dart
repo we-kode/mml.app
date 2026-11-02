@@ -5,9 +5,7 @@ import 'package:mml_app/gen/assets.gen.dart';
 /// Animation for the playlist intro screen.
 class IntroPlaylistAnimation extends StatelessWidget {
   /// Initializes the animation.
-  const IntroPlaylistAnimation({
-    super.key,
-  });
+  const IntroPlaylistAnimation({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -13,11 +13,7 @@ class Artist extends ModelBase {
   final String? name;
 
   /// Initializes the model.
-  Artist({
-    this.artistId,
-    this.name,
-    super.isDeletable,
-  });
+  Artist({this.artistId, this.name, super.isDeletable});
 
   /// Converts a json object/map to the model.
   factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);

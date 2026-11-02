@@ -8,10 +8,7 @@ part 'livestream.g.dart';
 @JsonSerializable(includeIfNull: false, createToJson: false)
 class Livestream extends Record {
   /// Initializes the model.
-  Livestream({
-    required super.recordId,
-    super.title,
-  }) : super(checksum: '');
+  Livestream({required super.recordId, super.title}) : super(checksum: '');
 
   /// Converts a json object/map to the model.
   factory Livestream.fromJson(Map<String, dynamic> json) =>

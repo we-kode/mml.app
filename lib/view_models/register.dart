@@ -96,20 +96,11 @@ class RegisterViewModel extends ChangeNotifier {
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
 
-    await _storage.set(
-      SecureStorageService.rsaPrivateStorageKey,
-      private,
-    );
-    await _storage.set(
-      SecureStorageService.rsaPublicStorageKey,
-      public,
-    );
+    await _storage.set(SecureStorageService.rsaPrivateStorageKey, private);
+    await _storage.set(SecureStorageService.rsaPublicStorageKey, public);
 
     final crypt = XorEncryptor.generateKey();
-    await _storage.set(
-      SecureStorageService.cryptoKey,
-      crypt.toString(),
-    );
+    await _storage.set(SecureStorageService.cryptoKey, crypt.toString());
 
     state = RegistrationState.init;
     notifyListeners();
@@ -203,11 +194,4 @@ class RegisterViewModel extends ChangeNotifier {
 }
 
 /// State of the registration process.
-enum RegistrationState {
-  rsa,
-  init,
-  scan,
-  register,
-  error,
-  success,
-}
+enum RegistrationState { rsa, init, scan, register, error, success }

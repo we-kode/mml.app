@@ -75,19 +75,17 @@ class FileService {
       SecureStorageService.cryptoKey,
     );
 
-    Response<ResponseBody> response =
-        await ApiService.getInstance().request<ResponseBody>(
-      '/media/stream/${record.recordId}',
-      options: Options(
-        responseType: ResponseType.stream,
-        receiveTimeout: Duration.zero,
-      ),
-    );
+    Response<ResponseBody> response = await ApiService.getInstance()
+        .request<ResponseBody>(
+          '/media/stream/${record.recordId}',
+          options: Options(
+            responseType: ResponseType.stream,
+            receiveTimeout: Duration.zero,
+          ),
+        );
 
-    var size = int.tryParse(
-          response.headers["content-length"]?.first ?? "",
-        ) ??
-        0;
+    var size =
+        int.tryParse(response.headers["content-length"]?.first ?? "") ?? 0;
     var downloadedAndEncryptedSize = 0;
 
     try {
@@ -120,10 +118,13 @@ class FileService {
   Future<File> getFile(Record record) async {
     final file = File('${await _folder}/${record.checksum}');
     if (!(await file.exists())) {
-      await download(record, onError: () {
-        _messengerService.showMessage(_messengerService.fileNotFound);
-        throw Exception("File not found!");
-      });
+      await download(
+        record,
+        onError: () {
+          _messengerService.showMessage(_messengerService.fileNotFound);
+          throw Exception("File not found!");
+        },
+      );
     }
 
     return file;

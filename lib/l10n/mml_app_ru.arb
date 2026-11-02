@@ -114,5 +114,13 @@
   "cacheRangeYear": "1 год",
   "cacheRangeNever": "Никогда",
   "cacheCleared": "Кэш был успешно очищен.",
-  "cacheClearedFailed": "Кэш не может быть очищен."
+  "cacheClearedFailed": "Кэш не может быть очищен.",
+  "announcements": "Объявления",
+  "showAnnouncementsOnStart": "Показывать объявления при запуске",
+  "noAnnouncements": "Актуальных объявлений нет.",
+  "doNotShowAgain": "Больше не показывать",
+  "close": "Закрыть",
+  "announcementPosition": "{index} из {count}",
+  "previous": "Назад",
+  "showAnnouncements": "Показать текущие объявления"
 }

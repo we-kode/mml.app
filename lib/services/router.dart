@@ -91,16 +91,12 @@ class RouterService {
             FilterAppBar(
               title: 'records',
               enableFilter: true,
-              listAction: SelectedItemsAction(
-                const Icon(Symbols.star_outline),
-              ),
+              listAction: SelectedItemsAction(const Icon(Symbols.star_outline)),
             ),
           ),
         ),
         pageBuilder: (context, animation1, animation2) {
-          return RecordsScreen(
-            appBar: MainViewModel.appBar,
-          );
+          return RecordsScreen(appBar: MainViewModel.appBar);
         },
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
@@ -134,16 +130,10 @@ class RouterService {
       LivestreamsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: LivestreamsViewModel.route,
-          arguments: NavigationArguments(
-            FilterAppBar(
-              title: 'livestreams',
-            ),
-          ),
+          arguments: NavigationArguments(FilterAppBar(title: 'livestreams')),
         ),
         pageBuilder: (context, animation1, animation2) {
-          return LivestreamScreen(
-            appBar: MainViewModel.appBar,
-          );
+          return LivestreamScreen(appBar: MainViewModel.appBar);
         },
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
@@ -151,11 +141,7 @@ class RouterService {
       SettingsViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: SettingsViewModel.route,
-          arguments: NavigationArguments(
-            FilterAppBar(
-              title: 'settings',
-            ),
-          ),
+          arguments: NavigationArguments(FilterAppBar(title: 'settings')),
         ),
         pageBuilder: (context, animation1, animation2) {
           return const SettingsScreen();
@@ -178,9 +164,8 @@ class RouterService {
           name: InformationViewModel.route,
           arguments: args,
         ),
-        pageBuilder: (context, animation1, animation2) => InformationScreen(
-          url: ((args as SubrouteArguments).arg as String),
-        ),
+        pageBuilder: (context, animation1, animation2) =>
+            InformationScreen(url: ((args as SubrouteArguments).arg as String)),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
@@ -195,21 +180,14 @@ class RouterService {
         reverseTransitionDuration: Duration.zero,
       ),
       LicenseViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: LicenseViewModel.route,
-          arguments: args,
-        ),
-        pageBuilder: (context, animation1, animation2) => LicenseScreen(
-          package: (args as Package),
-        ),
+        settings: RouteSettings(name: LicenseViewModel.route, arguments: args),
+        pageBuilder: (context, animation1, animation2) =>
+            LicenseScreen(package: (args as Package)),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
       FAQViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: FAQViewModel.route,
-          arguments: args,
-        ),
+        settings: RouteSettings(name: FAQViewModel.route, arguments: args),
         pageBuilder: (context, animation1, animation2) => const FAQScreen(),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,

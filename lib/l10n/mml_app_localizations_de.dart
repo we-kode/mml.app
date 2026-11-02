@@ -385,4 +385,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cacheClearedFailed => 'Cache konnte nicht gelöscht werden.';
+
+  @override
+  String get announcements => 'Mitteilungen';
+
+  @override
+  String get showAnnouncementsOnStart => 'Mitteilungen beim Start anzeigen';
+
+  @override
+  String get noAnnouncements => 'Es gibt keine aktuellen Mitteilungen.';
+
+  @override
+  String get doNotShowAgain => 'Nicht mehr anzeigen';
+
+  @override
+  String get close => 'Schließen';
+
+  @override
+  String announcementPosition(int index, int count) {
+    return '$index von $count';
+  }
+
+  @override
+  String get previous => 'Zurück';
+
+  @override
+  String get showAnnouncements => 'Aktuelle Mitteilungen anzeigen';
 }

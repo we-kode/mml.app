@@ -76,10 +76,7 @@ class PlayerSheetState extends State<PlayerSheet>
             ),
             boxShadow: kElevationToShadow[10],
           ),
-          constraints: const BoxConstraints(
-            maxHeight: 200,
-            minHeight: 0.0,
-          ),
+          constraints: const BoxConstraints(maxHeight: 200, minHeight: 0.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
@@ -91,8 +88,9 @@ class PlayerSheetState extends State<PlayerSheet>
                   Consumer<PlayerState>(
                     builder: (context, state, child) {
                       return PlayerService.getInstance()
-                                  .playerState
-                                  ?.currentRecord is LocalRecord ||
+                                      .playerState
+                                      ?.currentRecord
+                                  is LocalRecord ||
                               state.currentRecord is Livestream
                           ? Container()
                           : IconButton(
@@ -101,10 +99,10 @@ class PlayerSheetState extends State<PlayerSheet>
                               onPressed: () async {
                                 await PlaylistService.getInstance()
                                     .downloadRecords([
-                                  PlayerService.getInstance()
-                                      .playerState
-                                      ?.currentRecord,
-                                ], context);
+                                      PlayerService.getInstance()
+                                          .playerState
+                                          ?.currentRecord,
+                                    ], context);
                                 if (mounted) {
                                   setState(() => _favoriteFuture = null);
                                 }
@@ -140,10 +138,7 @@ class PlayerSheetState extends State<PlayerSheet>
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 25,
-                  right: 25,
-                ),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -155,7 +150,8 @@ class PlayerSheetState extends State<PlayerSheet>
                           fit: FlexFit.tight,
                           flex: 8,
                           child: Tooltip(
-                            message: state.currentRecord?.title ??
+                            message:
+                                state.currentRecord?.title ??
                                 AppLocalizations.of(context)!.unknown,
                             triggerMode: TooltipTriggerMode.tap,
                             child: Text(
@@ -185,10 +181,7 @@ class PlayerSheetState extends State<PlayerSheet>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 25,
-                  right: 25,
-                ),
+                padding: const EdgeInsets.only(left: 25, right: 25),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -224,10 +217,7 @@ class PlayerSheetState extends State<PlayerSheet>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 8,
-                  right: 8,
-                ),
+                padding: const EdgeInsets.only(left: 8, right: 8),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
@@ -243,15 +233,14 @@ class PlayerSheetState extends State<PlayerSheet>
                                   ),
                                 )
                               : Slider(
-                                  inactiveColor:
-                                      Theme.of(context).colorScheme.outline,
+                                  inactiveColor: Theme.of(
+                                    context,
+                                  ).colorScheme.outline,
                                   value: state.currentSeekPosition,
                                   min: 0,
                                   max: state.currentRecord?.duration ?? 0,
                                   onChanged: (value) {
-                                    PlayerService.getInstance().seek(
-                                      value,
-                                    );
+                                    PlayerService.getInstance().seek(value);
                                   },
                                   onChangeStart: (value) {
                                     PlayerService.getInstance().startSeekDrag();
@@ -270,10 +259,7 @@ class PlayerSheetState extends State<PlayerSheet>
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                  left: 0,
-                  right: 0,
-                ),
+                padding: const EdgeInsets.only(left: 0, right: 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -305,7 +291,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                 onPressed: state.shuffle || state.isLoading
                                     ? null
                                     : () => PlayerService.getInstance()
-                                        .playPrevious(),
+                                          .playPrevious(),
                                 iconSize: 32,
                                 icon: const Icon(Symbols.skip_previous_rounded),
                               );
@@ -404,7 +390,7 @@ class PlayerSheetState extends State<PlayerSheet>
                                     : () {
                                         var nextModeIndex =
                                             (state.repeat.index + 1) %
-                                                PlayerRepeatMode.values.length;
+                                            PlayerRepeatMode.values.length;
                                         PlayerService.getInstance().repeat =
                                             PlayerRepeatMode
                                                 .values[nextModeIndex];
@@ -413,8 +399,8 @@ class PlayerSheetState extends State<PlayerSheet>
                                   state.repeat == PlayerRepeatMode.all
                                       ? Symbols.repeat_on_rounded
                                       : (state.repeat == PlayerRepeatMode.one
-                                          ? Symbols.repeat_one_on_rounded
-                                          : Symbols.repeat_rounded),
+                                            ? Symbols.repeat_one_on_rounded
+                                            : Symbols.repeat_rounded),
                                 ),
                               );
                       },

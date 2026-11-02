@@ -116,27 +116,23 @@ class FilterAppBarState extends State<FilterAppBar> {
               ],
             )
           : widget.enableBack || widget.navigationState.path != null
-              ? IconButton(
-                  onPressed: () async {
-                    if (widget.navigationState.path != null) {
-                      widget.navigationState.returnPressed();
-                    } else {
-                      await RouterService.getInstance().popNestedRoute();
-                    }
-                  },
-                  icon: const Icon(Symbols.arrow_back),
-                  tooltip: AppLocalizations.of(context)!.back,
-                )
-              : null,
+          ? IconButton(
+              onPressed: () async {
+                if (widget.navigationState.path != null) {
+                  widget.navigationState.returnPressed();
+                } else {
+                  await RouterService.getInstance().popNestedRoute();
+                }
+              },
+              icon: const Icon(Symbols.arrow_back),
+              tooltip: AppLocalizations.of(context)!.back,
+            )
+          : null,
       title: Visibility(
         visible: widget.listAction == null || !widget.listAction!.enabled,
         child: !_filterOpened || !(widget.enableFilter ?? false)
-            ? Text(
-                widget.navigationState.path ?? _getLocalizedString(context),
-              )
-            : Container(
-                child: _createInput(context),
-              ),
+            ? Text(widget.navigationState.path ?? _getLocalizedString(context))
+            : Container(child: _createInput(context)),
       ),
       actions: _createActions(),
     );
@@ -165,31 +161,23 @@ class FilterAppBarState extends State<FilterAppBar> {
       initialValue: _filter,
       decoration: InputDecoration(
         labelText: AppLocalizations.of(context)!.filter,
-        icon: const Icon(
-          Symbols.filter_list_alt,
-        ),
+        icon: const Icon(Symbols.filter_list_alt),
         suffixIcon: IconButton(
-          icon: const Icon(
-            Symbols.clear,
-          ),
+          icon: const Icon(Symbols.clear),
           onPressed: () {
-            setState(
-              () {
-                _filter = '';
-                _filterOpened = false;
-              },
-            );
+            setState(() {
+              _filter = '';
+              _filterOpened = false;
+            });
 
             widget.filter.textFilter = '';
           },
         ),
       ),
       onChanged: (String filterText) {
-        setState(
-          () {
-            _filter = filterText;
-          },
-        );
+        setState(() {
+          _filter = filterText;
+        });
 
         widget.filter.textFilter = filterText;
       },
@@ -208,29 +196,23 @@ class FilterAppBarState extends State<FilterAppBar> {
                 !_filterOpened &&
                 (widget.listAction != null && !widget.listAction!.enabled))
               IconButton(
-                onPressed: () => setState(
-                  () {
-                    _filterOpened = !_filterOpened;
-                  },
-                ),
+                onPressed: () => setState(() {
+                  _filterOpened = !_filterOpened;
+                }),
                 icon: const Icon(Symbols.search),
               ),
             if (widget.exportAction != null && widget.listAction!.enabled)
               IconButton(
-                onPressed: () => setState(
-                  () {
-                    widget.exportAction!.actionPerformed = true;
-                  },
-                ),
+                onPressed: () => setState(() {
+                  widget.exportAction!.actionPerformed = true;
+                }),
                 icon: widget.exportAction!.icon,
               ),
             if (widget.listAction != null && widget.listAction!.enabled)
               IconButton(
-                onPressed: () => setState(
-                  () {
-                    widget.listAction!.actionPerformed = true;
-                  },
-                ),
+                onPressed: () => setState(() {
+                  widget.listAction!.actionPerformed = true;
+                }),
                 icon: widget.listAction!.icon,
               ),
           ];

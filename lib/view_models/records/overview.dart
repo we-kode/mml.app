@@ -42,10 +42,10 @@ class RecordsViewModel extends ChangeNotifier {
         return false;
       }
       locales = AppLocalizations.of(context)!;
-      isFolderView = (await SecureStorageService.getInstance().get(
+      isFolderView =
+          (await SecureStorageService.getInstance().get(
             SecureStorageService.folderViewStorageKey,
-          ))
-              ?.toLowerCase() ==
+          ))?.toLowerCase() ==
           'true';
       tagFilter = await _dbService.loadID3Filter();
       if (isFolderView) {
@@ -95,11 +95,7 @@ class RecordsViewModel extends ChangeNotifier {
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
-    await PlayerService.getInstance().play(
-      record as Record,
-      filter,
-      subfilter,
-    );
+    await PlayerService.getInstance().play(record as Record, filter, subfilter);
   }
 
   /// Loads the next folder which is before actual date range filtered by [subFilter].
@@ -118,22 +114,16 @@ class RecordsViewModel extends ChangeNotifier {
           subFilter.endDate!.year,
           subFilter.endDate!.month,
           DateUtils.getDaysInMonth(
-              subFilter.endDate!.year, subFilter.endDate!.month),
+            subFilter.endDate!.year,
+            subFilter.endDate!.month,
+          ),
         ),
       );
       saveFolderPath(subFilter);
     } else if (subFilter.startDate!.month == subFilter.endDate!.month) {
       subFilter[ID3TagFilters.date] = DateTimeRange(
-        start: DateTime(
-          subFilter.startDate!.year,
-          1,
-          1,
-        ),
-        end: DateTime(
-          subFilter.endDate!.year,
-          12,
-          31,
-        ),
+        start: DateTime(subFilter.startDate!.year, 1, 1),
+        end: DateTime(subFilter.endDate!.year, 12, 31),
       );
       saveFolderPath(subFilter);
     } else {
@@ -148,18 +138,19 @@ class RecordsViewModel extends ChangeNotifier {
       _dbService.saveID3Filter(
         ID3TagFilters.date,
         jsonEncode(
-          List<String>.from(
-            [subfilter.startDate.toString(), subfilter.endDate.toString()],
-          ),
+          List<String>.from([
+            subfilter.startDate.toString(),
+            subfilter.endDate.toString(),
+          ]),
         ),
       );
     }
   }
 
   Future<bool> isFilterPersistActive() async {
-    return (await SecureStorageService.getInstance()
-                .get(SecureStorageService.saveFiltersStorageKey))
-            ?.toLowerCase() ==
+    return (await SecureStorageService.getInstance().get(
+          SecureStorageService.saveFiltersStorageKey,
+        ))?.toLowerCase() ==
         'true';
   }
 }

@@ -55,6 +55,13 @@ class SecureStorageService {
   /// Key under which the cache remove time is stored.
   static const String cacheDurationStorageKey = 'cacheDuration';
 
+  /// Key under which the flag to show the announcements on start is stored.
+  static const String showAnnouncementsStorageKey = 'showAnnouncements';
+
+  /// Key under which the versions of the dismissed announcements are stored.
+  static const String dismissedAnnouncementsStorageKey =
+      'dismissedAnnouncements';
+
   /// Private constructor of the service.
   SecureStorageService._();
 

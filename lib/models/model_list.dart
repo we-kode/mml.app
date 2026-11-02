@@ -3,7 +3,6 @@ import 'dart:math';
 
 import 'package:mml_app/models/model_base.dart';
 
-
 /// A lazy list of models.
 class ModelList extends ListBase<ModelBase?> {
   /// List containing the models at the specified offset with a specified

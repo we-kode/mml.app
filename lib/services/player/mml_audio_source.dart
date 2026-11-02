@@ -15,10 +15,7 @@ class MMLAudioSource extends StreamAudioSource {
   final int cryptKey;
 
   /// Initializes the [MMLAudioSource] with [file] to play and [cryptKey] to decrypt file.
-  MMLAudioSource(
-    this.file,
-    this.cryptKey,
-  ) : super(tag: "MMLAudioSource");
+  MMLAudioSource(this.file, this.cryptKey) : super(tag: "MMLAudioSource");
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {

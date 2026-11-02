@@ -24,9 +24,7 @@ class AlbumService {
     var response = await _apiService.request(
       '/media/album/albums',
       queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(

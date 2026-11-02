@@ -11,8 +11,12 @@ extension StringExtended on String {
 
     final file = File('${(await getTemporaryDirectory()).path}/apc.jpg');
     await file.create(recursive: true);
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+    await file.writeAsBytes(
+      byteData.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      ),
+    );
 
     return file;
   }

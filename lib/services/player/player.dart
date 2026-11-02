@@ -85,11 +85,7 @@ class PlayerService {
 
   /// Plays the given [record] and opens the bottom [PlayerSheet] if not
   /// already done.
-  Future play(
-    Record record,
-    String? filter,
-    ID3TagFilter? tagFilter,
-  ) async {
+  Future play(Record record, String? filter, ID3TagFilter? tagFilter) async {
     var context = RouterService.getInstance().getCurrentContext();
 
     if (context == null || !context.mounted) {
@@ -169,8 +165,8 @@ class PlayerService {
     }
     _subscriptions.clear();
 
-    _subscriptions.add(_audioHandler.positionStream.listen(
-      (event) {
+    _subscriptions.add(
+      _audioHandler.positionStream.listen((event) {
         if (_isSeeking) {
           return;
         }
@@ -186,16 +182,21 @@ class PlayerService {
         if (previousSecond != _audioHandler.currentSeekPosition ~/ 1000) {
           playerState?.update();
         }
-      },
-    ));
+      }),
+    );
 
-    _subscriptions.add(_audioHandler.playbackEventStream.listen((event) {
-      playerState?.update();
-    }, onError: (Object e, StackTrace stackTrace) async {
-      if (e is PlatformException && e.message == 'Source error') {
-        await _audioHandler.refreshToken();
-      }
-    }));
+    _subscriptions.add(
+      _audioHandler.playbackEventStream.listen(
+        (event) {
+          playerState?.update();
+        },
+        onError: (Object e, StackTrace stackTrace) async {
+          if (e is PlatformException && e.message == 'Source error') {
+            await _audioHandler.refreshToken();
+          }
+        },
+      ),
+    );
   }
 
   /// Resets the current player.

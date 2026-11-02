@@ -114,5 +114,13 @@
   "cacheRangeYear": "1 Year",
   "cacheRangeNever": "Never",
   "cacheCleared": "Cache was cleared successfully.",
-  "cacheClearedFailed": "Cache could not be cleared."
+  "cacheClearedFailed": "Cache could not be cleared.",
+  "announcements": "Announcements",
+  "showAnnouncementsOnStart": "Show announcements on start",
+  "noAnnouncements": "There are no current announcements.",
+  "doNotShowAgain": "Do not show again",
+  "close": "Close",
+  "announcementPosition": "{index} of {count}",
+  "previous": "Back",
+  "showAnnouncements": "Show current announcements"
 }

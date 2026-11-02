@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// Shows a confirmation dialog for deletion.
-Future<bool> showDeleteDialog(BuildContext context) async{
+Future<bool> showDeleteDialog(BuildContext context) async {
   var localization = AppLocalizations.of(context)!;
   var shouldDelete = await showDialog<bool>(
     context: context,

@@ -66,16 +66,14 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   /// Toggles open state of FAB.
   void _toggle() {
-    setState(
-      () {
-        _open = !_open;
-        if (_open) {
-          _controller.forward();
-        } else {
-          _controller.reverse();
-        }
-      },
-    );
+    setState(() {
+      _open = !_open;
+      if (_open) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
   }
 
   @override
@@ -101,9 +99,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       child: Center(
         child: Material(
           shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(
-              Radius.circular(8),
-            ),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
           ),
           clipBehavior: Clip.antiAlias,
           elevation: 4.0,
@@ -128,9 +124,11 @@ class _ExpandableFabState extends State<ExpandableFab>
     final children = <Widget>[];
     final count = widget.children.length;
     final step = 90.0 / (count - 1);
-    for (var i = 0, angleInDegrees = 0.0;
-        i < count;
-        i++, angleInDegrees += step) {
+    for (
+      var i = 0, angleInDegrees = 0.0;
+      i < count;
+      i++, angleInDegrees += step
+    ) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
@@ -212,10 +210,7 @@ class _ExpandingActionButton extends StatelessWidget {
           ),
         );
       },
-      child: FadeTransition(
-        opacity: progress,
-        child: child,
-      ),
+      child: FadeTransition(opacity: progress, child: child),
     );
   }
 }
@@ -223,11 +218,7 @@ class _ExpandingActionButton extends StatelessWidget {
 /// One sub action button.
 @immutable
 class ActionButton extends StatelessWidget {
-  const ActionButton({
-    super.key,
-    this.onPressed,
-    required this.icon,
-  });
+  const ActionButton({super.key, this.onPressed, required this.icon});
 
   /// Called when button is pressed.
   final VoidCallback? onPressed;
@@ -240,9 +231,7 @@ class ActionButton extends StatelessWidget {
     final theme = Theme.of(context);
     return Material(
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(8),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
       ),
       clipBehavior: Clip.antiAlias,
       color: theme.colorScheme.primary,

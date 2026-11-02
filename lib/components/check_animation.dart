@@ -11,17 +11,15 @@ class CheckAnimation extends StatefulWidget {
   final StopFunction? onStop;
 
   /// Initializes the animation.
-  const CheckAnimation({
-    super.key,
-    this.onStop,
-  });
+  const CheckAnimation({super.key, this.onStop});
 
   @override
   CheckAnimationState createState() => CheckAnimationState();
 }
 
 /// State of the [CheckAnimation].
-class CheckAnimationState extends State<CheckAnimation> with SingleTickerProviderStateMixin{
+class CheckAnimationState extends State<CheckAnimation>
+    with SingleTickerProviderStateMixin {
   /// Controller for playback
   late AnimationController _controller;
 

@@ -6,9 +6,7 @@ import 'package:mml_app/views/playlists/not_downloaded.dart';
 
 /// Observer to handle imports from mml files when clicked extern.
 class ImportObserver extends StatefulWidget {
-  const ImportObserver({
-    super.key,
-  });
+  const ImportObserver({super.key});
 
   @override
   ImportObserverState createState() => ImportObserverState();
@@ -59,8 +57,11 @@ class ImportObserverState extends State<ImportObserver>
         return;
       }
 
-      var notDownloaded =
-          await ImportService.getInstance().import(null, context, cnt: content);
+      var notDownloaded = await ImportService.getInstance().import(
+        null,
+        context,
+        cnt: content,
+      );
 
       if (notDownloaded.isEmpty) {
         return;
@@ -74,9 +75,7 @@ class ImportObserverState extends State<ImportObserver>
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return NotDownloadedDialog(
-            records: notDownloaded,
-          );
+          return NotDownloadedDialog(records: notDownloaded);
         },
       );
 

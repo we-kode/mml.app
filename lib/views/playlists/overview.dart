@@ -57,19 +57,23 @@ class PlaylistScreen extends StatelessWidget {
                       ActionButton(
                         icon: const Icon(Symbols.upload),
                         onPressed: () async {
-                          FilePickerResult? selected =
-                              await FilePicker.platform.pickFiles(
-                            type:
-                                Platform.isIOS ? FileType.any : FileType.custom,
-                            allowedExtensions: Platform.isIOS ? null : ['mml'],
-                          );
+                          FilePickerResult? selected = await FilePicker.platform
+                              .pickFiles(
+                                type: Platform.isIOS
+                                    ? FileType.any
+                                    : FileType.custom,
+                                allowedExtensions: Platform.isIOS
+                                    ? null
+                                    : ['mml'],
+                              );
 
                           if (selected == null) {
                             return;
                           }
 
-                          var notDownloaded =
-                              await vm.import(selected.files.first);
+                          var notDownloaded = await vm.import(
+                            selected.files.first,
+                          );
 
                           if (notDownloaded.isEmpty) {
                             return;
@@ -134,9 +138,7 @@ class PlaylistScreen extends StatelessWidget {
                   barrierDismissible: false,
                   context: context,
                   builder: (BuildContext context) {
-                    return PlaylistEditDialog(
-                      playlistId: playlistId,
-                    );
+                    return PlaylistEditDialog(playlistId: playlistId);
                   },
                 );
 
@@ -146,21 +148,14 @@ class PlaylistScreen extends StatelessWidget {
 
                 return state == EditState.save || state == EditState.delete;
               },
-              openItemFunction: (
-                ModelBase item,
-                String? filter,
-                Subfilter? subfilter,
-              ) {
-                if (item is LocalRecord) {
-                  vm.playRecord(
-                    item,
-                    filter,
-                    null,
-                  );
-                } else if (item is Playlist) {
-                  vm.navigate(item);
-                }
-              },
+              openItemFunction:
+                  (ModelBase item, String? filter, Subfilter? subfilter) {
+                    if (item is LocalRecord) {
+                      vm.playRecord(item, filter, null);
+                    } else if (item is Playlist) {
+                      vm.navigate(item);
+                    }
+                  },
             );
           },
         );
