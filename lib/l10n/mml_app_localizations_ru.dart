@@ -382,4 +382,30 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cacheClearedFailed => 'Кэш не может быть очищен.';
+
+  @override
+  String get announcements => 'Объявления';
+
+  @override
+  String get showAnnouncementsOnStart => 'Показывать объявления при запуске';
+
+  @override
+  String get noAnnouncements => 'Актуальных объявлений нет.';
+
+  @override
+  String get doNotShowAgain => 'Больше не показывать';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String announcementPosition(int index, int count) {
+    return '$index из $count';
+  }
+
+  @override
+  String get previous => 'Назад';
+
+  @override
+  String get showAnnouncements => 'Показать текущие объявления';
 }

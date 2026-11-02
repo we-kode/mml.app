@@ -37,17 +37,10 @@ class LivestreamScreen extends StatelessWidget {
               onActiveItemChanged:
                   PlayerService.getInstance().onRecordChanged.stream,
               loadData: vm.load,
-              openItemFunction: (
-                ModelBase item,
-                String? filter,
-                Subfilter? subfilter,
-              ) {
-                vm.playRecord(
-                  item,
-                  filter,
-                  null,
-                );
-              },
+              openItemFunction:
+                  (ModelBase item, String? filter, Subfilter? subfilter) {
+                    vm.playRecord(item, filter, null);
+                  },
             );
           },
         );

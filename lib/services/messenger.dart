@@ -41,8 +41,9 @@ class MessengerService {
   /// Returns the translated string for unexpected errors with the passed
   /// [message].
   String unexpectedError(String message) {
-    return AppLocalizations.of(snackbarKey.currentContext!)!
-        .unexpectedError(message);
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.unexpectedError(message);
   }
 
   /// Translated string for forbidden errors.

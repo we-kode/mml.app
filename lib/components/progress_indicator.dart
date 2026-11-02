@@ -10,9 +10,7 @@ void showProgressIndicator() {
     barrierDismissible: false,
     context: RouterService.getInstance().navigatorKey.currentContext!,
     builder: (BuildContext context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     },
   );
 }

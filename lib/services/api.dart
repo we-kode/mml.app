@@ -22,6 +22,10 @@ class ApiService {
   /// storage.
   final SecureStorageService _store = SecureStorageService.getInstance();
 
+  /// Key of the request option extras, which suppresses the messages of the
+  /// default error handling for the request.
+  static const String silentErrorsKey = 'silentErrors';
+
   /// Private constructor of the service.
   ApiService._() {
     initDio(_dio, true);
@@ -41,7 +45,7 @@ class ApiService {
     Options? options,
     ProgressCallback? onSendProgress,
     ProgressCallback? onReceiveProgress,
-    String apiVersion = '2.0'
+    String apiVersion = '2.0',
   }) {
     return _dio.request<T>(
       '/v$apiVersion$path',
@@ -73,9 +77,7 @@ class ApiService {
   Future<Map<String, String>> getHeaders() async {
     Map<String, String> headers = {};
 
-    headers['Accept-Language'] = Intl.shortLocale(
-      Platform.localeName,
-    );
+    headers['Accept-Language'] = Intl.shortLocale(Platform.localeName);
 
     var accessToken = await _store.get(
       SecureStorageService.accessTokenStorageKey,
@@ -107,12 +109,14 @@ class ApiService {
   /// to a request send with the passed instance.
   void _addRequestOptionsInterceptor(Dio dio) {
     dio.interceptors.add(
-      InterceptorsWrapper(onRequest: (options, handler) async {
-        options.baseUrl = await getBaseUrl();
-        options.headers.addAll(await getHeaders());
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          options.baseUrl = await getBaseUrl();
+          options.headers.addAll(await getHeaders());
 
-        return handler.next(options);
-      }),
+          return handler.next(options);
+        },
+      ),
     );
   }
 
@@ -120,78 +124,84 @@ class ApiService {
   /// during requests send with the passed instance.
   void _addDefaultErrorHandlerInterceptor(Dio dio) {
     dio.interceptors.add(
-      InterceptorsWrapper(onError: (DioException e, handler) async {
-        if (e.response != null) {
-          var statusCode = e.response!.statusCode;
-          if (statusCode == HttpStatus.unauthorized) {
-            RequestOptions requestOptions = e.requestOptions;
+      InterceptorsWrapper(
+        onError: (DioException e, handler) async {
+          var silent = e.requestOptions.extra[silentErrorsKey] == true;
+          if (e.response != null) {
+            var statusCode = e.response!.statusCode;
+            if (statusCode == HttpStatus.unauthorized) {
+              RequestOptions requestOptions = e.requestOptions;
 
-            var hasClientId = await _store.has(
-              SecureStorageService.clientIdStorageKey,
-            );
-
-            var hasClientSecret = await _store.has(
-              SecureStorageService.clientSecretStorageKey,
-            );
-
-            if (!hasClientId || !hasClientSecret) {
-              return handler.reject(e);
-            }
-
-            await ClientService.getInstance().refreshToken();
-
-            var hasAccessToken = await _store.has(
-              SecureStorageService.accessTokenStorageKey,
-            );
-
-            if (!hasAccessToken) {
-              return handler.reject(e);
-            }
-
-            // Retry request with the new token.
-            var retryDio = Dio();
-            initDio(retryDio, true);
-
-            var options = Options(
-              method: requestOptions.method,
-              contentType: requestOptions.contentType,
-              headers: requestOptions.headers,
-            );
-
-            try {
-              var retryResponse = await retryDio.request(
-                requestOptions.path,
-                cancelToken: requestOptions.cancelToken,
-                onReceiveProgress: requestOptions.onReceiveProgress,
-                options: options,
-                data: requestOptions.data,
-                queryParameters: requestOptions.queryParameters,
+              var hasClientId = await _store.has(
+                SecureStorageService.clientIdStorageKey,
               );
 
-              return handler.resolve(retryResponse);
-            } catch (e) {
-              return handler.reject(e as DioException);
+              var hasClientSecret = await _store.has(
+                SecureStorageService.clientSecretStorageKey,
+              );
+
+              if (!hasClientId || !hasClientSecret) {
+                return handler.reject(e);
+              }
+
+              await ClientService.getInstance().refreshToken();
+
+              var hasAccessToken = await _store.has(
+                SecureStorageService.accessTokenStorageKey,
+              );
+
+              if (!hasAccessToken) {
+                return handler.reject(e);
+              }
+
+              // Retry request with the new token.
+              var retryDio = Dio();
+              initDio(retryDio, true);
+
+              var options = Options(
+                method: requestOptions.method,
+                contentType: requestOptions.contentType,
+                headers: requestOptions.headers,
+                extra: requestOptions.extra,
+              );
+
+              try {
+                var retryResponse = await retryDio.request(
+                  requestOptions.path,
+                  cancelToken: requestOptions.cancelToken,
+                  onReceiveProgress: requestOptions.onReceiveProgress,
+                  options: options,
+                  data: requestOptions.data,
+                  queryParameters: requestOptions.queryParameters,
+                );
+
+                return handler.resolve(retryResponse);
+              } catch (e) {
+                return handler.reject(e as DioException);
+              }
+            } else if (statusCode == HttpStatus.forbidden) {
+              if (!silent) _messenger.showMessage(_messenger.forbidden);
+              return handler.reject(e);
+            } else if (statusCode != null &&
+                statusCode >= HttpStatus.badRequest &&
+                statusCode < HttpStatus.internalServerError) {
+              // Client errors should be handled by the specific widget!
+              return handler.reject(e);
             }
-          } else if (statusCode == HttpStatus.forbidden) {
-            _messenger.showMessage(_messenger.forbidden);
-            return handler.reject(e);
-          } else if (statusCode != null &&
-              statusCode >= HttpStatus.badRequest &&
-              statusCode < HttpStatus.internalServerError) {
-            // Client errors should be handled by the specific widget!
-            return handler.reject(e);
           }
-        }
 
-        // All other errors except certificate errors!
-        if (e.error is SocketException) {
-          _messenger.showMessage(_messenger.notReachable);
-        } else if (e.type is! HandshakeException) {
-          _messenger.showMessage(_messenger.unexpectedError(e.message ?? ''));
-        }
+          // All other errors except certificate errors!
+          if (silent) {
+            return handler.reject(e);
+          } else if (e.error is SocketException) {
+            _messenger.showMessage(_messenger.notReachable);
+          } else if (e.type is! HandshakeException) {
+            _messenger.showMessage(_messenger.unexpectedError(e.message ?? ''));
+          }
 
-        return handler.reject(e);
-      }),
+          return handler.reject(e);
+        },
+      ),
     );
   }
 }

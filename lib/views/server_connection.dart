@@ -18,7 +18,10 @@ class ServerConnectionScreen extends StatelessWidget {
         child: ChangeNotifierProvider<ServerConnectionViewModel>(
           create: (context) => ServerConnectionViewModel(),
           builder: (context, _) {
-            var vm = Provider.of<ServerConnectionViewModel>(context, listen: false);
+            var vm = Provider.of<ServerConnectionViewModel>(
+              context,
+              listen: false,
+            );
 
             return FutureBuilder(
               future: vm.init(context),
@@ -63,19 +66,21 @@ class ServerConnectionScreen extends StatelessWidget {
                                 width: 256,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 6.0,
                                     style: BorderStyle.solid,
                                   ),
                                   borderRadius: BorderRadius.circular(5),
                                 ),
-                                child:  MobileScanner(
+                                child: MobileScanner(
                                   controller: MobileScannerController(
                                     detectionSpeed: DetectionSpeed.noDuplicates,
                                   ),
                                   onDetect: (capture) {
-                                    final Barcode barcode = capture.barcodes.first;
+                                    final Barcode barcode =
+                                        capture.barcodes.first;
                                     vm.updateConnectionSettings(barcode);
                                   },
                                 ),

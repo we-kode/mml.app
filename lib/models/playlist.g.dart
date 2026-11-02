@@ -7,23 +7,14 @@ part of 'playlist.dart';
 // **************************************************************************
 
 Playlist _$PlaylistFromJson(Map<String, dynamic> json) => Playlist(
-      id: (json['id'] as num?)?.toInt(),
-      name: json['name'] as String?,
-      isDeletable: json['isDeletable'] as bool? ?? true,
-    )..isSelectable = json['isSelectable'] as bool?;
+  id: (json['id'] as num?)?.toInt(),
+  name: json['name'] as String?,
+  isDeletable: json['isDeletable'] as bool? ?? true,
+)..isSelectable = json['isSelectable'] as bool?;
 
-Map<String, dynamic> _$PlaylistToJson(Playlist instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('isDeletable', instance.isDeletable);
-  writeNotNull('isSelectable', instance.isSelectable);
-  writeNotNull('id', instance.id);
-  writeNotNull('name', instance.name);
-  return val;
-}
+Map<String, dynamic> _$PlaylistToJson(Playlist instance) => <String, dynamic>{
+  'isDeletable': ?instance.isDeletable,
+  'isSelectable': ?instance.isSelectable,
+  'id': ?instance.id,
+  'name': ?instance.name,
+};

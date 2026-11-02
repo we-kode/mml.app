@@ -12,10 +12,6 @@ class InformationScreen extends StatelessWidget {
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
-    return InAppWebView(
-      initialUrlRequest: URLRequest(
-        url: WebUri(url),
-      ),
-    );
+    return InAppWebView(initialUrlRequest: URLRequest(url: WebUri(url)));
   }
 }

@@ -27,6 +27,9 @@ class ClientService {
   /// Instance of the [MessengerService] used to show messages to the user.
   final MessengerService _messenger = MessengerService.getInstance();
 
+  /// The running refresh of the access token or null.
+  Future<void>? _refresh;
+
   /// Private constructor of the service.
   ClientService._();
 
@@ -111,9 +114,7 @@ class ClientService {
 
       if (e is! DioException) {
         message = _messenger.unexpectedError(
-          FlutterErrorDetails(
-            exception: e,
-          ).summary.toDescription(),
+          FlutterErrorDetails(exception: e).summary.toDescription(),
         );
       }
     }
@@ -153,11 +154,18 @@ class ClientService {
     return response.data['registered'];
   }
 
-  /// Tries to refresh the current access token.
+  /// Tries to refresh the current access token. Concurrent calls wait for the
+  /// same refresh.
   ///
   /// If an error occurs [removeRegistration] gets called to remove the
   /// client registration.
-  Future refreshToken() async {
+  Future<void> refreshToken() {
+    return _refresh ??= _refreshToken().whenComplete(() => _refresh = null);
+  }
+
+  // The secure storage must not be written concurrently, so only one refresh
+  // runs at a time.
+  Future<void> _refreshToken() async {
     var dio = Dio();
     _apiService.initDio(dio, false);
 

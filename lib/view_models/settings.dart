@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
+import 'package:mml_app/components/announcements_dialog.dart';
 import 'package:mml_app/manager/image_cache_manager.dart';
 import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/services/announcements.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -61,6 +63,9 @@ class SettingsViewModel extends ChangeNotifier {
   // settings for saving filters.
   late bool saveFilters;
 
+  /// Whether the announcements are shown when the app starts.
+  late bool showAnnouncementsOnStart;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
@@ -72,10 +77,14 @@ class SettingsViewModel extends ChangeNotifier {
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       recordViewSettings = await _dbService.loadRecordViewSettings();
-      saveFilters = (await _secureStoreService
-                  .get(SecureStorageService.saveFiltersStorageKey) ??
+      saveFilters =
+          (await _secureStoreService.get(
+                SecureStorageService.saveFiltersStorageKey,
+              ) ??
               false) ==
           'true';
+      showAnnouncementsOnStart = await AnnouncementService.getInstance()
+          .showOnStart();
       return true;
     });
   }
@@ -137,11 +146,9 @@ class SettingsViewModel extends ChangeNotifier {
     final Uri uri = Uri(
       scheme: 'mailto',
       path: supportEMail,
-      query: _encodeQueryParameters(
-        <String, String>{
-          'subject': locales.appTitle,
-        },
-      ),
+      query: _encodeQueryParameters(<String, String>{
+        'subject': locales.appTitle,
+      }),
     );
     if (!await launchUrl(uri)) {
       throw Exception('Could not launch $uri');
@@ -150,14 +157,37 @@ class SettingsViewModel extends ChangeNotifier {
 
   String? _encodeQueryParameters(Map<String, String> params) {
     return params.entries
-        .map((MapEntry<String, String> e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
   }
 
   Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
     notifyListeners();
+  }
+
+  /// Sets whether the announcements are shown when the app starts.
+  Future<void> updateShowAnnouncementsOnStart(bool value) async {
+    showAnnouncementsOnStart = value;
+    await AnnouncementService.getInstance().setShowOnStart(value);
+    notifyListeners();
+  }
+
+  /// Shows all active announcements including the dismissed ones.
+  Future<void> showAnnouncements() async {
+    var announcements = await AnnouncementService.getInstance().getActive();
+    if (!_context.mounted) {
+      return;
+    }
+
+    await showDialog(
+      context: _context,
+      barrierDismissible: false,
+      builder: (context) => AnnouncementsDialog(announcements: announcements),
+    );
   }
 
   /// Updates the Save Filter settings.
@@ -174,9 +204,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Sets the cache limit to [value] and notifies listeners.
   Future<void> updateCacheLimits({int? duration = 0}) async {
-    cacheManager.updateLimits(
-      maxCacheTime: duration,
-    );
+    cacheManager.updateLimits(maxCacheTime: duration);
     notifyListeners();
   }
 

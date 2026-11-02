@@ -14,7 +14,7 @@ extension DurationDouble on double {
     int seconds = ((this / 1000) % 60).toInt();
     int minutes = ((this / (1000 * 60)) % 60).toInt();
     int hours = ((this / (1000 * 60 * 60)) % 24).toInt();
-    return Duration(seconds: seconds, minutes: minutes, hours: hours,);
+    return Duration(seconds: seconds, minutes: minutes, hours: hours);
   }
 
   /// Adds a 0 before [value] if [value] is smaller than ten.

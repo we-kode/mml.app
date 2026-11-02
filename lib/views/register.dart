@@ -111,7 +111,7 @@ class RegisterScreen extends StatelessWidget {
                                       ElevatedButton(
                                         onPressed: vm.saveName,
                                         child: Text(vm.locales.next),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -122,8 +122,9 @@ class RegisterScreen extends StatelessWidget {
                                 width: 256,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 6.0,
                                     style: BorderStyle.solid,
                                   ),

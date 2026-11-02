@@ -20,10 +20,7 @@ class RecordFolder extends ModelBase {
     this.day,
     bool isDeletable = false,
     bool isSelectable = false,
-  }) : super(
-          isDeletable: isDeletable,
-          isSelectable: isSelectable,
-        );
+  }) : super(isDeletable: isDeletable, isSelectable: isSelectable);
 
   /// Converts a json object/map to the model.
   factory RecordFolder.fromJson(Map<String, dynamic> json) =>
@@ -67,7 +64,10 @@ class RecordFolder extends ModelBase {
 
     if (startDate == endDate) {
       return RecordFolder(
-          year: startDate.year, month: startDate.month, day: startDate.day);
+        year: startDate.year,
+        month: startDate.month,
+        day: startDate.day,
+      );
     }
 
     if (startDate.month == endDate.month) {

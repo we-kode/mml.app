@@ -53,19 +53,19 @@ class ImportService {
 
       savedPlaylists = jsonDecode(content);
       for (var entryKey in savedPlaylists.keys) {
-        var exportedRecords = List.from(savedPlaylists[entryKey]).map(
-          (entry) => RecordExport.fromJson(entry),
-        );
-        var checksums = exportedRecords.map(
-          (entry) => entry.checksum,
-        );
+        var exportedRecords = List.from(
+          savedPlaylists[entryKey],
+        ).map((entry) => RecordExport.fromJson(entry));
+        var checksums = exportedRecords.map((entry) => entry.checksum);
         var playlist = await _dbService.createOrUpdatePlaylist(entryKey);
-        var records =
-            await _recordService.getRecordsByChecksum(List.from(checksums));
+        var records = await _recordService.getRecordsByChecksum(
+          List.from(checksums),
+        );
         notAvailable.addAll(
           exportedRecords.where(
-            (element) => !records
-                .any((rec) => (rec as Record).checksum == element.checksum),
+            (element) => !records.any(
+              (rec) => (rec as Record).checksum == element.checksum,
+            ),
           ),
         );
 

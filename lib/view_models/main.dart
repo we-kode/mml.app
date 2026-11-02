@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:mml_app/components/announcements_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
+import 'package:mml_app/services/announcements.dart';
 import 'package:mml_app/services/livestreams.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/livestreams/overview.dart';
@@ -32,27 +34,19 @@ class MainViewModel extends ChangeNotifier {
   /// Items of the navigation bar.
   late final List<BottomNavigationBarItem> navItems = [
     BottomNavigationBarItem(
-      icon: const Icon(
-        Symbols.music_note,
-      ),
+      icon: const Icon(Symbols.music_note),
       label: locales.records,
     ),
     BottomNavigationBarItem(
-      icon: const Icon(
-        Symbols.playlist_play,
-      ),
+      icon: const Icon(Symbols.playlist_play),
       label: locales.playlist,
     ),
     BottomNavigationBarItem(
-      icon: const Icon(
-        Symbols.sensors,
-      ),
+      icon: const Icon(Symbols.sensors),
       label: locales.livestreams,
     ),
     BottomNavigationBarItem(
-      icon: const Icon(
-        Symbols.settings,
-      ),
+      icon: const Icon(Symbols.settings),
       label: locales.settings,
     ),
   ];
@@ -69,15 +63,40 @@ class MainViewModel extends ChangeNotifier {
   Future<bool> init(BuildContext context) async {
     _context = context;
     locales = AppLocalizations.of(_context)!;
-    final showLivestreams =
-        (await LivestreamService.getInstance().get(null, null, null))
-            .isNotEmpty;
+    final showLivestreams = (await LivestreamService.getInstance().get(
+      null,
+      null,
+      null,
+    )).isNotEmpty;
     if (!showLivestreams) {
       _routerService.initRootRoutes(showLivestreams);
       _routes.removeWhere((element) => element == LivestreamsViewModel.route);
       navItems.removeWhere((element) => element.label == locales.livestreams);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showAnnouncements());
     return true;
+  }
+
+  /// Shows the active announcements the user did not dismiss, if enabled.
+  Future<void> _showAnnouncements() async {
+    var service = AnnouncementService.getInstance();
+    if (!await service.showOnStart()) {
+      return;
+    }
+
+    var announcements = await service.notDismissed(await service.getActive());
+    if (announcements.isEmpty || !_context.mounted) {
+      return;
+    }
+
+    await showDialog(
+      context: _context,
+      barrierDismissible: false,
+      builder: (context) => AnnouncementsDialog(
+        announcements: announcements,
+        onDismiss: service.dismiss,
+      ),
+    );
   }
 
   /// Pops the nested route.

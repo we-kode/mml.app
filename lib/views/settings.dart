@@ -43,7 +43,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.tracknumber = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.tracknumber,
                       );
@@ -58,7 +58,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.genre = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.genre,
                       );
@@ -73,7 +73,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.language = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.language,
                       );
@@ -88,7 +88,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.cover = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.cover,
                       );
@@ -113,7 +113,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.saveFilters = value,
-                          vm.updateFilterSaveSettings()
+                          vm.updateFilterSaveSettings(),
                         },
                         value: vm.saveFilters,
                       );
@@ -137,6 +137,33 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   onTap: vm.removeRegistration,
+                ),
+                const Divider(),
+                verticalSpacer,
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.announcements,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Symbols.campaign),
+                  title: Text(vm.locales.showAnnouncementsOnStart),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: vm.updateShowAnnouncementsOnStart,
+                        value: vm.showAnnouncementsOnStart,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Symbols.notifications),
+                  title: Text(vm.locales.showAnnouncements),
+                  onTap: vm.showAnnouncements,
                 ),
                 const Divider(),
                 verticalSpacer,

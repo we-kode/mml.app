@@ -15,11 +15,8 @@ class Playlist extends ModelBase {
   String? name;
 
   /// Initializes the model.
-  Playlist({
-    this.id,
-    this.name,
-    bool isDeletable = true,
-  }) : super(isDeletable: isDeletable);
+  Playlist({this.id, this.name, bool isDeletable = true})
+    : super(isDeletable: isDeletable);
 
   /// Converts a json object/map to the model.
   factory Playlist.fromJson(Map<String, dynamic> json) =>

@@ -7,11 +7,8 @@ import 'package:shimmer/shimmer.dart';
 
 /// Function to load data with the passed [filter], starting from [offset] and
 /// loading an amount of [take] data.
-typedef LoadDataFunction = Future<ModelList> Function({
-  String? filter,
-  int? offset,
-  int? take,
-});
+typedef LoadDataFunction =
+    Future<ModelList> Function({String? filter, int? offset, int? take});
 
 /// A dialog including a selection list.
 ///
@@ -88,8 +85,8 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
               child: _isLoadingData
                   ? _createLoadingWidget()
                   : (_items!.totalCount > 0
-                      ? _createListViewWidget()
-                      : _createNoDataWidget()),
+                        ? _createListViewWidget()
+                        : _createNoDataWidget()),
             ),
           ],
         ),
@@ -142,32 +139,32 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
       take: _take,
     );
 
-    dataFuture.then((value) {
-      if (!mounted) {
-        return;
-      }
+    dataFuture
+        .then((value) {
+          if (!mounted) {
+            return;
+          }
 
-      setState(() {
-        _isLoadingData = false;
-        _items = value;
-      });
-    }).onError((e, _) {
-      if (!mounted) {
-        return;
-      }
+          setState(() {
+            _isLoadingData = false;
+            _items = value;
+          });
+        })
+        .onError((e, _) {
+          if (!mounted) {
+            return;
+          }
 
-      setState(() {
-        _isLoadingData = false;
-        _items = ModelList([], _initialOffset, 0);
-      });
-    });
+          setState(() {
+            _isLoadingData = false;
+            _items = ModelList([], _initialOffset, 0);
+          });
+        });
   }
 
   /// Creates a loading indicator widget.
   Widget _createLoadingWidget() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   /// Creates a widget that will be shown, if no data were loaded or an error
@@ -177,10 +174,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            AppLocalizations.of(context)!.noData,
-            softWrap: true,
-          ),
+          Text(AppLocalizations.of(context)!.noData, softWrap: true),
           horizontalSpacer,
           TextButton.icon(
             onPressed: _loadData,
@@ -224,14 +218,10 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
   /// Creates the list view widget.
   Widget _createListViewWidget() {
     return ScrollConfiguration(
-      behavior: ScrollConfiguration.of(context).copyWith(
-        scrollbars: false,
-      ),
+      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
       child: ListView.separated(
         separatorBuilder: (context, index) {
-          return const Divider(
-            height: 1,
-          );
+          return const Divider(height: 1);
         },
         itemBuilder: (context, index) {
           var endNotReached = (_offset + _take) <= _items!.totalCount;
@@ -277,9 +267,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
       onChanged: (_) {
         _onItemChecked(index);
       },
-      value: _selectedValues.contains(
-        item.getIdentifier(),
-      ),
+      value: _selectedValues.contains(item.getIdentifier()),
     );
 
     return ListTile(
@@ -288,11 +276,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
       visualDensity: const VisualDensity(vertical: 0),
       title: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            Text(item.getDisplayDescription()),
-          ],
-        ),
+        child: Row(children: [Text(item.getDisplayDescription())]),
       ),
       onTap: () {
         _onItemChecked(index);
@@ -323,9 +307,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
   }
 
   /// Creates a list of action widgets that should be shown at the bottom of the dialog.
-  List<Widget> _createActions(
-    BuildContext context,
-  ) {
+  List<Widget> _createActions(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
 
     return [
@@ -336,7 +318,7 @@ class _AsyncSelectListDialogState extends State<AsyncSelectListDialog> {
       TextButton(
         onPressed: () => Navigator.pop(context, _selectedValues),
         child: Text(locales.save),
-      )
+      ),
     ];
   }
 }

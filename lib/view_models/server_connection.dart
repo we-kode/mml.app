@@ -72,9 +72,7 @@ class ServerConnectionViewModel extends ChangeNotifier {
 
   /// Tries to update the server connection settings if a new [barcode] gets
   /// scanned.
-  void updateConnectionSettings(
-    Barcode barcode,
-  ) async {
+  void updateConnectionSettings(Barcode barcode) async {
     if (barcode.rawValue == null) {
       return;
     }
@@ -110,9 +108,4 @@ class ServerConnectionViewModel extends ChangeNotifier {
 }
 
 /// State of the update connection settings process.
-enum UpdateState {
-  scan,
-  update,
-  error,
-  success,
-}
+enum UpdateState { scan, update, error, success }

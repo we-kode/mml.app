@@ -40,8 +40,10 @@ class MMLMediaItemService {
     return _instance;
   }
 
-  Future<List<MediaItem>> getChildren(String parentMediaId,
-      [Map<String, dynamic>? options]) async {
+  Future<List<MediaItem>> getChildren(
+    String parentMediaId, [
+    Map<String, dynamic>? options,
+  ]) async {
     await _checkRegistration();
 
     var result = switch (parentMediaId) {
@@ -49,14 +51,12 @@ class MMLMediaItemService {
       MMLMediaConstants.homeTabId => _getHomeMediaItems(),
       MMLMediaConstants.browseTabId => _getBrowsableCategoryMediaItems(),
       MMLMediaConstants.favoritesTabId => _getFavoritesMediaItems(options),
-      MMLMediaConstants.livestreamsTabId =>
-        _getLivestreamsMediaItems(options),
+      MMLMediaConstants.livestreamsTabId => _getLivestreamsMediaItems(options),
       MMLMediaConstants.albumsDiscoverId => _getAlbumMediaItems(options),
       MMLMediaConstants.artistsDiscoverId => _getArtistsMediaItems(options),
       MMLMediaConstants.genresDiscoverId => _getGenresMediaItems(options),
-      MMLMediaConstants.languagesDiscoverId =>
-        _getLanguagesMediaItems(options),
-      _ => Future.value([] as List<MediaItem>)
+      MMLMediaConstants.languagesDiscoverId => _getLanguagesMediaItems(options),
+      _ => Future.value([] as List<MediaItem>),
     };
 
     return result.catchError((e) {
@@ -71,7 +71,7 @@ class MMLMediaItemService {
               MMLMediaConstants.mediaSingleItemContentKey:
                   MMLMediaConstants.mediaPlayableContentValue,
             },
-          )
+          ),
         ];
       }
 
@@ -82,8 +82,10 @@ class MMLMediaItemService {
     });
   }
 
-  Future<(List<MediaItem>, ID3TagFilter, String)> search(String query,
-      [Map<String, dynamic>? extras]) async {
+  Future<(List<MediaItem>, ID3TagFilter, String)> search(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
     var searchResult = await searchRecords(query, extras);
 
     return (
@@ -97,8 +99,10 @@ class MMLMediaItemService {
     );
   }
 
-  Future<(ModelList, ID3TagFilter, String)> searchRecords(String query,
-      [Map<String, dynamic>? extras]) async {
+  Future<(ModelList, ID3TagFilter, String)> searchRecords(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
     await _checkRegistration();
 
     var filter = ID3TagFilter();
@@ -139,16 +143,20 @@ class MMLMediaItemService {
     } catch (e) {
       if (e is DioException && e.error is SocketException) {
         return (
-          ModelList([
-            Record(
-              recordId: MMLMediaConstants.offlineId,
-              title: locales.offlineErrorTitle(locales.appTitle),
-              album: locales.offlineError,
-              checksum: '',
-            )
-          ], 0, 1),
+          ModelList(
+            [
+              Record(
+                recordId: MMLMediaConstants.offlineId,
+                title: locales.offlineErrorTitle(locales.appTitle),
+                album: locales.offlineError,
+                checksum: '',
+              ),
+            ],
+            0,
+            1,
+          ),
           filter,
-          searchString
+          searchString,
         );
       }
 
@@ -206,7 +214,11 @@ class MMLMediaItemService {
       ),
     ];
 
-    if ((await LivestreamService.getInstance().get(null, null, null)).isEmpty) {
+    // Servers without livestreams fail the request, so the tab is hidden.
+    var hasLivestreams = await LivestreamService.getInstance()
+        .get(null, null, null)
+        .then((livestreams) => livestreams.isNotEmpty, onError: (_) => false);
+    if (!hasLivestreams) {
       tabs.removeWhere((x) => x.id == MMLMediaConstants.livestreamsTabId);
     }
 
@@ -262,41 +274,39 @@ class MMLMediaItemService {
         ),
       ),
       true,
-      extras: {
-        MMLMediaConstants.groupTitle: locales.newest,
-      },
+      extras: {MMLMediaConstants.groupTitle: locales.newest},
       defaultArtUri: await getIconUri('music_note'),
     );
 
-    items.addAll(await _getMediaItems(
-      await ArtistService.getInstance().getNewestArtists(),
-      true,
-      idPrefix: MMLMediaConstants.artistId,
-      extras: {
-        MMLMediaConstants.groupTitle: locales.newestArtists,
-      },
-      defaultArtUri: await getIconUri('artist'),
-    ));
+    items.addAll(
+      await _getMediaItems(
+        await ArtistService.getInstance().getNewestArtists(),
+        true,
+        idPrefix: MMLMediaConstants.artistId,
+        extras: {MMLMediaConstants.groupTitle: locales.newestArtists},
+        defaultArtUri: await getIconUri('artist'),
+      ),
+    );
 
-    items.addAll(await _getMediaItems(
-      await ArtistService.getInstance().getCommonArtists(),
-      true,
-      idPrefix: MMLMediaConstants.artistId,
-      extras: {
-        MMLMediaConstants.groupTitle: locales.commonArtists,
-      },
-      defaultArtUri: await getIconUri('artist'),
-    ));
+    items.addAll(
+      await _getMediaItems(
+        await ArtistService.getInstance().getCommonArtists(),
+        true,
+        idPrefix: MMLMediaConstants.artistId,
+        extras: {MMLMediaConstants.groupTitle: locales.commonArtists},
+        defaultArtUri: await getIconUri('artist'),
+      ),
+    );
 
-    items.addAll(await _getMediaItems(
-      await GenreService.getInstance().getCommonGenres(),
-      true,
-      idPrefix: MMLMediaConstants.genreId,
-      extras: {
-        MMLMediaConstants.groupTitle: locales.commonGenres,
-      },
-      defaultArtUri: await getIconUri('genres'),
-    ));
+    items.addAll(
+      await _getMediaItems(
+        await GenreService.getInstance().getCommonGenres(),
+        true,
+        idPrefix: MMLMediaConstants.genreId,
+        extras: {MMLMediaConstants.groupTitle: locales.commonGenres},
+        defaultArtUri: await getIconUri('genres'),
+      ),
+    );
 
     return items;
   }
@@ -314,24 +324,24 @@ class MMLMediaItemService {
 
     return Future.wait(
       models.whereType<ModelBase>().map(
-            (model) async => MediaItem(
-              id: idPrefix != null && idPrefix.isNotEmpty
-                  ? '$idPrefix:${model.getIdentifier()}'
-                  : model.getIdentifier(),
-              title: model.getDisplayDescription(),
-              artUri: await model.getAvatarUri() ?? defaultArtUri,
-              playable: playable,
-              extras: extras,
-              album: model is Record ? model.album : null,
-              genre: model is Record ? model.genre : null,
-              artist: model is Record ? model.artist : null,
-              duration: model is Record
-                  ? Duration(
-                      milliseconds: ((model as Record?)?.duration ?? 0).toInt(),
-                    )
-                  : null,
-            ),
-          ),
+        (model) async => MediaItem(
+          id: idPrefix != null && idPrefix.isNotEmpty
+              ? '$idPrefix:${model.getIdentifier()}'
+              : model.getIdentifier(),
+          title: model.getDisplayDescription(),
+          artUri: await model.getAvatarUri() ?? defaultArtUri,
+          playable: playable,
+          extras: extras,
+          album: model is Record ? model.album : null,
+          genre: model is Record ? model.genre : null,
+          artist: model is Record ? model.artist : null,
+          duration: model is Record
+              ? Duration(
+                  milliseconds: ((model as Record?)?.duration ?? 0).toInt(),
+                )
+              : null,
+        ),
+      ),
     );
   }
 
@@ -344,7 +354,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getFavoritesMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await DBService.getInstance().getPlaylists(
         null,
@@ -361,7 +372,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getLivestreamsMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await LivestreamService.getInstance().get(
         null,
@@ -378,7 +390,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getAlbumMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await AlbumService.getInstance().getAlbums(
         null,
@@ -396,7 +409,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getArtistsMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await ArtistService.getInstance().getArtists(
         null,
@@ -414,7 +428,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getGenresMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await GenreService.getInstance().getGenres(
         null,
@@ -432,7 +447,8 @@ class MMLMediaItemService {
   }
 
   Future<List<MediaItem>> _getLanguagesMediaItems(
-      Map<String, dynamic>? options) async {
+    Map<String, dynamic>? options,
+  ) async {
     return _getMediaItems(
       await LanguageService.getInstance().getLanguages(
         null,

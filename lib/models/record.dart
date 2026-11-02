@@ -80,7 +80,8 @@ class Record extends ModelBase {
 
   @override
   String getDisplayDescription() {
-    final tn = _viewSettings != null &&
+    final tn =
+        _viewSettings != null &&
             _viewSettings!.tracknumber &&
             trackNumber != null
         ? '$trackNumber - '
@@ -130,7 +131,7 @@ class Record extends ModelBase {
       return null;
     }
 
-   if (cover != null && cover!.isNotEmpty) {
+    if (cover != null && cover!.isNotEmpty) {
       return CachedNetworkImage(
         cacheKey: cover,
         imageUrl: cover!,
@@ -139,7 +140,7 @@ class Record extends ModelBase {
         cacheManager: ImageCacheManager(),
       );
     }
-    
+
     return const Icon(Symbols.music_note);
   }
 

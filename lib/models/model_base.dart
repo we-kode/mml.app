@@ -19,10 +19,7 @@ abstract class ModelBase {
   ///
   /// Shouldn't be used directly but be invoked by constructor of implementing
   /// model classes.
-  ModelBase({
-    this.isDeletable = false,
-    this.isSelectable = true,
-  });
+  ModelBase({this.isDeletable = false, this.isSelectable = true});
 
   /// Returns a display description of the model object, that
   /// can be used in widgets, e.g. lists.
@@ -75,14 +72,17 @@ abstract class ModelBase {
   /// Returns the avatar uri.
   Future<Uri?> getAvatarUri() async {
     if (getAvatarString() != null && getAvatarString()!.isNotEmpty) {
-      var fileInfo =
-          await ImageCacheManager().getFileFromCache(getAvatarString()!);
+      var fileInfo = await ImageCacheManager().getFileFromCache(
+        getAvatarString()!,
+      );
       if (fileInfo != null) {
         return await _platformUri(fileInfo.file);
       }
 
       try {
-        var response = await CoverFileService.getInstance().get(getAvatarString()!);
+        var response = await CoverFileService.getInstance().get(
+          getAvatarString()!,
+        );
         var file = await ImageCacheManager().putFileStream(
           getAvatarString()!,
           response.content,
@@ -90,7 +90,7 @@ abstract class ModelBase {
           fileExtension: "jpg",
         );
 
-        return _platformUri(file);
+        return await _platformUri(file);
       } catch (_) {}
     }
 

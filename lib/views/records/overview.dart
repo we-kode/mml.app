@@ -37,9 +37,7 @@ class RecordsScreen extends StatelessWidget {
 
             return AsyncListView(
               title: vm.locales.records,
-              subfilter: RecordTagFilter(
-                tagFilter: vm.tagFilter,
-              ),
+              subfilter: RecordTagFilter(tagFilter: vm.tagFilter),
               navState: appBar?.navigationState,
               activeItem:
                   PlayerService.getInstance().playerState?.currentRecord,
@@ -52,34 +50,33 @@ class RecordsScreen extends StatelessWidget {
                   subFilter.endDate,
                 )?.getIdentifier();
               },
-              loadData: ({
-                String? filter,
-                int? offset,
-                int? take,
-                dynamic subfilter,
-              }) {
-                WidgetsBinding.instance.addPostFrameCallback(
-                  (_) {
-                    if (subfilter != null) {
-                      if (!(subfilter as ID3TagFilter).isGrouped) {
-                        appBar?.navigationState.path = null;
-                      } else {
-                        appBar?.navigationState.path = RecordFolder.fromDate(
-                          subfilter.startDate,
-                          subfilter.endDate,
-                        )?.getIdentifier();
+              loadData:
+                  ({
+                    String? filter,
+                    int? offset,
+                    int? take,
+                    dynamic subfilter,
+                  }) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (subfilter != null) {
+                        if (!(subfilter as ID3TagFilter).isGrouped) {
+                          appBar?.navigationState.path = null;
+                        } else {
+                          appBar?.navigationState.path = RecordFolder.fromDate(
+                            subfilter.startDate,
+                            subfilter.endDate,
+                          )?.getIdentifier();
+                        }
                       }
-                    }
-                  },
-                );
+                    });
 
-                return vm.load(
-                  filter: filter,
-                  offset: offset,
-                  take: take,
-                  subfilter: subfilter,
-                );
-              },
+                    return vm.load(
+                      filter: filter,
+                      offset: offset,
+                      take: take,
+                      subfilter: subfilter,
+                    );
+                  },
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
               onMultiSelect: (actionId, selectedItems) async {
@@ -88,40 +85,33 @@ class RecordsScreen extends StatelessWidget {
                   context,
                 );
               },
-              openItemFunction: (
-                ModelBase item,
-                String? filter,
-                Subfilter? subfilter,
-              ) {
-                FocusManager.instance.primaryFocus?.unfocus();
-                if (item is Record) {
-                  vm.playRecord(
-                    item,
-                    filter,
-                    subfilter as ID3TagFilter,
-                  );
-                } else if (item is RecordFolder) {
-                  appBar?.navigationState.path = item.getIdentifier();
-                  (subfilter as ID3TagFilter)[ID3TagFilters.date] =
-                      DateTimeRange(
-                    start: DateTime(
-                      item.year,
-                      item.month ?? 1,
-                      item.day ?? 1,
-                    ),
-                    end: DateTime(
-                      item.year,
-                      item.month ?? 12,
-                      item.day ??
-                          DateUtils.getDaysInMonth(
-                            item.year,
-                            item.month ?? 12,
-                          ),
-                    ),
-                  );
-                  vm.saveFolderPath(subfilter);
-                }
-              },
+              openItemFunction:
+                  (ModelBase item, String? filter, Subfilter? subfilter) {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (item is Record) {
+                      vm.playRecord(item, filter, subfilter as ID3TagFilter);
+                    } else if (item is RecordFolder) {
+                      appBar?.navigationState.path = item.getIdentifier();
+                      (subfilter
+                          as ID3TagFilter)[ID3TagFilters.date] = DateTimeRange(
+                        start: DateTime(
+                          item.year,
+                          item.month ?? 1,
+                          item.day ?? 1,
+                        ),
+                        end: DateTime(
+                          item.year,
+                          item.month ?? 12,
+                          item.day ??
+                              DateUtils.getDaysInMonth(
+                                item.year,
+                                item.month ?? 12,
+                              ),
+                        ),
+                      );
+                      vm.saveFolderPath(subfilter);
+                    }
+                  },
             );
           },
         );

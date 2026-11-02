@@ -380,4 +380,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cacheClearedFailed => 'Cache could not be cleared.';
+
+  @override
+  String get announcements => 'Announcements';
+
+  @override
+  String get showAnnouncementsOnStart => 'Show announcements on start';
+
+  @override
+  String get noAnnouncements => 'There are no current announcements.';
+
+  @override
+  String get doNotShowAgain => 'Do not show again';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String announcementPosition(int index, int count) {
+    return '$index of $count';
+  }
+
+  @override
+  String get previous => 'Back';
+
+  @override
+  String get showAnnouncements => 'Show current announcements';
 }

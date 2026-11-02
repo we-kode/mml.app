@@ -10,10 +10,7 @@ class PlaylistEditDialog extends StatelessWidget {
   final int? playlistId;
 
   /// Initializes the view for the playlist create/edit dialog.
-  const PlaylistEditDialog({
-    super.key,
-    required this.playlistId,
-  });
+  const PlaylistEditDialog({super.key, required this.playlistId});
 
   /// Builds the user create/edit dialog.
   @override
@@ -37,9 +34,7 @@ class PlaylistEditDialog extends StatelessWidget {
               if (!snapshot.hasData) {
                 return const Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
-                    CircularProgressIndicator(),
-                  ],
+                  children: [CircularProgressIndicator()],
                 );
               }
 
@@ -118,8 +113,9 @@ class PlaylistEditDialog extends StatelessWidget {
       Consumer<PlaylistEditDialogViewModel>(
         builder: (context, value, child) {
           return TextButton(
-            onPressed:
-                value.playlistLoadedSuccessfully ? vm.savePlaylist : null,
+            onPressed: value.playlistLoadedSuccessfully
+                ? vm.savePlaylist
+                : null,
             child: Text(locales.save),
           );
         },

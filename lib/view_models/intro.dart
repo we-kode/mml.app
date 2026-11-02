@@ -58,8 +58,9 @@ class IntroViewModel extends ChangeNotifier {
 
   /// Calls the [RegisterScreen].
   Future _nextScreen() async {
-    await RouterService.getInstance()
-        .pushReplacementNamed(RegisterViewModel.route);
+    await RouterService.getInstance().pushReplacementNamed(
+      RegisterViewModel.route,
+    );
   }
 
   /// Returns intro pages.
@@ -91,7 +92,7 @@ class IntroViewModel extends ChangeNotifier {
           width: 256,
           child: IntroPlaylistAnimation(),
         ),
-      )
+      ),
     ];
   }
 

@@ -9,11 +9,7 @@ class MMLHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
-      ..badCertificateCallback = (
-        X509Certificate cert,
-        String host,
-        int port,
-      ) {
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) {
         // Ignore bad certificates in debug mode!
         if (kReleaseMode) {
           final messenger = MessengerService.getInstance();

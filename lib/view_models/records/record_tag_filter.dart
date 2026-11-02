@@ -27,9 +27,9 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   /// Clears the filter value of the [identifier].
   void clear(String identifier) async {
     tagFilter.clear(identifier);
-    await _dbService.clearID3Filter(identifier == ID3TagFilters.folderView
-        ? ID3TagFilters.date
-        : identifier);
+    await _dbService.clearID3Filter(
+      identifier == ID3TagFilters.folderView ? ID3TagFilters.date : identifier,
+    );
     if (identifier == ID3TagFilters.folderView) {
       await _storage.set(
         SecureStorageService.folderViewStorageKey,
@@ -58,15 +58,18 @@ class RecordTagFilterViewModel extends ChangeNotifier {
         SecureStorageService.folderViewStorageKey,
         (selectedValues as bool).toString(),
       );
-    } else if ((await _storage.get(SecureStorageService.saveFiltersStorageKey))
-            ?.toLowerCase() ==
+    } else if ((await _storage.get(
+          SecureStorageService.saveFiltersStorageKey,
+        ))?.toLowerCase() ==
         'true') {
       if (identifier == ID3TagFilters.date) {
         await _dbService.saveID3Filter(
           identifier,
           jsonEncode(
-            List<String>.from(
-                [tagFilter.startDate.toString(), tagFilter.endDate.toString()]),
+            List<String>.from([
+              tagFilter.startDate.toString(),
+              tagFilter.endDate.toString(),
+            ]),
           ),
         );
       } else {

@@ -7,20 +7,9 @@ part of 'record_export.dart';
 // **************************************************************************
 
 RecordExport _$RecordExportFromJson(Map<String, dynamic> json) => RecordExport(
-      checksum: json['checksum'] as String?,
-      title: json['title'] as String?,
-    );
+  checksum: json['checksum'] as String?,
+  title: json['title'] as String?,
+);
 
-Map<String, dynamic> _$RecordExportToJson(RecordExport instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('title', instance.title);
-  writeNotNull('checksum', instance.checksum);
-  return val;
-}
+Map<String, dynamic> _$RecordExportToJson(RecordExport instance) =>
+    <String, dynamic>{'title': ?instance.title, 'checksum': ?instance.checksum};

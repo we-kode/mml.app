@@ -24,9 +24,7 @@ class LanguageService {
     var response = await _apiService.request(
       '/media/language/languages',
       queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(

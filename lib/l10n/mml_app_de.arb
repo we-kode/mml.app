@@ -142,5 +142,23 @@
   "cacheRangeYear": "1 Jahr",
   "cacheRangeNever": "Nie",
   "cacheCleared": "Cache wurde erfolgreich gelöscht.",
-  "cacheClearedFailed": "Cache konnte nicht gelöscht werden."
+  "cacheClearedFailed": "Cache konnte nicht gelöscht werden.",
+  "announcements": "Mitteilungen",
+  "showAnnouncementsOnStart": "Mitteilungen beim Start anzeigen",
+  "noAnnouncements": "Es gibt keine aktuellen Mitteilungen.",
+  "doNotShowAgain": "Nicht mehr anzeigen",
+  "close": "Schließen",
+  "announcementPosition": "{index} von {count}",
+  "@announcementPosition": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "previous": "Zurück",
+  "showAnnouncements": "Aktuelle Mitteilungen anzeigen"
 }
