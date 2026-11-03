@@ -12,11 +12,12 @@ import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
+import 'package:mml_app/services/playback_resume.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/services/router.dart';
 
 /// Service that handles all actions for playing records.
-class PlayerService {
+class PlayerService with WidgetsBindingObserver {
   /// Instance of the [PlayerService].
   static PlayerService? _instance;
 
@@ -38,6 +39,9 @@ class PlayerService {
   StreamController<Record?> onRecordChanged = StreamController.broadcast();
 
   final List<StreamSubscription> _subscriptions = [];
+
+  /// Whether this service observes the lifecycle of the app.
+  bool _observesLifecycle = false;
 
   /// Private constructor of the [PlayerService].
   PlayerService._();
@@ -75,6 +79,7 @@ class PlayerService {
 
   /// Stops the music and closes the player bottom sheet.
   Future closePlayer({bool stopAudioHandler = true}) async {
+    _rememberPosition(force: true);
     if (stopAudioHandler) {
       await _audioHandler.stop();
     }
@@ -83,9 +88,16 @@ class PlayerService {
     await _reset();
   }
 
-  /// Plays the given [record] and opens the bottom [PlayerSheet] if not
-  /// already done.
-  Future play(Record record, String? filter, ID3TagFilter? tagFilter) async {
+  /// Plays the given [record] starting at [startAt] and opens the bottom
+  /// [PlayerSheet] if not already done. The record is only prepared and paused,
+  /// if [autoPlay] is false.
+  Future play(
+    Record record,
+    String? filter,
+    ID3TagFilter? tagFilter, {
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
     var context = RouterService.getInstance().getCurrentContext();
 
     if (context == null || !context.mounted) {
@@ -105,13 +117,18 @@ class PlayerService {
       enableDrag: false,
     );
 
-    await _audioHandler.playRecord(record);
+    await _audioHandler.playRecord(
+      record,
+      startAt: startAt,
+      autoPlay: autoPlay,
+    );
     initializeListeners();
   }
 
   /// Pauses the playback.
   void pause() {
     _audioHandler.pause();
+    _rememberPosition(force: true);
     playerState?.update();
   }
 
@@ -152,6 +169,8 @@ class PlayerService {
     if (updatePlayerSeek) {
       _isSeeking = false;
       await _audioHandler.seek(newDuration.asDuration());
+      _audioHandler.currentSeekPosition = newDuration;
+      _rememberPosition(force: true, allowStart: true);
     } else {
       _audioHandler.currentSeekPosition = newDuration;
     }
@@ -160,6 +179,11 @@ class PlayerService {
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
   void initializeListeners() {
+    if (!_observesLifecycle) {
+      _observesLifecycle = true;
+      WidgetsBinding.instance.addObserver(this);
+    }
+
     for (final subscription in _subscriptions) {
       subscription.cancel();
     }
@@ -178,6 +202,7 @@ class PlayerService {
 
         final previousSecond = _audioHandler.currentSeekPosition ~/ 1000;
         _audioHandler.currentSeekPosition = duration ?? 0;
+        _rememberPosition();
 
         if (previousSecond != _audioHandler.currentSeekPosition ~/ 1000) {
           playerState?.update();
@@ -196,6 +221,23 @@ class PlayerService {
           }
         },
       ),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      _rememberPosition(force: true);
+    }
+  }
+
+  /// Remembers the current position to continue the playback after a restart.
+  void _rememberPosition({bool force = false, bool allowStart = false}) {
+    PlaybackResumeService.getInstance().remember(
+      _audioHandler.currentRecord,
+      _audioHandler.currentSeekPosition,
+      force: force,
+      allowStart: allowStart,
     );
   }
 

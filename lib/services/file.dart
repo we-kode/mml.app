@@ -114,6 +114,11 @@ class FileService {
     }
   }
 
+  /// Whether the file of the downloaded [record] exists on the device.
+  Future<bool> exists(Record record) async {
+    return File('${await _folder}/${record.checksum}').exists();
+  }
+
   /// Loads file with [record] as decrypted byte chunked stream.
   Future<File> getFile(Record record) async {
     final file = File('${await _folder}/${record.checksum}');

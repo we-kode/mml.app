@@ -68,10 +68,13 @@ class RecordService {
   /// Loads the record with the given [id] from the server.
   ///
   /// Returns the [Record] instance or null if the record was not found.
-  Future<Record> getRecord(String id) async {
+  Future<Record> getRecord(String id, {bool silent = false}) async {
     var response = await _apiService.request(
       '/media/record/$id',
-      options: Options(method: 'GET'),
+      options: Options(
+        method: 'GET',
+        extra: {ApiService.silentErrorsKey: silent},
+      ),
     );
 
     return Record.fromJson(response.data);

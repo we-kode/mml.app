@@ -9,6 +9,7 @@ import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
 import 'package:mml_app/services/playlist.dart';
+import 'package:mml_app/services/share_link.dart';
 import 'package:provider/provider.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
@@ -85,6 +86,23 @@ class PlayerSheetState extends State<PlayerSheet>
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  Consumer<PlayerState>(
+                    builder: (context, state, child) {
+                      return state.currentRecord is LocalRecord ||
+                              state.currentRecord is Livestream
+                          ? Container()
+                          : IconButton(
+                              iconSize: 24,
+                              padding: EdgeInsets.zero,
+                              tooltip: AppLocalizations.of(
+                                context,
+                              )!.sharePlayLink,
+                              onPressed: () => ShareLinkService.getInstance()
+                                  .shareRecord(context),
+                              icon: const Icon(Symbols.dataset_linked),
+                            );
+                    },
+                  ),
                   Consumer<PlayerState>(
                     builder: (context, state, child) {
                       return PlayerService.getInstance()

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -120,6 +121,35 @@ class SettingsScreen extends StatelessWidget {
                     },
                   ),
                 ),
+                ListTile(
+                  leading: const Icon(Symbols.play_circle),
+                  title: Text(vm.locales.resumePlayback),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: vm.updateResumePlayback,
+                        value: vm.resumePlayback,
+                      );
+                    },
+                  ),
+                ),
+                if (vm.shareLinksAvailable)
+                  ListTile(
+                    leading: Icon(ShareAction.iconData),
+                    title: Text(vm.locales.shareMyLinks),
+                    onTap: vm.showShareLinks,
+                  ),
+                if (vm.shareOptionsAvailable)
+                  ListTile(
+                    leading: const Icon(Symbols.link),
+                    title: Text(vm.locales.shareSettings),
+                    onTap: vm.showShareSettings,
+                    trailing: IconButton(
+                      icon: const Icon(Symbols.info),
+                      tooltip: vm.locales.info,
+                      onPressed: vm.showShareSettingsInfo,
+                    ),
+                  ),
                 ListTile(
                   leading: const Icon(Symbols.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),

@@ -59,6 +59,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// The current seek position of the playback.
   double currentSeekPosition = 0.0;
 
+  /// Position the player was prepared at without starting the playback. The
+  /// start of the playback seeks there again, if the player lost the position.
+  Duration? _preparedPosition;
+
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool _shuffle = false;
 
@@ -132,8 +136,13 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _addPlaybackState();
   }
 
-  /// Plays the given [record].
-  Future<void> playRecord(Record record) async {
+  /// Plays the given [record] starting at [startAt]. The record is only
+  /// prepared and paused, if [autoPlay] is false.
+  Future<void> playRecord(
+    Record record, {
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
     if (_isLoading) {
       return;
     }
@@ -142,7 +151,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (_player == null) {
       _initPlayer();
     }
-    await _playCurrentRecord();
+    await _playCurrentRecord(startAt: startAt, autoPlay: autoPlay);
   }
 
   /// Creates new instance of the [AudioPlayer], if player not exists yet.
@@ -154,7 +163,18 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<void> play() async => _player?.play();
+  Future<void> play() async {
+    final player = _player;
+    final prepared = _preparedPosition;
+    _preparedPosition = null;
+    if (player != null &&
+        prepared != null &&
+        (player.position - prepared).abs() > const Duration(seconds: 1)) {
+      await player.seek(prepared);
+    }
+
+    return player?.play();
+  }
 
   @override
   Future<void> pause() async => _player?.pause();
@@ -193,7 +213,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<void> seek(Duration position) async => _player?.seek(position);
+  Future<void> seek(Duration position) async {
+    _preparedPosition = null;
+    return _player?.seek(position);
+  }
 
   @override
   Future<void> skipToNext() async {
@@ -519,11 +542,25 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Plays the [currentRecord].
-  Future<void> _playCurrentRecord() async {
-    var success = await _setPlayerSource();
+  Future<void> _playCurrentRecord({
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
+    var success = await _setPlayerSource(initialPosition: startAt);
 
     if (!success) {
       return;
+    }
+
+    _preparedPosition = null;
+    if (startAt != null) {
+      currentSeekPosition = startAt.inMilliseconds.toDouble();
+      // A source, which is not loaded yet, starts at its initial position, a
+      // seek would discard it.
+      if (_player!.processingState != ProcessingState.idle) {
+        await _player!.seek(startAt);
+      }
+      _preparedPosition = autoPlay ? null : startAt;
     }
 
     final brightness =
@@ -550,7 +587,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       ),
     );
 
-    _player!.play();
+    if (autoPlay) {
+      _player!.play();
+    }
   }
 
   /// Skips the playback in the given [direction] to the next or
@@ -618,7 +657,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Sets the source format of the player depending on the record type to be played.
-  Future<bool> _setPlayerSource({bool isRetry = false}) async {
+  /// The playback starts at the [initialPosition], if it is set.
+  Future<bool> _setPlayerSource({
+    bool isRetry = false,
+    Duration? initialPosition,
+  }) async {
     if (currentRecord == null) {
       await PlayerService.getInstance().closePlayer();
       return false;
@@ -647,9 +690,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
 
       try {
-        _player!.setAudioSource(
+        await _player!.setAudioSource(
           MMLAudioSource(file, int.parse(cryptKey!)),
-          preload: false,
+          // A source starting at a position is loaded at once, because just_audio
+          // starts sources, which are not loaded yet, at the beginning.
+          preload: initialPosition != null,
+          initialPosition: initialPosition,
         );
         _isLoading = false;
         return true;
@@ -659,7 +705,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           return false;
         }
 
-        return _setPlayerSource(isRetry: true);
+        return _setPlayerSource(
+          isRetry: true,
+          initialPosition: initialPosition,
+        );
       }
     }
 

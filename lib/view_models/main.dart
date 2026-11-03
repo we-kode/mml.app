@@ -5,6 +5,9 @@ import 'package:mml_app/components/announcements_dialog.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/services/announcements.dart';
 import 'package:mml_app/services/livestreams.dart';
+import 'package:mml_app/services/playback_resume.dart';
+import 'package:mml_app/services/share.dart';
+import 'package:mml_app/services/share_link.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/view_models/livestreams/overview.dart';
 import 'package:mml_app/view_models/playlists/overview.dart';
@@ -74,7 +77,21 @@ class MainViewModel extends ChangeNotifier {
       navItems.removeWhere((element) => element.label == locales.livestreams);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) => _showAnnouncements());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _openLinkOrResume());
+    ShareService.getInstance().refresh();
     return true;
+  }
+
+  /// Opens the share link the app was started with or continues the last
+  /// playback, if enabled.
+  Future<void> _openLinkOrResume() async {
+    try {
+      if (!await ShareLinkService.getInstance().ready()) {
+        await PlaybackResumeService.getInstance().restore();
+      }
+    } catch (_) {
+      // Neither a link nor the last playback may break the start of the app.
+    }
   }
 
   /// Shows the active announcements the user did not dismiss, if enabled.

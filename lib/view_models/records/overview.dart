@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -8,10 +7,15 @@ import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/models/share_action.dart';
+import 'package:mml_app/models/share_link.dart';
+import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/services/share_link.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/view_models/records/share_selection.dart';
 
 /// View model of the records screen.
 class RecordsViewModel extends ChangeNotifier {
@@ -35,12 +39,22 @@ class RecordsViewModel extends ChangeNotifier {
   /// settings for the records view.
   late RecordViewSettings recordViewSettings;
 
-  /// Initializes the view model.
-  Future<bool> init(BuildContext context) {
+  /// Text filter of the screen.
+  Filter? _textFilter;
+
+  /// Checks and shares the selected records.
+  final RecordShareSelection _shareSelection = RecordShareSelection();
+
+  /// Initializes the view model. A search link the app was opened with is
+  /// applied to the [textFilter] and the tag filter.
+  Future<bool> init(BuildContext context, {Filter? textFilter}) {
     return Future.microtask(() async {
       if (!context.mounted) {
         return false;
       }
+      _textFilter = textFilter;
+      ShareLinkService.getInstance().currentSearch = () =>
+          ShareLink(filter: _textFilter?.textFilter, tagFilter: tagFilter);
       locales = AppLocalizations.of(context)!;
       isFolderView =
           (await SecureStorageService.getInstance().get(
@@ -61,8 +75,59 @@ class RecordsViewModel extends ChangeNotifier {
       }
 
       recordViewSettings = await _dbService.loadRecordViewSettings();
+      _applySearchLink(ShareLinkService.getInstance().takePendingSearch());
+      tagFilter.addListener(_updateSearchShareable);
+      _textFilter?.addListener(_updateSearchShareable);
+      _updateSearchShareable();
       return true;
     });
+  }
+
+  void _updateSearchShareable() {
+    ShareLinkService.getInstance().searchShareable.value = ShareLink(
+      filter: _textFilter?.textFilter,
+      tagFilter: tagFilter,
+    ).hasSearch;
+  }
+
+  @override
+  void dispose() {
+    _shareSelection.dispose();
+    _textFilter?.removeListener(_updateSearchShareable);
+    ShareLinkService.getInstance().searchShareable.value = false;
+    ShareLinkService.getInstance().currentSearch = null;
+    super.dispose();
+  }
+
+  void _applySearchLink(ShareLink? link) {
+    if (link == null) {
+      return;
+    }
+
+    final shared = link.tagFilter;
+    tagFilter
+      ..artists = shared.artists
+      ..artistNames = shared.artistNames
+      ..genres = shared.genres
+      ..genreNames = shared.genreNames
+      ..albums = shared.albums
+      ..albumNames = shared.albumNames
+      ..languages = shared.languages
+      ..startDate = shared.startDate
+      ..endDate = shared.endDate;
+    _textFilter?.textFilter = link.filter;
+  }
+
+  /// Checks which of the [selected] items the user may share and shows the
+  /// share action of the [action] accordingly.
+  void selectionChanged(List<ModelBase> selected, ShareAction? action) {
+    _shareSelection.selectionChanged(selected, action);
+  }
+
+  /// Shares a download link of the [selected] items. Returns whether the
+  /// selection should be reset.
+  Future<bool> share(List<ModelBase?> selected, BuildContext context) {
+    return _shareSelection.share(selected, context);
   }
 
   /// Loads the records with the passing [filter] starting at [offset] and loading

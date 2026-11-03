@@ -10,6 +10,8 @@ import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/models/share_action.dart';
+import 'package:mml_app/services/share_link.dart';
 import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/view_models/faq.dart';
@@ -92,6 +94,10 @@ class RouterService {
               title: 'records',
               enableFilter: true,
               listAction: SelectedItemsAction(const Icon(Symbols.star_outline)),
+              shareAction: ShareAction(),
+              onShareLink: (context) =>
+                  ShareLinkService.getInstance().shareSearch(context),
+              shareLinkVisible: ShareLinkService.getInstance().searchShareable,
             ),
           ),
         ),

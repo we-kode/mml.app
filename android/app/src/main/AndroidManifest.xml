@@ -53,6 +53,15 @@
                 <data android:mimeType="application/json" />
                 <data android:mimeType="application/octet-stream" />
             </intent-filter>
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="mml" android:host="open" />
+            </intent-filter>
             <intent-filter>
               <action android:name=
                   "android.media.action.MEDIA_PLAY_FROM_SEARCH" />
