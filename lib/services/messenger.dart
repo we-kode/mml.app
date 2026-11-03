@@ -46,6 +46,28 @@ class MessengerService {
     )!.unexpectedError(message);
   }
 
+  /// Translated string for a share link of another server.
+  String get shareLinkOtherServer {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareLinkOtherServer;
+  }
+
+  /// Translated string for a selection with more records than fit into one
+  /// share link.
+  String shareTooMany(int limit) {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareTooMany(limit);
+  }
+
+  /// Translated string for a search with too many filter values to be shared.
+  String shareSearchTooLarge(int max) {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareSearchTooLarge(max);
+  }
+
   /// Translated string for forbidden errors.
   String get forbidden {
     return AppLocalizations.of(snackbarKey.currentContext!)!.forbidden;

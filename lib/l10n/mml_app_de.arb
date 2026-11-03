@@ -160,5 +160,83 @@
     }
   },
   "previous": "Zurück",
-  "showAnnouncements": "Aktuelle Mitteilungen anzeigen"
+  "showAnnouncements": "Aktuelle Mitteilungen anzeigen",
+  "share": "Teilen",
+  "shareSearchLink": "Link zur Suche teilen",
+  "sharePlayLink": "Link zur Wiedergabe teilen",
+  "shareDownloadLink": "Download-Link teilen",
+  "shareValidFor": "Gültigkeit",
+  "shareValid1Hour": "1 Stunde",
+  "shareValid1Day": "1 Tag",
+  "shareValid7Days": "7 Tage",
+  "shareValid30Days": "30 Tage",
+  "shareValid90Days": "90 Tage",
+  "shareSingleUse": "Einmal-Link",
+  "shareSingleUseHint": "Der Link kann nur einmal zum Herunterladen geöffnet werden.",
+  "shareUseAsDefault": "Als Standard verwenden und nicht mehr fragen",
+  "shareSettings": "Download-Links",
+  "shareMyLinks": "Meine aktiven Links",
+  "shareNoLinks": "Keine aktiven Links.",
+  "shareLinkRecords": "{count, plural, =1{1 Aufnahme} other{{count} Aufnahmen}}",
+  "@shareLinkRecords": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareLinkCreatedAt": "Erstellt am {date}",
+  "@shareLinkCreatedAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shareLinkExpiresAt": "Gültig bis {date}",
+  "@shareLinkExpiresAt": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shareLinkDeleteInfo": "Der Link wird sofort ungültig. Wer ihn bereits erhalten hat, kann nichts mehr herunterladen.",
+  "shareSettingsInfo": "Diese Einstellungen gelten für Download-Links, die Sie erstellen. Sie greifen nur, wenn Sie Aufnahmen teilen dürfen und der Administrator die Auswahl erlaubt.",
+  "shareAskBeforeSharing": "Vor dem Teilen nachfragen",
+  "sharePartial": "Sie dürfen nur {shareable} von {total} ausgewählten Aufnahmen teilen. Es werden nur diese geteilt.",
+  "@sharePartial": {
+    "placeholders": {
+      "shareable": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "shareLinkOtherServer": "Der Link gehört zu einem anderen Server.",
+  "shareSearchTooLarge": "Die Suche enthält zu viele Filterwerte und kann nicht geteilt werden. Erlaubt sind höchstens {max}.",
+  "@shareSearchTooLarge": {
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "resumePlayback": "Wiedergabe fortsetzen",
+  "faqShareLinks": "Wie teile ich eine Suche oder die aktuelle Wiedergabe?",
+  "faqShareLinksDescription": "Tippen Sie in der Aufnahmenliste oben rechts auf das Symbol für Links, um die aktuelle Suche mit allen Filtern zu teilen. Das Symbol erscheint nur, wenn ein Suchtext oder ein Filter gesetzt ist. Im Player teilt das Symbol die laufende Aufnahme an der aktuellen Position. Wer den Link öffnet, landet in der App mit derselben Suche beziehungsweise hört die Aufnahme an derselben Stelle. Dazu muss die App auf dem Gerät installiert und für denselben Server eingerichtet sein. Aufnahmen, für die jemand keine Berechtigung hat, werden nicht angezeigt oder abgespielt.",
+  "faqShareDownload": "Wie teile ich Aufnahmen zum Herunterladen?",
+  "faqShareDownloadDescription": "Halten Sie in der Aufnahmenliste eine Aufnahme oder einen Ordner gedrückt und wählen Sie weitere aus. Tippen Sie dann oben rechts auf das Symbol zum Teilen eines Download-Links. Wer den Link öffnet, lädt die Aufnahmen im Browser herunter, auch ohne die App: eine Aufnahme als Audiodatei, mehrere als ZIP-Archiv, jeweils mit dem Titel als Dateiname. Ein Link kann höchstens 100 Aufnahmen enthalten. Das Symbol erscheint nur, wenn Sie die ausgewählten Aufnahmen teilen dürfen. Dürfen Sie nur einen Teil teilen, werden Sie darauf hingewiesen und nur dieser Teil wird geteilt. Ob Gültigkeit und Einmal-Link in den Einstellungen unter „Download-Links“ gewählt werden können, bestimmt der Administrator. Ihre aktiven Download-Links sehen und löschen Sie in den Einstellungen unter „Meine aktiven Links“. Ein gelöschter Link funktioniert sofort nicht mehr.",
+  "faqResumePlayback": "Wie setze ich die Wiedergabe nach dem Öffnen der App fort?",
+  "faqResumePlaybackDescription": "Aktivieren Sie in den Einstellungen „Wiedergabe fortsetzen“. Beim nächsten Öffnen der App wird die zuletzt gehörte Aufnahme an der Stelle bereitgestellt, an der Sie aufgehört haben. Starten Sie sie mit der Wiedergabetaste. Die Funktion ist standardmäßig ausgeschaltet.",
+  "shareTooMany": "Ein Link kann höchstens {limit} Aufnahmen enthalten. Wählen Sie weniger Aufnahmen oder einen kleineren Ordner aus und erstellen Sie bei Bedarf mehrere Links.",
+  "@shareTooMany": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  }
 }

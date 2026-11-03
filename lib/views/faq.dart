@@ -27,6 +27,24 @@ class FAQScreen extends StatelessWidget {
                 ListTile(title: Text(locales.faqRemoveFavoritesDescription)),
               ],
             ),
+            ExpansionTile(
+              title: Text(locales.faqShareLinks),
+              children: [
+                ListTile(title: Text(locales.faqShareLinksDescription)),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(locales.faqShareDownload),
+              children: [
+                ListTile(title: Text(locales.faqShareDownloadDescription)),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(locales.faqResumePlayback),
+              children: [
+                ListTile(title: Text(locales.faqResumePlaybackDescription)),
+              ],
+            ),
           ],
         ),
       ),

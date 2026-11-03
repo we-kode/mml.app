@@ -5,6 +5,7 @@ import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_folder.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/playlist.dart';
@@ -29,7 +30,7 @@ class RecordsScreen extends StatelessWidget {
         var vm = Provider.of<RecordsViewModel>(context, listen: false);
 
         return FutureBuilder(
-          future: vm.init(context),
+          future: vm.init(context, textFilter: appBar?.filter),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -79,7 +80,17 @@ class RecordsScreen extends StatelessWidget {
                   },
               filter: appBar?.filter,
               selectedItemsAction: appBar?.listAction,
+              shareAction: appBar?.shareAction,
+              onSelectionChanged: (selected) =>
+                  vm.selectionChanged(selected, appBar?.shareAction),
               onMultiSelect: (actionId, selectedItems) async {
+                if (actionId == ShareAction.actionId) {
+                  return await vm.share(
+                    selectedItems as List<ModelBase?>,
+                    context,
+                  );
+                }
+
                 return await PlaylistService.getInstance().downloadRecords(
                   selectedItems as List<ModelBase?>,
                   context,

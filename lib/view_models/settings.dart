@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/announcements_dialog.dart';
+import 'package:mml_app/components/share_links_dialog.dart';
+import 'package:mml_app/components/share_settings_dialog.dart';
+import 'package:mml_app/services/playback_resume.dart';
+import 'package:mml_app/services/share.dart';
 import 'package:mml_app/manager/image_cache_manager.dart';
 import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/services/announcements.dart';
@@ -66,6 +70,15 @@ class SettingsViewModel extends ChangeNotifier {
   /// Whether the announcements are shown when the app starts.
   late bool showAnnouncementsOnStart;
 
+  /// Whether the playback is continued after the app was restarted.
+  late bool resumePlayback;
+
+  /// Whether the user chooses the options of share links.
+  late bool shareOptionsAvailable;
+
+  /// Whether the user may share records and so manages download links.
+  late bool shareLinksAvailable;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
@@ -85,6 +98,16 @@ class SettingsViewModel extends ChangeNotifier {
           'true';
       showAnnouncementsOnStart = await AnnouncementService.getInstance()
           .showOnStart();
+      resumePlayback = await PlaybackResumeService.getInstance().isEnabled();
+      final shareService = ShareService.getInstance();
+      try {
+        await shareService.refresh().timeout(const Duration(seconds: 3));
+      } catch (_) {
+        // The last known values are used without connection.
+      }
+      shareLinksAvailable =
+          await shareService.canShare() || await shareService.hasLinks();
+      shareOptionsAvailable = await shareService.userChoosesOptions();
       return true;
     });
   }
@@ -167,6 +190,45 @@ class SettingsViewModel extends ChangeNotifier {
   Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
     notifyListeners();
+  }
+
+  /// Sets whether the playback is continued after the app was restarted.
+  Future<void> updateResumePlayback(bool value) async {
+    resumePlayback = value;
+    await PlaybackResumeService.getInstance().setEnabled(value);
+    notifyListeners();
+  }
+
+  /// Shows the dialog to edit the options of share links.
+  Future<void> showShareSettings() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => const ShareSettingsDialog(),
+    );
+  }
+
+  /// Shows the dialog that lists and deletes the active download links.
+  Future<void> showShareLinks() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => const ShareLinksDialog(),
+    );
+  }
+
+  /// Shows the info about the options of share links.
+  Future<void> showShareSettingsInfo() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => AlertDialog(
+        content: Text(locales.shareSettingsInfo),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(locales.close),
+          ),
+        ],
+      ),
+    );
   }
 
   /// Sets whether the announcements are shown when the app starts.

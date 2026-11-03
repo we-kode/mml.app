@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -5,6 +6,7 @@ import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/filter.dart';
 import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/services/router.dart';
 
 /// An appbar containing one expandable filter input.
@@ -29,6 +31,16 @@ class FilterAppBar extends StatefulWidget {
 
   final ExportAction? exportAction;
 
+  /// [ShareAction] which shares a download link of the selected records.
+  final ShareAction? shareAction;
+
+  /// Function called when the user shares a link to the content of the screen
+  /// the app bar belongs to. The share button is hidden, if it is not set.
+  final void Function(BuildContext context)? onShareLink;
+
+  /// Whether the share button is shown. It is always shown, if not set.
+  final ValueListenable<bool>? shareLinkVisible;
+
   /// [NavigationState] to show the path of navigation in the appbar.
   final NavigationState navigationState = NavigationState();
 
@@ -38,6 +50,9 @@ class FilterAppBar extends StatefulWidget {
     required this.title,
     this.listAction,
     this.exportAction,
+    this.shareAction,
+    this.onShareLink,
+    this.shareLinkVisible,
     this.enableFilter,
     this.enableBack = false,
   });
@@ -59,6 +74,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   @override
   void initState() {
     widget.listAction?.addListener(_updateState);
+    widget.shareAction?.addListener(_updateState);
     widget.navigationState.addListener(_updateState);
     super.initState();
   }
@@ -68,18 +84,23 @@ class FilterAppBarState extends State<FilterAppBar> {
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.listAction != widget.listAction) {
-      widget.listAction?.removeListener(_updateState);
+      oldWidget.listAction?.removeListener(_updateState);
       widget.listAction?.addListener(_updateState);
     }
 
     if (oldWidget.navigationState != widget.navigationState) {
-      widget.navigationState.removeListener(_updateState);
+      oldWidget.navigationState.removeListener(_updateState);
       widget.navigationState.addListener(_updateState);
     }
 
     if (oldWidget.exportAction != widget.exportAction) {
-      widget.exportAction?.removeListener(_updateState);
+      oldWidget.exportAction?.removeListener(_updateState);
       widget.exportAction?.addListener(_updateState);
+    }
+
+    if (oldWidget.shareAction != widget.shareAction) {
+      oldWidget.shareAction?.removeListener(_updateState);
+      widget.shareAction?.addListener(_updateState);
     }
   }
 
@@ -87,6 +108,7 @@ class FilterAppBarState extends State<FilterAppBar> {
   void dispose() async {
     super.dispose();
     widget.listAction?.removeListener(_updateState);
+    widget.shareAction?.removeListener(_updateState);
     widget.exportAction?.removeListener(_updateState);
     widget.navigationState.removeListener(_updateState);
   }
@@ -102,6 +124,9 @@ class FilterAppBarState extends State<FilterAppBar> {
       backgroundColor: Theme.of(context).colorScheme.surface,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
+      leadingWidth: widget.listAction != null && widget.listAction!.enabled
+          ? 104
+          : null,
       leading: widget.listAction != null && widget.listAction!.enabled
           ? Row(
               children: [
@@ -112,7 +137,12 @@ class FilterAppBarState extends State<FilterAppBar> {
                   icon: const Icon(Symbols.close),
                   tooltip: AppLocalizations.of(context)!.cancel,
                 ),
-                Text("${widget.listAction!.count}"),
+                Flexible(
+                  child: Text(
+                    "${widget.listAction!.count}",
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             )
           : widget.enableBack || widget.navigationState.path != null
@@ -187,11 +217,32 @@ class FilterAppBarState extends State<FilterAppBar> {
   /// Creates the actions of the app bar.
   List<Widget> _createActions() {
     var enableFilter = widget.enableFilter ?? false;
+    var selecting = widget.listAction?.enabled ?? false;
     return !enableFilter &&
             widget.listAction == null &&
-            widget.exportAction == null
+            widget.exportAction == null &&
+            widget.onShareLink == null
         ? []
         : [
+            if (widget.onShareLink != null && !selecting)
+              ValueListenableBuilder<bool>(
+                valueListenable: widget.shareLinkVisible ?? ValueNotifier(true),
+                builder: (context, visible, _) => visible
+                    ? IconButton(
+                        onPressed: () => widget.onShareLink!(context),
+                        icon: const Icon(Symbols.dataset_linked),
+                        tooltip: AppLocalizations.of(context)!.shareSearchLink,
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            if (selecting && (widget.shareAction?.visible ?? false))
+              IconButton(
+                onPressed: () => setState(() {
+                  widget.shareAction!.actionPerformed = true;
+                }),
+                icon: widget.shareAction!.icon,
+                tooltip: AppLocalizations.of(context)!.shareDownloadLink,
+              ),
             if (enableFilter &&
                 !_filterOpened &&
                 (widget.listAction != null && !widget.listAction!.enabled))

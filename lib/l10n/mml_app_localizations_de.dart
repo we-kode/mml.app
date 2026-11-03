@@ -411,4 +411,130 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get showAnnouncements => 'Aktuelle Mitteilungen anzeigen';
+
+  @override
+  String get share => 'Teilen';
+
+  @override
+  String get shareSearchLink => 'Link zur Suche teilen';
+
+  @override
+  String get sharePlayLink => 'Link zur Wiedergabe teilen';
+
+  @override
+  String get shareDownloadLink => 'Download-Link teilen';
+
+  @override
+  String get shareValidFor => 'Gültigkeit';
+
+  @override
+  String get shareValid1Hour => '1 Stunde';
+
+  @override
+  String get shareValid1Day => '1 Tag';
+
+  @override
+  String get shareValid7Days => '7 Tage';
+
+  @override
+  String get shareValid30Days => '30 Tage';
+
+  @override
+  String get shareValid90Days => '90 Tage';
+
+  @override
+  String get shareSingleUse => 'Einmal-Link';
+
+  @override
+  String get shareSingleUseHint =>
+      'Der Link kann nur einmal zum Herunterladen geöffnet werden.';
+
+  @override
+  String get shareUseAsDefault =>
+      'Als Standard verwenden und nicht mehr fragen';
+
+  @override
+  String get shareSettings => 'Download-Links';
+
+  @override
+  String get shareMyLinks => 'Meine aktiven Links';
+
+  @override
+  String get shareNoLinks => 'Keine aktiven Links.';
+
+  @override
+  String shareLinkRecords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Aufnahmen',
+      one: '1 Aufnahme',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shareLinkCreatedAt(String date) {
+    return 'Erstellt am $date';
+  }
+
+  @override
+  String shareLinkExpiresAt(String date) {
+    return 'Gültig bis $date';
+  }
+
+  @override
+  String get shareLinkDeleteInfo =>
+      'Der Link wird sofort ungültig. Wer ihn bereits erhalten hat, kann nichts mehr herunterladen.';
+
+  @override
+  String get shareSettingsInfo =>
+      'Diese Einstellungen gelten für Download-Links, die Sie erstellen. Sie greifen nur, wenn Sie Aufnahmen teilen dürfen und der Administrator die Auswahl erlaubt.';
+
+  @override
+  String get shareAskBeforeSharing => 'Vor dem Teilen nachfragen';
+
+  @override
+  String sharePartial(int shareable, int total) {
+    return 'Sie dürfen nur $shareable von $total ausgewählten Aufnahmen teilen. Es werden nur diese geteilt.';
+  }
+
+  @override
+  String get shareLinkOtherServer => 'Der Link gehört zu einem anderen Server.';
+
+  @override
+  String shareSearchTooLarge(int max) {
+    return 'Die Suche enthält zu viele Filterwerte und kann nicht geteilt werden. Erlaubt sind höchstens $max.';
+  }
+
+  @override
+  String get resumePlayback => 'Wiedergabe fortsetzen';
+
+  @override
+  String get faqShareLinks =>
+      'Wie teile ich eine Suche oder die aktuelle Wiedergabe?';
+
+  @override
+  String get faqShareLinksDescription =>
+      'Tippen Sie in der Aufnahmenliste oben rechts auf das Symbol für Links, um die aktuelle Suche mit allen Filtern zu teilen. Das Symbol erscheint nur, wenn ein Suchtext oder ein Filter gesetzt ist. Im Player teilt das Symbol die laufende Aufnahme an der aktuellen Position. Wer den Link öffnet, landet in der App mit derselben Suche beziehungsweise hört die Aufnahme an derselben Stelle. Dazu muss die App auf dem Gerät installiert und für denselben Server eingerichtet sein. Aufnahmen, für die jemand keine Berechtigung hat, werden nicht angezeigt oder abgespielt.';
+
+  @override
+  String get faqShareDownload => 'Wie teile ich Aufnahmen zum Herunterladen?';
+
+  @override
+  String get faqShareDownloadDescription =>
+      'Halten Sie in der Aufnahmenliste eine Aufnahme oder einen Ordner gedrückt und wählen Sie weitere aus. Tippen Sie dann oben rechts auf das Symbol zum Teilen eines Download-Links. Wer den Link öffnet, lädt die Aufnahmen im Browser herunter, auch ohne die App: eine Aufnahme als Audiodatei, mehrere als ZIP-Archiv, jeweils mit dem Titel als Dateiname. Ein Link kann höchstens 100 Aufnahmen enthalten. Das Symbol erscheint nur, wenn Sie die ausgewählten Aufnahmen teilen dürfen. Dürfen Sie nur einen Teil teilen, werden Sie darauf hingewiesen und nur dieser Teil wird geteilt. Ob Gültigkeit und Einmal-Link in den Einstellungen unter „Download-Links“ gewählt werden können, bestimmt der Administrator. Ihre aktiven Download-Links sehen und löschen Sie in den Einstellungen unter „Meine aktiven Links“. Ein gelöschter Link funktioniert sofort nicht mehr.';
+
+  @override
+  String get faqResumePlayback =>
+      'Wie setze ich die Wiedergabe nach dem Öffnen der App fort?';
+
+  @override
+  String get faqResumePlaybackDescription =>
+      'Aktivieren Sie in den Einstellungen „Wiedergabe fortsetzen“. Beim nächsten Öffnen der App wird die zuletzt gehörte Aufnahme an der Stelle bereitgestellt, an der Sie aufgehört haben. Starten Sie sie mit der Wiedergabetaste. Die Funktion ist standardmäßig ausgeschaltet.';
+
+  @override
+  String shareTooMany(int limit) {
+    return 'Ein Link kann höchstens $limit Aufnahmen enthalten. Wählen Sie weniger Aufnahmen oder einen kleineren Ordner aus und erstellen Sie bei Bedarf mehrere Links.';
+  }
 }

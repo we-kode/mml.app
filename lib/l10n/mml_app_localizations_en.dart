@@ -406,4 +406,129 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showAnnouncements => 'Show current announcements';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get shareSearchLink => 'Share link to the search';
+
+  @override
+  String get sharePlayLink => 'Share link to the playback';
+
+  @override
+  String get shareDownloadLink => 'Share download link';
+
+  @override
+  String get shareValidFor => 'Validity';
+
+  @override
+  String get shareValid1Hour => '1 hour';
+
+  @override
+  String get shareValid1Day => '1 day';
+
+  @override
+  String get shareValid7Days => '7 days';
+
+  @override
+  String get shareValid30Days => '30 days';
+
+  @override
+  String get shareValid90Days => '90 days';
+
+  @override
+  String get shareSingleUse => 'Single-use link';
+
+  @override
+  String get shareSingleUseHint =>
+      'The link can be opened for download only once.';
+
+  @override
+  String get shareUseAsDefault => 'Use as default and do not ask again';
+
+  @override
+  String get shareSettings => 'Download links';
+
+  @override
+  String get shareMyLinks => 'My active links';
+
+  @override
+  String get shareNoLinks => 'No active links.';
+
+  @override
+  String shareLinkRecords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recordings',
+      one: '1 recording',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shareLinkCreatedAt(String date) {
+    return 'Created on $date';
+  }
+
+  @override
+  String shareLinkExpiresAt(String date) {
+    return 'Valid until $date';
+  }
+
+  @override
+  String get shareLinkDeleteInfo =>
+      'The link becomes invalid immediately. Whoever already received it can no longer download anything.';
+
+  @override
+  String get shareSettingsInfo =>
+      'These settings apply to download links you create. They only take effect if you may share records and the administrator allows choosing them.';
+
+  @override
+  String get shareAskBeforeSharing => 'Ask before sharing';
+
+  @override
+  String sharePartial(int shareable, int total) {
+    return 'You may share only $shareable of $total selected records. Only these are shared.';
+  }
+
+  @override
+  String get shareLinkOtherServer => 'The link belongs to another server.';
+
+  @override
+  String shareSearchTooLarge(int max) {
+    return 'The search contains too many filter values and cannot be shared. At most $max are allowed.';
+  }
+
+  @override
+  String get resumePlayback => 'Continue playback';
+
+  @override
+  String get faqShareLinks =>
+      'How do I share a search or the current playback?';
+
+  @override
+  String get faqShareLinksDescription =>
+      'In the list of records tap the link icon at the top right to share the current search with all filters. The icon only appears if a search text or a filter is set. In the player the icon shares the playing record at the current position. Whoever opens the link lands in the app with the same search or listens to the record at the same position. The app must be installed and set up for the same server. Records someone has no permission for are not shown or played.';
+
+  @override
+  String get faqShareDownload => 'How do I share records for download?';
+
+  @override
+  String get faqShareDownloadDescription =>
+      'In the list of records long press a record or a folder and select more. Then tap the icon to share a download link at the top right. Whoever opens the link downloads the records in the browser, even without the app: one record as audio file, several as ZIP archive, each named by its title. A link can contain 100 records at most. The icon only appears if you may share the selected records. If you may share only a part, you are notified and only that part is shared. Whether validity and single-use link can be chosen in the settings under “Download links” is decided by the administrator. You see and delete your active download links in the settings under “My active links”. A deleted link stops working immediately.';
+
+  @override
+  String get faqResumePlayback =>
+      'How do I continue the playback after opening the app?';
+
+  @override
+  String get faqResumePlaybackDescription =>
+      'Enable “Continue playback” in the settings. The next time you open the app the record you listened to last is prepared at the position where you stopped. Start it with the play button. The function is off by default.';
+
+  @override
+  String shareTooMany(int limit) {
+    return 'A link can contain $limit records at most. Select fewer records or a smaller folder and create several links if needed.';
+  }
 }

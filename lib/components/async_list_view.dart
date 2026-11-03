@@ -13,6 +13,7 @@ import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -92,6 +93,12 @@ class AsyncListView extends StatefulWidget {
   /// [ExportAction] of the action bar the list belongs to.
   final ExportAction? exportAction;
 
+  /// [ShareAction] of the action bar the list belongs to.
+  final ShareAction? shareAction;
+
+  /// Function called with the selected items, whenever the selection changes.
+  final void Function(List<ModelBase> selected)? onSelectionChanged;
+
   /// Navigation state if a hierarchical view is used.
   final NavigationState? navState;
 
@@ -122,6 +129,8 @@ class AsyncListView extends StatefulWidget {
     this.addItem,
     this.selectedItemsAction,
     this.exportAction,
+    this.shareAction,
+    this.onSelectionChanged,
     this.onMultiSelect,
     this.navState,
     this.moveUp,
@@ -182,6 +191,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.filter?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
     widget.exportAction?.addListener(_performSelectedItemsAction);
+    widget.shareAction?.addListener(_performSelectedItemsAction);
     widget.navState?.addListener(_backPressed);
     _activeItemId = widget.activeItem?.getIdentifier();
     _onActiveItemChangedSub ??= widget.onActiveItemChanged?.listen((event) {
@@ -202,6 +212,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     widget.filter?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
     widget.exportAction?.removeListener(_performSelectedItemsAction);
+    widget.shareAction?.removeListener(_performSelectedItemsAction);
     widget.navState?.removeListener(_backPressed);
     _onActiveItemChangedSub?.cancel();
   }
@@ -253,6 +264,8 @@ class _AsyncListViewState extends State<AsyncListView> {
       actionId = SelectedItemsAction.actionId;
     } else if (widget.exportAction?.actionPerformed ?? false) {
       actionId = ExportAction.actionId;
+    } else if (widget.shareAction?.actionPerformed ?? false) {
+      actionId = ShareAction.actionId;
     }
 
     if (actionId != null) {
@@ -264,9 +277,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       widget.onMultiSelect!(actionId, selected?.toList() ?? []).then((value) {
         widget.selectedItemsAction?.actionPerformedFinished();
         widget.exportAction?.actionPerformedFinished();
+        widget.shareAction?.actionPerformedFinished();
         if (value) {
           widget.selectedItemsAction?.clear();
           widget.exportAction?.clear();
+          widget.shareAction?.clear();
           _disableMultiSelectMode();
           if (widget.selectedItemsAction?.reload ?? false) {
             _reloadData();
@@ -283,6 +298,7 @@ class _AsyncListViewState extends State<AsyncListView> {
       _isInMultiSelectMode = false;
       _selectedItems = [];
     });
+    widget.onSelectionChanged?.call([]);
   }
 
   /// Reloads the data starting from initial offset with initial count.
@@ -623,7 +639,8 @@ class _AsyncListViewState extends State<AsyncListView> {
               )
             : null;
       },
-      onLongPress: !(item.isSelectable ?? true)
+      onLongPress:
+          widget.selectedItemsAction == null || !(item.isSelectable ?? true)
           ? null
           : () {
               if (!_isInMultiSelectMode) {
@@ -653,6 +670,9 @@ class _AsyncListViewState extends State<AsyncListView> {
       _selectedItems = _selectedItems;
     });
     widget.selectedItemsAction?.count = _selectedItems.length;
+    widget.onSelectionChanged?.call(
+      _selectedItems.whereType<ModelBase>().toList(),
+    );
   }
 
   /// Creates a list tile widget for a not loaded list item.
