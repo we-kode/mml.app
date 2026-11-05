@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
+import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 
 void main() {
@@ -55,5 +56,18 @@ void main() {
       handler.playbackState.value.processingState,
       AudioProcessingState.error,
     );
+  });
+
+  testWidgets('close stays behind the visible actions of the media controls', (
+    tester,
+  ) async {
+    final handler = await createHandler(tester);
+    expect(handler.closeControlIndex, 1);
+
+    handler.shuffle = true;
+    expect(handler.closeControlIndex, 2);
+
+    handler.currentRecord = Livestream(recordId: 'r1');
+    expect(handler.closeControlIndex, 1);
   });
 }

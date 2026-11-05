@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mml_app/models/record_folder.dart';
 import 'package:mml_app/models/share_check.dart';
 import 'package:mml_app/models/share_link_info.dart';
@@ -13,7 +16,7 @@ class ShareService {
   static final ShareService _instance = ShareService._();
 
   /// Instance of the [ApiService] to access the server with.
-  final ApiService _apiService = ApiService.getInstance();
+  final ApiService _apiService;
 
   /// Instance of the [SecureStorageService] the cached values are stored in.
   final SecureStorageService _store = SecureStorageService.getInstance();
@@ -34,8 +37,19 @@ class ShareService {
   /// The running refresh, so parallel calls wait for the same request.
   Future<void>? _refreshing;
 
+  /// Whether the server supports share links. Servers without share links
+  /// answer with not found.
+  final ValueNotifier<bool> supported = ValueNotifier(true);
+
   /// Private constructor of the service.
-  ShareService._();
+  ShareService._([ApiService? apiService])
+    : _apiService = apiService ?? ApiService.getInstance();
+
+  /// Creates a service, that accesses the server with the [apiService].
+  @visibleForTesting
+  factory ShareService.withApi(ApiService apiService) {
+    return ShareService._(apiService);
+  }
 
   /// Returns the singleton instance of the [ShareService].
   static ShareService getInstance() {
@@ -44,8 +58,8 @@ class ShareService {
 
   /// Loads whether the user may share records and the settings of the server
   /// and caches them, so they are available without connection. The cached
-  /// values stay untouched, if the server cannot be reached. Parallel calls wait
-  /// for the same request.
+  /// values stay untouched, if the server cannot be reached, and are removed, if
+  /// it does not support share links. Parallel calls wait for the same request.
   Future<void> refresh() {
     return _refreshing ??= _refresh().whenComplete(() => _refreshing = null);
   }
@@ -68,6 +82,12 @@ class ShareService {
         ).userSettingsAllowed,
         _hasLinksKey: (await getLinks(silent: true)).isNotEmpty,
       });
+      supported.value = true;
+    } on DioException catch (e) {
+      if (e.response?.statusCode == HttpStatus.notFound) {
+        supported.value = false;
+        await _store.setJson(SecureStorageService.shareStateStorageKey, {});
+      }
     } catch (_) {
       // Keep the cached values, errors are handled by the api service.
     }

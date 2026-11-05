@@ -80,4 +80,18 @@ void main() {
 
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('follows text filters changed by others', (tester) async {
+    final appBar = FilterAppBar(title: 'records', enableFilter: true);
+    await show(tester, appBar);
+
+    appBar.filter.textFilter = 'search';
+    await tester.pump();
+    expect(find.text('search'), findsOneWidget);
+
+    appBar.filter.textFilter = '';
+    await tester.pump();
+    expect(find.text('search'), findsNothing);
+    expect(find.byType(TextFormField), findsNothing);
+  });
 }

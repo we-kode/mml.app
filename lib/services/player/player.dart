@@ -54,6 +54,10 @@ class PlayerService with WidgetsBindingObserver {
     return _instance!;
   }
 
+  /// Sets the [handler] without initializing the audio service.
+  @visibleForTesting
+  set audioHandler(MMLAudioHandler handler) => _audioHandler = handler;
+
   /// Sets the repeat mode to the given [value].
   set repeat(PlayerRepeatMode value) {
     _audioHandler.repeat = value;
@@ -205,9 +209,13 @@ class PlayerService with WidgetsBindingObserver {
         _rememberPosition();
 
         if (previousSecond != _audioHandler.currentSeekPosition ~/ 1000) {
-          playerState?.update();
+          playerState?.updatePosition();
         }
       }),
+    );
+
+    _subscriptions.add(
+      _audioHandler.playingStream.listen((_) => playerState?.update()),
     );
 
     _subscriptions.add(

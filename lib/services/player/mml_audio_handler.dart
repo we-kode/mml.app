@@ -98,6 +98,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   Stream<PlaybackEvent> get playbackEventStream =>
       _player?.playbackEventStream ?? const Stream.empty();
 
+  /// Stream of the playing state of the player. It starts with the current
+  /// state.
+  Stream<bool> get playingStream =>
+      _player?.playingStream ?? const Stream.empty();
+
   /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player?.playing ?? false;
 
@@ -416,6 +421,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       _player!.playbackEventStream.listen((PlaybackEvent event) {
         _addPlaybackState();
       }, onError: (Object e, StackTrace st) {}),
+      _player!.playingStream.listen((_) => _addPlaybackState()),
       _player!.playerStateStream.listen((event) {
         if (event.processingState == ProcessingState.completed) {
           skipToNext();
@@ -437,7 +443,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         await stop();
         break;
       case MMLMediaConstants.customActionShuffle:
-        shuffle = !shuffle;
+        PlayerService.getInstance().shuffle = !shuffle;
         break;
       case MMLMediaConstants.customActionRepeat:
         var nextModeIndex =
@@ -449,6 +455,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     return super.customAction(name, extras);
   }
+
+  /// Index of the close control in the media controls of Android 13+. During
+  /// shuffle the system shows the repeat action in the place of the missing
+  /// previous action, so shuffle comes before close.
+  @visibleForTesting
+  int get closeControlIndex => _shuffle && currentRecord is! Livestream ? 2 : 1;
 
   /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
@@ -496,11 +508,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     }
 
     // Android 13+ media controls ignore MediaControl.stop and show only the
-    // first two custom actions, so close comes right after repeat.
+    // first custom actions, so close follows the action shown before it.
     if (_hasMediaControlsWithoutStop) {
       controls.remove(MediaControl.stop);
       controls.insert(
-        1,
+        closeControlIndex,
         MediaControl.custom(
           androidIcon: 'drawable/close',
           label: locales!.stop,
@@ -547,6 +559,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     bool autoPlay = true,
   }) async {
     var success = await _setPlayerSource(initialPosition: startAt);
+    PlayerService.getInstance().playerState?.update();
 
     if (!success) {
       return;

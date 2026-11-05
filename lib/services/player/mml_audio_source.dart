@@ -25,12 +25,12 @@ class MMLAudioSource extends StreamAudioSource {
       sourceLength: await file.length(),
       contentLength: end - start,
       offset: start,
-      stream: file.openRead(start, end).asyncMap((List<int> input) {
+      stream: file.openRead(start, end).map((List<int> input) {
         return XorEncryptor.decrypt(
           input is Uint8List ? input : Uint8List.fromList(input),
           cryptKey,
         );
-      }).asBroadcastStream(),
+      }),
       contentType: 'audio/mpeg',
     );
   }

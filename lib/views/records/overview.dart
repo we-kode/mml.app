@@ -79,6 +79,7 @@ class RecordsScreen extends StatelessWidget {
                     );
                   },
               filter: appBar?.filter,
+              onGroupSelected: vm.saveTagFilter,
               selectedItemsAction: appBar?.listAction,
               shareAction: appBar?.shareAction,
               onSelectionChanged: (selected) =>
