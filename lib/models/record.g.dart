@@ -14,6 +14,7 @@ Record _$RecordFromJson(Map<String, dynamic> json) => Record(
   date: json['date'] == null ? null : DateTime.parse(json['date'] as String),
   duration: (json['duration'] as num?)?.toDouble() ?? 0,
   album: json['album'] as String?,
+  albumId: json['albumId'] as String?,
   artist: json['artist'] as String?,
   genre: json['genre'] as String?,
   language: json['language'] as String?,

@@ -4,4 +4,7 @@ import 'package:flutter/material.dart';
 abstract class Subfilter extends ChangeNotifier {
   /// True, if the view should be grouped.
   bool isGrouped = false;
+
+  /// Replaces the filter values with the values of the [other] filter.
+  void replaceWith(covariant Subfilter other);
 }

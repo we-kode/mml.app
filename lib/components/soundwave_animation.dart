@@ -4,15 +4,18 @@ import 'package:mml_app/gen/assets.gen.dart';
 
 /// Animation for the livestream.
 class SoundwaveAnimation extends StatelessWidget {
+  /// Whether the animation is running.
+  final bool animate;
+
   /// Initializes the animation.
-  const SoundwaveAnimation({super.key});
+  const SoundwaveAnimation({super.key, this.animate = true});
 
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
       Assets.animations.soundwave,
       repeat: true,
-      animate: true,
+      animate: animate,
       fit: BoxFit.contain,
     );
   }

@@ -21,6 +21,7 @@ Livestream _$LivestreamFromJson(Map<String, dynamic> json) =>
       ..artist = json['artist'] as String?
       ..genre = json['genre'] as String?
       ..album = json['album'] as String?
+      ..albumId = json['albumId'] as String?
       ..language = json['language'] as String?
       ..checksum = json['checksum'] as String?
       ..cover = json['cover'] as String?;
