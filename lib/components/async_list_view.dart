@@ -96,6 +96,10 @@ class AsyncListView extends StatefulWidget {
   /// [ShareAction] of the action bar the list belongs to.
   final ShareAction? shareAction;
 
+  /// Function called after the [subfilter] was replaced by the filter of a
+  /// group.
+  final VoidCallback? onGroupSelected;
+
   /// Function called with the selected items, whenever the selection changes.
   final void Function(List<ModelBase> selected)? onSelectionChanged;
 
@@ -130,6 +134,7 @@ class AsyncListView extends StatefulWidget {
     this.selectedItemsAction,
     this.exportAction,
     this.shareAction,
+    this.onGroupSelected,
     this.onSelectionChanged,
     this.onMultiSelect,
     this.navState,
@@ -174,9 +179,6 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Indicates, whether data is loading and an loading indicator should be
   /// shown.
   bool _isLoadingData = true;
-
-  /// The actual item group if list items should be grouped.
-  String? _actualGroup;
 
   /// The active item in list.
   dynamic _activeItemId;
@@ -507,20 +509,12 @@ class _AsyncListViewState extends State<AsyncListView> {
 
     // Grouping if first element or
     // group is a new one and the predecessor has another group
-    if (index == 0 ||
-        (itemGroup != _actualGroup &&
-            _items![index - 1]?.getGroup(context) != itemGroup) ||
-        _items![index - 1]?.getGroup(context) != itemGroup) {
-      _actualGroup = itemGroup;
+    if (index == 0 || _items![index - 1]?.getGroup(context) != itemGroup) {
       return Column(
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-            child: Chip(
-              side: BorderSide.none,
-              backgroundColor: Theme.of(context).colorScheme.outlineVariant,
-              label: Text(item.getGroup(context)!),
-            ),
+            child: _groupChip(item, itemGroup),
           ),
           if (item.getIdentifier() != null) _listTile(item, index),
         ],
@@ -528,6 +522,35 @@ class _AsyncListViewState extends State<AsyncListView> {
     }
 
     return _listTile(item, index);
+  }
+
+  Widget _groupChip(ModelBase item, String group) {
+    final color = Theme.of(context).colorScheme.outlineVariant;
+    final filter = widget.subfilter == null || _isInMultiSelectMode
+        ? null
+        : item.getGroupFilter();
+
+    return filter == null
+        ? Chip(
+            side: BorderSide.none,
+            backgroundColor: color,
+            label: Text(group),
+          )
+        : ActionChip(
+            side: BorderSide.none,
+            backgroundColor: color,
+            label: Text(group),
+            onPressed: () => _selectGroup(filter),
+          );
+  }
+
+  void _selectGroup(Subfilter filter) {
+    // Only the replaced subfilter reloads the list.
+    widget.filter?.removeListener(_reloadData);
+    widget.filter?.textFilter = '';
+    widget.filter?.addListener(_reloadData);
+    widget.subfilter!.filter.replaceWith(filter);
+    widget.onGroupSelected?.call();
   }
 
   /// Creates a tile widget for one list [item] at the given [index].

@@ -128,6 +128,22 @@ class ID3TagFilter extends Subfilter {
     }
   }
 
+  /// Replaces the tag filters and the date interval with the values of the
+  /// [other] filter. Listeners are notified once.
+  @override
+  void replaceWith(ID3TagFilter other) {
+    artists = other.artists;
+    artistNames = other.artistNames;
+    genres = other.genres;
+    genreNames = other.genreNames;
+    albums = other.albums;
+    albumNames = other.albumNames;
+    languages = other.languages;
+    startDate = other.startDate;
+    endDate = other.endDate;
+    notifyListeners();
+  }
+
   /// Clears the filter value of the [identifier].
   void clear(String identifier) {
     _remove(identifier);

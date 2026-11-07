@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/manager/image_cache_manager.dart';
+import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/services/cover_file_service.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
@@ -51,6 +52,12 @@ abstract class ModelBase {
 
   /// Returns the group this item belongs to.
   String? getGroup(BuildContext context) {
+    return null;
+  }
+
+  /// Returns the filter matching the elements of [getGroup] or null if the
+  /// group can not be filtered.
+  Subfilter? getGroupFilter() {
     return null;
   }
 

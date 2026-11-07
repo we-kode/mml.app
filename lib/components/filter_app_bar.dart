@@ -76,6 +76,7 @@ class FilterAppBarState extends State<FilterAppBar> {
     widget.listAction?.addListener(_updateState);
     widget.shareAction?.addListener(_updateState);
     widget.navigationState.addListener(_updateState);
+    widget.filter.addListener(_filterChanged);
     super.initState();
   }
 
@@ -86,6 +87,11 @@ class FilterAppBarState extends State<FilterAppBar> {
     if (oldWidget.listAction != widget.listAction) {
       oldWidget.listAction?.removeListener(_updateState);
       widget.listAction?.addListener(_updateState);
+    }
+
+    if (oldWidget.filter != widget.filter) {
+      oldWidget.filter.removeListener(_filterChanged);
+      widget.filter.addListener(_filterChanged);
     }
 
     if (oldWidget.navigationState != widget.navigationState) {
@@ -111,6 +117,17 @@ class FilterAppBarState extends State<FilterAppBar> {
     widget.shareAction?.removeListener(_updateState);
     widget.exportAction?.removeListener(_updateState);
     widget.navigationState.removeListener(_updateState);
+    widget.filter.removeListener(_filterChanged);
+  }
+
+  void _filterChanged() {
+    final text = widget.filter.textFilter ?? '';
+    if (text != (_filter ?? '')) {
+      setState(() {
+        _filter = text;
+        _filterOpened = text.isNotEmpty;
+      });
+    }
   }
 
   /// Updates the state if the [SelectedItemsAction] state changed.

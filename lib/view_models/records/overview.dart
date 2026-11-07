@@ -10,6 +10,7 @@ import 'package:mml_app/models/record_view_settings.dart';
 import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/models/share_link.dart';
 import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/services/share.dart';
 import 'package:mml_app/services/share_link.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
@@ -53,6 +54,7 @@ class RecordsViewModel extends ChangeNotifier {
         return false;
       }
       _textFilter = textFilter;
+      ShareService.getInstance().supported.addListener(_updateSearchShareable);
       ShareLinkService.getInstance().currentSearch = () =>
           ShareLink(filter: _textFilter?.textFilter, tagFilter: tagFilter);
       locales = AppLocalizations.of(context)!;
@@ -84,16 +86,19 @@ class RecordsViewModel extends ChangeNotifier {
   }
 
   void _updateSearchShareable() {
-    ShareLinkService.getInstance().searchShareable.value = ShareLink(
-      filter: _textFilter?.textFilter,
-      tagFilter: tagFilter,
-    ).hasSearch;
+    ShareLinkService.getInstance().searchShareable.value =
+        ShareService.getInstance().supported.value &&
+        ShareLink(
+          filter: _textFilter?.textFilter,
+          tagFilter: tagFilter,
+        ).hasSearch;
   }
 
   @override
   void dispose() {
     _shareSelection.dispose();
     _textFilter?.removeListener(_updateSearchShareable);
+    ShareService.getInstance().supported.removeListener(_updateSearchShareable);
     ShareLinkService.getInstance().searchShareable.value = false;
     ShareLinkService.getInstance().currentSearch = null;
     super.dispose();
@@ -104,18 +109,20 @@ class RecordsViewModel extends ChangeNotifier {
       return;
     }
 
-    final shared = link.tagFilter;
-    tagFilter
-      ..artists = shared.artists
-      ..artistNames = shared.artistNames
-      ..genres = shared.genres
-      ..genreNames = shared.genreNames
-      ..albums = shared.albums
-      ..albumNames = shared.albumNames
-      ..languages = shared.languages
-      ..startDate = shared.startDate
-      ..endDate = shared.endDate;
+    tagFilter.replaceWith(link.tagFilter);
     _textFilter?.textFilter = link.filter;
+  }
+
+  /// Stores the replaced tag filter, if filters are persisted.
+  Future<void> saveTagFilter() async {
+    await _dbService.clearID3Filter();
+    if (await isFilterPersistActive()) {
+      await saveFolderPath(tagFilter);
+      await _dbService.saveID3Filter(
+        ID3TagFilters.albums,
+        jsonEncode(tagFilter.albums),
+      );
+    }
   }
 
   /// Checks which of the [selected] items the user may share and shows the

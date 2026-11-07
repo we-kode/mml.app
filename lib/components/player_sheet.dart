@@ -9,6 +9,7 @@ import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
 import 'package:mml_app/services/playlist.dart';
+import 'package:mml_app/services/share.dart';
 import 'package:mml_app/services/share_link.dart';
 import 'package:provider/provider.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
@@ -91,15 +92,22 @@ class PlayerSheetState extends State<PlayerSheet>
                       return state.currentRecord is LocalRecord ||
                               state.currentRecord is Livestream
                           ? Container()
-                          : IconButton(
-                              iconSize: 24,
-                              padding: EdgeInsets.zero,
-                              tooltip: AppLocalizations.of(
-                                context,
-                              )!.sharePlayLink,
-                              onPressed: () => ShareLinkService.getInstance()
-                                  .shareRecord(context),
-                              icon: const Icon(Symbols.dataset_linked),
+                          : ValueListenableBuilder<bool>(
+                              valueListenable:
+                                  ShareService.getInstance().supported,
+                              builder: (context, supported, _) => supported
+                                  ? IconButton(
+                                      iconSize: 24,
+                                      padding: EdgeInsets.zero,
+                                      tooltip: AppLocalizations.of(
+                                        context,
+                                      )!.sharePlayLink,
+                                      onPressed: () =>
+                                          ShareLinkService.getInstance()
+                                              .shareRecord(context),
+                                      icon: const Icon(Symbols.dataset_linked),
+                                    )
+                                  : const SizedBox.shrink(),
                             );
                     },
                   ),
@@ -188,10 +196,13 @@ class PlayerSheetState extends State<PlayerSheet>
                       builder: (context, state, child) {
                         return state.currentRecord is Livestream
                             ? const Icon(Symbols.sensors)
-                            : Text(
-                                "${state.currentSeekPosition.asFormattedDuration()}/${state.currentRecord?.duration?.asFormattedDuration()}",
-                                textAlign: TextAlign.right,
-                                style: Theme.of(context).textTheme.bodySmall,
+                            : ValueListenableBuilder<double>(
+                                valueListenable: state.position,
+                                builder: (context, position, _) => Text(
+                                  "${position.asFormattedDuration()}/${state.currentRecord?.duration?.asFormattedDuration()}",
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
                               );
                       },
                     ),
@@ -247,28 +258,34 @@ class PlayerSheetState extends State<PlayerSheet>
                               ? Center(
                                   child: SizedBox.fromSize(
                                     size: const Size(256, 64),
-                                    child: const SoundwaveAnimation(),
+                                    child: SoundwaveAnimation(
+                                      animate: state.isPlaying,
+                                    ),
                                   ),
                                 )
-                              : Slider(
-                                  inactiveColor: Theme.of(
-                                    context,
-                                  ).colorScheme.outline,
-                                  value: state.currentSeekPosition,
-                                  min: 0,
-                                  max: state.currentRecord?.duration ?? 0,
-                                  onChanged: (value) {
-                                    PlayerService.getInstance().seek(value);
-                                  },
-                                  onChangeStart: (value) {
-                                    PlayerService.getInstance().startSeekDrag();
-                                  },
-                                  onChangeEnd: (value) {
-                                    PlayerService.getInstance().seek(
-                                      value,
-                                      updatePlayerSeek: true,
-                                    );
-                                  },
+                              : ValueListenableBuilder<double>(
+                                  valueListenable: state.position,
+                                  builder: (context, position, _) => Slider(
+                                    inactiveColor: Theme.of(
+                                      context,
+                                    ).colorScheme.outline,
+                                    value: position,
+                                    min: 0,
+                                    max: state.currentRecord?.duration ?? 0,
+                                    onChanged: (value) {
+                                      PlayerService.getInstance().seek(value);
+                                    },
+                                    onChangeStart: (value) {
+                                      PlayerService.getInstance()
+                                          .startSeekDrag();
+                                    },
+                                    onChangeEnd: (value) {
+                                      PlayerService.getInstance().seek(
+                                        value,
+                                        updatePlayerSeek: true,
+                                      );
+                                    },
+                                  ),
                                 );
                         },
                       ),
