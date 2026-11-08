@@ -6,7 +6,7 @@ class ShareLink {
   static const String scheme = 'mml';
 
   /// Path of the landing page on the server.
-  static const String path = '/s/open';
+  static const String path = '/media/s/open';
 
   /// Name of the server the link was created on, or null if not known.
   final String? server;
