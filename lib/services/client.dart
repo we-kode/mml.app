@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -30,8 +31,34 @@ class ClientService {
   /// The running refresh of the access token or null.
   Future<void>? _refresh;
 
+  /// The running move to another server or null.
+  Future<void>? _move;
+
+  /// Adapter used to send the requests while moving to another server or null
+  /// for the default adapter.
+  final HttpClientAdapter? _moveAdapter;
+
+  /// Signs the [message] with the [privateKey] of the client.
+  final Future<String> Function(String message, String privateKey) _sign;
+
   /// Private constructor of the service.
-  ClientService._();
+  ClientService._([
+    this._moveAdapter,
+    Future<String> Function(String message, String privateKey)? sign,
+  ]) : _sign =
+           sign ??
+           ((message, privateKey) =>
+               RSA.signPKCS1v15(message, Hash.SHA512, privateKey));
+
+  /// Creates a service, that sends the requests of [moveServer] with the
+  /// [adapter] and signs token requests with [sign].
+  @visibleForTesting
+  factory ClientService.withMoveAdapter(
+    HttpClientAdapter adapter,
+    Future<String> Function(String message, String privateKey) sign,
+  ) {
+    return ClientService._(adapter, sign);
+  }
 
   /// Returns the singleton instance of the [ClientService].
   static ClientService getInstance() {
@@ -132,6 +159,9 @@ class ClientService {
   }
 
   /// Returns a boolean that indicates whether the client is registered.
+  ///
+  /// Moves the client in the background with [moveServer], if the server
+  /// announces another server name.
   Future<bool> isClientRegistered({bool handleErrors = true}) async {
     Response response;
 
@@ -151,7 +181,126 @@ class ClientService {
       response = await dio.request(url, options: options);
     }
 
+    final serverName = response.data['serverName'];
+    if (serverName is String && serverName.isNotEmpty) {
+      unawaited(moveServer(serverName));
+    }
+
     return response.data['registered'];
+  }
+
+  /// Moves the client to the server [serverName] in the format host[:port].
+  ///
+  /// The client is moved only, if [serverName] is a host with an optional
+  /// port, the client is registered on [serverName] and the
+  /// server announces the same server name. Otherwise or on any error the
+  /// current server is kept, so the client never loses its registration.
+  /// Concurrent calls wait for the same move.
+  Future<void> moveServer(String serverName) {
+    return _move ??= _moveServer(serverName).whenComplete(() => _move = null);
+  }
+
+  Future<void> _moveServer(String serverName) async {
+    final current = await _storage.get(
+      SecureStorageService.serverNameStorageKey,
+    );
+    if (current == null ||
+        !_isServerName(serverName) ||
+        _isSameServer(current, serverName)) {
+      return;
+    }
+
+    try {
+      final appKey = await _storage.get(SecureStorageService.appKeyStorageKey);
+      final dio = Dio(
+        BaseOptions(
+          baseUrl: 'https://$serverName/api/',
+          connectTimeout: const Duration(seconds: 5),
+          sendTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 5),
+          headers: {'App-Key': ?appKey},
+        ),
+      );
+      if (_moveAdapter != null) {
+        dio.httpClientAdapter = _moveAdapter;
+      }
+
+      final token = (await _requestToken(dio)).data?['access_token'];
+      if (token is! String || token.isEmpty) {
+        return;
+      }
+
+      final response = await dio.request(
+        '/v2.0/identity/client/',
+        options: Options(
+          method: 'GET',
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      final data = response.data;
+      if (data is! Map ||
+          data['registered'] != true ||
+          data['serverName'] is! String ||
+          !_isSameServer(data['serverName'], serverName)) {
+        return;
+      }
+
+      // The secure storage must not be written concurrently and the server
+      // must not have been changed in the meantime, e.g. by scanning new
+      // connection settings.
+      await _refresh;
+      final now = await _storage.get(SecureStorageService.serverNameStorageKey);
+      if (now == null || !_isSameServer(now, current)) {
+        return;
+      }
+
+      await _storage.set(SecureStorageService.accessTokenStorageKey, token);
+      await _storage.set(SecureStorageService.serverNameStorageKey, serverName);
+    } catch (_) {
+      // Keep the current server and try again on the next start.
+    }
+  }
+
+  bool _isSameServer(String a, String b) => a.toLowerCase() == b.toLowerCase();
+
+  bool _isServerName(String value) {
+    final uri = Uri.tryParse('https://$value');
+    return uri != null &&
+        uri.host.isNotEmpty &&
+        uri.userInfo.isEmpty &&
+        uri.path.isEmpty &&
+        !uri.hasQuery &&
+        !uri.hasFragment &&
+        _isSameServer(uri.authority, value);
+  }
+
+  Future<Response<Map>> _requestToken(Dio dio) async {
+    var clientId = await _storage.get(SecureStorageService.clientIdStorageKey);
+    var clientSecret = await _storage.get(
+      SecureStorageService.clientSecretStorageKey,
+    );
+    var rsaPrivate = await _storage.get(
+      SecureStorageService.rsaPrivateStorageKey,
+    );
+
+    var data = {
+      'grant_type': 'client_credentials',
+      'client_id': clientId,
+      'client_secret': clientSecret,
+    };
+    data['code_challenge'] = await _sign(
+      '{"grant_type":"client_credentials","client_id":"$clientId","client_secret":"$clientSecret"}',
+      rsaPrivate ?? '',
+    );
+
+    return dio.request(
+      '/v1.0/identity/connect/token',
+      data: data,
+      options: Options(
+        method: 'POST',
+        contentType: Headers.formUrlEncodedContentType,
+      ),
+    );
   }
 
   /// Tries to refresh the current access token. Concurrent calls wait for the
@@ -170,35 +319,7 @@ class ClientService {
     _apiService.initDio(dio, false);
 
     try {
-      var clientId = await _storage.get(
-        SecureStorageService.clientIdStorageKey,
-      );
-      var clientSecret = await _storage.get(
-        SecureStorageService.clientSecretStorageKey,
-      );
-      var rsaPrivate = await _storage.get(
-        SecureStorageService.rsaPrivateStorageKey,
-      );
-
-      var data = {
-        'grant_type': 'client_credentials',
-        'client_id': clientId,
-        'client_secret': clientSecret,
-      };
-      data['code_challenge'] = await RSA.signPKCS1v15(
-        '{"grant_type":"client_credentials","client_id":"$clientId","client_secret":"$clientSecret"}',
-        Hash.SHA512,
-        rsaPrivate ?? '',
-      );
-
-      Response<Map> response = await dio.request(
-        '/v1.0/identity/connect/token',
-        data: data,
-        options: Options(
-          method: 'POST',
-          contentType: Headers.formUrlEncodedContentType,
-        ),
-      );
+      Response<Map> response = await _requestToken(dio);
 
       // Store the token on successful request.
       if (response.statusCode == HttpStatus.ok) {
