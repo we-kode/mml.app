@@ -223,7 +223,7 @@ class ShareService {
     );
 
     return Uri.parse(
-      'https://$serverName/s/download/${response.data['token']}',
+      'https://$serverName/media/s/download/${response.data['token']}',
     );
   }
 

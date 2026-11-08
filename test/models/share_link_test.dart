@@ -22,7 +22,7 @@ void main() {
       expect(uri.scheme, 'https');
       expect(uri.host, 'mml.example.org');
       expect(uri.port, 8443);
-      expect(uri.path, '/s/open');
+      expect(uri.path, '/media/s/open');
 
       // The landing page of the server forwards the query to the app.
       final parsed = ShareLink.parse(
@@ -85,7 +85,10 @@ void main() {
       );
 
       final uri = link.toTokenUri('mml.example.org:8443', 'abc123');
-      expect(uri.toString(), 'https://mml.example.org:8443/s/open?c=abc123');
+      expect(
+        uri.toString(),
+        'https://mml.example.org:8443/media/s/open?c=abc123',
+      );
 
       final parsed = ShareLink.parse(
         Uri.parse('mml://open?c=abc123&server=mml.example.org%3A8443'),
