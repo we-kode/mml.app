@@ -98,6 +98,26 @@ void main() {
     );
   });
 
+  test(
+    'checks the registration without error handling with the versioned url',
+    () async {
+      final adapter = _Adapter({
+        'https://$oldServer/api/v2.0/identity/client/': (
+          200,
+          {'registered': true, 'serverName': oldServer},
+        ),
+      });
+
+      final registered = await ClientService.withMoveAdapter(
+        adapter,
+        sign,
+      ).isClientRegistered(handleErrors: false);
+
+      expect(registered, isTrue);
+      expect(adapter.requests.single.headers['App-Key'], 'appKey');
+    },
+  );
+
   group('moving to another server', () {
     test('moves, if the client is registered on the new server', () async {
       final adapter = _Adapter({

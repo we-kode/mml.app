@@ -34,8 +34,9 @@ class ClientService {
   /// The running move to another server or null.
   Future<void>? _move;
 
-  /// Adapter used to send the requests while moving to another server or null
-  /// for the default adapter.
+  /// Adapter used to send the requests while moving to another server and
+  /// while checking the registration without error handling or null for the
+  /// default adapter.
   final HttpClientAdapter? _moveAdapter;
 
   /// Signs the [message] with the [privateKey] of the client.
@@ -50,8 +51,9 @@ class ClientService {
            ((message, privateKey) =>
                RSA.signPKCS1v15(message, Hash.SHA512, privateKey));
 
-  /// Creates a service, that sends the requests of [moveServer] with the
-  /// [adapter] and signs token requests with [sign].
+  /// Creates a service, that sends the requests of [moveServer] and of
+  /// [isClientRegistered] without error handling with the [adapter] and signs
+  /// token requests with [sign].
   @visibleForTesting
   factory ClientService.withMoveAdapter(
     HttpClientAdapter adapter,
@@ -177,8 +179,11 @@ class ClientService {
     } else {
       var dio = Dio();
       _apiService.initDio(dio, false);
+      if (_moveAdapter != null) {
+        dio.httpClientAdapter = _moveAdapter;
+      }
 
-      response = await dio.request(url, options: options);
+      response = await dio.request('/v2.0$url', options: options);
     }
 
     final serverName = response.data['serverName'];
