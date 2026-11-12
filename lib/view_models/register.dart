@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';

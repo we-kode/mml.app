@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/view_models/main.dart';

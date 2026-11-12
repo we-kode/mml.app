@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/progress_indicator.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/services/db.dart';

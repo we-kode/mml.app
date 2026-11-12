@@ -1,5 +1,5 @@
 // Overview screen of the uploaded records to the music lib.
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:provider/provider.dart';

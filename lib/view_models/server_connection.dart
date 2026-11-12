@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/connection_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';

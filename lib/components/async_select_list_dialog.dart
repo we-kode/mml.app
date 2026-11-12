@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/models/model_list.dart';

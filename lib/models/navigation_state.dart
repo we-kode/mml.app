@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
 /// Holds the navigation path.
 class NavigationState extends ChangeNotifier {

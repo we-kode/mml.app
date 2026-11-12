@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/async_list_view.dart';
@@ -29,6 +29,7 @@ void main() {
     List<Record> records, {
     bool withSubfilter = true,
     SelectedItemsAction? action,
+    Listenable? reloadTrigger,
   }) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -40,6 +41,7 @@ void main() {
           subfilter: withSubfilter ? _TagFilter(tagFilter) : null,
           filter: textFilter,
           selectedItemsAction: action,
+          reloadTrigger: reloadTrigger,
           onMultiSelect: (actionId, items) async => false,
           onGroupSelected: () => selected++,
           loadData:
@@ -114,5 +116,19 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(ActionChip), findsNothing);
+  });
+
+  testWidgets('reloads the list when the reload trigger notifies', (
+    tester,
+  ) async {
+    final trigger = ChangeNotifier();
+    addTearDown(trigger.dispose);
+    await show(tester, [album()], reloadTrigger: trigger);
+    loads.clear();
+
+    trigger.notifyListeners();
+    await tester.pumpAndSettle();
+
+    expect(loads, hasLength(1));
   });
 }

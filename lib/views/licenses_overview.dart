@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:provider/provider.dart';
 
