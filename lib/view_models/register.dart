@@ -9,7 +9,6 @@ import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
-import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -99,8 +98,7 @@ class RegisterViewModel extends ChangeNotifier {
     await _storage.set(SecureStorageService.rsaPrivateStorageKey, private);
     await _storage.set(SecureStorageService.rsaPublicStorageKey, public);
 
-    final crypt = XorEncryptor.generateKey();
-    await _storage.set(SecureStorageService.cryptoKey, crypt.toString());
+    await _storage.ensureCryptoKey();
 
     state = RegistrationState.init;
     notifyListeners();

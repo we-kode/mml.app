@@ -118,6 +118,12 @@ class MainViewModel extends ChangeNotifier {
 
   /// Pops the nested route.
   Future<bool> popNestedRoute(BuildContext context) async {
+    final navigationState = appBar?.navigationState;
+    if (navigationState?.path != null) {
+      navigationState!.returnPressed();
+      return false;
+    }
+
     return !await _routerService.popNestedRoute();
   }
 

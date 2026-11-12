@@ -6,16 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/arguments/navigation_arguments.dart';
 import 'package:mml_app/arguments/playlists.dart';
-import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/action_export.dart';
 import 'package:mml_app/models/selected_items_action.dart';
 import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/services/share_link.dart';
-import 'package:mml_app/oss_licenses.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/view_models/faq.dart';
-import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/intro.dart';
 import 'package:mml_app/view_models/license.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
@@ -28,7 +25,6 @@ import 'package:mml_app/view_models/register.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:mml_app/views/faq.dart';
-import 'package:mml_app/views/information.dart';
 import 'package:mml_app/views/intro.dart';
 import 'package:mml_app/views/license.dart';
 import 'package:mml_app/views/licenses_overview.dart';
@@ -165,16 +161,6 @@ class RouterService {
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),
-      InformationViewModel.route: PageRouteBuilder(
-        settings: RouteSettings(
-          name: InformationViewModel.route,
-          arguments: args,
-        ),
-        pageBuilder: (context, animation1, animation2) =>
-            InformationScreen(url: ((args as SubrouteArguments).arg as String)),
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration: Duration.zero,
-      ),
       LicensesOverviewViewModel.route: PageRouteBuilder(
         settings: RouteSettings(
           name: LicensesOverviewViewModel.route,
@@ -188,7 +174,7 @@ class RouterService {
       LicenseViewModel.route: PageRouteBuilder(
         settings: RouteSettings(name: LicenseViewModel.route, arguments: args),
         pageBuilder: (context, animation1, animation2) =>
-            LicenseScreen(package: (args as Package)),
+            LicenseScreen(license: args as String),
         transitionDuration: Duration.zero,
         reverseTransitionDuration: Duration.zero,
       ),

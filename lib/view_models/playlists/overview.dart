@@ -159,7 +159,18 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// Imports records from file.
   Future<List<String>> import(PlatformFile file) async {
-    return await ImportService.getInstance().import(file.path!, _context);
+    final path = file.path;
+    final content = path == null
+        ? utf8.decode(await file.readAsBytes(), allowMalformed: true)
+        : null;
+    if (!_context.mounted) {
+      return [];
+    }
+    return await ImportService.getInstance().import(
+      path,
+      _context,
+      cnt: content,
+    );
   }
 
   /// Plays one record.

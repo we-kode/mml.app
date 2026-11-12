@@ -117,4 +117,9 @@ class MessengerService {
   String get cacheClearedFailed {
     return AppLocalizations.of(snackbarKey.currentContext!)!.cacheClearedFailed;
   }
+
+  /// Translated string for a message if a link could not be opened.
+  String get linkNotOpened {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.linkNotOpened;
+  }
 }

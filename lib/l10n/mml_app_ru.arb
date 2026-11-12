@@ -115,6 +115,7 @@
   "cacheRangeNever": "Никогда",
   "cacheCleared": "Кэш был успешно очищен.",
   "cacheClearedFailed": "Кэш не может быть очищен.",
+  "linkNotOpened": "Не удалось открыть ссылку.",
   "announcements": "Объявления",
   "showAnnouncementsOnStart": "Показывать объявления при запуске",
   "noAnnouncements": "Актуальных объявлений нет.",

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mml_app/util/xor_encryptor.dart';
 
 /// Service that handles data of the secure storage for the app.
 class SecureStorageService {
@@ -158,6 +159,15 @@ class SecureStorageService {
       iOptions: iOSOptions,
       aOptions: androidOptions,
     );
+  }
+
+  /// Stores a new key to encrypt downloaded records, if none is stored yet.
+  ///
+  /// An existing key is kept, so records downloaded before stay playable.
+  Future<void> ensureCryptoKey() async {
+    if (await get(cryptoKey) == null) {
+      await set(cryptoKey, XorEncryptor.generateKey().toString());
+    }
   }
 
   /// Deletes all tokens and secure information except the skip intro flag.

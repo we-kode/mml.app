@@ -384,6 +384,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cacheClearedFailed => 'Кэш не может быть очищен.';
 
   @override
+  String get linkNotOpened => 'Не удалось открыть ссылку.';
+
+  @override
   String get announcements => 'Объявления';
 
   @override

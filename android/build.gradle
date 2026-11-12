@@ -5,9 +5,9 @@ allprojects {
     }
 }
 
-rootProject.buildDir = '../build'
+rootProject.layout.buildDirectory.value(rootProject.layout.projectDirectory.dir('../build'))
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    project.layout.buildDirectory.value(rootProject.layout.buildDirectory.dir(project.name))
 }
 subprojects {
     project.evaluationDependsOn(':app')
@@ -19,5 +19,5 @@ subprojects.forEach { project ->
 }
 
 tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+    delete rootProject.layout.buildDirectory
 }

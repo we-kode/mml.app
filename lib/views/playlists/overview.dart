@@ -57,23 +57,18 @@ class PlaylistScreen extends StatelessWidget {
                       ActionButton(
                         icon: const Icon(Symbols.upload),
                         onPressed: () async {
-                          FilePickerResult? selected = await FilePicker.platform
-                              .pickFiles(
-                                type: Platform.isIOS
-                                    ? FileType.any
-                                    : FileType.custom,
-                                allowedExtensions: Platform.isIOS
-                                    ? null
-                                    : ['mml'],
-                              );
+                          final selected = await FilePicker.pickFile(
+                            type: Platform.isIOS
+                                ? FileType.any
+                                : FileType.custom,
+                            allowedExtensions: Platform.isIOS ? null : ['mml'],
+                          );
 
                           if (selected == null) {
                             return;
                           }
 
-                          var notDownloaded = await vm.import(
-                            selected.files.first,
-                          );
+                          var notDownloaded = await vm.import(selected);
 
                           if (notDownloaded.isEmpty) {
                             return;

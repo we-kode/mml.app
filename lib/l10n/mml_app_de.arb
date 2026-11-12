@@ -143,6 +143,7 @@
   "cacheRangeNever": "Nie",
   "cacheCleared": "Cache wurde erfolgreich gelöscht.",
   "cacheClearedFailed": "Cache konnte nicht gelöscht werden.",
+  "linkNotOpened": "Der Link konnte nicht geöffnet werden.",
   "announcements": "Mitteilungen",
   "showAnnouncementsOnStart": "Mitteilungen beim Start anzeigen",
   "noAnnouncements": "Es gibt keine aktuellen Mitteilungen.",

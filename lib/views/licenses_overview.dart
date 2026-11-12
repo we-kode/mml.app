@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:provider/provider.dart';
-import 'package:mml_app/oss_licenses.dart';
 
 /// Overview screen of licenses of all used packages.
 class LicensesOverviewScreen extends StatelessWidget {
@@ -16,13 +15,23 @@ class LicensesOverviewScreen extends StatelessWidget {
       builder: (context, _) {
         var vm = Provider.of<LicensesOverviewViewModel>(context, listen: false);
 
-        return ListView.builder(
-          itemCount: allDependencies.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              title: Text(allDependencies[index].name),
-              onTap: () {
-                vm.showLicense(allDependencies[index]);
+        return FutureBuilder<Map<String, String>>(
+          future: vm.licenses,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final licenses = snapshot.data!.entries.toList();
+            return ListView.builder(
+              itemCount: licenses.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text(licenses[index].key),
+                  onTap: () {
+                    vm.showLicense(licenses[index].value);
+                  },
+                );
               },
             );
           },

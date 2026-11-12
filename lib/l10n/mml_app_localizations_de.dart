@@ -387,6 +387,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cacheClearedFailed => 'Cache konnte nicht gelöscht werden.';
 
   @override
+  String get linkNotOpened => 'Der Link konnte nicht geöffnet werden.';
+
+  @override
   String get announcements => 'Mitteilungen';
 
   @override
