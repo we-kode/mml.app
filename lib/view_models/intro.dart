@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';

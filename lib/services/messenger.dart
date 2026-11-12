@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// Service that shows messages in the snackbar of the app.
@@ -116,5 +116,10 @@ class MessengerService {
   /// Translated string for a message if the cache could not be cleared.
   String get cacheClearedFailed {
     return AppLocalizations.of(snackbarKey.currentContext!)!.cacheClearedFailed;
+  }
+
+  /// Translated string for a message if a link could not be opened.
+  String get linkNotOpened {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.linkNotOpened;
   }
 }

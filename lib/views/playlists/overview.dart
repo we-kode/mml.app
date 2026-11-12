@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/delete_dialog.dart';
@@ -51,29 +51,26 @@ class PlaylistScreen extends StatelessWidget {
               exportAction: appBar?.exportAction,
               filter: appBar?.filter,
               showAddButton: true,
+              reloadTrigger: vm,
               subactions: playlistId != null
                   ? null
                   : [
                       ActionButton(
                         icon: const Icon(Symbols.upload),
                         onPressed: () async {
-                          FilePickerResult? selected = await FilePicker.platform
-                              .pickFiles(
-                                type: Platform.isIOS
-                                    ? FileType.any
-                                    : FileType.custom,
-                                allowedExtensions: Platform.isIOS
-                                    ? null
-                                    : ['mml'],
-                              );
+                          final selected = await FilePicker.pickFile(
+                            type: Platform.isIOS
+                                ? FileType.any
+                                : FileType.custom,
+                            allowedExtensions: Platform.isIOS ? null : ['mml'],
+                          );
 
                           if (selected == null) {
                             return;
                           }
 
-                          var notDownloaded = await vm.import(
-                            selected.files.first,
-                          );
+                          var notDownloaded = await vm.import(selected);
+                          vm.update();
 
                           if (notDownloaded.isEmpty) {
                             return;

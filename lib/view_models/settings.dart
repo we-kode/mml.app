@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
 import 'package:mml_app/components/announcements_dialog.dart';
@@ -15,7 +15,6 @@ import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/faq.dart';
-import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -50,7 +49,7 @@ class SettingsViewModel extends ChangeNotifier {
   final ImageCacheManager cacheManager = ImageCacheManager();
 
   /// Link of the privacy policy.
-  final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
+  final String privacyLink = "";
 
   /// Link of the legal information.
   final String legalInfoLink = "";
@@ -137,20 +136,27 @@ class SettingsViewModel extends ChangeNotifier {
     );
   }
 
-  /// Redirects to the legal information webview screen.
-  void showLegalInformation() {
-    _routerService.pushNestedRoute(
-      InformationViewModel.route,
-      arguments: SubrouteArguments(arg: legalInfoLink),
-    );
-  }
+  /// Opens the legal information in an in-app browser view.
+  Future<void> showLegalInformation() =>
+      _launch(Uri.parse(legalInfoLink), LaunchMode.inAppBrowserView);
 
-  /// Redirects to the privacy policy webview screen.
-  void showPrivacyPolicy() {
-    _routerService.pushNestedRoute(
-      InformationViewModel.route,
-      arguments: SubrouteArguments(arg: privacyLink),
-    );
+  /// Opens the privacy policy in an in-app browser view.
+  Future<void> showPrivacyPolicy() =>
+      _launch(Uri.parse(privacyLink), LaunchMode.inAppBrowserView);
+
+  Future<void> _launch(
+    Uri uri, [
+    LaunchMode mode = LaunchMode.platformDefault,
+  ]) async {
+    var launched = false;
+    try {
+      launched = await launchUrl(uri, mode: mode);
+    } catch (_) {
+      launched = false;
+    }
+    if (!launched) {
+      _messengerService.showMessage(_messengerService.linkNotOpened);
+    }
   }
 
   /// Redirects to the faq screen.
@@ -173,9 +179,7 @@ class SettingsViewModel extends ChangeNotifier {
         'subject': locales.appTitle,
       }),
     );
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
-    }
+    await _launch(uri);
   }
 
   String? _encodeQueryParameters(Map<String, String> params) {

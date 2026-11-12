@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/check_animation.dart';
 import 'package:mml_app/components/error_animation.dart';
 import 'package:mml_app/components/generate_rsa_animation.dart';

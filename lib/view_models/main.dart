@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/announcements_dialog.dart';
@@ -118,6 +118,12 @@ class MainViewModel extends ChangeNotifier {
 
   /// Pops the nested route.
   Future<bool> popNestedRoute(BuildContext context) async {
+    final navigationState = appBar?.navigationState;
+    if (navigationState?.path != null) {
+      navigationState!.returnPressed();
+      return false;
+    }
+
     return !await _routerService.popNestedRoute();
   }
 

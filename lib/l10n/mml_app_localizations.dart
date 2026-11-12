@@ -790,6 +790,12 @@ abstract class AppLocalizations {
   /// **'Cache konnte nicht gelöscht werden.'**
   String get cacheClearedFailed;
 
+  /// No description provided for @linkNotOpened.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link konnte nicht geöffnet werden.'**
+  String get linkNotOpened;
+
   /// No description provided for @announcements.
   ///
   /// In de, this message translates to:

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/progress_indicator.dart';
 import 'package:mml_app/components/share_options_dialog.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';

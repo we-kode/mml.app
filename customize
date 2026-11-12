@@ -21,6 +21,7 @@ COLOR_SCHEME=./config/lib_color_schemes.g.dart
 if test -f "$COLOR_SCHEME"; then
     echo "Replacing color scheme"
     cp "$COLOR_SCHEME" "$DIR/lib/lib_color_schemes.g.dart"
+    sed -i -E "s#package:flutter/material.dart#package:material_ui/material_ui.dart#" "$DIR/lib/lib_color_schemes.g.dart"
 fi
 
 # replace titles

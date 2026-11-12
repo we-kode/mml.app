@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'mml_app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -382,6 +383,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cacheClearedFailed => 'Кэш не может быть очищен.';
+
+  @override
+  String get linkNotOpened => 'Не удалось открыть ссылку.';
 
   @override
   String get announcements => 'Объявления';

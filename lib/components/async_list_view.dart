@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/expandable_fab.dart';
@@ -20,18 +20,20 @@ import 'package:shimmer/shimmer.dart';
 /// Function to load data with the passed [filter], starting from [offset] and
 /// loading an amount of [take] data. Also a [subfilter] can be added to filter
 /// the list more specific.
-typedef LoadDataFunction =
-    Future<ModelList> Function({
-      String? filter,
-      int? offset,
-      int? take,
-      Subfilter? subfilter,
-    });
+typedef LoadDataFunction = Future<ModelList> Function({
+  String? filter,
+  int? offset,
+  int? take,
+  Subfilter? subfilter,
+});
 
 /// Function to open one [item] in the list view, that corresponds to the given
 /// [filter] and [subFilter].
-typedef OpenItemFunction =
-    Function(ModelBase item, String? filter, Subfilter? subFilter);
+typedef OpenItemFunction = Function(
+  ModelBase item,
+  String? filter,
+  Subfilter? subFilter,
+);
 
 /// Function to be called when the back button is pressed. And the list should navigate up in folder structure.
 typedef MoveUpFunction = Function(Subfilter? subFilter);
@@ -40,8 +42,10 @@ typedef MoveUpFunction = Function(Subfilter? subFilter);
 typedef EditGroupFunction = Function(ModelBase item);
 
 /// Function called when the corresponds function of the selected items is performed in the action bar.
-typedef MultiSelectActionFunction =
-    Future<bool> Function(String actionId, List<dynamic> selectedItems);
+typedef MultiSelectActionFunction = Future<bool> Function(
+  String actionId,
+  List<dynamic> selectedItems,
+);
 
 /// Function that creates an new item.
 ///
@@ -121,6 +125,9 @@ class AsyncListView extends StatefulWidget {
   /// Subaction buttons which can be used to add multiple sub actions to the main add button
   final List<ActionButton>? subactions;
 
+  /// Reloads the list whenever it notifies its listeners.
+  final Listenable? reloadTrigger;
+
   /// Initializes the list view.
   const AsyncListView({
     super.key,
@@ -143,6 +150,7 @@ class AsyncListView extends StatefulWidget {
     this.activeItem,
     this.showAddButton = false,
     this.subactions,
+    this.reloadTrigger,
   });
 
   @override
@@ -191,6 +199,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     _reloadData();
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
+    widget.reloadTrigger?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
     widget.exportAction?.addListener(_performSelectedItemsAction);
     widget.shareAction?.addListener(_performSelectedItemsAction);
@@ -212,6 +221,7 @@ class _AsyncListViewState extends State<AsyncListView> {
     super.dispose();
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
+    widget.reloadTrigger?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
     widget.exportAction?.removeListener(_performSelectedItemsAction);
     widget.shareAction?.removeListener(_performSelectedItemsAction);

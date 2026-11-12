@@ -2,38 +2,21 @@ PODS:
   - fast_rsa (0.7.0):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_inappwebview_ios (0.0.1):
-    - Flutter
-    - flutter_inappwebview_ios/Core (= 0.0.1)
-    - OrderedSet (~> 6.0.3)
-  - flutter_inappwebview_ios/Core (0.0.1):
-    - Flutter
-    - OrderedSet (~> 6.0.3)
-  - OrderedSet (6.0.3)
 
 DEPENDENCIES:
   - fast_rsa (from `.symlinks/plugins/fast_rsa/ios`)
   - Flutter (from `Flutter`)
-  - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
-
-SPEC REPOS:
-  trunk:
-    - OrderedSet
 
 EXTERNAL SOURCES:
   fast_rsa:
     :path: ".symlinks/plugins/fast_rsa/ios"
   Flutter:
     :path: Flutter
-  flutter_inappwebview_ios:
-    :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
 
 SPEC CHECKSUMS:
   fast_rsa: bfa36cb649d61f98bd620bea0010aaee35ebd33b
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
-  flutter_inappwebview_ios: 6f63631e2c62a7c350263b13fa5427aedefe81d4
-  OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
 
-PODFILE CHECKSUM: 56ba4d1aa6c4f8b1d9ed2c43dc4ec19c27ad8f45
+PODFILE CHECKSUM: e95772898243ad1749ad02af7b2fd4aa2ce22650
 
 COCOAPODS: 1.17.0

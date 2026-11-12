@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -159,7 +159,18 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// Imports records from file.
   Future<List<String>> import(PlatformFile file) async {
-    return await ImportService.getInstance().import(file.path!, _context);
+    final path = file.path;
+    final content = path == null
+        ? utf8.decode(await file.readAsBytes(), allowMalformed: true)
+        : null;
+    if (!_context.mounted) {
+      return [];
+    }
+    return await ImportService.getInstance().import(
+      path,
+      _context,
+      cnt: content,
+    );
   }
 
   /// Plays one record.

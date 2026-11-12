@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mml_app/services/cover_file_service.dart';
 import 'package:mml_app/services/secure_storage.dart';

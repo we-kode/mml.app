@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/announcement.dart';
 import 'package:mml_app/models/announcement_severity.dart';

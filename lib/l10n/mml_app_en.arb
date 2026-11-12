@@ -115,6 +115,7 @@
   "cacheRangeNever": "Never",
   "cacheCleared": "Cache was cleared successfully.",
   "cacheClearedFailed": "Cache could not be cleared.",
+  "linkNotOpened": "The link could not be opened.",
   "announcements": "Announcements",
   "showAnnouncementsOnStart": "Show announcements on start",
   "noAnnouncements": "There are no current announcements.",
