@@ -13,11 +13,7 @@ class Genre extends ModelBase {
   final String? name;
 
   /// Initializes the model.
-  Genre({
-    this.genreId,
-    this.name,
-    super.isDeletable,
-  });
+  Genre({this.genreId, this.name, super.isDeletable});
 
   /// Converts a json object/map to the model.
   factory Genre.fromJson(Map<String, dynamic> json) => _$GenreFromJson(json);

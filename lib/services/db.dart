@@ -89,9 +89,11 @@ class DBService {
   /// Is called on upgrading the database.
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     var batch = db.batch();
-    for (var actualVersion = oldVersion + 1;
-        actualVersion <= newVersion;
-        actualVersion++) {
+    for (
+      var actualVersion = oldVersion + 1;
+      actualVersion <= newVersion;
+      actualVersion++
+    ) {
       _migrations[actualVersion]!().onUpdate(batch);
     }
     await batch.commit();
@@ -126,43 +128,39 @@ class DBService {
   ) async {
     final db = await _database;
 
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      '''
         SELECT p.id as playlistId, p.name as playlistName, r.*, rp.id FROM $_tRecords r
         INNER JOIN $_tRecordsPlaylists rp ON rp.recordId = r.recordId
         INNER JOIN $_tPlaylists p ON rp.playlistId = p.id
         WHERE p.id = ?
         ORDER BY p.name, r.tracknumber, r.title
         LIMIT ? OFFSET ?
-    ''', [
-      playlist,
-      take ?? 0,
-      offset ?? 0,
-    ]);
+    ''',
+      [playlist, take ?? 0, offset ?? 0],
+    );
 
     return ModelList(
-      List.generate(
-        maps.length,
-        (index) {
-          var rec = LocalRecord(
-            recordId: maps[index]['recordId'],
-            album: maps[index]['album'],
-            artist: maps[index]['artist'],
-            genre: maps[index]['genre'],
-            title: maps[index]['title'],
-            trackNumber: maps[index]['tracknumber'],
-            language: maps[index]['language'],
-            checksum: maps[index]['checksum'],
-            duration: double.parse(maps[index]['duration'] ?? '0'),
-            cover: maps[index]['cover'],
-            playlist: Playlist(
-              id: maps[index]['playlistId'],
-              name: maps[index]['playlistName'],
-            ),
-          );
-          rec.viewSettings = recordViewSettings;
-          return rec;
-        },
-      ),
+      List.generate(maps.length, (index) {
+        var rec = LocalRecord(
+          recordId: maps[index]['recordId'],
+          album: maps[index]['album'],
+          artist: maps[index]['artist'],
+          genre: maps[index]['genre'],
+          title: maps[index]['title'],
+          trackNumber: maps[index]['tracknumber'],
+          language: maps[index]['language'],
+          checksum: maps[index]['checksum'],
+          duration: double.parse(maps[index]['duration'] ?? '0'),
+          cover: maps[index]['cover'],
+          playlist: Playlist(
+            id: maps[index]['playlistId'],
+            name: maps[index]['playlistName'],
+          ),
+        );
+        rec.viewSettings = recordViewSettings;
+        return rec;
+      }),
       offset ?? 0,
       maps.length,
     );
@@ -205,10 +203,7 @@ class DBService {
     }
 
     var result = maps.first;
-    return Playlist(
-      id: result['id'],
-      name: result['name'],
-    );
+    return Playlist(id: result['id'], name: result['name']);
   }
 
   /// Loads all available playlists from database.
@@ -226,10 +221,7 @@ class DBService {
     return ModelList(
       List.generate(
         maps.length,
-        (index) => Playlist(
-          id: maps[index]['id'],
-          name: maps[index]['name'],
-        ),
+        (index) => Playlist(id: maps[index]['id'], name: maps[index]['name']),
       ),
       offset ?? 0,
       maps.length,
@@ -265,10 +257,7 @@ class DBService {
       if (maps.isEmpty) {
         await db.insert(
           _tRecordsPlaylists,
-          Map.of({
-            'recordId': record.recordId,
-            'playlistId': playlist,
-          }),
+          Map.of({'recordId': record.recordId, 'playlistId': playlist}),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       }
@@ -300,11 +289,7 @@ class DBService {
   /// Removes record.
   Future removeRecord(String recordId) async {
     final db = await _database;
-    await db.delete(
-      _tRecords,
-      where: 'recordId = ?',
-      whereArgs: [recordId],
-    );
+    await db.delete(_tRecords, where: 'recordId = ?', whereArgs: [recordId]);
   }
 
   /// Returns the file name which belongs to the [recordId].
@@ -348,14 +333,17 @@ class DBService {
     bool repeat = false,
   }) async {
     final db = await _database;
-    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    final List<Map<String, dynamic>> maps = await db.rawQuery(
+      '''
         SELECT r.*, p.id as playlistId, p.name as playlistName
         FROM $_tPlaylists p
         INNER JOIN $_tRecordsPlaylists rp ON rp.playlistId = p.id
         INNER JOIN $_tRecords r ON rp.recordId = r.recordId
         WHERE p.id = ?
         ORDER BY r.tracknumber, r.title
-    ''', [playlistId]);
+    ''',
+      [playlistId],
+    );
 
     if (maps.isEmpty) {
       return null;
@@ -371,20 +359,21 @@ class DBService {
       return records.elementAt(random.nextInt(records.length - 1));
     }
 
-    final actualIndex =
-        records.indexWhere((element) => element.recordId == recordId);
+    final actualIndex = records.indexWhere(
+      (element) => element.recordId == recordId,
+    );
     if (!reverse) {
       return actualIndex == (records.length - 1)
           ? !repeat
-              ? null
-              : records.elementAt(0)
+                ? null
+                : records.elementAt(0)
           : records.elementAt(actualIndex + 1);
     }
 
     return actualIndex == 0
         ? !repeat
-            ? null
-            : records.elementAt(records.length - 1)
+              ? null
+              : records.elementAt(records.length - 1)
         : records.elementAt(actualIndex - 1);
   }
 
@@ -427,37 +416,32 @@ class DBService {
         WHERE p.id = ?
         ORDER BY r.tracknumber, r.title
     ''',
-      [
-        playlistId,
-      ],
+      [playlistId],
     );
 
-    return List.generate(
-      maps.length,
-      (index) => _mapRecord(maps[index]),
-    );
+    return List.generate(maps.length, (index) => _mapRecord(maps[index]));
   }
 
   /// Deletes one playlist by [playlistId].
   Future removePlaylist(int playlistId) async {
     final db = await _database;
-    await db.delete(
-      _tPlaylists,
-      where: 'id = ?',
-      whereArgs: [playlistId],
-    );
+    await db.delete(_tPlaylists, where: 'id = ?', whereArgs: [playlistId]);
   }
 
   /// loads the saved record view settings.
   Future<RecordViewSettings> loadRecordViewSettings() async {
     final db = await _database;
-    final List<Map<String, dynamic>> maps =
-        await db.query(_tRecordViewSettings);
+    final List<Map<String, dynamic>> maps = await db.query(
+      _tRecordViewSettings,
+    );
 
     if (maps.isEmpty) {
       final settings = RecordViewSettings();
-      await db.insert(_tRecordViewSettings, settings.toJson(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
+      await db.insert(
+        _tRecordViewSettings,
+        settings.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
       return settings;
     }
 
@@ -486,14 +470,10 @@ class DBService {
   /// Saves the ID3 tag [filter] of the [key].
   Future saveID3Filter(String key, String filter) async {
     final db = await _database;
-    db.insert(
-      _tid3Filters,
-      {
-        'key': key,
-        'filter': filter,
-      },
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    db.insert(_tid3Filters, {
+      'key': key,
+      'filter': filter,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   /// Removes the id3 tag filter. If [key] is provided only the filter of the [key] will be deleted.
@@ -503,11 +483,7 @@ class DBService {
       await db.delete(_tid3Filters);
       return;
     }
-    await db.delete(
-      _tid3Filters,
-      where: 'key = ?',
-      whereArgs: [key],
-    );
+    await db.delete(_tid3Filters, where: 'key = ?', whereArgs: [key]);
   }
 
   /// Loads [ID3TagFilter] with saved filters.
@@ -529,13 +505,11 @@ class DBService {
     return List<String>.from(
       jsonDecode(
         (filters.firstWhere(
-              (element) => element['key'] == key,
-              orElse: () => {
-                'key': key,
-                'filter': '[]',
-              },
-            )['filter'] ??
-            '[]') as String,
+                  (element) => element['key'] == key,
+                  orElse: () => {'key': key, 'filter': '[]'},
+                )['filter'] ??
+                '[]')
+            as String,
       ),
     );
   }
@@ -561,9 +535,6 @@ class DBService {
     }
 
     var result = maps.first;
-    return Playlist(
-      id: result['id'],
-      name: result['name'],
-    );
+    return Playlist(id: result['id'], name: result['name']);
   }
 }

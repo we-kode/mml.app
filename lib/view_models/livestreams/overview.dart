@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/livestream.dart';
 import 'package:mml_app/models/model_base.dart';
@@ -17,13 +17,13 @@ class LivestreamsViewModel extends ChangeNotifier {
   /// [LivestreamService] used to load data for the livestream overview.
   final LivestreamService _service = LivestreamService.getInstance();
 
- /// Initializes the view model.
+  /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
       if (!context.mounted) {
         return false;
       }
-      
+
       locales = AppLocalizations.of(context)!;
       return true;
     });
@@ -37,12 +37,7 @@ class LivestreamsViewModel extends ChangeNotifier {
     int? take,
     dynamic subfilter,
   }) async {
-    var x =  _service.get(
-      filter,
-      offset,
-      take,
-    );
-
+    var x = _service.get(filter, offset, take);
 
     return x;
   }
@@ -59,5 +54,4 @@ class LivestreamsViewModel extends ChangeNotifier {
       subfilter,
     );
   }
-
 }

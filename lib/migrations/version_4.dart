@@ -12,7 +12,7 @@ class V4Migration implements DBMigration {
 
   @override
   void onUpdate(Batch batch) {
-   batch.execute('''
+    batch.execute('''
       CREATE TABLE ID3Filters (
         key TEXT PRIMARY KEY,
         filter TEXT NOT NULL

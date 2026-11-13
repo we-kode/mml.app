@@ -1,15 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/arguments/subroute_arguments.dart';
+import 'package:mml_app/components/announcements_dialog.dart';
+import 'package:mml_app/components/share_links_dialog.dart';
+import 'package:mml_app/components/share_settings_dialog.dart';
+import 'package:mml_app/services/playback_resume.dart';
+import 'package:mml_app/services/share.dart';
 import 'package:mml_app/manager/image_cache_manager.dart';
 import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/services/announcements.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/view_models/faq.dart';
-import 'package:mml_app/view_models/information.dart';
 import 'package:mml_app/view_models/licenses_overview.dart';
 import 'package:mml_app/view_models/server_connection.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -44,7 +49,7 @@ class SettingsViewModel extends ChangeNotifier {
   final ImageCacheManager cacheManager = ImageCacheManager();
 
   /// Link of the privacy policy.
-  final String privacyLink = "https://ecgm.freeddns.org:18188/privacy";
+  final String privacyLink = "";
 
   /// Link of the legal information.
   final String legalInfoLink = "";
@@ -61,6 +66,18 @@ class SettingsViewModel extends ChangeNotifier {
   // settings for saving filters.
   late bool saveFilters;
 
+  /// Whether the announcements are shown when the app starts.
+  late bool showAnnouncementsOnStart;
+
+  /// Whether the playback is continued after the app was restarted.
+  late bool resumePlayback;
+
+  /// Whether the user chooses the options of share links.
+  late bool shareOptionsAvailable;
+
+  /// Whether the user may share records and so manages download links.
+  late bool shareLinksAvailable;
+
   /// Initializes the view model.
   Future<bool> init(BuildContext context) {
     return Future.microtask(() async {
@@ -72,10 +89,24 @@ class SettingsViewModel extends ChangeNotifier {
       var pkgInfo = await PackageInfo.fromPlatform();
       version = "${pkgInfo.version}.${pkgInfo.buildNumber}";
       recordViewSettings = await _dbService.loadRecordViewSettings();
-      saveFilters = (await _secureStoreService
-                  .get(SecureStorageService.saveFiltersStorageKey) ??
+      saveFilters =
+          (await _secureStoreService.get(
+                SecureStorageService.saveFiltersStorageKey,
+              ) ??
               false) ==
           'true';
+      showAnnouncementsOnStart = await AnnouncementService.getInstance()
+          .showOnStart();
+      resumePlayback = await PlaybackResumeService.getInstance().isEnabled();
+      final shareService = ShareService.getInstance();
+      try {
+        await shareService.refresh().timeout(const Duration(seconds: 3));
+      } catch (_) {
+        // The last known values are used without connection.
+      }
+      shareLinksAvailable =
+          await shareService.canShare() || await shareService.hasLinks();
+      shareOptionsAvailable = await shareService.userChoosesOptions();
       return true;
     });
   }
@@ -105,20 +136,27 @@ class SettingsViewModel extends ChangeNotifier {
     );
   }
 
-  /// Redirects to the legal information webview screen.
-  void showLegalInformation() {
-    _routerService.pushNestedRoute(
-      InformationViewModel.route,
-      arguments: SubrouteArguments(arg: legalInfoLink),
-    );
-  }
+  /// Opens the legal information in an in-app browser view.
+  Future<void> showLegalInformation() =>
+      _launch(Uri.parse(legalInfoLink), LaunchMode.inAppBrowserView);
 
-  /// Redirects to the privacy policy webview screen.
-  void showPrivacyPolicy() {
-    _routerService.pushNestedRoute(
-      InformationViewModel.route,
-      arguments: SubrouteArguments(arg: privacyLink),
-    );
+  /// Opens the privacy policy in an in-app browser view.
+  Future<void> showPrivacyPolicy() =>
+      _launch(Uri.parse(privacyLink), LaunchMode.inAppBrowserView);
+
+  Future<void> _launch(
+    Uri uri, [
+    LaunchMode mode = LaunchMode.platformDefault,
+  ]) async {
+    var launched = false;
+    try {
+      launched = await launchUrl(uri, mode: mode);
+    } catch (_) {
+      launched = false;
+    }
+    if (!launched) {
+      _messengerService.showMessage(_messengerService.linkNotOpened);
+    }
   }
 
   /// Redirects to the faq screen.
@@ -137,27 +175,85 @@ class SettingsViewModel extends ChangeNotifier {
     final Uri uri = Uri(
       scheme: 'mailto',
       path: supportEMail,
-      query: _encodeQueryParameters(
-        <String, String>{
-          'subject': locales.appTitle,
-        },
-      ),
+      query: _encodeQueryParameters(<String, String>{
+        'subject': locales.appTitle,
+      }),
     );
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $uri');
-    }
+    await _launch(uri);
   }
 
   String? _encodeQueryParameters(Map<String, String> params) {
     return params.entries
-        .map((MapEntry<String, String> e) =>
-            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .map(
+          (MapEntry<String, String> e) =>
+              '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}',
+        )
         .join('&');
   }
 
   Future updateRecordViewSettings() async {
     await _dbService.saveRecordViewSettings(recordViewSettings);
     notifyListeners();
+  }
+
+  /// Sets whether the playback is continued after the app was restarted.
+  Future<void> updateResumePlayback(bool value) async {
+    resumePlayback = value;
+    await PlaybackResumeService.getInstance().setEnabled(value);
+    notifyListeners();
+  }
+
+  /// Shows the dialog to edit the options of share links.
+  Future<void> showShareSettings() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => const ShareSettingsDialog(),
+    );
+  }
+
+  /// Shows the dialog that lists and deletes the active download links.
+  Future<void> showShareLinks() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => const ShareLinksDialog(),
+    );
+  }
+
+  /// Shows the info about the options of share links.
+  Future<void> showShareSettingsInfo() async {
+    await showDialog(
+      context: _context,
+      builder: (context) => AlertDialog(
+        content: Text(locales.shareSettingsInfo),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(locales.close),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Sets whether the announcements are shown when the app starts.
+  Future<void> updateShowAnnouncementsOnStart(bool value) async {
+    showAnnouncementsOnStart = value;
+    await AnnouncementService.getInstance().setShowOnStart(value);
+    notifyListeners();
+  }
+
+  /// Shows all active announcements including the dismissed ones.
+  Future<void> showAnnouncements() async {
+    var announcements = await AnnouncementService.getInstance().getActive();
+    if (!_context.mounted) {
+      return;
+    }
+
+    await showDialog(
+      context: _context,
+      barrierDismissible: false,
+      builder: (context) => AnnouncementsDialog(announcements: announcements),
+    );
   }
 
   /// Updates the Save Filter settings.
@@ -174,9 +270,7 @@ class SettingsViewModel extends ChangeNotifier {
 
   /// Sets the cache limit to [value] and notifies listeners.
   Future<void> updateCacheLimits({int? duration = 0}) async {
-    cacheManager.updateLimits(
-      maxCacheTime: duration,
-    );
+    cacheManager.updateLimits(maxCacheTime: duration);
     notifyListeners();
   }
 

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/expandable_fab.dart';
@@ -13,6 +13,7 @@ import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/navigation_state.dart';
 import 'package:mml_app/models/selected_items_action.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/models/subfilter.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -35,14 +36,10 @@ typedef OpenItemFunction = Function(
 );
 
 /// Function to be called when the back button is pressed. And the list should navigate up in folder structure.
-typedef MoveUpFunction = Function(
-  Subfilter? subFilter,
-);
+typedef MoveUpFunction = Function(Subfilter? subFilter);
 
 /// Function to edit the group of one [item].
-typedef EditGroupFunction = Function(
-  ModelBase item,
-);
+typedef EditGroupFunction = Function(ModelBase item);
 
 /// Function called when the corresponds function of the selected items is performed in the action bar.
 typedef MultiSelectActionFunction = Future<bool> Function(
@@ -100,6 +97,16 @@ class AsyncListView extends StatefulWidget {
   /// [ExportAction] of the action bar the list belongs to.
   final ExportAction? exportAction;
 
+  /// [ShareAction] of the action bar the list belongs to.
+  final ShareAction? shareAction;
+
+  /// Function called after the [subfilter] was replaced by the filter of a
+  /// group.
+  final VoidCallback? onGroupSelected;
+
+  /// Function called with the selected items, whenever the selection changes.
+  final void Function(List<ModelBase> selected)? onSelectionChanged;
+
   /// Navigation state if a hierarchical view is used.
   final NavigationState? navState;
 
@@ -118,6 +125,9 @@ class AsyncListView extends StatefulWidget {
   /// Subaction buttons which can be used to add multiple sub actions to the main add button
   final List<ActionButton>? subactions;
 
+  /// Reloads the list whenever it notifies its listeners.
+  final Listenable? reloadTrigger;
+
   /// Initializes the list view.
   const AsyncListView({
     super.key,
@@ -130,6 +140,9 @@ class AsyncListView extends StatefulWidget {
     this.addItem,
     this.selectedItemsAction,
     this.exportAction,
+    this.shareAction,
+    this.onGroupSelected,
+    this.onSelectionChanged,
     this.onMultiSelect,
     this.navState,
     this.moveUp,
@@ -137,6 +150,7 @@ class AsyncListView extends StatefulWidget {
     this.activeItem,
     this.showAddButton = false,
     this.subactions,
+    this.reloadTrigger,
   });
 
   @override
@@ -174,9 +188,6 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// shown.
   bool _isLoadingData = true;
 
-  /// The actual item group if list items should be grouped.
-  String? _actualGroup;
-
   /// The active item in list.
   dynamic _activeItemId;
 
@@ -188,8 +199,10 @@ class _AsyncListViewState extends State<AsyncListView> {
     _reloadData();
     widget.subfilter?.filter.addListener(_reloadData);
     widget.filter?.addListener(_reloadData);
+    widget.reloadTrigger?.addListener(_reloadData);
     widget.selectedItemsAction?.addListener(_performSelectedItemsAction);
     widget.exportAction?.addListener(_performSelectedItemsAction);
+    widget.shareAction?.addListener(_performSelectedItemsAction);
     widget.navState?.addListener(_backPressed);
     _activeItemId = widget.activeItem?.getIdentifier();
     _onActiveItemChangedSub ??= widget.onActiveItemChanged?.listen((event) {
@@ -208,8 +221,10 @@ class _AsyncListViewState extends State<AsyncListView> {
     super.dispose();
     widget.subfilter?.filter.removeListener(_reloadData);
     widget.filter?.removeListener(_reloadData);
+    widget.reloadTrigger?.removeListener(_reloadData);
     widget.selectedItemsAction?.removeListener(_performSelectedItemsAction);
     widget.exportAction?.removeListener(_performSelectedItemsAction);
+    widget.shareAction?.removeListener(_performSelectedItemsAction);
     widget.navState?.removeListener(_backPressed);
     _onActiveItemChangedSub?.cancel();
   }
@@ -227,8 +242,8 @@ class _AsyncListViewState extends State<AsyncListView> {
             child: _isLoadingData
                 ? _createLoadingWidget()
                 : (_items!.totalCount > 0
-                    ? _createListViewWidget()
-                    : _createNoDataWidget()),
+                      ? _createListViewWidget()
+                      : _createNoDataWidget()),
           ),
         ],
       ),
@@ -261,6 +276,8 @@ class _AsyncListViewState extends State<AsyncListView> {
       actionId = SelectedItemsAction.actionId;
     } else if (widget.exportAction?.actionPerformed ?? false) {
       actionId = ExportAction.actionId;
+    } else if (widget.shareAction?.actionPerformed ?? false) {
+      actionId = ShareAction.actionId;
     }
 
     if (actionId != null) {
@@ -272,9 +289,11 @@ class _AsyncListViewState extends State<AsyncListView> {
       widget.onMultiSelect!(actionId, selected?.toList() ?? []).then((value) {
         widget.selectedItemsAction?.actionPerformedFinished();
         widget.exportAction?.actionPerformedFinished();
+        widget.shareAction?.actionPerformedFinished();
         if (value) {
           widget.selectedItemsAction?.clear();
           widget.exportAction?.clear();
+          widget.shareAction?.clear();
           _disableMultiSelectMode();
           if (widget.selectedItemsAction?.reload ?? false) {
             _reloadData();
@@ -291,6 +310,7 @@ class _AsyncListViewState extends State<AsyncListView> {
       _isInMultiSelectMode = false;
       _selectedItems = [];
     });
+    widget.onSelectionChanged?.call([]);
   }
 
   /// Reloads the data starting from initial offset with initial count.
@@ -317,10 +337,7 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// Shows a loading indicator instead of the list during load, if
   /// [showLoadingOverlay] is true.
   /// Otherwise the data will be loaded lazy in the background.
-  void _loadData({
-    bool showLoadingOverlay = true,
-    Subfilter? subfilter,
-  }) {
+  void _loadData({bool showLoadingOverlay = true, Subfilter? subfilter}) {
     if (showLoadingOverlay) {
       setState(() {
         _isLoadingData = true;
@@ -334,25 +351,27 @@ class _AsyncListViewState extends State<AsyncListView> {
       subfilter: subfilter,
     );
 
-    dataFuture.then((value) {
-      if (!mounted) {
-        return;
-      }
+    dataFuture
+        .then((value) {
+          if (!mounted) {
+            return;
+          }
 
-      setState(() {
-        _isLoadingData = false;
-        _items = value;
-      });
-    }).onError((e, _) {
-      if (!mounted) {
-        return;
-      }
+          setState(() {
+            _isLoadingData = false;
+            _items = value;
+          });
+        })
+        .onError((e, _) {
+          if (!mounted) {
+            return;
+          }
 
-      setState(() {
-        _isLoadingData = false;
-        _items = ModelList([], _initialOffset, 0);
-      });
-    });
+          setState(() {
+            _isLoadingData = false;
+            _items = ModelList([], _initialOffset, 0);
+          });
+        });
   }
 
   /// Show a floating action button or an expanding fab.
@@ -361,15 +380,13 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// When a list of sub action buttons is provided, an expandable action button will be shown.
   Widget _createActionButton() {
     return Visibility(
-      visible: (widget.showAddButton &&
+      visible:
+          (widget.showAddButton &&
               widget.subactions != null &&
               widget.subactions!.isNotEmpty) ||
           widget.addItem != null,
       child: widget.subactions != null && widget.subactions!.isNotEmpty
-          ? ExpandableFab(
-              distance: 64.0,
-              children: widget.subactions!,
-            )
+          ? ExpandableFab(distance: 64.0, children: widget.subactions!)
           : FloatingActionButton(
               onPressed: () {
                 if (widget.addItem == null) {
@@ -417,16 +434,10 @@ class _AsyncListViewState extends State<AsyncListView> {
       },
       triggerMode: RefreshIndicatorTriggerMode.onEdge,
       child: ScrollConfiguration(
-        behavior: ScrollConfiguration.of(context).copyWith(
-          scrollbars: false,
-        ),
+        behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
         child: ListView.separated(
           separatorBuilder: (context, index) {
-            return const Divider(
-              height: 0,
-              indent: 10,
-              endIndent: 10,
-            );
+            return const Divider(height: 0, indent: 10, endIndent: 10);
           },
           itemBuilder: (context, index) {
             var endNotReached = (_offset + _take) <= _items!.totalCount;
@@ -470,9 +481,7 @@ class _AsyncListViewState extends State<AsyncListView> {
 
   /// Creates a loading indicator widget.
   Widget _createLoadingWidget() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   /// Creates a widget that will be shown, if no data were loaded or an error
@@ -482,10 +491,7 @@ class _AsyncListViewState extends State<AsyncListView> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            AppLocalizations.of(context)!.noData,
-            softWrap: true,
-          ),
+          Text(AppLocalizations.of(context)!.noData, softWrap: true),
           horizontalSpacer,
           TextButton.icon(
             onPressed: () => _loadData(subfilter: widget.subfilter?.filter),
@@ -513,26 +519,12 @@ class _AsyncListViewState extends State<AsyncListView> {
 
     // Grouping if first element or
     // group is a new one and the predecessor has another group
-    if (index == 0 ||
-        (itemGroup != _actualGroup &&
-            _items![index - 1]?.getGroup(context) != itemGroup) ||
-        _items![index - 1]?.getGroup(context) != itemGroup) {
-      _actualGroup = itemGroup;
+    if (index == 0 || _items![index - 1]?.getGroup(context) != itemGroup) {
       return Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(
-              top: 10,
-              left: 10,
-              right: 10,
-            ),
-            child: Chip(
-              side: BorderSide.none,
-              backgroundColor: Theme.of(context).colorScheme.outlineVariant,
-              label: Text(
-                item.getGroup(context)!,
-              ),
-            ),
+            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            child: _groupChip(item, itemGroup),
           ),
           if (item.getIdentifier() != null) _listTile(item, index),
         ],
@@ -542,18 +534,45 @@ class _AsyncListViewState extends State<AsyncListView> {
     return _listTile(item, index);
   }
 
+  Widget _groupChip(ModelBase item, String group) {
+    final color = Theme.of(context).colorScheme.outlineVariant;
+    final filter = widget.subfilter == null || _isInMultiSelectMode
+        ? null
+        : item.getGroupFilter();
+
+    return filter == null
+        ? Chip(
+            side: BorderSide.none,
+            backgroundColor: color,
+            label: Text(group),
+          )
+        : ActionChip(
+            side: BorderSide.none,
+            backgroundColor: color,
+            label: Text(group),
+            onPressed: () => _selectGroup(filter),
+          );
+  }
+
+  void _selectGroup(Subfilter filter) {
+    // Only the replaced subfilter reloads the list.
+    widget.filter?.removeListener(_reloadData);
+    widget.filter?.textFilter = '';
+    widget.filter?.addListener(_reloadData);
+    widget.subfilter!.filter.replaceWith(filter);
+    widget.onGroupSelected?.call();
+  }
+
   /// Creates a tile widget for one list [item] at the given [index].
   ListTile _listTile(ModelBase item, int index) {
     var leadingTile = item.getAvatar(context) == null
         ? !_isInMultiSelectMode
-            ? item.getPrefixIcon(context)
-            : _selectCheckbox(index, item)
+              ? item.getPrefixIcon(context)
+              : _selectCheckbox(index, item)
         : Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
+                borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                 child: Container(
                   height: 42,
                   width: 42,
@@ -577,10 +596,7 @@ class _AsyncListViewState extends State<AsyncListView> {
       selectedTileColor: Theme.of(context).focusColor,
       leading: leadingTile,
       minVerticalPadding: 10,
-      contentPadding: const EdgeInsets.only(
-        right: 10,
-        left: 10,
-      ),
+      contentPadding: const EdgeInsets.only(right: 10, left: 10),
       isThreeLine: item.getSubtitle(context) != null,
       visualDensity: const VisualDensity(vertical: 0),
       title: Wrap(
@@ -613,7 +629,8 @@ class _AsyncListViewState extends State<AsyncListView> {
               ),
             )
           : null,
-      trailing: (item.getMetadata(context) != null ||
+      trailing:
+          (item.getMetadata(context) != null ||
               item.getSubMetadata(context) != null)
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -622,13 +639,10 @@ class _AsyncListViewState extends State<AsyncListView> {
                     ? Text(
                         item.getMetadata(context)!,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                              color: item.getIdentifier() == _activeItemId
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge!
-                                      .color,
-                            ),
+                          color: item.getIdentifier() == _activeItemId
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).textTheme.bodyLarge!.color,
+                        ),
                       )
                     : const SizedBox.shrink(),
                 item.getSubMetadata(context) != null
@@ -658,7 +672,8 @@ class _AsyncListViewState extends State<AsyncListView> {
               )
             : null;
       },
-      onLongPress: !(item.isSelectable ?? true)
+      onLongPress:
+          widget.selectedItemsAction == null || !(item.isSelectable ?? true)
           ? null
           : () {
               if (!_isInMultiSelectMode) {
@@ -677,7 +692,8 @@ class _AsyncListViewState extends State<AsyncListView> {
   /// the identifier was in the list of selected items.
   void _onItemChecked(int index) {
     if (_selectedItems.any(
-        (item) => item.getIdentifier() == _items![index]?.getIdentifier())) {
+      (item) => item.getIdentifier() == _items![index]?.getIdentifier(),
+    )) {
       _selectedItems.remove(_items![index]);
     } else if (_items![index] != null) {
       _selectedItems.add(_items![index]!);
@@ -687,6 +703,9 @@ class _AsyncListViewState extends State<AsyncListView> {
       _selectedItems = _selectedItems;
     });
     widget.selectedItemsAction?.count = _selectedItems.length;
+    widget.onSelectionChanged?.call(
+      _selectedItems.whereType<ModelBase>().toList(),
+    );
   }
 
   /// Creates a list tile widget for a not loaded list item.
@@ -717,15 +736,14 @@ class _AsyncListViewState extends State<AsyncListView> {
       splashRadius: 0,
       side: BorderSide.none,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(5.0),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
       ),
       onChanged: (_) {
         _onItemChecked(index);
       },
-      value: _selectedItems
-          .any((elem) => elem.getIdentifier() == item.getIdentifier()),
+      value: _selectedItems.any(
+        (elem) => elem.getIdentifier() == item.getIdentifier(),
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/components/player_sheet.dart';
 import 'package:mml_app/constants/mml_media_constants.dart';
@@ -12,11 +12,12 @@ import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
 import 'package:mml_app/services/player/player_state.dart';
+import 'package:mml_app/services/playback_resume.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/services/router.dart';
 
 /// Service that handles all actions for playing records.
-class PlayerService {
+class PlayerService with WidgetsBindingObserver {
   /// Instance of the [PlayerService].
   static PlayerService? _instance;
 
@@ -37,6 +38,11 @@ class PlayerService {
   /// Event stream, when actual playing record changes.
   StreamController<Record?> onRecordChanged = StreamController.broadcast();
 
+  final List<StreamSubscription> _subscriptions = [];
+
+  /// Whether this service observes the lifecycle of the app.
+  bool _observesLifecycle = false;
+
   /// Private constructor of the [PlayerService].
   PlayerService._();
 
@@ -47,6 +53,10 @@ class PlayerService {
 
     return _instance!;
   }
+
+  /// Sets the [handler] without initializing the audio service.
+  @visibleForTesting
+  set audioHandler(MMLAudioHandler handler) => _audioHandler = handler;
 
   /// Sets the repeat mode to the given [value].
   set repeat(PlayerRepeatMode value) {
@@ -73,6 +83,7 @@ class PlayerService {
 
   /// Stops the music and closes the player bottom sheet.
   Future closePlayer({bool stopAudioHandler = true}) async {
+    _rememberPosition(force: true);
     if (stopAudioHandler) {
       await _audioHandler.stop();
     }
@@ -81,13 +92,16 @@ class PlayerService {
     await _reset();
   }
 
-  /// Plays the given [record] and opens the bottom [PlayerSheet] if not
-  /// already done.
+  /// Plays the given [record] starting at [startAt] and opens the bottom
+  /// [PlayerSheet] if not already done. The record is only prepared and paused,
+  /// if [autoPlay] is false.
   Future play(
     Record record,
     String? filter,
-    ID3TagFilter? tagFilter,
-  ) async {
+    ID3TagFilter? tagFilter, {
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
     var context = RouterService.getInstance().getCurrentContext();
 
     if (context == null || !context.mounted) {
@@ -107,13 +121,18 @@ class PlayerService {
       enableDrag: false,
     );
 
-    await _audioHandler.playRecord(record);
+    await _audioHandler.playRecord(
+      record,
+      startAt: startAt,
+      autoPlay: autoPlay,
+    );
     initializeListeners();
   }
 
   /// Pauses the playback.
   void pause() {
     _audioHandler.pause();
+    _rememberPosition(force: true);
     playerState?.update();
   }
 
@@ -154,6 +173,8 @@ class PlayerService {
     if (updatePlayerSeek) {
       _isSeeking = false;
       await _audioHandler.seek(newDuration.asDuration());
+      _audioHandler.currentSeekPosition = newDuration;
+      _rememberPosition(force: true, allowStart: true);
     } else {
       _audioHandler.currentSeekPosition = newDuration;
     }
@@ -162,8 +183,18 @@ class PlayerService {
 
   /// Initializes the listeners used to update the [PlayerState] and the gui.
   void initializeListeners() {
-    _audioHandler.positionStream.listen(
-      (event) {
+    if (!_observesLifecycle) {
+      _observesLifecycle = true;
+      WidgetsBinding.instance.addObserver(this);
+    }
+
+    for (final subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
+
+    _subscriptions.add(
+      _audioHandler.positionStream.listen((event) {
         if (_isSeeking) {
           return;
         }
@@ -173,19 +204,49 @@ class PlayerService {
           '${event.inMilliseconds.clamp(0, recordDuration)}',
         );
 
+        final previousSecond = _audioHandler.currentSeekPosition ~/ 1000;
         _audioHandler.currentSeekPosition = duration ?? 0;
+        _rememberPosition();
 
-        playerState?.update();
-      },
+        if (previousSecond != _audioHandler.currentSeekPosition ~/ 1000) {
+          playerState?.updatePosition();
+        }
+      }),
     );
 
-    _audioHandler.playbackEventStream.listen((event) {
-      playerState?.update();
-    }, onError: (Object e, StackTrace stackTrace) async {
-      if (e is PlatformException && e.message == 'Source error') {
-        await _audioHandler.refreshToken();
-      }
-    });
+    _subscriptions.add(
+      _audioHandler.playingStream.listen((_) => playerState?.update()),
+    );
+
+    _subscriptions.add(
+      _audioHandler.playbackEventStream.listen(
+        (event) {
+          playerState?.update();
+        },
+        onError: (Object e, StackTrace stackTrace) async {
+          if (e is PlatformException && e.message == 'Source error') {
+            await _audioHandler.refreshToken();
+          }
+        },
+      ),
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) {
+      _rememberPosition(force: true);
+    }
+  }
+
+  /// Remembers the current position to continue the playback after a restart.
+  void _rememberPosition({bool force = false, bool allowStart = false}) {
+    PlaybackResumeService.getInstance().remember(
+      _audioHandler.currentRecord,
+      _audioHandler.currentSeekPosition,
+      force: force,
+      allowStart: allowStart,
+    );
   }
 
   /// Resets the current player.
@@ -217,8 +278,9 @@ class PlayerService {
       config: AudioServiceConfig(
         androidNotificationChannelId: "de.wekode.mml.audio",
         androidNotificationChannelName: AppLocalizations.of(context)!.appTitle,
-        androidNotificationOngoing: true,
+        androidNotificationOngoing: false,
         androidStopForegroundOnPause: true,
+        androidResumeOnClick: false,
         androidBrowsableRootExtras: {
           MMLMediaConstants.mediaBrowseSupported: true,
           MMLMediaConstants.mediaPlayableContentKey:

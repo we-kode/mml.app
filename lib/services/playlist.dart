@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/playlist.dart';

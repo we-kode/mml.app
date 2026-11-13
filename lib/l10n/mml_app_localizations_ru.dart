@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'mml_app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -295,6 +296,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Файл невозможно расшифровать. Неправильный формат.';
 
   @override
+  String fileTooLarge(int size) {
+    return 'Файл слишком большой для импорта (макс. $size МБ).';
+  }
+
+  @override
   String get notDownloaded => 'Не загружено';
 
   @override
@@ -344,6 +350,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get repeat => 'Повторение';
 
   @override
+  String get stop => 'Стоп';
+
+  @override
   String errorAuthenticationExpired(String appTitle) {
     return 'Зарегистрируйтесь в $appTitle';
   }
@@ -374,4 +383,161 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get cacheClearedFailed => 'Кэш не может быть очищен.';
+
+  @override
+  String get linkNotOpened => 'Не удалось открыть ссылку.';
+
+  @override
+  String get announcements => 'Объявления';
+
+  @override
+  String get showAnnouncementsOnStart => 'Показывать объявления при запуске';
+
+  @override
+  String get noAnnouncements => 'Актуальных объявлений нет.';
+
+  @override
+  String get doNotShowAgain => 'Больше не показывать';
+
+  @override
+  String get close => 'Закрыть';
+
+  @override
+  String announcementPosition(int index, int count) {
+    return '$index из $count';
+  }
+
+  @override
+  String get previous => 'Назад';
+
+  @override
+  String get showAnnouncements => 'Показать текущие объявления';
+
+  @override
+  String get share => 'Поделиться';
+
+  @override
+  String get shareSearchLink => 'Поделиться ссылкой на поиск';
+
+  @override
+  String get sharePlayLink => 'Поделиться ссылкой на воспроизведение';
+
+  @override
+  String get shareDownloadLink => 'Поделиться ссылкой для скачивания';
+
+  @override
+  String get shareValidFor => 'Срок действия';
+
+  @override
+  String get shareValid1Hour => '1 час';
+
+  @override
+  String get shareValid1Day => '1 день';
+
+  @override
+  String get shareValid7Days => '7 дней';
+
+  @override
+  String get shareValid30Days => '30 дней';
+
+  @override
+  String get shareValid90Days => '90 дней';
+
+  @override
+  String get shareSingleUse => 'Одноразовая ссылка';
+
+  @override
+  String get shareSingleUseHint =>
+      'Ссылку можно открыть для скачивания только один раз.';
+
+  @override
+  String get shareUseAsDefault =>
+      'Использовать по умолчанию и больше не спрашивать';
+
+  @override
+  String get shareSettings => 'Ссылки для скачивания';
+
+  @override
+  String get shareMyLinks => 'Мои активные ссылки';
+
+  @override
+  String get shareNoLinks => 'Нет активных ссылок.';
+
+  @override
+  String shareLinkRecords(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count записи',
+      many: '$count записей',
+      few: '$count записи',
+      one: '1 запись',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shareLinkCreatedAt(String date) {
+    return 'Создана $date';
+  }
+
+  @override
+  String shareLinkExpiresAt(String date) {
+    return 'Действительна до $date';
+  }
+
+  @override
+  String get shareLinkDeleteInfo =>
+      'Ссылка сразу станет недействительной. Тот, кто уже получил её, больше ничего не сможет скачать.';
+
+  @override
+  String get shareSettingsInfo =>
+      'Эти настройки действуют для создаваемых вами ссылок. Они применяются, только если вы можете делиться записями и администратор разрешил выбор.';
+
+  @override
+  String get shareAskBeforeSharing => 'Спрашивать перед отправкой';
+
+  @override
+  String sharePartial(int shareable, int total) {
+    return 'Вы можете поделиться только $shareable из $total выбранных записей. Будут отправлены только они.';
+  }
+
+  @override
+  String get shareLinkOtherServer => 'Ссылка относится к другому серверу.';
+
+  @override
+  String shareSearchTooLarge(int max) {
+    return 'Поиск содержит слишком много значений фильтров и не может быть отправлен. Допускается не более $max.';
+  }
+
+  @override
+  String get resumePlayback => 'Продолжить воспроизведение';
+
+  @override
+  String get faqShareLinks =>
+      'Как поделиться поиском или текущим воспроизведением?';
+
+  @override
+  String get faqShareLinksDescription =>
+      'В списке записей нажмите значок ссылки вверху справа, чтобы отправить текущий поиск со всеми фильтрами. Значок появляется, только если задан текст поиска или фильтр. В плеере значок отправляет играющую запись с текущей позиции. Тот, кто откроет ссылку, попадёт в приложение с тем же поиском или услышит запись с того же места. Приложение должно быть установлено и настроено для того же сервера. Записи, на которые нет прав, не отображаются и не воспроизводятся.';
+
+  @override
+  String get faqShareDownload => 'Как поделиться записями для скачивания?';
+
+  @override
+  String get faqShareDownloadDescription =>
+      'В списке записей удерживайте запись или папку и выберите другие. Затем нажмите вверху справа значок отправки ссылки для скачивания. Открывший ссылку скачивает записи в браузере, даже без приложения: одну запись как аудиофайл, несколько как ZIP-архив, названия файлов совпадают с названиями записей. Ссылка может содержать не более 100 записей. Значок появляется, только если вы можете делиться выбранными записями. Если можно поделиться только частью, вы получите уведомление, и будет отправлена только эта часть. Можно ли выбирать срок и одноразовость в настройках «Ссылки для скачивания», решает администратор. Активные ссылки для скачивания можно посмотреть и удалить в настройках в разделе «Мои активные ссылки». Удалённая ссылка перестаёт работать сразу.';
+
+  @override
+  String get faqResumePlayback =>
+      'Как продолжить воспроизведение после открытия приложения?';
+
+  @override
+  String get faqResumePlaybackDescription =>
+      'Включите в настройках «Продолжить воспроизведение». При следующем открытии приложения последняя прослушанная запись будет подготовлена на том месте, где вы остановились. Запустите её кнопкой воспроизведения. По умолчанию функция выключена.';
+
+  @override
+  String shareTooMany(int limit) {
+    return 'Ссылка может содержать не более $limit записей. Выберите меньше записей или меньшую папку и при необходимости создайте несколько ссылок.';
+  }
 }

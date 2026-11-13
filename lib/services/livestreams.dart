@@ -19,11 +19,7 @@ class LivestreamService {
   }
 
   /// Loads a list of livestream items filtered by [filter] with given [offset].
-  Future<ModelList> get(
-    String? filter,
-    int? offset,
-    int? take,
-  ) async {
+  Future<ModelList> get(String? filter, int? offset, int? take) async {
     var params = <String, String?>{};
 
     if (filter != null) {
@@ -42,9 +38,7 @@ class LivestreamService {
       var response = await _apiService.request(
         '/media/livestream/list',
         queryParameters: params,
-        options: Options(
-          method: 'POST',
-        ),
+        options: Options(method: 'POST'),
       );
 
       return ModelList(
@@ -55,11 +49,7 @@ class LivestreamService {
         response.data["totalCount"],
       );
     } catch (e) {
-      return ModelList(
-        List<Livestream>.empty(),
-        offset ?? 0,
-        0,
-      );
+      return ModelList(List<Livestream>.empty(), offset ?? 0, 0);
     }
   }
 
@@ -67,9 +57,7 @@ class LivestreamService {
   Future<Livestream> getLivestream(String id) async {
     var response = await _apiService.request(
       '/media/livestream/$id',
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return Livestream.fromJson(response.data);

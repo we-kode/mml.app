@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/connection_settings.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
@@ -72,9 +72,7 @@ class ServerConnectionViewModel extends ChangeNotifier {
 
   /// Tries to update the server connection settings if a new [barcode] gets
   /// scanned.
-  void updateConnectionSettings(
-    Barcode barcode,
-  ) async {
+  void updateConnectionSettings(Barcode barcode) async {
     if (barcode.rawValue == null) {
       return;
     }
@@ -110,9 +108,4 @@ class ServerConnectionViewModel extends ChangeNotifier {
 }
 
 /// State of the update connection settings process.
-enum UpdateState {
-  scan,
-  update,
-  error,
-  success,
-}
+enum UpdateState { scan, update, error, success }

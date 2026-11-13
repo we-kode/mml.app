@@ -1,17 +1,22 @@
-import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_view_settings.dart';
+import 'package:mml_app/models/share_action.dart';
+import 'package:mml_app/models/share_link.dart';
+import 'package:mml_app/models/filter.dart';
+import 'package:mml_app/services/share.dart';
+import 'package:mml_app/services/share_link.dart';
 import 'package:mml_app/services/db.dart';
 import 'package:mml_app/services/player/player.dart';
 import 'package:mml_app/services/record.dart';
 import 'package:mml_app/services/secure_storage.dart';
+import 'package:mml_app/view_models/records/share_selection.dart';
 
 /// View model of the records screen.
 class RecordsViewModel extends ChangeNotifier {
@@ -35,17 +40,28 @@ class RecordsViewModel extends ChangeNotifier {
   /// settings for the records view.
   late RecordViewSettings recordViewSettings;
 
-  /// Initializes the view model.
-  Future<bool> init(BuildContext context) {
+  /// Text filter of the screen.
+  Filter? _textFilter;
+
+  /// Checks and shares the selected records.
+  final RecordShareSelection _shareSelection = RecordShareSelection();
+
+  /// Initializes the view model. A search link the app was opened with is
+  /// applied to the [textFilter] and the tag filter.
+  Future<bool> init(BuildContext context, {Filter? textFilter}) {
     return Future.microtask(() async {
       if (!context.mounted) {
         return false;
       }
+      _textFilter = textFilter;
+      ShareService.getInstance().supported.addListener(_updateSearchShareable);
+      ShareLinkService.getInstance().currentSearch = () =>
+          ShareLink(filter: _textFilter?.textFilter, tagFilter: tagFilter);
       locales = AppLocalizations.of(context)!;
-      isFolderView = (await SecureStorageService.getInstance().get(
+      isFolderView =
+          (await SecureStorageService.getInstance().get(
             SecureStorageService.folderViewStorageKey,
-          ))
-              ?.toLowerCase() ==
+          ))?.toLowerCase() ==
           'true';
       tagFilter = await _dbService.loadID3Filter();
       if (isFolderView) {
@@ -61,8 +77,64 @@ class RecordsViewModel extends ChangeNotifier {
       }
 
       recordViewSettings = await _dbService.loadRecordViewSettings();
+      _applySearchLink(ShareLinkService.getInstance().takePendingSearch());
+      tagFilter.addListener(_updateSearchShareable);
+      _textFilter?.addListener(_updateSearchShareable);
+      _updateSearchShareable();
       return true;
     });
+  }
+
+  void _updateSearchShareable() {
+    ShareLinkService.getInstance().searchShareable.value =
+        ShareService.getInstance().supported.value &&
+        ShareLink(
+          filter: _textFilter?.textFilter,
+          tagFilter: tagFilter,
+        ).hasSearch;
+  }
+
+  @override
+  void dispose() {
+    _shareSelection.dispose();
+    _textFilter?.removeListener(_updateSearchShareable);
+    ShareService.getInstance().supported.removeListener(_updateSearchShareable);
+    ShareLinkService.getInstance().searchShareable.value = false;
+    ShareLinkService.getInstance().currentSearch = null;
+    super.dispose();
+  }
+
+  void _applySearchLink(ShareLink? link) {
+    if (link == null) {
+      return;
+    }
+
+    tagFilter.replaceWith(link.tagFilter);
+    _textFilter?.textFilter = link.filter;
+  }
+
+  /// Stores the replaced tag filter, if filters are persisted.
+  Future<void> saveTagFilter() async {
+    await _dbService.clearID3Filter();
+    if (await isFilterPersistActive()) {
+      await saveFolderPath(tagFilter);
+      await _dbService.saveID3Filter(
+        ID3TagFilters.albums,
+        jsonEncode(tagFilter.albums),
+      );
+    }
+  }
+
+  /// Checks which of the [selected] items the user may share and shows the
+  /// share action of the [action] accordingly.
+  void selectionChanged(List<ModelBase> selected, ShareAction? action) {
+    _shareSelection.selectionChanged(selected, action);
+  }
+
+  /// Shares a download link of the [selected] items. Returns whether the
+  /// selection should be reset.
+  Future<bool> share(List<ModelBase?> selected, BuildContext context) {
+    return _shareSelection.share(selected, context);
   }
 
   /// Loads the records with the passing [filter] starting at [offset] and loading
@@ -95,11 +167,7 @@ class RecordsViewModel extends ChangeNotifier {
     String? filter,
     ID3TagFilter? subfilter,
   ) async {
-    await PlayerService.getInstance().play(
-      record as Record,
-      filter,
-      subfilter,
-    );
+    await PlayerService.getInstance().play(record as Record, filter, subfilter);
   }
 
   /// Loads the next folder which is before actual date range filtered by [subFilter].
@@ -118,22 +186,16 @@ class RecordsViewModel extends ChangeNotifier {
           subFilter.endDate!.year,
           subFilter.endDate!.month,
           DateUtils.getDaysInMonth(
-              subFilter.endDate!.year, subFilter.endDate!.month),
+            subFilter.endDate!.year,
+            subFilter.endDate!.month,
+          ),
         ),
       );
       saveFolderPath(subFilter);
     } else if (subFilter.startDate!.month == subFilter.endDate!.month) {
       subFilter[ID3TagFilters.date] = DateTimeRange(
-        start: DateTime(
-          subFilter.startDate!.year,
-          1,
-          1,
-        ),
-        end: DateTime(
-          subFilter.endDate!.year,
-          12,
-          31,
-        ),
+        start: DateTime(subFilter.startDate!.year, 1, 1),
+        end: DateTime(subFilter.endDate!.year, 12, 31),
       );
       saveFolderPath(subFilter);
     } else {
@@ -148,18 +210,19 @@ class RecordsViewModel extends ChangeNotifier {
       _dbService.saveID3Filter(
         ID3TagFilters.date,
         jsonEncode(
-          List<String>.from(
-            [subfilter.startDate.toString(), subfilter.endDate.toString()],
-          ),
+          List<String>.from([
+            subfilter.startDate.toString(),
+            subfilter.endDate.toString(),
+          ]),
         ),
       );
     }
   }
 
   Future<bool> isFilterPersistActive() async {
-    return (await SecureStorageService.getInstance()
-                .get(SecureStorageService.saveFiltersStorageKey))
-            ?.toLowerCase() ==
+    return (await SecureStorageService.getInstance().get(
+          SecureStorageService.saveFiltersStorageKey,
+        ))?.toLowerCase() ==
         'true';
   }
 }

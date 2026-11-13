@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/id3_tag_filter.dart';
 import 'package:mml_app/models/model_list.dart';
 import 'package:mml_app/services/album.dart';
@@ -22,14 +22,22 @@ class RecordTagFilterViewModel extends ChangeNotifier {
   final DBService _dbService = DBService.getInstance();
 
   /// Initializes the view model.
-  RecordTagFilterViewModel(this.tagFilter);
+  RecordTagFilterViewModel(this.tagFilter) {
+    tagFilter.addListener(notifyListeners);
+  }
+
+  @override
+  void dispose() {
+    tagFilter.removeListener(notifyListeners);
+    super.dispose();
+  }
 
   /// Clears the filter value of the [identifier].
   void clear(String identifier) async {
     tagFilter.clear(identifier);
-    await _dbService.clearID3Filter(identifier == ID3TagFilters.folderView
-        ? ID3TagFilters.date
-        : identifier);
+    await _dbService.clearID3Filter(
+      identifier == ID3TagFilters.folderView ? ID3TagFilters.date : identifier,
+    );
     if (identifier == ID3TagFilters.folderView) {
       await _storage.set(
         SecureStorageService.folderViewStorageKey,
@@ -58,15 +66,18 @@ class RecordTagFilterViewModel extends ChangeNotifier {
         SecureStorageService.folderViewStorageKey,
         (selectedValues as bool).toString(),
       );
-    } else if ((await _storage.get(SecureStorageService.saveFiltersStorageKey))
-            ?.toLowerCase() ==
+    } else if ((await _storage.get(
+          SecureStorageService.saveFiltersStorageKey,
+        ))?.toLowerCase() ==
         'true') {
       if (identifier == ID3TagFilters.date) {
         await _dbService.saveID3Filter(
           identifier,
           jsonEncode(
-            List<String>.from(
-                [tagFilter.startDate.toString(), tagFilter.endDate.toString()]),
+            List<String>.from([
+              tagFilter.startDate.toString(),
+              tagFilter.endDate.toString(),
+            ]),
           ),
         );
       } else {

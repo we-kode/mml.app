@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/manager/image_cache_manager.dart';
+import 'package:mml_app/models/subfilter.dart';
 import 'package:mml_app/services/cover_file_service.dart';
 
 /// Base model with abstract methods that should be implemented by all models.
@@ -19,10 +20,7 @@ abstract class ModelBase {
   ///
   /// Shouldn't be used directly but be invoked by constructor of implementing
   /// model classes.
-  ModelBase({
-    this.isDeletable = false,
-    this.isSelectable = true,
-  });
+  ModelBase({this.isDeletable = false, this.isSelectable = true});
 
   /// Returns a display description of the model object, that
   /// can be used in widgets, e.g. lists.
@@ -57,6 +55,12 @@ abstract class ModelBase {
     return null;
   }
 
+  /// Returns the filter matching the elements of [getGroup] or null if the
+  /// group can not be filtered.
+  Subfilter? getGroupFilter() {
+    return null;
+  }
+
   /// Returns an icon which can be used as prefix in list.
   Icon? getPrefixIcon(BuildContext context) {
     return null;
@@ -75,14 +79,17 @@ abstract class ModelBase {
   /// Returns the avatar uri.
   Future<Uri?> getAvatarUri() async {
     if (getAvatarString() != null && getAvatarString()!.isNotEmpty) {
-      var fileInfo =
-          await ImageCacheManager().getFileFromCache(getAvatarString()!);
+      var fileInfo = await ImageCacheManager().getFileFromCache(
+        getAvatarString()!,
+      );
       if (fileInfo != null) {
         return await _platformUri(fileInfo.file);
       }
 
       try {
-        var response = await CoverFileService.getInstance().get(getAvatarString()!);
+        var response = await CoverFileService.getInstance().get(
+          getAvatarString()!,
+        );
         var file = await ImageCacheManager().putFileStream(
           getAvatarString()!,
           response.content,
@@ -90,7 +97,7 @@ abstract class ModelBase {
           fileExtension: "jpg",
         );
 
-        return _platformUri(file);
+        return await _platformUri(file);
       } catch (_) {}
     }
 

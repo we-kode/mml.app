@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/check_animation.dart';
 import 'package:mml_app/components/error_animation.dart';
 import 'package:mml_app/components/generate_rsa_animation.dart';
@@ -111,7 +111,7 @@ class RegisterScreen extends StatelessWidget {
                                       ElevatedButton(
                                         onPressed: vm.saveName,
                                         child: Text(vm.locales.next),
-                                      )
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -122,8 +122,9 @@ class RegisterScreen extends StatelessWidget {
                                 width: 256,
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 6.0,
                                     style: BorderStyle.solid,
                                   ),

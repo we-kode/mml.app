@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -99,10 +99,7 @@ class PlaylistViewModel extends ChangeNotifier {
 
   /// Removes one record from playlist.
   Future _removeRecord(LocalRecord record) async {
-    await _dbService.removeFromPlaylist(
-      record.recordId!,
-      record.playlist.id!,
-    );
+    await _dbService.removeFromPlaylist(record.recordId!, record.playlist.id!);
 
     if (!(await _dbService.isInPlaylist(record.recordId!))) {
       await _dbService.removeRecord(record.recordId!);
@@ -154,32 +151,31 @@ class PlaylistViewModel extends ChangeNotifier {
       checksum: localRecord.checksum,
       title: localRecord.title,
     );
-    itemsMap.update(
-      localRecord.playlist.name!,
-      (values) {
-        values.add(export);
-        return values.toList();
-      },
-      ifAbsent: () => [export],
-    );
+    itemsMap.update(localRecord.playlist.name!, (values) {
+      values.add(export);
+      return values.toList();
+    }, ifAbsent: () => [export]);
   }
 
   /// Imports records from file.
   Future<List<String>> import(PlatformFile file) async {
-    return await ImportService.getInstance().import(file.path!, _context);
+    final path = file.path;
+    final content = path == null
+        ? utf8.decode(await file.readAsBytes(), allowMalformed: true)
+        : null;
+    if (!_context.mounted) {
+      return [];
+    }
+    return await ImportService.getInstance().import(
+      path,
+      _context,
+      cnt: content,
+    );
   }
 
   /// Plays one record.
-  void playRecord(
-    ModelBase record,
-    String? filter,
-    ID3TagFilter? subfilter,
-  ) {
-    PlayerService.getInstance().play(
-      record as LocalRecord,
-      filter,
-      subfilter,
-    );
+  void playRecord(ModelBase record, String? filter, ID3TagFilter? subfilter) {
+    PlayerService.getInstance().play(record as LocalRecord, filter, subfilter);
   }
 
   /// navigates to folder of [playlist].

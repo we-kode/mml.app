@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/models/record_export.dart';
 import 'package:mml_app/services/db.dart';
@@ -53,19 +53,19 @@ class ImportService {
 
       savedPlaylists = jsonDecode(content);
       for (var entryKey in savedPlaylists.keys) {
-        var exportedRecords = List.from(savedPlaylists[entryKey]).map(
-          (entry) => RecordExport.fromJson(entry),
-        );
-        var checksums = exportedRecords.map(
-          (entry) => entry.checksum,
-        );
+        var exportedRecords = List.from(
+          savedPlaylists[entryKey],
+        ).map((entry) => RecordExport.fromJson(entry));
+        var checksums = exportedRecords.map((entry) => entry.checksum);
         var playlist = await _dbService.createOrUpdatePlaylist(entryKey);
-        var records =
-            await _recordService.getRecordsByChecksum(List.from(checksums));
+        var records = await _recordService.getRecordsByChecksum(
+          List.from(checksums),
+        );
         notAvailable.addAll(
           exportedRecords.where(
-            (element) => !records
-                .any((rec) => (rec as Record).checksum == element.checksum),
+            (element) => !records.any(
+              (rec) => (rec as Record).checksum == element.checksum,
+            ),
           ),
         );
 

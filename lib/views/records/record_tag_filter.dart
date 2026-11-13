@@ -1,5 +1,7 @@
+import 'dart:math';
+
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/async_select_list_dialog.dart';
 import 'package:mml_app/components/horizontal_spacer.dart';
 import 'package:mml_app/components/list_subfilter_view.dart';
@@ -14,10 +16,41 @@ typedef FilterChangedFunction = Future<bool> Function(ID3TagFilter filter);
 // Tag filters for the records view.
 class RecordTagFilter extends ListSubfilterView {
   /// Initializes the [RecordTagFilter].
-  const RecordTagFilter({
-    super.key,
-    required ID3TagFilter tagFilter,
-  }) : super(filter: tagFilter);
+  const RecordTagFilter({super.key, required ID3TagFilter tagFilter})
+    : super(filter: tagFilter);
+
+  /// Shows the dialog to select the date range of the filter with the
+  /// preselected [value] and returns the selected range.
+  @visibleForTesting
+  static Future<List<DateTime?>?> showDateRangeDialog(
+    BuildContext context,
+    List<DateTime?> value,
+  ) {
+    final locales = AppLocalizations.of(context)!;
+    final color = Theme.of(context).colorScheme.primary;
+    final screen = MediaQuery.sizeOf(context);
+    final isLow = screen.height < _dateDialogHeight + 48;
+    return showCalendarDatePicker2Dialog(
+      context: context,
+      config: CalendarDatePicker2WithActionButtonsConfig(
+        calendarType: CalendarDatePicker2Type.range,
+        lastDate: DateTime.now(),
+        useAbbrLabelForMonthModePicker: true,
+        dayMaxWidth: isLow ? 30 : null,
+        controlsHeight: isLow ? 40 : null,
+        cancelButton: Text(locales.cancel, style: TextStyle(color: color)),
+        okButton: Text(locales.save, style: TextStyle(color: color)),
+      ),
+      dialogSize: Size(
+        min(screen.width - 32, 360),
+        min(_dateDialogHeight, screen.height - 48),
+      ),
+      borderRadius: BorderRadius.circular(0),
+      value: value,
+    );
+  }
+
+  static const double _dateDialogHeight = 410;
 
   @override
   Widget build(BuildContext context) {
@@ -42,12 +75,10 @@ class RecordTagFilter extends ListSubfilterView {
                             Symbols.filter_alt_off,
                             color: activeColor,
                           ),
-                          padding: const EdgeInsets.only(
-                            top: 6,
-                            bottom: 6,
-                          ),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
+                          padding: const EdgeInsets.only(top: 6, bottom: 6),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .secondary,
                           onPressed: () => vm.clearAll(),
                         )
                       : const SizedBox.shrink();
@@ -56,9 +87,7 @@ class RecordTagFilter extends ListSubfilterView {
               Consumer<RecordTagFilterViewModel>(
                 builder: (context, vm, child) {
                   return vm.tagFilter.isAny()
-                      ? const SizedBox(
-                          width: 8,
-                        )
+                      ? const SizedBox(width: 8)
                       : const SizedBox.shrink();
                 },
               ),
@@ -113,14 +142,11 @@ class RecordTagFilter extends ListSubfilterView {
   /// Creates a single tag filter for given [identifier].
   ///
   /// [icon] and the [activeBGColor] can be set.
-  Widget _createTagFilter(
-    String identifier,
-    String label,
-    IconData icon,
-  ) {
+  Widget _createTagFilter(String identifier, String label, IconData icon) {
     return Consumer<RecordTagFilterViewModel>(
       builder: (context, vm, child) {
-        var isFolderView = identifier == ID3TagFilters.date &&
+        var isFolderView =
+            identifier == ID3TagFilters.date &&
             (filter as ID3TagFilter).isGrouped;
         final isActive = vm.tagFilter.isNotEmpty(identifier);
         final brightness = Theme.of(context).brightness;
@@ -145,12 +171,10 @@ class RecordTagFilter extends ListSubfilterView {
                 onPressed: () => identifier == ID3TagFilters.date
                     ? _handleDateFilter(context, vm)
                     : identifier == ID3TagFilters.folderView
-                        ? _handleFolderFilter(context, vm)
-                        : _handleFilter(identifier, context, vm),
+                    ? _handleFolderFilter(context, vm)
+                    : _handleFilter(identifier, context, vm),
                 onDeleted: vm.tagFilter.isNotEmpty(identifier)
-                    ? () => {
-                          vm.clear(identifier),
-                        }
+                    ? () => {vm.clear(identifier)}
                     : null,
               );
       },
@@ -171,32 +195,10 @@ class RecordTagFilter extends ListSubfilterView {
     BuildContext context,
     RecordTagFilterViewModel vm,
   ) async {
-    var locales = AppLocalizations.of(context)!;
-    var dateUpdated = await showCalendarDatePicker2Dialog(
-      context: context,
-      config: CalendarDatePicker2WithActionButtonsConfig(
-        calendarType: CalendarDatePicker2Type.range,
-        lastDate: DateTime.now(),
-        cancelButton: Text(
-          locales.cancel,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        okButton: Text(
-          locales.save,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ),
-      dialogSize: Size(
-        MediaQuery.of(context).size.height * 0.4,
-        MediaQuery.of(context).size.width * 0.2,
-      ),
-      borderRadius: BorderRadius.circular(0),
-      value: [vm.tagFilter.startDate, vm.tagFilter.endDate]
-    );
+    var dateUpdated = await showDateRangeDialog(context, [
+      vm.tagFilter.startDate,
+      vm.tagFilter.endDate,
+    ]);
 
     if (dateUpdated == null || dateUpdated.isEmpty) {
       return;
@@ -204,10 +206,7 @@ class RecordTagFilter extends ListSubfilterView {
 
     vm.updateFilter(
       ID3TagFilters.date,
-      DateTimeRange(
-        start: dateUpdated.first!,
-        end: dateUpdated.last!,
-      ),
+      DateTimeRange(start: dateUpdated.first!, end: dateUpdated.last!),
     );
   }
 
@@ -222,12 +221,8 @@ class RecordTagFilter extends ListSubfilterView {
       context: context,
       builder: (BuildContext context) {
         return AsyncSelectListDialog(
-          loadData: ({filter, offset, take}) => vm.load(
-            identifier,
-            filter: filter,
-            offset: offset,
-            take: take,
-          ),
+          loadData: ({filter, offset, take}) =>
+              vm.load(identifier, filter: filter, offset: offset, take: take),
           initialSelected: vm.tagFilter[identifier],
         );
       },

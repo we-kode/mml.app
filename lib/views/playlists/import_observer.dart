@@ -1,13 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:mml_app/services/import.dart';
+import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/views/playlists/not_downloaded.dart';
 
 /// Observer to handle imports from mml files when clicked extern.
 class ImportObserver extends StatefulWidget {
-  const ImportObserver({
-    super.key,
-  });
+  const ImportObserver({super.key});
 
   @override
   ImportObserverState createState() => ImportObserverState();
@@ -40,15 +39,29 @@ class ImportObserverState extends State<ImportObserver>
 
   /// reads the file content.
   void getOpenFileUrl() async {
-    dynamic content = await platform.invokeMethod("getOpenFileUrl");
+    dynamic content;
+    try {
+      content = await platform.invokeMethod("getOpenFileUrl");
+    } on PlatformException catch (e) {
+      var messenger = MessengerService.getInstance();
+      messenger.showMessage(
+        e.code == 'fileTooLarge'
+            ? messenger.fileTooLarge(e.details as int? ?? 0)
+            : messenger.notCompatibleFile,
+      );
+      return;
+    }
 
     if (content != null) {
       if (!mounted) {
         return;
       }
 
-      var notDownloaded =
-          await ImportService.getInstance().import(null, context, cnt: content);
+      var notDownloaded = await ImportService.getInstance().import(
+        null,
+        context,
+        cnt: content,
+      );
 
       if (notDownloaded.isEmpty) {
         return;
@@ -62,9 +75,7 @@ class ImportObserverState extends State<ImportObserver>
         barrierDismissible: false,
         context: context,
         builder: (BuildContext context) {
-          return NotDownloadedDialog(
-            records: notDownloaded,
-          );
+          return NotDownloadedDialog(records: notDownloaded);
         },
       );
 

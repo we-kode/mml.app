@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/view_models/records/download.dart';
@@ -34,18 +34,14 @@ class RecordDownloadDialog extends StatelessWidget {
         var locales = AppLocalizations.of(context)!;
 
         return AlertDialog(
-          title: Text(
-            locales.download,
-          ),
+          title: Text(locales.download),
           content: FutureBuilder(
             future: vm.init(context, records, playlists),
             builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
               if (!snapshot.hasData) {
                 return const Column(
                   mainAxisSize: MainAxisSize.min,
-                  children:  [
-                    CircularProgressIndicator(),
-                  ],
+                  children: [CircularProgressIndicator()],
                 );
               }
 
@@ -82,10 +78,7 @@ class RecordDownloadDialog extends StatelessWidget {
                 ),
                 verticalSpacer,
                 verticalSpacer,
-                Text(
-                  value.downloadFileName,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                Text(value.downloadFileName, overflow: TextOverflow.ellipsis),
               ],
             );
           },
@@ -95,9 +88,7 @@ class RecordDownloadDialog extends StatelessWidget {
   }
 
   /// Creates a list of action widgets that should be shown at the bottom of the dialog.
-  List<Widget> _createActions(
-    BuildContext context,
-  ) {
+  List<Widget> _createActions(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
 
     return [

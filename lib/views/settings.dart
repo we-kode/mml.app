@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mml_app/components/vertical_spacer.dart';
+import 'package:mml_app/models/share_action.dart';
 import 'package:mml_app/view_models/settings.dart';
 import 'package:provider/provider.dart';
 
@@ -43,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.tracknumber = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.tracknumber,
                       );
@@ -58,7 +59,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.genre = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.genre,
                       );
@@ -73,7 +74,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.language = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.language,
                       );
@@ -88,7 +89,7 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.recordViewSettings.cover = value,
-                          vm.updateRecordViewSettings()
+                          vm.updateRecordViewSettings(),
                         },
                         value: vm.recordViewSettings.cover,
                       );
@@ -113,13 +114,42 @@ class SettingsScreen extends StatelessWidget {
                       return Switch(
                         onChanged: (value) => {
                           vm.saveFilters = value,
-                          vm.updateFilterSaveSettings()
+                          vm.updateFilterSaveSettings(),
                         },
                         value: vm.saveFilters,
                       );
                     },
                   ),
                 ),
+                ListTile(
+                  leading: const Icon(Symbols.play_circle),
+                  title: Text(vm.locales.resumePlayback),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: vm.updateResumePlayback,
+                        value: vm.resumePlayback,
+                      );
+                    },
+                  ),
+                ),
+                if (vm.shareLinksAvailable)
+                  ListTile(
+                    leading: Icon(ShareAction.iconData),
+                    title: Text(vm.locales.shareMyLinks),
+                    onTap: vm.showShareLinks,
+                  ),
+                if (vm.shareOptionsAvailable)
+                  ListTile(
+                    leading: const Icon(Symbols.link),
+                    title: Text(vm.locales.shareSettings),
+                    onTap: vm.showShareSettings,
+                    trailing: IconButton(
+                      icon: const Icon(Symbols.info),
+                      tooltip: vm.locales.info,
+                      onPressed: vm.showShareSettingsInfo,
+                    ),
+                  ),
                 ListTile(
                   leading: const Icon(Symbols.qr_code_2),
                   title: Text(vm.locales.changeServerConnection),
@@ -137,6 +167,33 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   onTap: vm.removeRegistration,
+                ),
+                const Divider(),
+                verticalSpacer,
+                ListTile(
+                  dense: true,
+                  visualDensity: const VisualDensity(vertical: -4),
+                  title: Text(
+                    vm.locales.announcements,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Symbols.campaign),
+                  title: Text(vm.locales.showAnnouncementsOnStart),
+                  trailing: Consumer<SettingsViewModel>(
+                    builder: (context, vm, _) {
+                      return Switch(
+                        onChanged: vm.updateShowAnnouncementsOnStart,
+                        value: vm.showAnnouncementsOnStart,
+                      );
+                    },
+                  ),
+                ),
+                ListTile(
+                  leading: const Icon(Symbols.notifications),
+                  title: Text(vm.locales.showAnnouncements),
+                  onTap: vm.showAnnouncements,
                 ),
                 const Divider(),
                 verticalSpacer,

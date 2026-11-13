@@ -13,4 +13,9 @@ class Filter extends Subfilter {
     _textFilter = textFilter;
     notifyListeners();
   }
+
+  @override
+  void replaceWith(Filter other) {
+    textFilter = other.textFilter;
+  }
 }

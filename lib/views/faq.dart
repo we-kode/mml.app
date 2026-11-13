@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// FAQ detail screen.
@@ -25,6 +25,24 @@ class FAQScreen extends StatelessWidget {
               title: Text(locales.faqRemoveFavorites),
               children: [
                 ListTile(title: Text(locales.faqRemoveFavoritesDescription)),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(locales.faqShareLinks),
+              children: [
+                ListTile(title: Text(locales.faqShareLinksDescription)),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(locales.faqShareDownload),
+              children: [
+                ListTile(title: Text(locales.faqShareDownloadDescription)),
+              ],
+            ),
+            ExpansionTile(
+              title: Text(locales.faqResumePlayback),
+              children: [
+                ListTile(title: Text(locales.faqResumePlaybackDescription)),
               ],
             ),
           ],

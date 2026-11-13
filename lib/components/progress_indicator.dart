@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/services/router.dart';
 
 /// Shows a progress indicator overlay.
@@ -10,9 +10,7 @@ void showProgressIndicator() {
     barrierDismissible: false,
     context: RouterService.getInstance().navigatorKey.currentContext!,
     builder: (BuildContext context) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     },
   );
 }

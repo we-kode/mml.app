@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Action which is whoen in the app bar when items are selected in a selection list.
 class SelectedItemsAction extends ChangeNotifier {

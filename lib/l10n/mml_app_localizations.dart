@@ -64,7 +64,7 @@ import 'mml_app_localizations_ru.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -87,17 +87,17 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('de'),
     Locale('en'),
-    Locale('ru')
+    Locale('ru'),
   ];
 
   /// No description provided for @appTitle.
@@ -622,6 +622,12 @@ abstract class AppLocalizations {
   /// **'Datei konnte nicht gelesen werden. Format fehlerhaft.'**
   String get notCompatibleFile;
 
+  /// No description provided for @fileTooLarge.
+  ///
+  /// In de, this message translates to:
+  /// **'Datei ist zu groß und kann nicht importiert werden (max. {size} MB).'**
+  String fileTooLarge(int size);
+
   /// No description provided for @notDownloaded.
   ///
   /// In de, this message translates to:
@@ -718,6 +724,12 @@ abstract class AppLocalizations {
   /// **'Wiederholung'**
   String get repeat;
 
+  /// No description provided for @stop.
+  ///
+  /// In de, this message translates to:
+  /// **'Stopp'**
+  String get stop;
+
   /// No description provided for @errorAuthenticationExpired.
   ///
   /// In de, this message translates to:
@@ -777,6 +789,258 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Cache konnte nicht gelöscht werden.'**
   String get cacheClearedFailed;
+
+  /// No description provided for @linkNotOpened.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link konnte nicht geöffnet werden.'**
+  String get linkNotOpened;
+
+  /// No description provided for @announcements.
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilungen'**
+  String get announcements;
+
+  /// No description provided for @showAnnouncementsOnStart.
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilungen beim Start anzeigen'**
+  String get showAnnouncementsOnStart;
+
+  /// No description provided for @noAnnouncements.
+  ///
+  /// In de, this message translates to:
+  /// **'Es gibt keine aktuellen Mitteilungen.'**
+  String get noAnnouncements;
+
+  /// No description provided for @doNotShowAgain.
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht mehr anzeigen'**
+  String get doNotShowAgain;
+
+  /// No description provided for @close.
+  ///
+  /// In de, this message translates to:
+  /// **'Schließen'**
+  String get close;
+
+  /// No description provided for @announcementPosition.
+  ///
+  /// In de, this message translates to:
+  /// **'{index} von {count}'**
+  String announcementPosition(int index, int count);
+
+  /// No description provided for @previous.
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück'**
+  String get previous;
+
+  /// No description provided for @showAnnouncements.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Mitteilungen anzeigen'**
+  String get showAnnouncements;
+
+  /// No description provided for @share.
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get share;
+
+  /// No description provided for @shareSearchLink.
+  ///
+  /// In de, this message translates to:
+  /// **'Link zur Suche teilen'**
+  String get shareSearchLink;
+
+  /// No description provided for @sharePlayLink.
+  ///
+  /// In de, this message translates to:
+  /// **'Link zur Wiedergabe teilen'**
+  String get sharePlayLink;
+
+  /// No description provided for @shareDownloadLink.
+  ///
+  /// In de, this message translates to:
+  /// **'Download-Link teilen'**
+  String get shareDownloadLink;
+
+  /// No description provided for @shareValidFor.
+  ///
+  /// In de, this message translates to:
+  /// **'Gültigkeit'**
+  String get shareValidFor;
+
+  /// No description provided for @shareValid1Hour.
+  ///
+  /// In de, this message translates to:
+  /// **'1 Stunde'**
+  String get shareValid1Hour;
+
+  /// No description provided for @shareValid1Day.
+  ///
+  /// In de, this message translates to:
+  /// **'1 Tag'**
+  String get shareValid1Day;
+
+  /// No description provided for @shareValid7Days.
+  ///
+  /// In de, this message translates to:
+  /// **'7 Tage'**
+  String get shareValid7Days;
+
+  /// No description provided for @shareValid30Days.
+  ///
+  /// In de, this message translates to:
+  /// **'30 Tage'**
+  String get shareValid30Days;
+
+  /// No description provided for @shareValid90Days.
+  ///
+  /// In de, this message translates to:
+  /// **'90 Tage'**
+  String get shareValid90Days;
+
+  /// No description provided for @shareSingleUse.
+  ///
+  /// In de, this message translates to:
+  /// **'Einmal-Link'**
+  String get shareSingleUse;
+
+  /// No description provided for @shareSingleUseHint.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link kann nur einmal zum Herunterladen geöffnet werden.'**
+  String get shareSingleUseHint;
+
+  /// No description provided for @shareUseAsDefault.
+  ///
+  /// In de, this message translates to:
+  /// **'Als Standard verwenden und nicht mehr fragen'**
+  String get shareUseAsDefault;
+
+  /// No description provided for @shareSettings.
+  ///
+  /// In de, this message translates to:
+  /// **'Download-Links'**
+  String get shareSettings;
+
+  /// No description provided for @shareMyLinks.
+  ///
+  /// In de, this message translates to:
+  /// **'Meine aktiven Links'**
+  String get shareMyLinks;
+
+  /// No description provided for @shareNoLinks.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine aktiven Links.'**
+  String get shareNoLinks;
+
+  /// No description provided for @shareLinkRecords.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Aufnahme} other{{count} Aufnahmen}}'**
+  String shareLinkRecords(int count);
+
+  /// No description provided for @shareLinkCreatedAt.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstellt am {date}'**
+  String shareLinkCreatedAt(String date);
+
+  /// No description provided for @shareLinkExpiresAt.
+  ///
+  /// In de, this message translates to:
+  /// **'Gültig bis {date}'**
+  String shareLinkExpiresAt(String date);
+
+  /// No description provided for @shareLinkDeleteInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link wird sofort ungültig. Wer ihn bereits erhalten hat, kann nichts mehr herunterladen.'**
+  String get shareLinkDeleteInfo;
+
+  /// No description provided for @shareSettingsInfo.
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Einstellungen gelten für Download-Links, die Sie erstellen. Sie greifen nur, wenn Sie Aufnahmen teilen dürfen und der Administrator die Auswahl erlaubt.'**
+  String get shareSettingsInfo;
+
+  /// No description provided for @shareAskBeforeSharing.
+  ///
+  /// In de, this message translates to:
+  /// **'Vor dem Teilen nachfragen'**
+  String get shareAskBeforeSharing;
+
+  /// No description provided for @sharePartial.
+  ///
+  /// In de, this message translates to:
+  /// **'Sie dürfen nur {shareable} von {total} ausgewählten Aufnahmen teilen. Es werden nur diese geteilt.'**
+  String sharePartial(int shareable, int total);
+
+  /// No description provided for @shareLinkOtherServer.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link gehört zu einem anderen Server.'**
+  String get shareLinkOtherServer;
+
+  /// No description provided for @shareSearchTooLarge.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Suche enthält zu viele Filterwerte und kann nicht geteilt werden. Erlaubt sind höchstens {max}.'**
+  String shareSearchTooLarge(int max);
+
+  /// No description provided for @resumePlayback.
+  ///
+  /// In de, this message translates to:
+  /// **'Wiedergabe fortsetzen'**
+  String get resumePlayback;
+
+  /// No description provided for @faqShareLinks.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie teile ich eine Suche oder die aktuelle Wiedergabe?'**
+  String get faqShareLinks;
+
+  /// No description provided for @faqShareLinksDescription.
+  ///
+  /// In de, this message translates to:
+  /// **'Tippen Sie in der Aufnahmenliste oben rechts auf das Symbol für Links, um die aktuelle Suche mit allen Filtern zu teilen. Das Symbol erscheint nur, wenn ein Suchtext oder ein Filter gesetzt ist. Im Player teilt das Symbol die laufende Aufnahme an der aktuellen Position. Wer den Link öffnet, landet in der App mit derselben Suche beziehungsweise hört die Aufnahme an derselben Stelle. Dazu muss die App auf dem Gerät installiert und für denselben Server eingerichtet sein. Aufnahmen, für die jemand keine Berechtigung hat, werden nicht angezeigt oder abgespielt.'**
+  String get faqShareLinksDescription;
+
+  /// No description provided for @faqShareDownload.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie teile ich Aufnahmen zum Herunterladen?'**
+  String get faqShareDownload;
+
+  /// No description provided for @faqShareDownloadDescription.
+  ///
+  /// In de, this message translates to:
+  /// **'Halten Sie in der Aufnahmenliste eine Aufnahme oder einen Ordner gedrückt und wählen Sie weitere aus. Tippen Sie dann oben rechts auf das Symbol zum Teilen eines Download-Links. Wer den Link öffnet, lädt die Aufnahmen im Browser herunter, auch ohne die App: eine Aufnahme als Audiodatei, mehrere als ZIP-Archiv, jeweils mit dem Titel als Dateiname. Ein Link kann höchstens 100 Aufnahmen enthalten. Das Symbol erscheint nur, wenn Sie die ausgewählten Aufnahmen teilen dürfen. Dürfen Sie nur einen Teil teilen, werden Sie darauf hingewiesen und nur dieser Teil wird geteilt. Ob Gültigkeit und Einmal-Link in den Einstellungen unter „Download-Links“ gewählt werden können, bestimmt der Administrator. Ihre aktiven Download-Links sehen und löschen Sie in den Einstellungen unter „Meine aktiven Links“. Ein gelöschter Link funktioniert sofort nicht mehr.'**
+  String get faqShareDownloadDescription;
+
+  /// No description provided for @faqResumePlayback.
+  ///
+  /// In de, this message translates to:
+  /// **'Wie setze ich die Wiedergabe nach dem Öffnen der App fort?'**
+  String get faqResumePlayback;
+
+  /// No description provided for @faqResumePlaybackDescription.
+  ///
+  /// In de, this message translates to:
+  /// **'Aktivieren Sie in den Einstellungen „Wiedergabe fortsetzen“. Beim nächsten Öffnen der App wird die zuletzt gehörte Aufnahme an der Stelle bereitgestellt, an der Sie aufgehört haben. Starten Sie sie mit der Wiedergabetaste. Die Funktion ist standardmäßig ausgeschaltet.'**
+  String get faqResumePlaybackDescription;
+
+  /// No description provided for @shareTooMany.
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Link kann höchstens {limit} Aufnahmen enthalten. Wählen Sie weniger Aufnahmen oder einen kleineren Ordner aus und erstellen Sie bei Bedarf mehrere Links.'**
+  String shareTooMany(int limit);
 }
 
 class _AppLocalizationsDelegate
@@ -808,8 +1072,9 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-      'an issue with the localizations generation tool. Please file an issue '
-      'on GitHub with a reproducible sample app and the gen-l10n configuration '
-      'that was used.');
+    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.',
+  );
 }

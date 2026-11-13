@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/progress_indicator.dart';
 import 'package:mml_app/models/playlist.dart';
 import 'package:mml_app/services/db.dart';
@@ -99,7 +99,9 @@ class PlaylistEditDialogViewModel extends ChangeNotifier {
     } on DatabaseException catch (e) {
       if (e.isUniqueConstraintError()) {
         errors = Map.from({
-          nameField: List<String>.from([locales.playlistUniqueConstraintFailed])
+          nameField: List<String>.from([
+            locales.playlistUniqueConstraintFailed,
+          ]),
         });
         formKey.currentState!.validate();
       }

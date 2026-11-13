@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// View of  dialog of not downloaded records.
@@ -7,19 +7,14 @@ class NotDownloadedDialog extends StatelessWidget {
   final List<String> records;
 
   /// Initializes the view.
-  const NotDownloadedDialog({
-    super.key,
-    required this.records,
-  });
+  const NotDownloadedDialog({super.key, required this.records});
 
   /// Builds the dialog.
   @override
   Widget build(BuildContext context) {
     var locales = AppLocalizations.of(context)!;
     return AlertDialog(
-      title: Text(
-        locales.notDownloaded,
-      ),
+      title: Text(locales.notDownloaded),
       content: SizedBox(
         height: MediaQuery.of(context).size.height * 0.2,
         width: MediaQuery.of(context).size.width,
@@ -33,10 +28,7 @@ class NotDownloadedDialog extends StatelessWidget {
                   return ListTile(
                     title: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Text(
-                        records[index],
-                        softWrap: false,
-                      ),
+                      child: Text(records[index], softWrap: false),
                     ),
                   );
                 },

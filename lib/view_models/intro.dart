@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:intl/intl_standalone.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -58,8 +58,9 @@ class IntroViewModel extends ChangeNotifier {
 
   /// Calls the [RegisterScreen].
   Future _nextScreen() async {
-    await RouterService.getInstance()
-        .pushReplacementNamed(RegisterViewModel.route);
+    await RouterService.getInstance().pushReplacementNamed(
+      RegisterViewModel.route,
+    );
   }
 
   /// Returns intro pages.
@@ -91,7 +92,7 @@ class IntroViewModel extends ChangeNotifier {
           width: 256,
           child: IntroPlaylistAnimation(),
         ),
-      )
+      ),
     ];
   }
 

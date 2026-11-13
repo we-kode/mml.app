@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mml_app/util/xor_encryptor.dart';
 
 /// Service that handles data of the secure storage for the app.
 class SecureStorageService {
@@ -55,6 +57,28 @@ class SecureStorageService {
   /// Key under which the cache remove time is stored.
   static const String cacheDurationStorageKey = 'cacheDuration';
 
+  /// Key under which the flag to show the announcements on start is stored.
+  static const String showAnnouncementsStorageKey = 'showAnnouncements';
+
+  /// Key under which the versions of the dismissed announcements are stored.
+  static const String dismissedAnnouncementsStorageKey =
+      'dismissedAnnouncements';
+
+  /// Key under which the last known rights to share records are stored as
+  /// json object.
+  static const String shareStateStorageKey = 'shareState';
+
+  /// Key under which the defaults of new share links are stored as json
+  /// object.
+  static const String shareDefaultsStorageKey = 'shareDefaults';
+
+  /// Key under which the flag to continue the last playback is stored.
+  static const String resumePlaybackStorageKey = 'resumePlayback';
+
+  /// Key under which the last played record, its position and its playlist
+  /// are stored as json object.
+  static const String lastPlaybackStorageKey = 'lastPlayback';
+
   /// Private constructor of the service.
   SecureStorageService._();
 
@@ -108,6 +132,22 @@ class SecureStorageService {
     );
   }
 
+  /// Returns the json object persisted under the given [key] or an empty map,
+  /// if nothing or no valid json object is stored.
+  Future<Map<String, dynamic>> getJson(String key) async {
+    try {
+      final value = jsonDecode(await get(key) ?? '{}');
+      return value is Map<String, dynamic> ? value : {};
+    } on FormatException {
+      return {};
+    }
+  }
+
+  /// Stores the json object [value] under the given [key]. Null deletes it.
+  Future<void> setJson(String key, Map<String, dynamic>? value) {
+    return set(key, value == null ? null : jsonEncode(value));
+  }
+
   /// Deletes the value under the given [key] from the secure storage.
   Future<void> delete(String key) async {
     if (Platform.isIOS) {
@@ -119,6 +159,15 @@ class SecureStorageService {
       iOptions: iOSOptions,
       aOptions: androidOptions,
     );
+  }
+
+  /// Stores a new key to encrypt downloaded records, if none is stored yet.
+  ///
+  /// An existing key is kept, so records downloaded before stay playable.
+  Future<void> ensureCryptoKey() async {
+    if (await get(cryptoKey) == null) {
+      await set(cryptoKey, XorEncryptor.generateKey().toString());
+    }
   }
 
   /// Deletes all tokens and secure information except the skip intro flag.

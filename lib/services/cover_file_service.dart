@@ -19,17 +19,19 @@ class CoverFileService extends FileService {
   final ApiService _apiService = ApiService.getInstance();
 
   @override
-  Future<FileServiceResponse> get(String url, {Map<String, String>? headers}) async {
+  Future<FileServiceResponse> get(
+    String url, {
+    Map<String, String>? headers,
+  }) async {
     final response = await _apiService.request(
       '/media/record/cover/$url',
-      options: Options(
-        method: 'GET',
-        responseType: ResponseType.bytes
-      ),
+      options: Options(method: 'GET', responseType: ResponseType.bytes),
     );
 
     var stream = ByteStream.fromBytes(response.data);
 
-    return HttpGetResponse(StreamedResponse(stream, response.statusCode ?? 200));
+    return HttpGetResponse(
+      StreamedResponse(stream, response.statusCode ?? 200),
+    );
   }
 }

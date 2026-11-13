@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/components/async_list_view.dart';
 import 'package:mml_app/components/filter_app_bar.dart';
 import 'package:mml_app/models/model_base.dart';
@@ -37,17 +37,10 @@ class LivestreamScreen extends StatelessWidget {
               onActiveItemChanged:
                   PlayerService.getInstance().onRecordChanged.stream,
               loadData: vm.load,
-              openItemFunction: (
-                ModelBase item,
-                String? filter,
-                Subfilter? subfilter,
-              ) {
-                vm.playRecord(
-                  item,
-                  filter,
-                  null,
-                );
-              },
+              openItemFunction:
+                  (ModelBase item, String? filter, Subfilter? subfilter) {
+                    vm.playRecord(item, filter, null);
+                  },
             );
           },
         );

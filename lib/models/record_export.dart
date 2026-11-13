@@ -12,10 +12,7 @@ class RecordExport {
   String? checksum;
 
   /// Creates a new record instance with the given values.
-  RecordExport({
-    required this.checksum,
-    this.title,
-  });
+  RecordExport({required this.checksum, this.title});
 
   /// Converts a json object/map to the record model.
   factory RecordExport.fromJson(Map<String, dynamic> json) =>

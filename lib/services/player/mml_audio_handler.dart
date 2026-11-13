@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
@@ -56,6 +59,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// The current seek position of the playback.
   double currentSeekPosition = 0.0;
 
+  /// Position the player was prepared at without starting the playback. The
+  /// start of the playback seeks there again, if the player lost the position.
+  Duration? _preparedPosition;
+
   /// Bool, that indicates, whether shuffle is enabled or not.
   bool _shuffle = false;
 
@@ -68,17 +75,33 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   /// App localizations.
   AppLocalizations? locales;
 
+  final List<StreamSubscription> _subscriptions = [];
+
+  bool _hasMediaControlsWithoutStop = false;
+
   /// Creates an instance of the [MMLAudioHandler] and initializes the
   /// listeners.
   MMLAudioHandler(BuildContext context) {
     locales = AppLocalizations.of(context);
+    if (Platform.isAndroid) {
+      DeviceInfoPlugin().androidInfo.then(
+        (info) => _hasMediaControlsWithoutStop = info.version.sdkInt >= 33,
+      );
+    }
   }
 
   /// Stream with the current playback position.
-  Stream<Duration> get positionStream => _player!.positionStream;
+  Stream<Duration> get positionStream =>
+      _player?.positionStream ?? const Stream.empty();
 
   /// Stream with the current playback events.
-  Stream<PlaybackEvent> get playbackEventStream => _player!.playbackEventStream;
+  Stream<PlaybackEvent> get playbackEventStream =>
+      _player?.playbackEventStream ?? const Stream.empty();
+
+  /// Stream of the playing state of the player. It starts with the current
+  /// state.
+  Stream<bool> get playingStream =>
+      _player?.playingStream ?? const Stream.empty();
 
   /// Bool, that indicates, whether the record is playing or not.
   bool get isPlaying => _player?.playing ?? false;
@@ -118,8 +141,13 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     _addPlaybackState();
   }
 
-  /// Plays the given [record].
-  Future<void> playRecord(Record record) async {
+  /// Plays the given [record] starting at [startAt]. The record is only
+  /// prepared and paused, if [autoPlay] is false.
+  Future<void> playRecord(
+    Record record, {
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
     if (_isLoading) {
       return;
     }
@@ -128,43 +156,72 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (_player == null) {
       _initPlayer();
     }
-    await _playCurrentRecord();
+    await _playCurrentRecord(startAt: startAt, autoPlay: autoPlay);
   }
 
   /// Creates new instance of the [AudioPlayer], if player not exists yet.
   void _initPlayer() {
-    _player ??= AudioPlayer();
+    // Outside release builds the proxy streams through MMLHttpOverrides, which
+    // accepts self-signed certificates of development servers.
+    _player ??= AudioPlayer(useProxyForRequestHeaders: !kReleaseMode);
     _initializeListeners();
   }
 
   @override
-  Future<void> play() => _player!.play();
+  Future<void> play() async {
+    final player = _player;
+    final prepared = _preparedPosition;
+    _preparedPosition = null;
+    if (player != null &&
+        prepared != null &&
+        (player.position - prepared).abs() > const Duration(seconds: 1)) {
+      await player.seek(prepared);
+    }
+
+    return player?.play();
+  }
 
   @override
-  Future<void> pause() => _player!.pause();
+  Future<void> pause() async => _player?.pause();
 
   @override
   Future<void> stop() async {
-    await _player!.stop();
-    await _player!.dispose();
-    playbackState.add(
-      playbackState.value.copyWith(
-        processingState: {
-          ProcessingState.idle: AudioProcessingState.idle,
-        }[_player!.processingState]!,
-      ),
-    );
+    final player = _player;
     _player = null;
+    _isLoading = false;
+    await _cancelSubscriptions();
+    await player?.stop();
+    await player?.dispose();
+
+    // Android detaches the notification from the foreground service
+    // asynchronously and ignores its removal until then.
+    playbackState.add(playbackState.value.copyWith(playing: false));
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (_player != null) {
+      return;
+    }
+
+    playbackState.add(
+      playbackState.value.copyWith(processingState: AudioProcessingState.idle),
+    );
     await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
   }
 
   @override
-  Future<void> onNotificationDeleted() async {
-    await _player!.stop();
+  Future<void> onNotificationDeleted() => stop();
+
+  @override
+  Future<void> onTaskRemoved() async {
+    if (!isPlaying) {
+      await stop();
+    }
   }
 
   @override
-  Future<void> seek(Duration position) => _player!.seek(position);
+  Future<void> seek(Duration position) async {
+    _preparedPosition = null;
+    return _player?.seek(position);
+  }
 
   @override
   Future<void> skipToNext() async {
@@ -177,15 +234,22 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   @override
-  Future<List<MediaItem>> getChildren(String parentMediaId,
-      [Map<String, dynamic>? options]) async {
-    return await MMLMediaItemService.getInstance(locales!)
-        .getChildren(parentMediaId, options);
+  Future<List<MediaItem>> getChildren(
+    String parentMediaId, [
+    Map<String, dynamic>? options,
+  ]) {
+    return _loadMediaItems(
+      () => MMLMediaItemService.getInstance(
+        locales!,
+      ).getChildren(parentMediaId, options),
+    );
   }
 
   @override
-  Future<void> playFromMediaId(String mediaId,
-      [Map<String, dynamic>? extras]) async {
+  Future<void> playFromMediaId(
+    String mediaId, [
+    Map<String, dynamic>? extras,
+  ]) async {
     if (mediaId == MMLMediaConstants.offlineId) {
       throw PlatformException(
         code: MMLMediaConstants.errorCodeUnknownError,
@@ -199,91 +263,72 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
 
     if (mediaId.startsWith(MMLMediaConstants.localRecordId)) {
       record = (await DBService.getInstance().getRecords(
-        int.tryParse(mediaId.replaceAll(
-              '${MMLMediaConstants.localRecordId}:',
-              '',
-            )) ??
+        int.tryParse(
+              mediaId.replaceAll('${MMLMediaConstants.localRecordId}:', ''),
+            ) ??
             0,
-      ))
-          .firstOrNull;
+      )).firstOrNull;
     } else if (mediaId.startsWith(MMLMediaConstants.livestreamId)) {
       record = await LivestreamService.getInstance().getLivestream(
-        mediaId.replaceAll(
-          '${MMLMediaConstants.livestreamId}:',
-          '',
-        ),
+        mediaId.replaceAll('${MMLMediaConstants.livestreamId}:', ''),
       );
     } else {
       if (mediaId.startsWith(MMLMediaConstants.genreId)) {
         tagFilter.genres = [
-          mediaId.replaceAll(
-            '${MMLMediaConstants.genreId}:',
-            '',
-          )
+          mediaId.replaceAll('${MMLMediaConstants.genreId}:', ''),
         ];
       } else if (mediaId.startsWith(MMLMediaConstants.albumId)) {
         tagFilter.albums = [
-          mediaId.replaceAll(
-            '${MMLMediaConstants.albumId}:',
-            '',
-          )
+          mediaId.replaceAll('${MMLMediaConstants.albumId}:', ''),
         ];
       } else if (mediaId.startsWith(MMLMediaConstants.artistId)) {
         tagFilter.artists = [
-          mediaId.replaceAll(
-            '${MMLMediaConstants.artistId}:',
-            '',
-          )
+          mediaId.replaceAll('${MMLMediaConstants.artistId}:', ''),
         ];
       } else if (mediaId.startsWith(MMLMediaConstants.languageId)) {
         tagFilter.languages = [
-          mediaId.replaceAll(
-            '${MMLMediaConstants.languageId}:',
-            '',
-          )
+          mediaId.replaceAll('${MMLMediaConstants.languageId}:', ''),
         ];
       } else {
         record = await RecordService.getInstance().getRecord(mediaId);
       }
 
-      record ??= (await RecordService.getInstance().getRecords(
-        filter,
-        extras != null && extras.containsKey(MMLMediaConstants.extraPage)
-            ? extras[MMLMediaConstants.extraPage]
-            : MMLMediaConstants.defaultPage,
-        extras != null && extras.containsKey(MMLMediaConstants.extraPageSize)
-            ? extras[MMLMediaConstants.extraPageSize]
-            : MMLMediaConstants.defaultPageSize,
-        tagFilter,
-        RecordViewSettings(
-          genre: true,
-          album: true,
-          cover: true,
-          language: true,
-          tracknumber: true,
-        ),
-      ))
-          .firstOrNull as Record?;
+      record ??=
+          (await RecordService.getInstance().getRecords(
+                filter,
+                extras != null &&
+                        extras.containsKey(MMLMediaConstants.extraPage)
+                    ? extras[MMLMediaConstants.extraPage]
+                    : MMLMediaConstants.defaultPage,
+                extras != null &&
+                        extras.containsKey(MMLMediaConstants.extraPageSize)
+                    ? extras[MMLMediaConstants.extraPageSize]
+                    : MMLMediaConstants.defaultPageSize,
+                tagFilter,
+                RecordViewSettings(
+                  genre: true,
+                  album: true,
+                  cover: true,
+                  language: true,
+                  tracknumber: true,
+                ),
+              )).firstOrNull
+              as Record?;
     }
 
     if (record != null) {
-      await PlayerService.getInstance().play(
-        record,
-        filter,
-        tagFilter,
-      );
+      await PlayerService.getInstance().play(record, filter, tagFilter);
     }
   }
 
   @override
-  Future<void> playFromSearch(String query,
-      [Map<String, dynamic>? extras]) async {
+  Future<void> playFromSearch(
+    String query, [
+    Map<String, dynamic>? extras,
+  ]) async {
     var searchResult = await MMLMediaItemService.getInstance(
       locales!,
-    ).searchRecords(
-      query,
-      extras,
-    );
+    ).searchRecords(query, extras);
 
     var tagFilter = searchResult.$2;
     var filter = searchResult.$3;
@@ -291,22 +336,66 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     var record = searchResult.$1.firstOrNull as Record?;
 
     if (record != null) {
-      await PlayerService.getInstance().play(
-        record,
-        filter,
-        tagFilter,
-      );
+      await PlayerService.getInstance().play(record, filter, tagFilter);
     }
   }
 
   @override
-  Future<List<MediaItem>> search(String query,
-      [Map<String, dynamic>? extras]) async {
-    return (await MMLMediaItemService.getInstance(locales!).search(
-      query,
-      extras,
-    ))
-        .$1;
+  Future<List<MediaItem>> search(String query, [Map<String, dynamic>? extras]) {
+    return _loadMediaItems(
+      () async => (await MMLMediaItemService.getInstance(
+        locales!,
+      ).search(query, extras)).$1,
+    );
+  }
+
+  // Android rejects errors sent for loaded media items and crashes the app,
+  // so errors are published as playback state and an empty list is returned.
+  Future<List<MediaItem>> _loadMediaItems(
+    Future<List<MediaItem>> Function() load,
+  ) async {
+    try {
+      final items = await load();
+      _setBrowseError(null, null);
+      return items;
+    } on PlatformException catch (e) {
+      _setBrowseError(int.tryParse(e.code), e.message);
+    } catch (_) {
+      _setBrowseError(
+        int.parse(MMLMediaConstants.errorCodeUnknownError),
+        locales!.unknownError,
+      );
+    }
+    return [];
+  }
+
+  // A running playback is not interrupted by errors while browsing.
+  void _setBrowseError(int? code, String? message) {
+    final state = playbackState.value;
+    if (message == null) {
+      if (state.processingState == AudioProcessingState.error) {
+        playbackState.add(
+          state.copyWith(
+            processingState: AudioProcessingState.idle,
+            errorCode: null,
+            errorMessage: null,
+          ),
+        );
+      }
+      return;
+    }
+
+    if (state.playing) {
+      return;
+    }
+
+    playbackState.add(
+      state.copyWith(
+        processingState: AudioProcessingState.error,
+        errorCode: code ?? int.parse(MMLMediaConstants.errorCodeUnknownError),
+        errorMessage: message,
+      ),
+    );
   }
 
   /// Refreshes the access token and updates the headers of the audio source.
@@ -321,37 +410,40 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     final url = currentRecord is Livestream
         ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
         : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
-    await _player!.setUrl(
-      url,
-      headers: headers,
-      initialPosition: duration,
-    );
+    await _player!.setUrl(url, headers: headers, initialPosition: duration);
   }
 
   /// Initializes the listeners to handle errors, show notifications and skip to
   /// the next record on playback end.
   void _initializeListeners() {
-    _player!.playbackEventStream.listen(
-      (PlaybackEvent event) {
+    _cancelSubscriptions();
+    _subscriptions.addAll([
+      _player!.playbackEventStream.listen((PlaybackEvent event) {
         _addPlaybackState();
-      },
-      onError: (Object e, StackTrace st) {},
-    );
-
-    _player!.playerStateStream.listen(
-      (event) {
+      }, onError: (Object e, StackTrace st) {}),
+      _player!.playingStream.listen((_) => _addPlaybackState()),
+      _player!.playerStateStream.listen((event) {
         if (event.processingState == ProcessingState.completed) {
           skipToNext();
         }
-      },
-    );
+      }),
+    ]);
+  }
+
+  Future<void> _cancelSubscriptions() async {
+    final subscriptions = List.of(_subscriptions);
+    _subscriptions.clear();
+    await Future.wait(subscriptions.map((s) => s.cancel()));
   }
 
   @override
-  Future customAction(String name, [Map<String, dynamic>? extras]) {
+  Future customAction(String name, [Map<String, dynamic>? extras]) async {
     switch (name) {
+      case MMLMediaConstants.customActionStop:
+        await stop();
+        break;
       case MMLMediaConstants.customActionShuffle:
-        shuffle = !shuffle;
+        PlayerService.getInstance().shuffle = !shuffle;
         break;
       case MMLMediaConstants.customActionRepeat:
         var nextModeIndex =
@@ -364,8 +456,18 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     return super.customAction(name, extras);
   }
 
+  /// Index of the close control in the media controls of Android 13+. During
+  /// shuffle the system shows the repeat action in the place of the missing
+  /// previous action, so shuffle comes before close.
+  @visibleForTesting
+  int get closeControlIndex => _shuffle && currentRecord is! Livestream ? 2 : 1;
+
   /// Adds or updates the current playback notification message.
   void _addPlaybackState() {
+    if (_player == null) {
+      return;
+    }
+
     final playing = _player!.playing;
 
     List<MediaControl> controls = [
@@ -373,8 +475,8 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         androidIcon: repeat == PlayerRepeatMode.all
             ? 'drawable/repeat_on'
             : repeat == PlayerRepeatMode.one
-                ? 'drawable/repeat_one_on'
-                : 'drawable/repeat',
+            ? 'drawable/repeat_one_on'
+            : 'drawable/repeat',
         label: locales!.repeat,
         name: MMLMediaConstants.customActionRepeat,
       ),
@@ -405,12 +507,24 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       compatIndices = [0, 1];
     }
 
+    // Android 13+ media controls ignore MediaControl.stop and show only the
+    // first custom actions, so close follows the action shown before it.
+    if (_hasMediaControlsWithoutStop) {
+      controls.remove(MediaControl.stop);
+      controls.insert(
+        closeControlIndex,
+        MediaControl.custom(
+          androidIcon: 'drawable/close',
+          label: locales!.stop,
+          name: MMLMediaConstants.customActionStop,
+        ),
+      );
+    }
+
     playbackState.add(
       playbackState.value.copyWith(
         controls: controls,
-        systemActions: const {
-          MediaAction.seek,
-        },
+        systemActions: const {MediaAction.seek},
         androidCompactActionIndices: compatIndices,
         processingState: const {
           ProcessingState.idle: AudioProcessingState.loading,
@@ -440,21 +554,36 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Plays the [currentRecord].
-  Future<void> _playCurrentRecord() async {
-    var success = await _setPlayerSource();
+  Future<void> _playCurrentRecord({
+    Duration? startAt,
+    bool autoPlay = true,
+  }) async {
+    var success = await _setPlayerSource(initialPosition: startAt);
+    PlayerService.getInstance().playerState?.update();
 
     if (!success) {
       return;
     }
 
+    _preparedPosition = null;
+    if (startAt != null) {
+      currentSeekPosition = startAt.inMilliseconds.toDouble();
+      // A source, which is not loaded yet, starts at its initial position, a
+      // seek would discard it.
+      if (_player!.processingState != ProcessingState.idle) {
+        await _player!.seek(startAt);
+      }
+      _preparedPosition = autoPlay ? null : startAt;
+    }
+
     final brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     final isDarkMode = brightness == Brightness.dark;
-    final bgImageUri = await currentRecord?.getAvatarUri() ??
+    final bgImageUri =
+        await currentRecord?.getAvatarUri() ??
         (await getImageFileFromAssets(
           !isDarkMode ? Assets.images.bgLight.path : Assets.images.bgDark.path,
-        ))
-            .uri;
+        )).uri;
 
     PlayerService.getInstance().onRecordChanged.add(currentRecord);
     mediaItem.add(
@@ -471,7 +600,9 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       ),
     );
 
-    _player!.play();
+    if (autoPlay) {
+      _player!.play();
+    }
   }
 
   /// Skips the playback in the given [direction] to the next or
@@ -493,7 +624,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       currentRecord = record;
       await _playCurrentRecord();
     } else {
-      _player!.stop();
+      await stop();
     }
   }
 
@@ -524,9 +655,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
         '/media/stream/$direction/${currentRecord!.recordId!}',
         queryParameters: params,
         data: _tagFilter != null ? _tagFilter!.toJson() : {},
-        options: Options(
-          method: 'POST',
-        ),
+        options: Options(method: 'POST'),
       );
 
       if (response.data != null) {
@@ -541,7 +670,11 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   /// Sets the source format of the player depending on the record type to be played.
-  Future<bool> _setPlayerSource({bool isRetry = false}) async {
+  /// The playback starts at the [initialPosition], if it is set.
+  Future<bool> _setPlayerSource({
+    bool isRetry = false,
+    Duration? initialPosition,
+  }) async {
     if (currentRecord == null) {
       await PlayerService.getInstance().closePlayer();
       return false;
@@ -559,9 +692,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
     if (currentRecord is LocalRecord) {
       File file;
       try {
-        file = await FileService.getInstance().getFile(
-          currentRecord!,
-        );
+        file = await FileService.getInstance().getFile(currentRecord!);
       } catch (e) {
         await PlayerService.getInstance().closePlayer();
         return false;
@@ -572,9 +703,12 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       );
 
       try {
-        _player!.setAudioSource(
+        await _player!.setAudioSource(
           MMLAudioSource(file, int.parse(cryptKey!)),
-          preload: false,
+          // A source starting at a position is loaded at once, because just_audio
+          // starts sources, which are not loaded yet, at the beginning.
+          preload: initialPosition != null,
+          initialPosition: initialPosition,
         );
         _isLoading = false;
         return true;
@@ -584,7 +718,10 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
           return false;
         }
 
-        return _setPlayerSource(isRetry: true);
+        return _setPlayerSource(
+          isRetry: true,
+          initialPosition: initialPosition,
+        );
       }
     }
 
@@ -595,10 +732,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
       final url = currentRecord is Livestream
           ? '${baseUrl}v2.0/media/livestream/stream/${currentRecord!.recordId}'
           : '${baseUrl}v2.0/media/stream/${currentRecord!.recordId}.mp3';
-      await _player!.setUrl(
-        url,
-        headers: headers,
-      );
+      await _player!.setUrl(url, headers: headers);
       _isLoading = false;
     } catch (e) {
       if (isRetry) {
@@ -613,9 +747,7 @@ class MMLAudioHandler extends BaseAudioHandler with QueueHandler, SeekHandler {
   }
 
   Future<void> _errorOnLoadingRecord() async {
-    _isLoading = false;
-    await _player!.stop();
-    await PlayerService.getInstance().closePlayer(stopAudioHandler: false);
+    await stop();
     final ms = MessengerService.getInstance();
     ms.showMessage(ms.notReachableRecord);
   }

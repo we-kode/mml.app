@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/player/mml_audio_handler.dart';
 import 'package:mml_app/services/player/player_repeat_mode.dart';
@@ -7,6 +7,10 @@ import 'package:mml_app/services/player/player_repeat_mode.dart';
 class PlayerState extends ChangeNotifier {
   /// [MMLAudioHandler] that handles the play state.
   final MMLAudioHandler _audioHandler;
+
+  /// Current seek position, for widgets that only depend on the position and
+  /// are therefore rebuilt separately.
+  final ValueNotifier<double> position = ValueNotifier(0);
 
   /// Initializes the player state.
   PlayerState(this._audioHandler);
@@ -36,6 +40,14 @@ class PlayerState extends ChangeNotifier {
   ///
   /// Should be used if the state changes.
   void update() {
+    updatePosition();
     notifyListeners();
+  }
+
+  /// Notifies the listeners of [position].
+  ///
+  /// Should be used if only the position changes.
+  void updatePosition() {
+    position.value = currentSeekPosition;
   }
 }

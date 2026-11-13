@@ -3,7 +3,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/record.dart';
 import 'package:mml_app/services/api.dart';
 import 'package:mml_app/services/messenger.dart';
@@ -75,19 +75,17 @@ class FileService {
       SecureStorageService.cryptoKey,
     );
 
-    Response<ResponseBody> response =
-        await ApiService.getInstance().request<ResponseBody>(
-      '/media/stream/${record.recordId}',
-      options: Options(
-        responseType: ResponseType.stream,
-        receiveTimeout: Duration.zero,
-      ),
-    );
+    Response<ResponseBody> response = await ApiService.getInstance()
+        .request<ResponseBody>(
+          '/media/stream/${record.recordId}',
+          options: Options(
+            responseType: ResponseType.stream,
+            receiveTimeout: Duration.zero,
+          ),
+        );
 
-    var size = int.tryParse(
-          response.headers["content-length"]?.first ?? "",
-        ) ??
-        0;
+    var size =
+        int.tryParse(response.headers["content-length"]?.first ?? "") ?? 0;
     var downloadedAndEncryptedSize = 0;
 
     try {
@@ -116,14 +114,22 @@ class FileService {
     }
   }
 
+  /// Whether the file of the downloaded [record] exists on the device.
+  Future<bool> exists(Record record) async {
+    return File('${await _folder}/${record.checksum}').exists();
+  }
+
   /// Loads file with [record] as decrypted byte chunked stream.
   Future<File> getFile(Record record) async {
     final file = File('${await _folder}/${record.checksum}');
     if (!(await file.exists())) {
-      await download(record, onError: () {
-        _messengerService.showMessage(_messengerService.fileNotFound);
-        throw Exception("File not found!");
-      });
+      await download(
+        record,
+        onError: () {
+          _messengerService.showMessage(_messengerService.fileNotFound);
+          throw Exception("File not found!");
+        },
+      );
     }
 
     return file;

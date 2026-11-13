@@ -8,8 +8,6 @@ class PlaylistArguments extends NavigationArguments {
   final Playlist? playlist;
 
   /// Initializes the navigation arguments for the playlist overview.
-  PlaylistArguments({
-    required FilterAppBar appBar,
-    this.playlist,
-  }) : super(appBar);
+  PlaylistArguments({required FilterAppBar appBar, this.playlist})
+    : super(appBar);
 }

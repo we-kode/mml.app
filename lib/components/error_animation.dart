@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mml_app/gen/assets.gen.dart';
 
@@ -11,10 +11,7 @@ class ErrorAnimation extends StatefulWidget {
   final StopFunction? onStop;
 
   /// Initializes the animation.
-  const ErrorAnimation({
-    super.key,
-    this.onStop,
-  });
+  const ErrorAnimation({super.key, this.onStop});
 
   @override
   ErrorAnimationState createState() => ErrorAnimationState();

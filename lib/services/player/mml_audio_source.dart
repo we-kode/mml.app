@@ -15,10 +15,7 @@ class MMLAudioSource extends StreamAudioSource {
   final int cryptKey;
 
   /// Initializes the [MMLAudioSource] with [file] to play and [cryptKey] to decrypt file.
-  MMLAudioSource(
-    this.file,
-    this.cryptKey,
-  ) : super(tag: "MMLAudioSource");
+  MMLAudioSource(this.file, this.cryptKey) : super(tag: "MMLAudioSource");
 
   @override
   Future<StreamAudioResponse> request([int? start, int? end]) async {
@@ -28,9 +25,12 @@ class MMLAudioSource extends StreamAudioSource {
       sourceLength: await file.length(),
       contentLength: end - start,
       offset: start,
-      stream: file.openRead(start, end).asyncMap((List<int> input) {
-        return XorEncryptor.decrypt(Uint8List.fromList(input), cryptKey);
-      }).asBroadcastStream(),
+      stream: file.openRead(start, end).map((List<int> input) {
+        return XorEncryptor.decrypt(
+          input is Uint8List ? input : Uint8List.fromList(input),
+          cryptKey,
+        );
+      }),
       contentType: 'audio/mpeg',
     );
   }

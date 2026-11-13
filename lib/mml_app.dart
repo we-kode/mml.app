@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mml_app/lib_color_schemes.g.dart';
 import 'package:mml_app/services/messenger.dart';
 import 'package:mml_app/services/router.dart';
@@ -23,14 +22,8 @@ class MMLApp extends StatelessWidget {
       scaffoldMessengerKey: MessengerService.getInstance().snackbarKey,
 
       // Configure theme data.
-      theme: ThemeData(
-        colorScheme: lightColorScheme,
-        useMaterial3: true,
-      ),
-      darkTheme: ThemeData(
-        colorScheme: darkColorScheme,
-        useMaterial3: true,
-      ),
+      theme: ThemeData(colorScheme: lightColorScheme, useMaterial3: true),
+      darkTheme: ThemeData(colorScheme: darkColorScheme, useMaterial3: true),
 
       themeMode: ThemeMode.system,
 
@@ -42,10 +35,13 @@ class MMLApp extends StatelessWidget {
       // Configure the localizations of the app.
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
       ],
+
+      // Provides the theme and localizations to packages, which still use
+      // the material library of the Flutter SDK.
+      // ignore: deprecated_member_use
+      builder: (context, child) => MaterialUiCompatibilityBridge(child: child!),
       supportedLocales: const [
         Locale('en', ''),
         Locale('de', ''),

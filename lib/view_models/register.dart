@@ -3,13 +3,12 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fast_rsa/fast_rsa.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
-import 'package:mml_app/util/xor_encryptor.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -96,20 +95,10 @@ class RegisterViewModel extends ChangeNotifier {
     var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
     var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
 
-    await _storage.set(
-      SecureStorageService.rsaPrivateStorageKey,
-      private,
-    );
-    await _storage.set(
-      SecureStorageService.rsaPublicStorageKey,
-      public,
-    );
+    await _storage.set(SecureStorageService.rsaPrivateStorageKey, private);
+    await _storage.set(SecureStorageService.rsaPublicStorageKey, public);
 
-    final crypt = XorEncryptor.generateKey();
-    await _storage.set(
-      SecureStorageService.cryptoKey,
-      crypt.toString(),
-    );
+    await _storage.ensureCryptoKey();
 
     state = RegistrationState.init;
     notifyListeners();
@@ -203,11 +192,4 @@ class RegisterViewModel extends ChangeNotifier {
 }
 
 /// State of the registration process.
-enum RegistrationState {
-  rsa,
-  init,
-  scan,
-  register,
-  error,
-  success,
-}
+enum RegistrationState { rsa, init, scan, register, error, success }

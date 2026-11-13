@@ -49,20 +49,16 @@ class RecordService {
       '/media/record/list',
       queryParameters: params,
       data: tagFilter != null ? tagFilter.toJson() : {},
-      options: Options(
-        method: 'POST',
-      ),
+      options: Options(method: 'POST'),
     );
 
     return ModelList(
       List<Record>.from(
-        response.data['items'].map(
-          (item) {
-            var rec = Record.fromJson(item);
-            rec.viewSettings = recordViewSettings;
-            return rec;
-          },
-        ),
+        response.data['items'].map((item) {
+          var rec = Record.fromJson(item);
+          rec.viewSettings = recordViewSettings;
+          return rec;
+        }),
       ),
       offset ?? 0,
       response.data["totalCount"],
@@ -72,11 +68,12 @@ class RecordService {
   /// Loads the record with the given [id] from the server.
   ///
   /// Returns the [Record] instance or null if the record was not found.
-  Future<Record> getRecord(String id) async {
+  Future<Record> getRecord(String id, {bool silent = false}) async {
     var response = await _apiService.request(
       '/media/record/$id',
       options: Options(
         method: 'GET',
+        extra: {ApiService.silentErrorsKey: silent},
       ),
     );
 
@@ -84,26 +81,19 @@ class RecordService {
   }
 
   /// Returns a list of records which are part of the checksums.
-  Future<ModelList> getRecordsByChecksum(
-    List<String> checksums,
-  ) async {
+  Future<ModelList> getRecordsByChecksum(List<String> checksums) async {
     var response = await _apiService.request(
       '/media/record/check',
       data: checksums,
-      options: Options(
-        method: 'POST',
-        contentType: Headers.jsonContentType,
-      ),
+      options: Options(method: 'POST', contentType: Headers.jsonContentType),
     );
 
     return ModelList(
       List<Record>.from(
-        response.data.map(
-          (item) {
-            var rec = Record.fromJson(item);
-            return rec;
-          },
-        ),
+        response.data.map((item) {
+          var rec = Record.fromJson(item);
+          return rec;
+        }),
       ),
       0,
       response.data.length,
@@ -136,16 +126,12 @@ class RecordService {
       '/media/record/listFolder',
       queryParameters: params,
       data: subfilter.toJson(),
-      options: Options(
-        method: 'POST',
-      ),
+      options: Options(method: 'POST'),
     );
 
     return ModelList(
       List<RecordFolder>.from(
-        response.data['items'].map(
-          (item) => RecordFolder.fromJson(item),
-        ),
+        response.data['items'].map((item) => RecordFolder.fromJson(item)),
       ),
       offset ?? 0,
       response.data["totalCount"],

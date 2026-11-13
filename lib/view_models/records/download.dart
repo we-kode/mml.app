@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 import 'package:mml_app/models/model_base.dart';
 import 'package:mml_app/models/record.dart';
@@ -29,19 +29,14 @@ class RecordsDownloadDialogViewModel extends ChangeNotifier {
   ) async {
     _context = context;
     locales = AppLocalizations.of(context)!;
-    return Future<bool>.microtask(
-      () {
-        _download(records, playlists);
-        return true;
-      },
-    );
+    return Future<bool>.microtask(() {
+      _download(records, playlists);
+      return true;
+    });
   }
 
   /// Downloads and adds the selected [records] into the selected [playlists].
-  Future _download(
-    List<ModelBase?> records,
-    List<dynamic> playlists,
-  ) async {
+  Future _download(List<ModelBase?> records, List<dynamic> playlists) async {
     final nav = Navigator.of(_context);
     for (var record in records) {
       var r = record as Record;

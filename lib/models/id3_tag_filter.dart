@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mml_app/models/subfilter.dart';
 
@@ -126,6 +126,22 @@ class ID3TagFilter extends Subfilter {
       case ID3TagFilters.folderView:
         return isGrouped;
     }
+  }
+
+  /// Replaces the tag filters and the date interval with the values of the
+  /// [other] filter. Listeners are notified once.
+  @override
+  void replaceWith(ID3TagFilter other) {
+    artists = other.artists;
+    artistNames = other.artistNames;
+    genres = other.genres;
+    genreNames = other.genreNames;
+    albums = other.albums;
+    albumNames = other.albumNames;
+    languages = other.languages;
+    startDate = other.startDate;
+    endDate = other.endDate;
+    notifyListeners();
   }
 
   /// Clears the filter value of the [identifier].

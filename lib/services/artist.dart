@@ -24,9 +24,7 @@ class ArtistService {
     var response = await _apiService.request(
       '/media/artist/artists',
       queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(
@@ -42,9 +40,7 @@ class ArtistService {
   Future<ModelList> getNewestArtists() async {
     var response = await _apiService.request(
       '/media/artist/newestArtists',
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(
@@ -60,9 +56,7 @@ class ArtistService {
   Future<ModelList> getCommonArtists() async {
     var response = await _apiService.request(
       '/media/artist/commonArtists',
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(

@@ -1,22 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:mml_app/oss_licenses.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// License detail screen.
 class LicenseScreen extends StatelessWidget {
-  /// Package model to show the license for.
-  final Package package;
+  /// License text to show.
+  final String license;
 
   /// Initializes the instance.
-  const LicenseScreen({super.key, required this.package});
+  const LicenseScreen({super.key, required this.license});
 
   /// Builds the screen.
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: Text(package.license ?? ""),
-      ),
+      child: Padding(padding: const EdgeInsets.all(5), child: Text(license)),
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
 
 /// Service that shows messages in the snackbar of the app.
@@ -41,8 +41,31 @@ class MessengerService {
   /// Returns the translated string for unexpected errors with the passed
   /// [message].
   String unexpectedError(String message) {
-    return AppLocalizations.of(snackbarKey.currentContext!)!
-        .unexpectedError(message);
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.unexpectedError(message);
+  }
+
+  /// Translated string for a share link of another server.
+  String get shareLinkOtherServer {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareLinkOtherServer;
+  }
+
+  /// Translated string for a selection with more records than fit into one
+  /// share link.
+  String shareTooMany(int limit) {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareTooMany(limit);
+  }
+
+  /// Translated string for a search with too many filter values to be shared.
+  String shareSearchTooLarge(int max) {
+    return AppLocalizations.of(
+      snackbarKey.currentContext!,
+    )!.shareSearchTooLarge(max);
   }
 
   /// Translated string for forbidden errors.
@@ -75,9 +98,14 @@ class MessengerService {
     return AppLocalizations.of(snackbarKey.currentContext!)!.downloadError;
   }
 
-   /// Translated string for error on downloading.
+  /// Translated string for error on downloading.
   String get notCompatibleFile {
     return AppLocalizations.of(snackbarKey.currentContext!)!.notCompatibleFile;
+  }
+
+  /// Returns the translated string for files larger than [size] megabytes.
+  String fileTooLarge(int size) {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.fileTooLarge(size);
   }
 
   /// Translated string for a message if the cache is cleared successfully.
@@ -88,5 +116,10 @@ class MessengerService {
   /// Translated string for a message if the cache could not be cleared.
   String get cacheClearedFailed {
     return AppLocalizations.of(snackbarKey.currentContext!)!.cacheClearedFailed;
+  }
+
+  /// Translated string for a message if a link could not be opened.
+  String get linkNotOpened {
+    return AppLocalizations.of(snackbarKey.currentContext!)!.linkNotOpened;
   }
 }

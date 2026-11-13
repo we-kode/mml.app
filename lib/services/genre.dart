@@ -24,9 +24,7 @@ class GenreService {
     var response = await _apiService.request(
       '/media/genre/genres',
       queryParameters: {"filter": filter, "skip": offset, "take": take},
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(
@@ -41,9 +39,7 @@ class GenreService {
   Future<ModelList> getCommonGenres() async {
     var response = await _apiService.request(
       '/media/genre/commonGenres',
-      options: Options(
-        method: 'GET',
-      ),
+      options: Options(method: 'GET'),
     );
 
     return ModelList(
