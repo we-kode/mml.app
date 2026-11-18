@@ -98,6 +98,16 @@ void main() {
     );
   });
 
+  test('keeps the registration, if the token request fails locally', () async {
+    final service = ClientService.withMoveAdapter(
+      _Adapter({}),
+      (message, privateKey) async => throw ArgumentError('unreadable key'),
+    );
+
+    await expectLater(service.refreshToken(), throwsArgumentError);
+    await expectKept();
+  });
+
   test(
     'checks the registration without error handling with the versioned url',
     () async {

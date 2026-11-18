@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mml_app/util/xor_encryptor.dart';
 
@@ -20,6 +21,10 @@ class SecureStorageService {
   final iOSOptions = const IOSOptions(
     accessibility: KeychainAccessibility.first_unlock_this_device,
   );
+
+  // Matches keychain items regardless of their accessibility, e.g. items
+  // stored by app versions before 1.2.0 with the default accessibility.
+  final _anyAccessibilityOptions = const IOSOptions(accessibility: null);
 
   /// Key under which the app key is persisted.
   static const String appKeyStorageKey = 'appKey';
@@ -104,13 +109,49 @@ class SecureStorageService {
 
     var cachedValue = _cache[key];
     if (cachedValue == null) {
-      _cache[key] = await _storage.read(
-        key: key,
-        iOptions: iOSOptions,
-        aOptions: androidOptions,
-      );
+      _cache[key] = await _readIOS(key);
     }
     return _cache[key];
+  }
+
+  // Since flutter_secure_storage 10 reads only match items with the configured
+  // accessibility, items stored with another one are read without it and
+  // migrated to the configured accessibility.
+  Future<String?> _readIOS(String key) async {
+    final value = await _storage.read(key: key, iOptions: iOSOptions);
+    if (value != null) {
+      return value;
+    }
+
+    final legacyValue = await _storage.read(
+      key: key,
+      iOptions: _anyAccessibilityOptions,
+    );
+    if (legacyValue != null &&
+        await _storage.isCupertinoProtectedDataAvailable() == true) {
+      await _migrateIOS(key, legacyValue);
+    }
+    return legacyValue;
+  }
+
+  // An item can only get another accessibility by deleting and adding it, so
+  // it is restored with the default accessibility, if adding it fails.
+  Future<void> _migrateIOS(String key, String value) async {
+    try {
+      await _storage.delete(key: key, iOptions: iOSOptions);
+      await _storage.write(key: key, value: value, iOptions: iOSOptions);
+    } on PlatformException {
+      try {
+        await _storage.write(
+          key: key,
+          value: value,
+          iOptions: _anyAccessibilityOptions,
+        );
+      } on PlatformException {
+        // The value stays cached for this session and is migrated again on
+        // the next start, if it is still stored.
+      }
+    }
   }
 
   /// Returns a boolean, that indicates whether a value is persisted under
@@ -124,12 +165,22 @@ class SecureStorageService {
     if (Platform.isIOS) {
       _cache[key] = value;
     }
-    return await _storage.write(
-      key: key,
-      value: value,
-      iOptions: iOSOptions,
-      aOptions: androidOptions,
-    );
+    try {
+      return await _storage.write(
+        key: key,
+        value: value,
+        iOptions: iOSOptions,
+        aOptions: androidOptions,
+      );
+    } on PlatformException {
+      if (!Platform.isIOS) {
+        rethrow;
+      }
+
+      // An item stored with another accessibility blocks adding the new one.
+      await _storage.delete(key: key, iOptions: iOSOptions);
+      return await _storage.write(key: key, value: value, iOptions: iOSOptions);
+    }
   }
 
   /// Returns the json object persisted under the given [key] or an empty map,
