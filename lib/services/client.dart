@@ -338,12 +338,12 @@ class ClientService {
       }
     } catch (e) {
       // Rethrow the error on login page, to abort the register process
-      // correctly or on not authorized errors to prevent logout on server
-      // errors.
-      if (!(await _storage.has(SecureStorageService.accessTokenStorageKey)) ||
-          (e is DioException &&
-              (e.response?.statusCode != HttpStatus.unauthorized &&
-                  e.response?.data['error'] != 'Error occurred 333'))) {
+      // correctly, on local errors like unreadable credentials or on server
+      // errors, so the registration is only removed if the server rejects it.
+      if (e is! DioException ||
+          !(await _storage.has(SecureStorageService.accessTokenStorageKey)) ||
+          (e.response?.statusCode != HttpStatus.unauthorized &&
+              e.response?.data['error'] != 'Error occurred 333')) {
         rethrow;
       }
 
