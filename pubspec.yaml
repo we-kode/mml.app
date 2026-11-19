@@ -41,7 +41,7 @@ dependencies:
   json_annotation: ^4.11.0
   introduction_screen: ^5.0.1
   mobile_scanner: ^7.5.0
-  fast_rsa: ^3.8.6
+  pointycastle: ^4.0.0
   lottie: ^3.8.2
   device_info_plus: ^13.3.0
   shimmer: ^4.0.0
