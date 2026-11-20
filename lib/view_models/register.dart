@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
-import 'package:fast_rsa/fast_rsa.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mml_app/models/client_registration.dart';
 import 'package:mml_app/services/client.dart';
 import 'package:mml_app/services/router.dart';
 import 'package:mml_app/services/secure_storage.dart';
 import 'package:mml_app/l10n/mml_app_localizations.dart';
+import 'package:mml_app/util/rsa.dart';
 import 'package:mml_app/view_models/main.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -90,18 +90,38 @@ class RegisterViewModel extends ChangeNotifier {
   }
 
   /// Generates rsa key.
+  ///
+  /// Sets the [RegistrationState] to error if the keys can not be generated.
   Future generateKeys() async {
-    var keyPair = await RSA.generate(4096);
-    var private = await RSA.convertPrivateKeyToPKCS1(keyPair.privateKey);
-    var public = await RSA.convertPublicKeyToPKCS1(keyPair.publicKey);
+    try {
+      final keyPair = await Rsa.generate();
 
-    await _storage.set(SecureStorageService.rsaPrivateStorageKey, private);
-    await _storage.set(SecureStorageService.rsaPublicStorageKey, public);
+      await _storage.set(
+        SecureStorageService.rsaPrivateStorageKey,
+        keyPair.privateKey,
+      );
+      await _storage.set(
+        SecureStorageService.rsaPublicStorageKey,
+        keyPair.publicKey,
+      );
 
-    await _storage.ensureCryptoKey();
+      await _storage.ensureCryptoKey();
 
-    state = RegistrationState.init;
-    notifyListeners();
+      state = RegistrationState.init;
+    } catch (e) {
+      state = RegistrationState.error;
+    }
+  }
+
+  /// Continues the registration after an error with the failed step.
+  Future retry() async {
+    if (await _storage.has(SecureStorageService.rsaPrivateStorageKey)) {
+      state = RegistrationState.scan;
+      return;
+    }
+
+    state = RegistrationState.rsa;
+    await generateKeys();
   }
 
   /// Redirects the route with main route after successful registration.
