@@ -1,20 +1,14 @@
 PODS:
-  - fast_rsa (0.7.0):
-    - Flutter
   - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - fast_rsa (from `.symlinks/plugins/fast_rsa/ios`)
   - Flutter (from `Flutter`)
 
 EXTERNAL SOURCES:
-  fast_rsa:
-    :path: ".symlinks/plugins/fast_rsa/ios"
   Flutter:
     :path: Flutter
 
 SPEC CHECKSUMS:
-  fast_rsa: bfa36cb649d61f98bd620bea0010aaee35ebd33b
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
 
 PODFILE CHECKSUM: e95772898243ad1749ad02af7b2fd4aa2ce22650
